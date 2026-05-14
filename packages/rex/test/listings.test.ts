@@ -1,6 +1,8 @@
-import { Effect } from "effect";
+import { Cause, Effect, Exit } from "effect";
 import { describe, expect, it } from "vitest";
+import { RexApiError } from "../src/errors.ts";
 import { ListingsDescribeModel } from "../src/operations/ListingsDescribeModel.ts";
+import { ListingsRead } from "../src/operations/ListingsRead.ts";
 import { ListingsSearch } from "../src/operations/ListingsSearch.ts";
 import { runEffect } from "./setup.ts";
 describe("Listings (live)", () => {
@@ -27,16 +29,35 @@ describe("Listings (live)", () => {
     expect(typeof row.system_ctime).toBe("number");
   });
 
-  it("fails (does not resolve) for an invalid argument", async () => {
-    // `limit` must be numeric — Rex rejects a bad value, which surfaces as a
-    // failed Effect (envelope error via transformResponse / a transport
-    // error via matchError). Either way the Exit must not be a success.
+  it("surfaces a Rex HTTP-200 envelope error as a typed RexApiError failure", async () => {
+    // Reading a non-existent id is a *logical* failure: Rex answers HTTP 200
+    // with a non-null `error` in the envelope. The client recovers that into
+    // the typed error channel, so the Exit is a typed failure (not a defect)
+    // carrying RexApiError — `Effect.catchTag("RexApiError", ...)` would work.
     const exit = await runEffect(
-      ListingsSearch({ limit: "not-a-number" as unknown as number }).pipe(
-        Effect.exit,
-      ),
+      ListingsRead({ id: 999_999_999 }).pipe(Effect.exit),
     );
 
-    expect(exit._tag).toBe("Failure");
+    expect(Exit.isFailure(exit)).toBe(true);
+    if (Exit.isFailure(exit)) {
+      // It must be a typed failure, not a defect.
+      expect(Cause.hasDies(exit.cause)).toBe(false);
+      const error = Cause.findErrorOption(exit.cause);
+      expect(error._tag).toBe("Some");
+      if (error._tag === "Some") {
+        expect(error.value).toBeInstanceOf(RexApiError);
+      }
+    }
+  });
+
+  it("recovers a RexApiError via Effect.catchTag", async () => {
+    const recovered = await runEffect(
+      ListingsRead({ id: 999_999_999 }).pipe(
+        Effect.catchTag("RexApiError", (error) =>
+          Effect.succeed(`caught: ${error.type ?? "unknown"}`),
+        ),
+      ),
+    );
+    expect(recovered).toMatch(/^caught:/);
   });
 });
