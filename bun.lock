@@ -279,6 +279,22 @@
         "effect": "catalog:",
       },
     },
+    "packages/rex": {
+      "name": "@distilled.cloud/rex",
+      "version": "0.0.0",
+      "dependencies": {
+        "@distilled.cloud/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "catalog:",
+        "@types/node": "catalog:",
+        "dotenv": "catalog:",
+        "vitest": "catalog:",
+      },
+      "peerDependencies": {
+        "effect": "catalog:",
+      },
+    },
     "packages/stripe": {
       "name": "@distilled.cloud/stripe",
       "version": "0.20.2",
@@ -497,6 +513,8 @@
     "@distilled.cloud/posthog": ["@distilled.cloud/posthog@workspace:packages/posthog"],
 
     "@distilled.cloud/prisma-postgres": ["@distilled.cloud/prisma-postgres@workspace:packages/prisma-postgres"],
+
+    "@distilled.cloud/rex": ["@distilled.cloud/rex@workspace:packages/rex"],
 
     "@distilled.cloud/stripe": ["@distilled.cloud/stripe@workspace:packages/stripe"],
 

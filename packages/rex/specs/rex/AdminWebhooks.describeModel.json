@@ -1,0 +1,65 @@
+{
+  "result": {
+    "search_result_formats": [
+      {
+        "id": "default",
+        "description": "The default response format containing preselected fields.",
+        "limit": 100
+      },
+      {
+        "id": "etags",
+        "description": "Constructs unique etags for record ids that represent a record at a given time. If the etag has changed the next time you request etags you should request the full record.",
+        "limit": 50000
+      },
+      {
+        "id": "ids",
+        "description": "Returns an array of id's only. Id sets are subject to much higher search result limits (10000 items per page).",
+        "limit": 1000000
+      },
+      {
+        "id": "default_no_stubs",
+        "description": "The default response format containing preselected fields but not containing stubs.",
+        "limit": 100
+      }
+    ],
+    "delete_modes": [
+      "purge"
+    ],
+    "data_structure": {
+      "description": "This is not necessarily a full and accurate representation of the data model. For a full representation, query an existing record.",
+      "structure": [
+        "id",
+        "library_id",
+        "account_id",
+        "system_ctime",
+        "system_modtime",
+        "system_unhealthytime",
+        "system_modified_user_id",
+        "system_created_user_id",
+        "name",
+        "url",
+        "version",
+        "is_enabled",
+        "error_rate",
+        "send_format_id"
+      ]
+    },
+    "read_fields": {
+      "core": "Returns core information about a record. This is technically always included regardless of what is passed in to read fields but this field allows you to explicitly request ONLY core data."
+    },
+    "searchable_fields": [
+      "is_hidden",
+      "library_id",
+      "id",
+      "name",
+      "url",
+      "is_enabled",
+      "event_id",
+      "system_unhealthytime"
+    ],
+    "orderby_fields": [
+      "name"
+    ],
+    "export_options": []
+  }
+}

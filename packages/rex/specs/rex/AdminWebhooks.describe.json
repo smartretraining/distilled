@@ -1,0 +1,1255 @@
+{
+  "result": {
+    "name": "AdminWebhooks",
+    "description": "",
+    "service_group": "Admin\n\nTODO: Delete hooks (trash, purge, archive)... OR just send these as update statuses\nTODO: Etags",
+    "completed": false,
+    "experimental": false,
+    "detail": "",
+    "methods": {
+      "create": {
+        "description": "Create a record and return a reference to the id",
+        "parameters": {
+          "data": {
+            "comment": "An array of data to add to the record",
+            "type": "array",
+            "default_value": null,
+            "required": true
+          },
+          "return_id": {
+            "comment": "True if the id should returned only. False if the record should be returned",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          }
+        },
+        "returns": "int|array Either the id of the newly created record or the newly created record (depends if return_id is specified)",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Create a record and return a reference to the id",
+          "request": {
+            "parameters": {
+              "data": [],
+              "return_id": {
+                "required": false,
+                "definition": {
+                  "description": "True if the id should returned only. False if the record should be returned",
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            },
+            "examples": {
+              "Example1": []
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Either the id of the newly created record or the newly created record (depends if return_id is specified)",
+                "example": []
+              }
+            }
+          }
+        }
+      },
+      "describe": {
+        "description": "Describes the class and its methods - simply or in detail",
+        "parameters": {
+          "include_detail": {
+            "comment": "True if detailed descriptions of each method should be included",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          }
+        },
+        "returns": "array An array describing the class",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": null,
+          "request": {
+            "parameters": {
+              "include_detail": {
+                "required": false,
+                "definition": {
+                  "description": "True if detailed descriptions of each method should be included",
+                  "type": "boolean"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "include_detail": true
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Object describing the service",
+                "example": {
+                  "result": {
+                    "name": "Service",
+                    "description": "",
+                    "detail": "",
+                    "methods": {
+                      "archive": {
+                        "description": "Archives a record - archived records are omitted from search results but can be restored at any time.",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be archived.",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Archives a record - archived records are omitted from search results but can be restored at any time.",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be archived.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result of the archive"
+                            }
+                          }
+                        }
+                      },
+                      "create": {
+                        "description": "Create a record and return a reference to the id",
+                        "parameters": {
+                          "data": {
+                            "comment": "An array of data to add to the record",
+                            "type": "array",
+                            "default_value": null,
+                            "required": true
+                          },
+                          "return_id": {
+                            "comment": "True if the id should returned only. False if the record should be returned",
+                            "type": "bool",
+                            "default_value": false,
+                            "required": false
+                          }
+                        },
+                        "returns": "int|array Either the id of the newly created record or the newly created record (depends if return_id is specified)",
+                        "openapi": {
+                          "available": true,
+                          "description": "Create a record and return a reference to the id",
+                          "request": {
+                            "parameters": {
+                              "data": [],
+                              "return_id": {
+                                "required": false,
+                                "definition": {
+                                  "description": "True if the id should returned only. False if the record should be returned",
+                                  "type": "boolean",
+                                  "default": false
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": []
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": []
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "Either the id of the newly created record or the newly created record (depends if return_id is specified)"
+                            }
+                          }
+                        }
+                      },
+                      "read": {
+                        "description": "Read a record by id",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record to return",
+                            "type": "int|string",
+                            "default_value": null,
+                            "required": true
+                          },
+                          "fields": {
+                            "comment": "An array of fields to read",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "extra_fields": {
+                            "comment": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                            "type": "array",
+                            "default_value": [
+                              "smart_categories"
+                            ],
+                            "required": false
+                          }
+                        },
+                        "returns": "array ",
+                        "openapi": {
+                          "available": false,
+                          "description": "",
+                          "request": {
+                            "parameters": [],
+                            "examples": []
+                          },
+                          "response": {
+                            "examples": [],
+                            "schema": [],
+                            "statuses": []
+                          }
+                        }
+                      },
+                      "recoverFromArchive": {
+                        "description": "Recovers a record from the archive",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be recovered from the archive",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Recovers a record from the archive",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be recovered from the archive.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result recovered"
+                            }
+                          }
+                        }
+                      },
+                      "recoverFromTrash": {
+                        "description": "Recover a record from the trash",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be recovered from the trash",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Recovers a record from the trash",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be recovered from the trash.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result recovered"
+                            }
+                          }
+                        }
+                      },
+                      "search": {
+                        "description": "Perform a search",
+                        "parameters": {
+                          "criteria": {
+                            "comment": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "order_by": {
+                            "comment": "An array keyed by field name with a value of either ASC|DESC",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "offset": {
+                            "comment": "The number of rows to offset",
+                            "type": "int",
+                            "default_value": 0,
+                            "required": false
+                          },
+                          "limit": {
+                            "comment": "The number of rows to return",
+                            "type": "int",
+                            "default_value": 20,
+                            "required": false
+                          },
+                          "create_viewstate": {
+                            "comment": "True if a viewstate should be created, false to just return the records",
+                            "type": "bool",
+                            "default_value": false,
+                            "required": false
+                          },
+                          "search_state": {
+                            "comment": "(DEPRECATED - provide system_record_state as a criteria instead)",
+                            "type": "string|array",
+                            "default_value": "active",
+                            "required": false
+                          },
+                          "ids_only": {
+                            "comment": "(DEPRECATED - use search_result_format:'ids' instead) If set to true, returns ids of matching records only - no actual rows",
+                            "type": "bool",
+                            "default_value": false,
+                            "required": false
+                          },
+                          "result_format": {
+                            "comment": "Any of the SEARCH_RESULT_FORMAT_* constants (ids, etags, stubs). Default is 'stubs'",
+                            "type": "string",
+                            "default_value": "default",
+                            "required": false
+                          },
+                          "extra_options": {
+                            "comment": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          }
+                        },
+                        "returns": "array ",
+                        "openapi": {
+                          "available": true,
+                          "description": "Perform a search",
+                          "request": {
+                            "parameters": {
+                              "criteria": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+                                  "type": "object"
+                                }
+                              },
+                              "order_by": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array keyed by field name with a value of either ASC|DESC",
+                                  "type": "string"
+                                }
+                              },
+                              "offset": {
+                                "required": false,
+                                "definition": {
+                                  "description": "The number of rows to offset",
+                                  "type": "number",
+                                  "default": 0
+                                }
+                              },
+                              "limit": {
+                                "required": false,
+                                "definition": {
+                                  "description": "The number of rows to return",
+                                  "type": "number",
+                                  "default": 20
+                                }
+                              },
+                              "create_viewstate": {
+                                "required": false,
+                                "definition": {
+                                  "description": "True if a viewstate should be created, false to just return the records",
+                                  "type": "boolean",
+                                  "default": false
+                                }
+                              },
+                              "result_format": {
+                                "required": false,
+                                "definition": {
+                                  "description": "Any of the SEARCH_RESULT_FORMAT_* constants (ids, etags, stubs).",
+                                  "type": "string",
+                                  "default": "stubs"
+                                }
+                              },
+                              "extra_options": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+                                  "type": "array"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "limit": 2,
+                                "offset": 10
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": []
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The search results"
+                            }
+                          }
+                        }
+                      },
+                      "trash": {
+                        "description": "Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system).",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be trashed",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system).",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be trashed.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result of the trash"
+                            }
+                          }
+                        }
+                      },
+                      "update": {
+                        "description": "Update the record. To remove sub records include the _destroy flag",
+                        "parameters": {
+                          "data": {
+                            "comment": "An array of data to update. Record must exist to be updated",
+                            "type": "array",
+                            "default_value": null,
+                            "required": true
+                          },
+                          "fields": {
+                            "comment": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "extra_fields": {
+                            "comment": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          }
+                        },
+                        "returns": "array The record after the update is complete",
+                        "openapi": {
+                          "available": true,
+                          "description": "Update the record. To remove sub records include the _destroy flag",
+                          "request": {
+                            "parameters": {
+                              "data": [],
+                              "fields": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+                                  "type": "object"
+                                }
+                              },
+                              "extra_fields": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                                  "type": "object"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": []
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": []
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The record after the update is complete"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "describeDeleteModes": {
+        "description": "Describes available delete modes",
+        "parameters": [],
+        "returns": "array ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": null,
+          "request": {
+            "parameters": [],
+            "examples": []
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Available delete modes",
+                "example": {
+                  "result": [
+                    "archive",
+                    "trash",
+                    "purge"
+                  ],
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "describeModel": {
+        "description": "Describes certain characteristics of the model including searchable fields, orderby fields and delete modes",
+        "parameters": [],
+        "returns": "array An array keyed by characteristic",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": null,
+          "request": {
+            "parameters": [],
+            "examples": []
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Available characteristics of the model",
+                "example": {
+                  "result": {
+                    "search_result_formats": [
+                      {
+                        "id": "default",
+                        "description": "The default response format containing preselected fields.",
+                        "limit": 100
+                      },
+                      {
+                        "id": "etags",
+                        "description": "Constructs unique etags for record ids that represent a record at a given time. If the etag has changed the next time you request etags you should request the full record.",
+                        "limit": 50000
+                      },
+                      {
+                        "id": "ids",
+                        "description": "Returns an array of id's only. Id sets are subject to much higher search result limits (10000 items per page).",
+                        "limit": 1000000
+                      },
+                      {
+                        "id": "default_no_stubs",
+                        "description": "The default response format containing preselected fields but not containing stubs.",
+                        "limit": 100
+                      }
+                    ],
+                    "delete_modes": [
+                      "archive",
+                      "trash",
+                      "purge"
+                    ],
+                    "data_structure": {
+                      "description": "This is not necessarily a full and accurate representation of the data model. For a full representation, query an existing record.",
+                      "structure": [
+                        "id",
+                        "account_id",
+                        "system_record_state",
+                        "system_ctime",
+                        "system_modtime",
+                        "system_owner_user_id",
+                        "system_modified_user_id",
+                        "system_created_user_id"
+                      ]
+                    },
+                    "read_fields": {
+                      "core": "Returns core information about a record. This is technically always included regardless of what is passed in to read fields but this field allows you to explicitly request ONLY core data."
+                    },
+                    "read_extra_fields": {},
+                    "searchable_fields": {
+                      "system_owner_user_id": {
+                        "name": "system_owner_user_id",
+                        "label": "Owning User",
+                        "type": "enum",
+                        "options": {
+                          "source": "remote",
+                          "list": "account_users_search"
+                        },
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_created_user_id": {
+                        "name": "system_created_user_id",
+                        "label": "Created User",
+                        "type": "enum",
+                        "options": {
+                          "source": "remote",
+                          "list": "account_users_search"
+                        },
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_modified_user_id": {
+                        "name": "system_modified_user_id",
+                        "label": "Last Modified By",
+                        "type": "enum",
+                        "options": {
+                          "source": "remote",
+                          "list": "account_users_search"
+                        },
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_ctime": {
+                        "name": "system_ctime",
+                        "label": "Created Time",
+                        "type": "timestamp",
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_modtime": {
+                        "name": "system_modtime",
+                        "label": "Modified Time",
+                        "type": "timestamp",
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "id": {
+                        "name": "id",
+                        "label": "Record Id",
+                        "type": "integer",
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_record_state": {
+                        "name": "system_record_state",
+                        "label": "Record State",
+                        "type": "enum",
+                        "options": {
+                          "source": "remote",
+                          "list": "record_state"
+                        },
+                        "real_field": true,
+                        "category": "Record Meta"
+                      }
+                    },
+                    "orderby_fields": [
+                      "system_ctime",
+                      "system_modtime"
+                    ],
+                    "export_options": []
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "describeSearchFields": {
+        "description": "Describes search fields",
+        "parameters": {
+          "include_detail": {
+            "comment": "True if detail about the fields should be included",
+            "type": "bool",
+            "default_value": true,
+            "required": false
+          }
+        },
+        "returns": "array An array of fields",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": null,
+          "request": {
+            "parameters": {
+              "include_detail": {
+                "required": false,
+                "definition": {
+                  "description": "True if detail about the fields should be included",
+                  "type": "boolean"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "include_detail": true
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Available search fields",
+                "example": {
+                  "result": {
+                    "id": {
+                      "name": "id",
+                      "label": "Record Id",
+                      "type": "integer",
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_owner_user_id": {
+                      "name": "system_owner_user_id",
+                      "label": "Owning User",
+                      "type": "enum",
+                      "options": {
+                        "source": "remote",
+                        "list": "account_users_search"
+                      },
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_created_user_id": {
+                      "name": "system_created_user_id",
+                      "label": "Created User",
+                      "type": "enum",
+                      "options": {
+                        "source": "remote",
+                        "list": "account_users_search"
+                      },
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_modified_user_id": {
+                      "name": "system_modified_user_id",
+                      "label": "Last Modified By",
+                      "type": "enum",
+                      "options": {
+                        "source": "remote",
+                        "list": "account_users_search"
+                      },
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_ctime": {
+                      "name": "system_ctime",
+                      "label": "Created Time",
+                      "type": "timestamp",
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_modtime": {
+                      "name": "system_modtime",
+                      "label": "Modified Time",
+                      "type": "timestamp",
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_record_state": {
+                      "name": "system_record_state",
+                      "label": "Record State",
+                      "type": "enum",
+                      "options": {
+                        "source": "remote",
+                        "list": "record_state"
+                      },
+                      "real_field": true,
+                      "category": "Record Meta"
+                    }
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "getEventsAndCategories": {
+        "description": "Get event list",
+        "parameters": [],
+        "returns": "array ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Get event list",
+          "request": {
+            "parameters": [],
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "markAsHealthy": {
+        "description": "",
+        "parameters": {
+          "webhook_id": {
+            "comment": "",
+            "type": "unknown",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "void",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "",
+          "request": {
+            "parameters": {
+              "webhook_id": {
+                "required": true,
+                "definition": {
+                  "description": "",
+                  "type": "unknown",
+                  "default": null
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "purge": {
+        "description": "Truly and fully deletes the record from the database.",
+        "parameters": {
+          "id": {
+            "comment": "The id of the record that should be deleted.",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "bool The result of the deletion",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Truly and fully deletes the record from the database.",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the record that should be deleted.",
+                  "type": "number"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "id": 1
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The result of the deletion",
+                "example": {
+                  "result": 1,
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "read": {
+        "description": "",
+        "parameters": {
+          "id": {
+            "comment": "",
+            "type": "unknown",
+            "default_value": null,
+            "required": true
+          },
+          "fields": {
+            "comment": "",
+            "type": "unknown",
+            "default_value": [],
+            "required": false
+          },
+          "extra_fields": {
+            "comment": "",
+            "type": "unknown",
+            "default_value": [],
+            "required": false
+          }
+        },
+        "returns": "void",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "",
+                  "type": "unknown",
+                  "default": null
+                }
+              },
+              "fields": {
+                "required": false,
+                "definition": {
+                  "description": "",
+                  "type": "unknown",
+                  "default": []
+                }
+              },
+              "extra_fields": {
+                "required": false,
+                "definition": {
+                  "description": "",
+                  "type": "unknown",
+                  "default": []
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "search": {
+        "description": "Perform a search",
+        "parameters": {
+          "criteria": {
+            "comment": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          },
+          "order_by": {
+            "comment": "An array keyed by field name with a value of either ASC|DESC",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          },
+          "offset": {
+            "comment": "The number of rows to offset",
+            "type": "int",
+            "default_value": 0,
+            "required": false
+          },
+          "limit": {
+            "comment": "The number of rows to return",
+            "type": "int",
+            "default_value": 20,
+            "required": false
+          },
+          "create_viewstate": {
+            "comment": "True if a viewstate should be created, false to just return the records",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          },
+          "search_state": {
+            "comment": "(DEPRECATED - provide system_record_state as a criteria instead)",
+            "type": "string|array",
+            "default_value": "active",
+            "required": false
+          },
+          "ids_only": {
+            "comment": "(DEPRECATED - use search_result_format:'ids' instead) If set to true, returns ids of matching records only - no actual rows",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          },
+          "result_format": {
+            "comment": "Any of the search result formats available for this service",
+            "type": "string",
+            "default_value": "default",
+            "required": false
+          },
+          "extra_options": {
+            "comment": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          }
+        },
+        "returns": "array ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Perform a search",
+          "request": {
+            "parameters": {
+              "criteria": {
+                "required": false,
+                "definition": {
+                  "description": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+                  "type": "object"
+                }
+              },
+              "order_by": {
+                "required": false,
+                "definition": {
+                  "description": "An array keyed by field name with a value of either ASC|DESC",
+                  "type": "string"
+                }
+              },
+              "offset": {
+                "required": false,
+                "definition": {
+                  "description": "The number of rows to offset",
+                  "type": "number",
+                  "default": 0
+                }
+              },
+              "limit": {
+                "required": false,
+                "definition": {
+                  "description": "The number of rows to return",
+                  "type": "number",
+                  "default": 20
+                }
+              },
+              "create_viewstate": {
+                "required": false,
+                "definition": {
+                  "description": "True if a viewstate should be created, false to just return the records",
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "result_format": {
+                "required": false,
+                "definition": {
+                  "description": "Any of the search result formats available for this service",
+                  "type": "string",
+                  "default": "default"
+                }
+              },
+              "extra_options": {
+                "required": false,
+                "definition": {
+                  "description": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+                  "type": "array"
+                }
+              },
+              "search_state": {
+                "required": false,
+                "definition": {
+                  "description": "(DEPRECATED - provide system_record_state as a criteria instead)",
+                  "type": "string|array",
+                  "default": "active"
+                }
+              },
+              "ids_only": {
+                "required": false,
+                "definition": {
+                  "description": "(DEPRECATED - use search_result_format:'ids' instead) If set to true, returns ids of matching records only - no actual rows",
+                  "type": "bool",
+                  "default": false
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "limit": 10,
+                "offset": 0
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The search results",
+                "example": []
+              }
+            }
+          }
+        }
+      },
+      "sendTestEvent": {
+        "description": "Sends test event to ensure the webhook works correctly",
+        "parameters": {
+          "webhook_id": {
+            "comment": "",
+            "type": "null",
+            "default_value": null,
+            "required": false
+          }
+        },
+        "returns": "void",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Sends test event to ensure the webhook works correctly",
+          "request": {
+            "parameters": {
+              "webhook_id": {
+                "required": false,
+                "definition": {
+                  "description": "",
+                  "type": "null",
+                  "default": null
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "update": {
+        "description": "Update the record. To remove sub records include the _destroy flag",
+        "parameters": {
+          "data": {
+            "comment": "An array of data to update. Record must exist to be updated",
+            "type": "array",
+            "default_value": null,
+            "required": true
+          },
+          "fields": {
+            "comment": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          },
+          "extra_fields": {
+            "comment": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          }
+        },
+        "returns": "array The record after the update is complete",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Update the record. To remove sub records include the _destroy flag",
+          "request": {
+            "parameters": {
+              "data": [],
+              "fields": {
+                "required": false,
+                "definition": {
+                  "description": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+                  "type": "object"
+                }
+              },
+              "extra_fields": {
+                "required": false,
+                "definition": {
+                  "description": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                  "type": "object"
+                }
+              }
+            },
+            "examples": {
+              "Example1": []
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The record after the update is complete",
+                "example": []
+              }
+            }
+          }
+        }
+      }
+    },
+    "is_internal": false
+  }
+}

@@ -1,0 +1,1364 @@
+{
+  "result": [
+    {
+      "name": "AccountBilling",
+      "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountBillingCredits",
+      "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountHierarchy",
+      "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountSettings",
+      "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountSettingsCommissionStatement",
+      "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountSettingsCommissionWorksheet",
+      "has_openapi_docs": true,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountSettingsCompliance",
+      "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountSettingsCustomInvoiceNumbers",
+      "has_openapi_docs": true,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountSettingsImages",
+      "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountSettingsLeads",
+      "has_openapi_docs": true,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountSettingsMatch",
+      "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountSettingsOpenHomes",
+      "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountSettingsPublication",
+      "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountSettingsRemittance",
+      "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountSettingsSalespersonInvoice",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AccountSettingsWorkingHours",
+      "has_openapi_docs": true,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountUsers",
+      "has_openapi_docs": true,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "Accounts",
+      "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "Activities",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ActivityStream",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AddressLookup",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AdminAccountSharing",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminAppointmentTypes",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminApptNotificationMessages",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminAutomationRules",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AdminBrochures",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminCampaignTemplates",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminChartOfAccounts",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AdminCommAgentDefaults",
+      "has_openapi_docs": true,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminCommAgentSlidingScales",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AdminCommDeductions",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminCommGrossStructures",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminContractConditions",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AdminCustomFields",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminDealStatuses",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminDealTypes",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminDisclaimers",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminHtmlTemplates",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminIconSets",
+      "has_openapi_docs": false,
+      "service_group": "Admins"
+    },
+    {
+      "name": "AdminIdentityDocumentTypes",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminIdentityRequirementsCompanies",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminIdentityRequirementsPeople",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminKeyLocations",
+      "has_openapi_docs": true,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminListingRelationshipTypes",
+      "has_openapi_docs": true,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminMailingLists",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminMarketingPacks",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminMarketingProviders",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminMergeTemplates",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminMetricWriteRules",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminNewsletterTemplates",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AdminOfficeLocations",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminOutboundSettings",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminPipelineStages",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminPortalDefinitions",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminPortalProfiles",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminPrivacySettings",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminPropertyRelationshipTypes",
+      "has_openapi_docs": true,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminPublicationRequiredDocuments",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminReferralCategories",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminResources",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminTags",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminTemplateLibraries",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminTracks",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminUserGroups",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminUserValidationRules",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminValueLists",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminWatermarks",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminWebhooks",
+      "has_openapi_docs": false,
+      "service_group": "Admin\n\nTODO: Delete hooks (trash, purge, archive)... OR just send these as update statuses\nTODO: Etags"
+    },
+    {
+      "name": "AdminWorkflowVersions",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AdminWorkflows",
+      "has_openapi_docs": false,
+      "service_group": "Admin"
+    },
+    {
+      "name": "AgentCommissions",
+      "has_openapi_docs": true,
+      "service_group": "Commission"
+    },
+    {
+      "name": "AgentLedgerBulkTransactions",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AgentLedgerPayRuns",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AgentLedgerPayslipImports",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AgentLedgers",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AiAdmin",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AiCompletions",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Announcements",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ApiDocs",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Appointments",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "Appraisals",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "AsyncActions",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "AuditLogs",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Authentication",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Backup",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "BankDetails",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "BatchRequests",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Buildings",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "CachedCalendarEvents",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "CachedCalendars",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "CalendarAvailabilities",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "CalendarEvents",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Calendars",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "CampaignMembers",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Campaigns",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ChainInstances",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ChainLinks",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Chains",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "CommissionWorksheetAgentAllocations",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "CommissionWorksheets",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ComplianceEntries",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ContactAntiMoneyLaunderingChecks",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ContactBankDetails",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ContactIdentityVerifications",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ContactMatchAlerts",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ContactMatchManualSendLog",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ContactSingleView",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Contacts",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "ContractConditions",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ContractEvents",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Contracts",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "CrossAccountRecordTransfer",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "CrossServiceViewstates",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "CustomFields",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "CustomReports",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "DataCleanup",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Deals",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Dedupe",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Documents",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "EmailDropbox",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "EmbeddedApps",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "Engagement",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "EsignRequests",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "EsignTemplates",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "Export",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Feedback",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "GlobalSearch",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Graph",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "HealthCheck",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Help",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Holds",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "HomeFilters",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Import",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ImportRecordIds",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "InterestedParties",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "InvoiceTransactions",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Invoices",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "KeyRegister",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "KeyRegisterHistory",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "Leads",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ListingEvents",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ListingMatchAlerts",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ListingPortalUploads",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ListingPublication",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ListingServicePackages",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Listings",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "MailMerge",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "MailMergeEventLogs",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "MapAreas",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "MarketLeads",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "MassActions",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "MatchAlertOutbound",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "MatchAlertSendQueue",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "MatchProfiles",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Metrics",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "NewsletterCampaignBlocks",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "NewsletterCampaigns",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "NewsletterReports",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Notes",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "Oabs",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "OpenHomeCheckIns",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "OverpaymentTransactions",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Phoenix",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "PortalStats",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "PortalUploadQueue",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "PortalUploadQueueTargets",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ProjectStages",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "Projects",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "Properties",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "ProspectingContactScores",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ProspectingProspects",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ProspectingSeats",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "PublicActions",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "PublishedListingEvents",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "PublishedListings",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "QuickStats",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "RealTimeWebNotifications",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "RecordStream",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Referrals",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ReinzCustomValues",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ReinzForms",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Reminders",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "ReportCenter",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ReportGenerator",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ReportingDashboards",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ReportingData",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ReportingWidgets",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "RssFeeds",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "SavedFilters",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "SearchUtility",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "SecurityObjectPermissions",
+      "has_openapi_docs": false,
+      "service_group": "Security"
+    },
+    {
+      "name": "SecurityObjectRights",
+      "has_openapi_docs": false,
+      "service_group": "Security"
+    },
+    {
+      "name": "SecurityPermissionGroups",
+      "has_openapi_docs": false,
+      "service_group": "Security"
+    },
+    {
+      "name": "SecurityPrivilegeSets",
+      "has_openapi_docs": false,
+      "service_group": "Security"
+    },
+    {
+      "name": "SecurityPrivileges",
+      "has_openapi_docs": false,
+      "service_group": "Security"
+    },
+    {
+      "name": "SingleViewConnections",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Stream",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Substantiations",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Support",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "SystemFieldUpdate",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "SystemValues",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Telephony",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Tenancies",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "TenancyApplications",
+      "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceAplyid",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceCampaignTrack",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceClickToDial",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceCompareAndConnect",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceCoreLogic",
+      "has_openapi_docs": true,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceCoreLogicImport",
+      "has_openapi_docs": true,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceCoreLogicProperty",
+      "has_openapi_docs": true,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceCoreLogicSearch",
+      "has_openapi_docs": true,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceCrm2Print",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceDocuSign",
+      "has_openapi_docs": true,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceEaPrint",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceFirstAml",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceFirstNational",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceGoHighLevel",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceHMLandRegistryImport",
+      "has_openapi_docs": true,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceHMLandRegistryProperty",
+      "has_openapi_docs": true,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceHMLandRegistrySearch",
+      "has_openapi_docs": true,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceHelloSign",
+      "has_openapi_docs": true,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceHomepass",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceIPayroll",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceKellerWilliamsCommand",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceLJHooker",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceMultiArray",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceMyConnect",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceOdc",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServicePostcodeFile",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServicePriceFinderImportV2",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServicePriceFinderPropertyV2",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServicePriceFinderSearchV2",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceProfessionals",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceRecordLinks",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceReiFormsLive",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceReinzFormsV2",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceReipNexus",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceReipNexusImport",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceReipNexusProperty",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceReipNexusSearch",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceRexCirrus8",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceSmsGlobal",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceSpokeSocial",
+      "has_openapi_docs": true,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceTheLettingsHub",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceTheWholeHouse",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServiceVault",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceWhatsApp",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceXero",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "ThirdPartyServiceYourPorter",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "ThirdPartyServices",
+      "has_openapi_docs": false,
+      "service_group": "Third Party"
+    },
+    {
+      "name": "TrackInstance",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "TrustAccountDeposits",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "TrustAccountReconciliations",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "TrustAccounts",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "TrustBankUploadRemittances",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "TrustBankUploads",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "TrustFundsRequests",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "TrustLedgers",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "TrustTransactions",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "Upload",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "UserCalendars",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "UserNotificationPreferences",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "UserNotifications",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "UserOutbound",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "UserPreferences",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "UserProfile",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "VpaCampaigns",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "VpaLineItems",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "WashLists",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "WhatsAppMessages",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "WorkflowInstances",
+      "has_openapi_docs": false,
+      "service_group": null
+    }
+  ]
+}

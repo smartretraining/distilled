@@ -10,3 +10,4 @@ pnpm-workspace.yaml
 vendor/
 .claude
 .worktrees
+.npmrc
