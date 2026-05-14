@@ -1,0 +1,4402 @@
+{
+  "result": {
+    "name": "Properties",
+    "description": "",
+    "service_group": null,
+    "completed": true,
+    "experimental": false,
+    "detail": "",
+    "methods": {
+      "archive": {
+        "description": "Archives a record - archived records are omitted from search results but can be restored at any time.",
+        "parameters": {
+          "id": {
+            "comment": "The id of the record that should be archived.",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "bool True on success",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Archives a record - archived records are omitted from search results but can be restored at any time.",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the record that should be archived.",
+                  "type": "number"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "id": 1
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The result of the archive",
+                "example": {
+                  "result": 1,
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "autocomplete": {
+        "description": "Optimized for auto complete based on address of a property",
+        "parameters": {
+          "search_string": {
+            "comment": "The start of the address we're searching for",
+            "type": "string",
+            "default_value": "",
+            "required": false
+          },
+          "limit": {
+            "comment": "Max 100 (default 20)",
+            "type": "int",
+            "default_value": 20,
+            "required": false
+          },
+          "return_viewstate": {
+            "comment": "True to get a viewstate id rather than a set of records. Setting limit to a false like value will cause all matching records to be included in the viewstate regardless of limit parameter",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          }
+        },
+        "returns": "array|string|null An array containing the address of the property and its _id or a viewstate id",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Optimized for auto complete based on address of a property",
+          "request": {
+            "parameters": {
+              "search_string": {
+                "required": false,
+                "definition": {
+                  "description": "The start of the address we're searching for",
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "limit": {
+                "required": false,
+                "definition": {
+                  "description": "Max 100 (default 20)",
+                  "type": "int",
+                  "default": 20
+                }
+              },
+              "return_viewstate": {
+                "required": false,
+                "definition": {
+                  "description": "True to get a viewstate id rather than a set of records. Setting limit to a false like value will cause all matching records to be included in the viewstate regardless of limit parameter",
+                  "type": "bool",
+                  "default": false
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "create": {
+        "description": "Create a record and return a reference to the id",
+        "parameters": {
+          "data": {
+            "comment": "An array of data to add to the record",
+            "type": "array",
+            "default_value": null,
+            "required": true
+          },
+          "return_id": {
+            "comment": "True if the id should returned only. False if the record should be returned",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          }
+        },
+        "returns": "int|array Either the id of the newly created record or the newly created record (depends if return_id is specified)",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Create a record and return a reference to the id",
+          "request": {
+            "parameters": {
+              "data": {
+                "required": true,
+                "default": false,
+                "definition": {
+                  "description": "An array of data to add to the record",
+                  "type": "object",
+                  "properties": {
+                    "adr_unit_number": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property unit number or the lot number if the property category is land or rural"
+                    },
+                    "adr_street_number": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property street number - required for residential properties"
+                    },
+                    "adr_street_name": {
+                      "type": "string",
+                      "nullable": false,
+                      "description": "Property street name"
+                    },
+                    "adr_suburb_or_town": {
+                      "type": "string",
+                      "nullable": false,
+                      "description": "Property suburb or town"
+                    },
+                    "adr_locality": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property locality - always null for AU properties"
+                    },
+                    "adr_state_or_region": {
+                      "type": "string",
+                      "nullable": false,
+                      "description": "Property state or region"
+                    },
+                    "adr_postcode": {
+                      "type": "string",
+                      "nullable": false,
+                      "description": "Property postcode"
+                    },
+                    "adr_country": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property country (aus|nz|uk) - will be set automatically from account settings if not provided"
+                    },
+                    "adr_latitude": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property latitude - calculated automatically from address if not provided"
+                    },
+                    "adr_longitude": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property longitude - calculated automatically from address if not provided"
+                    },
+                    "adr_building": {
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "nullable": true,
+                          "description": "The id of the building/site in which the property exists"
+                        }
+                      }
+                    },
+                    "adr_estate_name": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property estate name"
+                    },
+                    "adr_estate_stage": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property estate stage"
+                    },
+                    "title_number": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property title number"
+                    },
+                    "property_image_uri": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property image URI"
+                    },
+                    "property_category": {
+                      "type": "object",
+                      "nullable": false,
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "nullable": false,
+                          "description": "Property category id (valuelist: property_category)"
+                        }
+                      }
+                    },
+                    "property_subcategory_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property subcategory id (deprecated)"
+                    },
+                    "meta_rates_business": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Business rates for a property"
+                    },
+                    "meta_rates_council_exempt": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property is exempt from council tax - available in UK only"
+                    },
+                    "meta_rates_council": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Council rates for a property"
+                    },
+                    "meta_rates_bodycorp": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Bodycorp rates for a property"
+                    },
+                    "meta_rates_water": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Water rates for a property"
+                    },
+                    "meta_rates_land": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Land rates for a property"
+                    },
+                    "meta_rates_other": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Other rates for a property"
+                    },
+                    "meta_rates_domestic": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Domestic rates - available in Northern Ireland"
+                    },
+                    "meta_parking_notes": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Parking notes for a property"
+                    },
+                    "meta_zone": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property zone"
+                    },
+                    "meta_tax_band": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Tax band the property falls under - available in UK only (valuelist: property_tax_band)"
+                    },
+                    "meta_council_authority": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "The council authority of the property - available in UK only"
+                    },
+                    "is_dnd": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property owner has requested no contact regarding this property"
+                    },
+                    "business_name": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property business name - only available for business properties"
+                    },
+                    "attr_bedrooms": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of bedrooms - only residential properties"
+                    },
+                    "attr_bathrooms": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of bathrooms - only residential properties"
+                    },
+                    "attr_ensuites": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of ensuites - only residential properties"
+                    },
+                    "attr_toilets": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of toilets - only residential properties"
+                    },
+                    "attr_living_areas": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of living areas - only residential properties"
+                    },
+                    "attr_garages": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of garages - only residential properties"
+                    },
+                    "attr_carports": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of carports - only residential properties"
+                    },
+                    "attr_open_spaces": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of open spaces - only residential and commercial properties"
+                    },
+                    "attr_floor": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "The floor on which the property is located in a multi-story building"
+                    },
+                    "attr_stories": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of stories in the property"
+                    },
+                    "attr_buildarea": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property build area - not available for land properties"
+                    },
+                    "attr_buildarea_m2": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property build area m2 - not available for land properties"
+                    },
+                    "attr_buildarea_unit_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property build area unit type (valuelist: unit_of_area_building)"
+                    },
+                    "attr_landarea": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property land area"
+                    },
+                    "attr_landarea_m2": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property land area m2"
+                    },
+                    "attr_landarea_unit_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property land area unit type (valuelist: unit_of_area_land)"
+                    },
+                    "attr_energy_rating": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property energy rating - only AU and NZ commercial properties",
+                      "minimum": 0,
+                      "maximum": 10
+                    },
+                    "attr_build_year": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Property build year - only available for residential properties"
+                    },
+                    "attr_sleeps": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of people who can sleep at the property"
+                    },
+                    "attr_roi_pa": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property return on investment per annum - only commercial properties"
+                    },
+                    "attr_takings": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property yearly takings"
+                    },
+                    "attr_valuation_date": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property valuation date performed by registered valuer"
+                    },
+                    "attr_valuation_amount": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "The valuation amount for the entire value of the property performed by registered valuer"
+                    },
+                    "attr_valuation_land_amount": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "The valuation amount for the land component only performed by registered valuer"
+                    },
+                    "attr_is_house_land": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property is a house and land package"
+                    },
+                    "attr_is_franchise": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property is a franchise"
+                    },
+                    "attr_is_corner_block": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Property corner block"
+                    },
+                    "attr_land_depth_rear": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property rear depth in meters"
+                    },
+                    "attr_land_depth_left": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property left depth in meters"
+                    },
+                    "attr_land_depth_right": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property right depth in meters"
+                    },
+                    "attr_land_frontage": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property frontage - only available for land properties"
+                    },
+                    "attr_land_crossover_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property land crossover (valuelist: property_crossover)"
+                    },
+                    "attr_exterior_id": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Property exterior type (valuelist: property_exterior)"
+                    },
+                    "attr_roof_id": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Property roof type (valuelist: property_roof)"
+                    },
+                    "attr_whole_part_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Whether it is whole or part of the building (valuelist: property_part)"
+                    },
+                    "attr_tenure_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property tenure type (valuelist: property_tenure)"
+                    },
+                    "attr_tenure_ground_rent": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property tenure ground rent"
+                    },
+                    "attr_tenure_service_charge": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property tenure service charge"
+                    },
+                    "attr_tenure_agent_id": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Property tenure agent id"
+                    },
+                    "attr_tenure_expiry_year": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Property tenure expiry year"
+                    },
+                    "attr_tenure_other": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property tenure other"
+                    },
+                    "attr_tenure_ground_rent_review_year": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Property tenure ground rent review year - available in UK only"
+                    },
+                    "attr_tenure_ground_rent_increase_percentage": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property tenure ground rent increase as percentage - available in UK only"
+                    },
+                    "attr_shared_ownership_percentage": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Shared ownership percentage - available in UK only"
+                    },
+                    "attr_shared_ownership": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property is shared ownership - available in UK only"
+                    },
+                    "attr_shared_ownership_rent": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Shared ownership rent amount - available in UK only"
+                    },
+                    "attr_shared_ownership_rent_period_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Shared ownership rent frequency (valuelist: shared_ownership_rent_period) - available in UK only"
+                    },
+                    "attr_primary_sewerage_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "List of available sewerage types (valuelist: property_sewerage_supply) - available in UK only"
+                    },
+                    "attr_primary_water_supply_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "List of available water supply types (valuelist: property_water_supply)- available in UK only"
+                    },
+                    "attr_primary_electricity_supply_ids": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "List of available electricity supply types (valuelist: property_electricity_supply)- available in UK only"
+                    },
+                    "attr_broadband_ids": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "List of available broadband connection types (valuelist: property_broadband_value_list)- available in UK only"
+                    },
+                    "attr_last_flooded_date": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Last flooded date - available in UK only"
+                    },
+                    "attr_has_flood_defences": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property has flood defences or not - available in UK only"
+                    },
+                    "attr_sources_of_flooding_ids": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": " (valuelist: property_flooding_source)- available in UK only"
+                    },
+                    "attr_has_restrictions": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property has restrictions or not - available in UK only"
+                    },
+                    "attr_private_rights_of_way": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Any easements, servitudes or wayleaves - available in UK only"
+                    },
+                    "attr_public_rights_of_way": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Property has public rights of way - available in UK only"
+                    },
+                    "attr_stopcock_location": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Stopcock location - available in UK only"
+                    },
+                    "attr_water_meter_location": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Water meter location - available in UK only"
+                    },
+                    "attr_electricity_meter_location": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Electricity meter location - available in UK only"
+                    },
+                    "attr_gas_meter_location": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Gas meter location - available in UK only"
+                    },
+                    "attr_has_gas": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property has gas (yes/no) - available in UK only"
+                    },
+                    "attr_pre_paid_gas_meter": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property has pre-paid gas meter (yes/no) - available in UK only"
+                    },
+                    "attr_has_parking": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property has parking (yes/no)"
+                    },
+                    "attr_parking_type_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Parking type (valuelist: property_parking_type)"
+                    },
+                    "attr_parking_details": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Parking details"
+                    },
+                    "attr_has_open_space": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property has open space (yes/no)"
+                    },
+                    "attr_open_space_details": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Open space details"
+                    },
+                    "rural_fences": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Fences details for rural property"
+                    },
+                    "rural_annual_rainfall": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Annual rainfall details for rural property"
+                    },
+                    "rural_soil_types": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Soil types details for rural property"
+                    },
+                    "rural_improvements": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Improvements details for rural property"
+                    },
+                    "rural_irrigation": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Irrigation details for rural property"
+                    },
+                    "rural_carrying_capacity": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Carrying capacity details for rural property"
+                    },
+                    "rural_services": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Services details for rural property"
+                    },
+                    "default_property_image": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Default property image"
+                    },
+                    "note": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property notes"
+                    }
+                  }
+                }
+              },
+              "return_id": {
+                "required": false,
+                "definition": {
+                  "description": "True if the id should returned only. False if the record should be returned",
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "data": {
+                  "property_category": {
+                    "id": "residential"
+                  },
+                  "adr_unit_number": "2",
+                  "adr_street_number": "265",
+                  "adr_street_name": "Roberts Road",
+                  "adr_suburb_or_town": "Subiaco",
+                  "adr_locality": null,
+                  "adr_state_or_region": "WA",
+                  "adr_postcode": "6008",
+                  "adr_country": "aus",
+                  "adr_building": {
+                    "id": 1
+                  },
+                  "meta_rates_business": "$1,800.08 p/a",
+                  "meta_rates_council_exempt": false,
+                  "meta_rates_council": "$1,500.04 p/a",
+                  "meta_rates_bodycorp": "$80 p/q",
+                  "meta_rates_water": "$531.00 p/annum + usage",
+                  "meta_rates_domestic": 2342.12,
+                  "meta_tax_band": "B",
+                  "meta_council_authority": null,
+                  "attr_bedrooms": 5,
+                  "attr_bathrooms": 3,
+                  "attr_ensuites": 1,
+                  "attr_toilets": 3,
+                  "attr_living_areas": 2,
+                  "attr_garages": 2,
+                  "attr_carports": "1",
+                  "attr_open_spaces": "1",
+                  "attr_total_car_accom": "4",
+                  "attr_floor": "2",
+                  "attr_stories": null,
+                  "attr_buildarea": 942,
+                  "attr_buildarea_m2": 942,
+                  "attr_landarea": 989,
+                  "attr_landarea_m2": 989,
+                  "attr_energy_rating": 8,
+                  "attr_build_year": "2000",
+                  "attr_valuation_date": "2019-05-01",
+                  "attr_valuation_amount": 1500000,
+                  "attr_tenure_ground_rent": 2342,
+                  "attr_tenure_service_charge": 10.5,
+                  "attr_tenure_expiry_year": 2025,
+                  "attr_tenure_other": null,
+                  "attr_tenure_ground_rent_review_year": 2022,
+                  "attr_tenure_ground_rent_increase_percentage": 15.2,
+                  "attr_shared_ownership_percentage": 10,
+                  "attr_shared_ownership": true,
+                  "attr_shared_ownership_rent": 1023,
+                  "attr_shared_ownership_rent_period_id": "week",
+                  "attr_exterior": {
+                    "id": "212"
+                  },
+                  "attr_roof": {
+                    "id": "209"
+                  },
+                  "attr_primary_sewerage_id": "mains_supply",
+                  "attr_primary_water_supply_id": "mains_supply",
+                  "attr_primary_electricity_supply_ids": [
+                    "private_supply"
+                  ],
+                  "attr_broadband_ids": [
+                    "adsl",
+                    "fttc"
+                  ],
+                  "attr_last_flooded_date": "2021-04-15",
+                  "attr_has_flood_defences": true,
+                  "attr_sources_of_flooding_ids": [
+                    "river"
+                  ],
+                  "attr_has_restrictions": false,
+                  "attr_private_rights_of_way": true,
+                  "attr_public_rights_of_way": false,
+                  "attr_stopcock_location": "Front Yard",
+                  "attr_water_meter_location": "Front Yard",
+                  "attr_electricity_meter_location": "Front Yard",
+                  "attr_gas_meter_location": "Front Yard",
+                  "attr_has_gas": "yes",
+                  "attr_pre_paid_gas_meter": "no",
+                  "attr_has_open_space": "no",
+                  "attr_has_parking": "yes",
+                  "attr_parking_type_id": "allocated_bay",
+                  "attr_parking_details": "Outside of the property",
+                  "attr_open_space_details": null,
+                  "default_property_image": {
+                    "uri": "rextmp://2/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643.jpg"
+                  },
+                  "note": "Note about property",
+                  "related": {
+                    "property_tags": [
+                      {
+                        "id": 1
+                      }
+                    ],
+                    "property_features": [
+                      {
+                        "feature": {
+                          "id": "study"
+                        }
+                      },
+                      {
+                        "feature": {
+                          "id": "secureParking"
+                        }
+                      },
+                      {
+                        "feature": {
+                          "id": "airConditioning"
+                        }
+                      }
+                    ],
+                    "property_views": [
+                      {
+                        "view": {
+                          "id": "city"
+                        }
+                      },
+                      {
+                        "view": {
+                          "id": "valley"
+                        }
+                      }
+                    ],
+                    "property_documents": [],
+                    "contact_reln_property": [
+                      {
+                        "reln_type": {
+                          "id": "owner"
+                        },
+                        "contact": {
+                          "id": "1"
+                        }
+                      },
+                      {
+                        "reln_type": {
+                          "id": "owner"
+                        },
+                        "contact": {
+                          "id": "6"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Either the id of the newly created record or the newly created record (depends if return_id is specified)",
+                "example": {
+                  "result": {
+                    "system_record_state": "active",
+                    "system_ctime": 1558571329,
+                    "system_modtime": 1558607501,
+                    "system_search_key": "2 / 265 Roberts Road, Subiaco WA 6008",
+                    "adr_unit_number": "2",
+                    "adr_street_number": "265",
+                    "adr_street_name": "Roberts Road",
+                    "adr_suburb_or_town": "Subiaco",
+                    "adr_locality": null,
+                    "adr_state_or_region": "WA",
+                    "adr_postcode": "6008",
+                    "adr_country": "aus",
+                    "adr_estate_name": null,
+                    "adr_estate_stage": null,
+                    "title_number": "HL12345",
+                    "meta_rates_business": "$1,800.08 p/a",
+                    "meta_rates_council_exempt": false,
+                    "meta_rates_council": "$1,500.04 p/a",
+                    "meta_rates_bodycorp": "$80 p/q",
+                    "meta_rates_water": "$531.00 p/annum + usage",
+                    "meta_rates_land": null,
+                    "meta_rates_other": null,
+                    "meta_rates_domestic": 2342.12,
+                    "meta_parking_notes": null,
+                    "meta_zone": null,
+                    "meta_tax_band": null,
+                    "meta_council_authority": null,
+                    "is_dnd": null,
+                    "business_name": null,
+                    "id": 1,
+                    "etag": "1-1558607501",
+                    "system_owner_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "system_modified_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "system_created_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "adr_latitude": "-31.9458237",
+                    "adr_longitude": "115.8273202",
+                    "attr_bedrooms": 5,
+                    "attr_bathrooms": 3,
+                    "attr_ensuites": 1,
+                    "attr_toilets": 3,
+                    "attr_living_areas": 2,
+                    "attr_garages": 2,
+                    "attr_carports": "1",
+                    "attr_open_spaces": "1",
+                    "attr_total_car_accom": "4",
+                    "attr_floor": "2",
+                    "attr_stories": null,
+                    "attr_buildarea": 942,
+                    "attr_buildarea_m2": 942,
+                    "attr_landarea": 989,
+                    "attr_landarea_m2": 989,
+                    "attr_energy_rating": 8,
+                    "attr_build_year": "2000",
+                    "attr_sleeps": null,
+                    "attr_roi_pa": null,
+                    "attr_takings": null,
+                    "attr_valuation_date": "2019-05-01",
+                    "attr_valuation_amount": 1500000,
+                    "attr_valuation_land_amount": null,
+                    "attr_is_house_land": null,
+                    "attr_is_franchise": null,
+                    "attr_is_corner_block": null,
+                    "attr_land_depth_rear": null,
+                    "attr_land_depth_left": null,
+                    "attr_land_depth_right": null,
+                    "attr_land_frontage": null,
+                    "attr_tenure_ground_rent": 2342,
+                    "attr_tenure_service_charge": 10.5,
+                    "attr_tenure_expiry_year": 2025,
+                    "attr_tenure_other": null,
+                    "attr_tenure_ground_rent_review_year": 2022,
+                    "attr_tenure_ground_rent_increase_percentage": 15.2,
+                    "attr_shared_ownership_percentage": 10,
+                    "attr_shared_ownership": true,
+                    "attr_shared_ownership_rent": 1023,
+                    "attr_shared_ownership_rent_period_id": "week",
+                    "attr_primary_sewerage": {
+                      "id": "mains_supply",
+                      "text": "Mains Supply"
+                    },
+                    "attr_primary_water_supply": {
+                      "id": "mains_supply",
+                      "text": "Mains Supply"
+                    },
+                    "attr_primary_electricity_supply": [
+                      {
+                        "id": "private_supply",
+                        "text": "Private Supply"
+                      }
+                    ],
+                    "attr_broadband": [
+                      {
+                        "id": "adsl",
+                        "text": "ADSL"
+                      },
+                      {
+                        "id": "fttc",
+                        "text": "FTTC"
+                      }
+                    ],
+                    "attr_sources_of_flooding": [
+                      {
+                        "id": "river",
+                        "text": "River"
+                      }
+                    ],
+                    "attr_last_flooded_date": "2021-04-15",
+                    "attr_has_flood_defences": true,
+                    "attr_has_restrictions": null,
+                    "attr_private_rights_of_way": true,
+                    "attr_public_rights_of_way": null,
+                    "attr_stopcock_location": "Front Yard",
+                    "attr_water_meter_location": "Front Yard",
+                    "attr_electricity_meter_location": "Front Yard",
+                    "attr_gas_meter_location": "Front Yard",
+                    "attr_has_gas": "yes",
+                    "attr_pre_paid_gas_meter": "no",
+                    "attr_has_open_space": "no",
+                    "attr_has_parking": "yes",
+                    "attr_parking_type": {
+                      "id": "allocated_bay",
+                      "text": "Allocated Bay"
+                    },
+                    "attr_parking_details": "Outside of the property",
+                    "attr_open_space_details": null,
+                    "rural_fences": null,
+                    "rural_annual_rainfall": null,
+                    "rural_soil_types": null,
+                    "rural_improvements": null,
+                    "rural_irrigation": null,
+                    "rural_carrying_capacity": null,
+                    "rural_services": null,
+                    "adr_building": {
+                      "name": "Sample Building",
+                      "adr_street_number": "265",
+                      "adr_street_name": "Roberts Road",
+                      "adr_suburb_or_town": "Subiaco",
+                      "adr_state_or_region": "WA",
+                      "adr_locality": null,
+                      "adr_postcode": "6008",
+                      "adr_country": "aus",
+                      "building_image": null,
+                      "id": 1
+                    },
+                    "attr_buildarea_unit": {
+                      "id": "m2",
+                      "text": "m2"
+                    },
+                    "attr_landarea_unit": {
+                      "id": "m2",
+                      "text": "m2"
+                    },
+                    "attr_roof": {
+                      "id": "209",
+                      "text": "Tin"
+                    },
+                    "attr_exterior": {
+                      "id": "212",
+                      "text": "Brick"
+                    },
+                    "attr_whole_part": null,
+                    "attr_land_crossover": null,
+                    "attr_tenure": null,
+                    "attr_tenure_agent": null,
+                    "property_category": {
+                      "id": "residential",
+                      "text": "Residential"
+                    },
+                    "property_image": {
+                      "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643.jpg",
+                      "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643.jpg",
+                      "thumbs": {
+                        "800x600": {
+                          "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_800x600.jpg",
+                          "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_800x600.jpg"
+                        },
+                        "400x300": {
+                          "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_400x300.jpg",
+                          "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_400x300.jpg"
+                        },
+                        "200x150": {
+                          "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_200x150.jpg",
+                          "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_200x150.jpg"
+                        },
+                        "80x60": {
+                          "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_80x60.jpg",
+                          "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_80x60.jpg"
+                        }
+                      }
+                    },
+                    "note": null,
+                    "related": {
+                      "property_tags": [
+                        {
+                          "tag": "Sample Tag",
+                          "id": 1
+                        }
+                      ],
+                      "property_features": [
+                        {
+                          "feature_id": "study",
+                          "id": 10,
+                          "feature_name": "Study",
+                          "feature": {
+                            "id": "study",
+                            "text": "Study"
+                          }
+                        },
+                        {
+                          "feature_id": "secureParking",
+                          "id": 11,
+                          "feature_name": "Secure Parking",
+                          "feature": {
+                            "id": "secureParking",
+                            "text": "Secure Parking"
+                          }
+                        },
+                        {
+                          "feature_id": "airConditioning",
+                          "id": 271,
+                          "feature_name": "Air Conditioning",
+                          "feature": {
+                            "id": "airConditioning",
+                            "text": "Air Conditioning"
+                          }
+                        }
+                      ],
+                      "property_views": [
+                        {
+                          "view_id": "city",
+                          "id": 12,
+                          "view_name": "City",
+                          "view": {
+                            "id": "city",
+                            "text": "City"
+                          }
+                        },
+                        {
+                          "view_id": "valley",
+                          "id": 271,
+                          "view_name": "Valley",
+                          "view": {
+                            "id": "valley",
+                            "text": "Valley"
+                          }
+                        }
+                      ],
+                      "property_documents": [],
+                      "contact_reln_property": [
+                        {
+                          "id": 1,
+                          "reln_type": {
+                            "id": "owner",
+                            "text": "Owner"
+                          },
+                          "contact": {
+                            "system_record_state": "active",
+                            "system_ctime": "1558571309",
+                            "system_modtime": "1558571309",
+                            "name": "Will Wyman",
+                            "email_address": "emie74@breitenberg.com",
+                            "phone_number": "(03) 5251 7119",
+                            "fax_number": null,
+                            "is_dnd": "1",
+                            "type": "person",
+                            "last_contacted_date": "2019-05-22",
+                            "name_last": "Wyman",
+                            "address_postal": "385C Bartell Alleyway\nConnland, SA 2668",
+                            "address": "Level 5 671 Kohler Ridge\nWest Joaquinport, ACT 2665",
+                            "interest_level": "warm",
+                            "marketing_birthday": "1984-03-05",
+                            "marketing_enquiry_source": "Internet",
+                            "marketing_enquiry_method": null,
+                            "marketing_gender": "male",
+                            "marketing_postcode": "1198",
+                            "system_owner_user": {
+                              "id": "1",
+                              "name": "Sample User",
+                              "first_name": "Sample",
+                              "last_name": "User",
+                              "email_address": "sample.user@rexlabs.io"
+                            },
+                            "contact_image": null,
+                            "etag": "1-1558571309",
+                            "id": "1"
+                          }
+                        },
+                        {
+                          "id": 2,
+                          "reln_type": {
+                            "id": "owner",
+                            "text": "Owner"
+                          },
+                          "contact": {
+                            "system_record_state": "active",
+                            "system_ctime": "1558571310",
+                            "system_modtime": "1558571310",
+                            "name": "Emma Dickinson",
+                            "email_address": "laverne.volkman@gmail.com.au",
+                            "phone_number": "(02) 3536 6439",
+                            "fax_number": null,
+                            "is_dnd": null,
+                            "type": "person",
+                            "last_contacted_date": "2019-05-23",
+                            "name_last": "Dickinson",
+                            "address_postal": "09B Ray Little\nSouth May, NSW 2673",
+                            "address": "600 Lowe Road\nSouth Demariohaven, VIC 7118",
+                            "interest_level": "cold",
+                            "marketing_birthday": "1973-02-01",
+                            "marketing_enquiry_source": null,
+                            "marketing_enquiry_method": null,
+                            "marketing_gender": "female",
+                            "marketing_postcode": "5746",
+                            "system_owner_user": {
+                              "id": "1",
+                              "name": "Sample User",
+                              "first_name": "Sample",
+                              "last_name": "User",
+                              "email_address": "sample.user@rexlabs.io"
+                            },
+                            "contact_image": null,
+                            "etag": "2-1558571310",
+                            "id": "2"
+                          }
+                        }
+                      ]
+                    },
+                    "security_user_rights": [
+                      "read",
+                      "update",
+                      "archive",
+                      "trash",
+                      "purge",
+                      "perms"
+                    ]
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "describe": {
+        "description": "Describes the class and its methods - simply or in detail",
+        "parameters": {
+          "include_detail": {
+            "comment": "True if detailed descriptions of each method should be included",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          }
+        },
+        "returns": "array An array describing the class",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": null,
+          "request": {
+            "parameters": {
+              "include_detail": {
+                "required": false,
+                "definition": {
+                  "description": "True if detailed descriptions of each method should be included",
+                  "type": "boolean"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "include_detail": true
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Object describing the service",
+                "example": {
+                  "result": {
+                    "name": "Service",
+                    "description": "",
+                    "detail": "",
+                    "methods": {
+                      "archive": {
+                        "description": "Archives a record - archived records are omitted from search results but can be restored at any time.",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be archived.",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Archives a record - archived records are omitted from search results but can be restored at any time.",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be archived.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result of the archive"
+                            }
+                          }
+                        }
+                      },
+                      "create": {
+                        "description": "Create a record and return a reference to the id",
+                        "parameters": {
+                          "data": {
+                            "comment": "An array of data to add to the record",
+                            "type": "array",
+                            "default_value": null,
+                            "required": true
+                          },
+                          "return_id": {
+                            "comment": "True if the id should returned only. False if the record should be returned",
+                            "type": "bool",
+                            "default_value": false,
+                            "required": false
+                          }
+                        },
+                        "returns": "int|array Either the id of the newly created record or the newly created record (depends if return_id is specified)",
+                        "openapi": {
+                          "available": true,
+                          "description": "Create a record and return a reference to the id",
+                          "request": {
+                            "parameters": {
+                              "data": [],
+                              "return_id": {
+                                "required": false,
+                                "definition": {
+                                  "description": "True if the id should returned only. False if the record should be returned",
+                                  "type": "boolean",
+                                  "default": false
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": []
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": []
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "Either the id of the newly created record or the newly created record (depends if return_id is specified)"
+                            }
+                          }
+                        }
+                      },
+                      "read": {
+                        "description": "Read a record by id",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record to return",
+                            "type": "int|string",
+                            "default_value": null,
+                            "required": true
+                          },
+                          "fields": {
+                            "comment": "An array of fields to read",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "extra_fields": {
+                            "comment": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                            "type": "array",
+                            "default_value": [
+                              "smart_categories"
+                            ],
+                            "required": false
+                          }
+                        },
+                        "returns": "array ",
+                        "openapi": {
+                          "available": false,
+                          "description": "",
+                          "request": {
+                            "parameters": [],
+                            "examples": []
+                          },
+                          "response": {
+                            "examples": [],
+                            "schema": [],
+                            "statuses": []
+                          }
+                        }
+                      },
+                      "recoverFromArchive": {
+                        "description": "Recovers a record from the archive",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be recovered from the archive",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Recovers a record from the archive",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be recovered from the archive.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result recovered"
+                            }
+                          }
+                        }
+                      },
+                      "recoverFromTrash": {
+                        "description": "Recover a record from the trash",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be recovered from the trash",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Recovers a record from the trash",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be recovered from the trash.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result recovered"
+                            }
+                          }
+                        }
+                      },
+                      "search": {
+                        "description": "Perform a search",
+                        "parameters": {
+                          "criteria": {
+                            "comment": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "order_by": {
+                            "comment": "An array keyed by field name with a value of either ASC|DESC",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "offset": {
+                            "comment": "The number of rows to offset",
+                            "type": "int",
+                            "default_value": 0,
+                            "required": false
+                          },
+                          "limit": {
+                            "comment": "The number of rows to return",
+                            "type": "int",
+                            "default_value": 20,
+                            "required": false
+                          },
+                          "create_viewstate": {
+                            "comment": "True if a viewstate should be created, false to just return the records",
+                            "type": "bool",
+                            "default_value": false,
+                            "required": false
+                          },
+                          "search_state": {
+                            "comment": "(DEPRECATED - provide system_record_state as a criteria instead)",
+                            "type": "string|array",
+                            "default_value": "active",
+                            "required": false
+                          },
+                          "ids_only": {
+                            "comment": "(DEPRECATED - use search_result_format:'ids' instead) If set to true, returns ids of matching records only - no actual rows",
+                            "type": "bool",
+                            "default_value": false,
+                            "required": false
+                          },
+                          "result_format": {
+                            "comment": "Any of the SEARCH_RESULT_FORMAT_* constants (ids, etags, stubs). Default is 'stubs'",
+                            "type": "string",
+                            "default_value": "default",
+                            "required": false
+                          },
+                          "extra_options": {
+                            "comment": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          }
+                        },
+                        "returns": "array ",
+                        "openapi": {
+                          "available": true,
+                          "description": "Perform a search",
+                          "request": {
+                            "parameters": {
+                              "criteria": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+                                  "type": "object"
+                                }
+                              },
+                              "order_by": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array keyed by field name with a value of either ASC|DESC",
+                                  "type": "string"
+                                }
+                              },
+                              "offset": {
+                                "required": false,
+                                "definition": {
+                                  "description": "The number of rows to offset",
+                                  "type": "number",
+                                  "default": 0
+                                }
+                              },
+                              "limit": {
+                                "required": false,
+                                "definition": {
+                                  "description": "The number of rows to return",
+                                  "type": "number",
+                                  "default": 20
+                                }
+                              },
+                              "create_viewstate": {
+                                "required": false,
+                                "definition": {
+                                  "description": "True if a viewstate should be created, false to just return the records",
+                                  "type": "boolean",
+                                  "default": false
+                                }
+                              },
+                              "result_format": {
+                                "required": false,
+                                "definition": {
+                                  "description": "Any of the SEARCH_RESULT_FORMAT_* constants (ids, etags, stubs).",
+                                  "type": "string",
+                                  "default": "stubs"
+                                }
+                              },
+                              "extra_options": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+                                  "type": "array"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "limit": 2,
+                                "offset": 10
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": []
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The search results"
+                            }
+                          }
+                        }
+                      },
+                      "trash": {
+                        "description": "Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system).",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be trashed",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system).",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be trashed.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result of the trash"
+                            }
+                          }
+                        }
+                      },
+                      "update": {
+                        "description": "Update the record. To remove sub records include the _destroy flag",
+                        "parameters": {
+                          "data": {
+                            "comment": "An array of data to update. Record must exist to be updated",
+                            "type": "array",
+                            "default_value": null,
+                            "required": true
+                          },
+                          "fields": {
+                            "comment": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "extra_fields": {
+                            "comment": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          }
+                        },
+                        "returns": "array The record after the update is complete",
+                        "openapi": {
+                          "available": true,
+                          "description": "Update the record. To remove sub records include the _destroy flag",
+                          "request": {
+                            "parameters": {
+                              "data": [],
+                              "fields": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+                                  "type": "object"
+                                }
+                              },
+                              "extra_fields": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                                  "type": "object"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": []
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": []
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The record after the update is complete"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "describeDeleteModes": {
+        "description": "Describes available delete modes",
+        "parameters": [],
+        "returns": "array ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": null,
+          "request": {
+            "parameters": [],
+            "examples": []
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Available delete modes",
+                "example": {
+                  "result": [
+                    "archive",
+                    "trash",
+                    "purge"
+                  ],
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "describeModel": {
+        "description": "Describes certain characteristics of the model including searchable fields, orderby fields and delete modes",
+        "parameters": [],
+        "returns": "array An array keyed by characteristic",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": null,
+          "request": {
+            "parameters": [],
+            "examples": []
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Available characteristics of the model",
+                "example": {
+                  "result": {
+                    "search_result_formats": [
+                      {
+                        "id": "default",
+                        "description": "The default response format containing preselected fields.",
+                        "limit": 100
+                      },
+                      {
+                        "id": "etags",
+                        "description": "Constructs unique etags for record ids that represent a record at a given time. If the etag has changed the next time you request etags you should request the full record.",
+                        "limit": 50000
+                      },
+                      {
+                        "id": "ids",
+                        "description": "Returns an array of id's only. Id sets are subject to much higher search result limits (10000 items per page).",
+                        "limit": 1000000
+                      },
+                      {
+                        "id": "default_no_stubs",
+                        "description": "The default response format containing preselected fields but not containing stubs.",
+                        "limit": 100
+                      }
+                    ],
+                    "delete_modes": [
+                      "archive",
+                      "trash",
+                      "purge"
+                    ],
+                    "data_structure": {
+                      "description": "This is not necessarily a full and accurate representation of the data model. For a full representation, query an existing record.",
+                      "structure": [
+                        "id",
+                        "account_id",
+                        "system_record_state",
+                        "system_ctime",
+                        "system_modtime",
+                        "system_owner_user_id",
+                        "system_modified_user_id",
+                        "system_created_user_id"
+                      ]
+                    },
+                    "read_fields": {
+                      "core": "Returns core information about a record. This is technically always included regardless of what is passed in to read fields but this field allows you to explicitly request ONLY core data."
+                    },
+                    "read_extra_fields": {},
+                    "searchable_fields": {
+                      "system_owner_user_id": {
+                        "name": "system_owner_user_id",
+                        "label": "Owning User",
+                        "type": "enum",
+                        "options": {
+                          "source": "remote",
+                          "list": "account_users_search"
+                        },
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_created_user_id": {
+                        "name": "system_created_user_id",
+                        "label": "Created User",
+                        "type": "enum",
+                        "options": {
+                          "source": "remote",
+                          "list": "account_users_search"
+                        },
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_modified_user_id": {
+                        "name": "system_modified_user_id",
+                        "label": "Last Modified By",
+                        "type": "enum",
+                        "options": {
+                          "source": "remote",
+                          "list": "account_users_search"
+                        },
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_ctime": {
+                        "name": "system_ctime",
+                        "label": "Created Time",
+                        "type": "timestamp",
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_modtime": {
+                        "name": "system_modtime",
+                        "label": "Modified Time",
+                        "type": "timestamp",
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "id": {
+                        "name": "id",
+                        "label": "Record Id",
+                        "type": "integer",
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_record_state": {
+                        "name": "system_record_state",
+                        "label": "Record State",
+                        "type": "enum",
+                        "options": {
+                          "source": "remote",
+                          "list": "record_state"
+                        },
+                        "real_field": true,
+                        "category": "Record Meta"
+                      }
+                    },
+                    "orderby_fields": [
+                      "system_ctime",
+                      "system_modtime"
+                    ],
+                    "export_options": []
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "describeSearchFields": {
+        "description": "Describes search fields",
+        "parameters": {
+          "include_detail": {
+            "comment": "True if detail about the fields should be included",
+            "type": "bool",
+            "default_value": true,
+            "required": false
+          }
+        },
+        "returns": "array An array of fields",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": null,
+          "request": {
+            "parameters": {
+              "include_detail": {
+                "required": false,
+                "definition": {
+                  "description": "True if detail about the fields should be included",
+                  "type": "boolean"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "include_detail": true
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Available search fields",
+                "example": {
+                  "result": {
+                    "id": {
+                      "name": "id",
+                      "label": "Record Id",
+                      "type": "integer",
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_owner_user_id": {
+                      "name": "system_owner_user_id",
+                      "label": "Owning User",
+                      "type": "enum",
+                      "options": {
+                        "source": "remote",
+                        "list": "account_users_search"
+                      },
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_created_user_id": {
+                      "name": "system_created_user_id",
+                      "label": "Created User",
+                      "type": "enum",
+                      "options": {
+                        "source": "remote",
+                        "list": "account_users_search"
+                      },
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_modified_user_id": {
+                      "name": "system_modified_user_id",
+                      "label": "Last Modified By",
+                      "type": "enum",
+                      "options": {
+                        "source": "remote",
+                        "list": "account_users_search"
+                      },
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_ctime": {
+                      "name": "system_ctime",
+                      "label": "Created Time",
+                      "type": "timestamp",
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_modtime": {
+                      "name": "system_modtime",
+                      "label": "Modified Time",
+                      "type": "timestamp",
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_record_state": {
+                      "name": "system_record_state",
+                      "label": "Record State",
+                      "type": "enum",
+                      "options": {
+                        "source": "remote",
+                        "list": "record_state"
+                      },
+                      "real_field": true,
+                      "category": "Record Meta"
+                    }
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "findPossibleDuplicate": {
+        "description": "Allows for a prevalidation check for a duplicate property (if this function returns something, creation will fail)",
+        "parameters": {
+          "property_category_id": {
+            "comment": "The property category id",
+            "type": "int",
+            "default_value": null,
+            "required": false
+          },
+          "adr_street_number": {
+            "comment": "The street number",
+            "type": "string",
+            "default_value": null,
+            "required": false
+          },
+          "adr_street_name": {
+            "comment": "The street name",
+            "type": "string",
+            "default_value": null,
+            "required": false
+          },
+          "adr_suburb_or_town": {
+            "comment": "The suburb / town",
+            "type": "string",
+            "default_value": null,
+            "required": false
+          },
+          "adr_locality": {
+            "comment": "Locality / City",
+            "type": "string",
+            "default_value": null,
+            "required": false
+          },
+          "adr_state_or_region": {
+            "comment": "State or region",
+            "type": "string",
+            "default_value": null,
+            "required": false
+          },
+          "adr_postcode": {
+            "comment": "String postcode",
+            "type": "string",
+            "default_value": null,
+            "required": false
+          },
+          "adr_unit_number": {
+            "comment": "The unit number",
+            "type": "string",
+            "default_value": null,
+            "required": false
+          },
+          "exclude_ids": {
+            "comment": "An array of ids to not take into account when detecting duplicates",
+            "type": "array",
+            "default_value": null,
+            "required": false
+          },
+          "adr_building_id": {
+            "comment": "",
+            "type": "unknown",
+            "default_value": null,
+            "required": false
+          },
+          "skip_postcode_validation": {
+            "comment": "",
+            "type": "unknown",
+            "default_value": false,
+            "required": false
+          }
+        },
+        "returns": "int|bool The id of the duplicate or false if none was found.",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Allows for a prevalidation check for a duplicate property (if this function returns something, creation will fail)",
+          "request": {
+            "parameters": {
+              "property_category_id": {
+                "required": false,
+                "definition": {
+                  "description": "The property category id",
+                  "type": "int",
+                  "default": null
+                }
+              },
+              "adr_street_number": {
+                "required": false,
+                "definition": {
+                  "description": "The street number",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "adr_street_name": {
+                "required": false,
+                "definition": {
+                  "description": "The street name",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "adr_suburb_or_town": {
+                "required": false,
+                "definition": {
+                  "description": "The suburb / town",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "adr_locality": {
+                "required": false,
+                "definition": {
+                  "description": "Locality / City",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "adr_state_or_region": {
+                "required": false,
+                "definition": {
+                  "description": "State or region",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "adr_postcode": {
+                "required": false,
+                "definition": {
+                  "description": "String postcode",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "adr_unit_number": {
+                "required": false,
+                "definition": {
+                  "description": "The unit number",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "exclude_ids": {
+                "required": false,
+                "definition": {
+                  "description": "An array of ids to not take into account when detecting duplicates",
+                  "type": "array",
+                  "default": null
+                }
+              },
+              "adr_building_id": {
+                "required": false,
+                "definition": {
+                  "description": "",
+                  "type": "unknown",
+                  "default": null
+                }
+              },
+              "skip_postcode_validation": {
+                "required": false,
+                "definition": {
+                  "description": "",
+                  "type": "unknown",
+                  "default": false
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "getHistory": {
+        "description": "Retrieves a stream of oabs, appraisals and listings for the property record",
+        "parameters": {
+          "id": {
+            "comment": "The id of the record you want to retrieve a stream for",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          },
+          "limit": {
+            "comment": "The maximum number of records that should be returned",
+            "type": "int",
+            "default_value": 100,
+            "required": false
+          }
+        },
+        "returns": "array ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Retrieves a stream of oabs, appraisals and listings for the property record",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the record you want to retrieve a stream for",
+                  "type": "int",
+                  "default": null
+                }
+              },
+              "limit": {
+                "required": false,
+                "definition": {
+                  "description": "The maximum number of records that should be returned",
+                  "type": "int",
+                  "default": 100
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "getListingImages": {
+        "description": "Returns a collection of all the listing images from all active listings of this property ordered by the date of the listing and the priority of the image",
+        "parameters": {
+          "id": {
+            "comment": "The ID of the property to return images for",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          },
+          "limit": {
+            "comment": "Restricts the number of returned images default 100",
+            "type": "int",
+            "default_value": 100,
+            "required": false
+          }
+        },
+        "returns": "array An array of all the images with attached thumbs",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Returns a collection of all the listing images from all active listings of this property ordered by the date of the listing and the priority of the image",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The ID of the property to return images for",
+                  "type": "int",
+                  "default": null
+                }
+              },
+              "limit": {
+                "required": false,
+                "definition": {
+                  "description": "Restricts the number of returned images default 100",
+                  "type": "int",
+                  "default": 100
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "getStatusStub": {
+        "description": "Get property status stub for record",
+        "parameters": {
+          "id": {
+            "comment": "The id of the record we want a property status stub node for",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "array An array containing primary_status (string containing the primary status type),",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Get property status stub for record",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the record we want a property status stub node for",
+                  "type": "int",
+                  "default": null
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "read": {
+        "description": "Read a record by id",
+        "parameters": {
+          "id": {
+            "comment": "The id of the record to return",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          },
+          "fields": {
+            "comment": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          },
+          "extra_fields": {
+            "comment": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          }
+        },
+        "returns": "array ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Read a record by id",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The record id to read",
+                  "type": "number"
+                }
+              },
+              "fields": {
+                "required": false,
+                "definition": {
+                  "description": "An array of fields to read",
+                  "type": "array",
+                  "default": [],
+                  "nullable": true
+                }
+              },
+              "extra_fields": {
+                "required": false,
+                "definition": {
+                  "description": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                  "type": "array",
+                  "default": [],
+                  "nullable": true
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "id": 1
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The record",
+                "example": {
+                  "result": {
+                    "system_record_state": "active",
+                    "system_ctime": 1558571329,
+                    "system_modtime": 1558607501,
+                    "system_search_key": "2 / 265 Roberts Road, Subiaco WA 6008",
+                    "adr_unit_number": "2",
+                    "adr_street_number": "265",
+                    "adr_street_name": "Roberts Road",
+                    "adr_suburb_or_town": "Subiaco",
+                    "adr_locality": null,
+                    "adr_state_or_region": "WA",
+                    "adr_postcode": "6008",
+                    "adr_country": "aus",
+                    "adr_estate_name": null,
+                    "adr_estate_stage": null,
+                    "title_number": "HL12345",
+                    "meta_rates_business": "$1,800.08 p/a",
+                    "meta_rates_council_exempt": false,
+                    "meta_rates_council": "$1,500.04 p/a",
+                    "meta_rates_bodycorp": "$80 p/q",
+                    "meta_rates_water": "$531.00 p/annum + usage",
+                    "meta_rates_land": null,
+                    "meta_rates_other": null,
+                    "meta_rates_domestic": 2342.12,
+                    "meta_parking_notes": null,
+                    "meta_zone": null,
+                    "meta_tax_band": "B",
+                    "meta_council_authority": null,
+                    "is_dnd": null,
+                    "business_name": null,
+                    "id": 1,
+                    "etag": "1-1558607501",
+                    "system_owner_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "system_modified_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "system_created_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "adr_latitude": "-31.9458237",
+                    "adr_longitude": "115.8273202",
+                    "attr_bedrooms": 5,
+                    "attr_bathrooms": 3,
+                    "attr_ensuites": 1,
+                    "attr_toilets": 3,
+                    "attr_living_areas": 2,
+                    "attr_garages": 2,
+                    "attr_carports": "1",
+                    "attr_open_spaces": "1",
+                    "attr_total_car_accom": "4",
+                    "attr_floor": "2",
+                    "attr_stories": null,
+                    "attr_buildarea": 942,
+                    "attr_buildarea_m2": 942,
+                    "attr_landarea": 989,
+                    "attr_landarea_m2": 989,
+                    "attr_energy_rating": 8,
+                    "attr_build_year": "2000",
+                    "attr_sleeps": null,
+                    "attr_roi_pa": null,
+                    "attr_takings": null,
+                    "attr_valuation_date": "2019-05-01",
+                    "attr_valuation_amount": 1500000,
+                    "attr_valuation_land_amount": null,
+                    "attr_is_house_land": null,
+                    "attr_is_franchise": null,
+                    "attr_is_corner_block": null,
+                    "attr_land_depth_rear": null,
+                    "attr_land_depth_left": null,
+                    "attr_land_depth_right": null,
+                    "attr_land_frontage": null,
+                    "attr_tenure_ground_rent": 2342,
+                    "attr_tenure_service_charge": 10.5,
+                    "attr_tenure_expiry_year": 2025,
+                    "attr_tenure_other": null,
+                    "attr_tenure_ground_rent_review_year": 2022,
+                    "attr_tenure_ground_rent_increase_percentage": 15.2,
+                    "attr_shared_ownership_percentage": 10,
+                    "attr_shared_ownership": true,
+                    "attr_shared_ownership_rent": 1023,
+                    "attr_shared_ownership_rent_period_id": "week",
+                    "attr_stopcock_location": "Front Yard",
+                    "attr_water_meter_location": "Front Yard",
+                    "attr_electricity_meter_location": "Front Yard",
+                    "attr_gas_meter_location": "Front Yard",
+                    "attr_has_gas": "yes",
+                    "attr_pre_paid_gas_meter": "no",
+                    "attr_has_open_space": "no",
+                    "attr_has_parking": "yes",
+                    "attr_parking_type": {
+                      "id": "allocated_bay",
+                      "text": "Allocated Bay"
+                    },
+                    "attr_parking_details": "Outside of the property",
+                    "attr_open_space_details": null,
+                    "attr_primary_sewerage": {
+                      "id": "mains_supply",
+                      "text": "Mains Supply"
+                    },
+                    "attr_primary_water_supply": {
+                      "id": "mains_supply",
+                      "text": "Mains Supply"
+                    },
+                    "attr_primary_electricity_supply": [
+                      {
+                        "id": "private_supply",
+                        "text": "Private Supply"
+                      }
+                    ],
+                    "attr_broadband": [
+                      {
+                        "id": "adsl",
+                        "text": "ADSL"
+                      },
+                      {
+                        "id": "fttc",
+                        "text": "FTTC"
+                      }
+                    ],
+                    "attr_sources_of_flooding": [
+                      {
+                        "id": "river",
+                        "text": "River"
+                      }
+                    ],
+                    "attr_last_flooded_date": "2021-04-15",
+                    "attr_has_flood_defences": true,
+                    "attr_has_restrictions": null,
+                    "attr_private_rights_of_way": true,
+                    "attr_public_rights_of_way": null,
+                    "rural_fences": null,
+                    "rural_annual_rainfall": null,
+                    "rural_soil_types": null,
+                    "rural_improvements": null,
+                    "rural_irrigation": null,
+                    "rural_carrying_capacity": null,
+                    "rural_services": null,
+                    "adr_building": {
+                      "name": "Sample Building",
+                      "adr_street_number": "265",
+                      "adr_street_name": "Roberts Road",
+                      "adr_suburb_or_town": "Subiaco",
+                      "adr_state_or_region": "WA",
+                      "adr_locality": null,
+                      "adr_postcode": "6008",
+                      "adr_country": "aus",
+                      "building_image": null,
+                      "id": 1
+                    },
+                    "attr_buildarea_unit": {
+                      "id": "m2",
+                      "text": "m2"
+                    },
+                    "attr_landarea_unit": {
+                      "id": "m2",
+                      "text": "m2"
+                    },
+                    "attr_roof": {
+                      "id": "209",
+                      "text": "Tin"
+                    },
+                    "attr_exterior": {
+                      "id": "212",
+                      "text": "Brick"
+                    },
+                    "attr_whole_part": null,
+                    "attr_land_crossover": null,
+                    "attr_tenure": null,
+                    "attr_tenure_agent": null,
+                    "property_category": {
+                      "id": "residential",
+                      "text": "Residential"
+                    },
+                    "property_image": {
+                      "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643.jpg",
+                      "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643.jpg",
+                      "thumbs": {
+                        "800x600": {
+                          "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_800x600.jpg",
+                          "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_800x600.jpg"
+                        },
+                        "400x300": {
+                          "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_400x300.jpg",
+                          "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_400x300.jpg"
+                        },
+                        "200x150": {
+                          "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_200x150.jpg",
+                          "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_200x150.jpg"
+                        },
+                        "80x60": {
+                          "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_80x60.jpg",
+                          "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_80x60.jpg"
+                        }
+                      }
+                    },
+                    "note": null,
+                    "related": {
+                      "property_tags": [
+                        {
+                          "tag": "Sample Tag",
+                          "id": 1
+                        }
+                      ],
+                      "property_features": [
+                        {
+                          "feature_id": "study",
+                          "id": 10,
+                          "feature_name": "Study",
+                          "feature": {
+                            "id": "study",
+                            "text": "Study"
+                          }
+                        },
+                        {
+                          "feature_id": "secureParking",
+                          "id": 11,
+                          "feature_name": "Secure Parking",
+                          "feature": {
+                            "id": "secureParking",
+                            "text": "Secure Parking"
+                          }
+                        },
+                        {
+                          "feature_id": "airConditioning",
+                          "id": 271,
+                          "feature_name": "Air Conditioning",
+                          "feature": {
+                            "id": "airConditioning",
+                            "text": "Air Conditioning"
+                          }
+                        }
+                      ],
+                      "property_views": [
+                        {
+                          "view_id": "city",
+                          "id": 12,
+                          "view_name": "City",
+                          "view": {
+                            "id": "city",
+                            "text": "City"
+                          }
+                        },
+                        {
+                          "view_id": "valley",
+                          "id": 271,
+                          "view_name": "Valley",
+                          "view": {
+                            "id": "valley",
+                            "text": "Valley"
+                          }
+                        }
+                      ],
+                      "property_documents": [],
+                      "contact_reln_property": [
+                        {
+                          "id": 1,
+                          "reln_type": {
+                            "id": "owner",
+                            "text": "Owner"
+                          },
+                          "contact": {
+                            "system_record_state": "active",
+                            "system_ctime": "1558571309",
+                            "system_modtime": "1558571309",
+                            "name": "Will Wyman",
+                            "email_address": "emie74@breitenberg.com",
+                            "phone_number": "(03) 5251 7119",
+                            "fax_number": null,
+                            "is_dnd": "1",
+                            "type": "person",
+                            "last_contacted_date": "2019-05-22",
+                            "name_last": "Wyman",
+                            "address_postal": "385C Bartell Alleyway\nConnland, SA 2668",
+                            "address": "Level 5 671 Kohler Ridge\nWest Joaquinport, ACT 2665",
+                            "interest_level": "warm",
+                            "marketing_birthday": "1984-03-05",
+                            "marketing_enquiry_source": "Internet",
+                            "marketing_enquiry_method": null,
+                            "marketing_gender": "male",
+                            "marketing_postcode": "1198",
+                            "system_owner_user": {
+                              "id": "1",
+                              "name": "Sample User",
+                              "first_name": "Sample",
+                              "last_name": "User",
+                              "email_address": "sample.user@rexlabs.io"
+                            },
+                            "contact_image": null,
+                            "etag": "1-1558571309",
+                            "id": "1"
+                          }
+                        },
+                        {
+                          "id": 2,
+                          "reln_type": {
+                            "id": "owner",
+                            "text": "Owner"
+                          },
+                          "contact": {
+                            "system_record_state": "active",
+                            "system_ctime": "1558571310",
+                            "system_modtime": "1558571310",
+                            "name": "Emma Dickinson",
+                            "email_address": "laverne.volkman@gmail.com.au",
+                            "phone_number": "(02) 3536 6439",
+                            "fax_number": null,
+                            "is_dnd": null,
+                            "type": "person",
+                            "last_contacted_date": "2019-05-23",
+                            "name_last": "Dickinson",
+                            "address_postal": "09B Ray Little\nSouth May, NSW 2673",
+                            "address": "600 Lowe Road\nSouth Demariohaven, VIC 7118",
+                            "interest_level": "cold",
+                            "marketing_birthday": "1973-02-01",
+                            "marketing_enquiry_source": null,
+                            "marketing_enquiry_method": null,
+                            "marketing_gender": "female",
+                            "marketing_postcode": "5746",
+                            "system_owner_user": {
+                              "id": "1",
+                              "name": "Sample User",
+                              "first_name": "Sample",
+                              "last_name": "User",
+                              "email_address": "sample.user@rexlabs.io"
+                            },
+                            "contact_image": null,
+                            "etag": "2-1558571310",
+                            "id": "2"
+                          }
+                        }
+                      ]
+                    },
+                    "security_user_rights": [
+                      "read",
+                      "update",
+                      "archive",
+                      "trash",
+                      "purge",
+                      "perms"
+                    ]
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "recoverFromArchive": {
+        "description": "Recovers a record from the archive",
+        "parameters": {
+          "id": {
+            "comment": "The id of the record that should be recovered from the archive",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "bool True on success",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Recovers a record from the archive",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the record that should be recovered from the archive.",
+                  "type": "number"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "id": 1
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The result recovered",
+                "example": {
+                  "result": 1,
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "recoverFromTrash": {
+        "description": "Recover a record from the trash",
+        "parameters": {
+          "id": {
+            "comment": "The id of the record that should be recovered from the trash",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "bool True on success",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Recovers a record from the trash",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the record that should be recovered from the trash.",
+                  "type": "number"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "id": 1
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The result recovered",
+                "example": {
+                  "result": 1,
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "search": {
+        "description": "Perform a search",
+        "parameters": {
+          "criteria": {
+            "comment": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          },
+          "order_by": {
+            "comment": "An array keyed by field name with a value of either ASC|DESC",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          },
+          "offset": {
+            "comment": "The number of rows to offset",
+            "type": "int",
+            "default_value": 0,
+            "required": false
+          },
+          "limit": {
+            "comment": "The number of rows to return",
+            "type": "int",
+            "default_value": 20,
+            "required": false
+          },
+          "create_viewstate": {
+            "comment": "True if a viewstate should be created, false to just return the records",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          },
+          "search_state": {
+            "comment": "(DEPRECATED - provide system_record_state as a criteria instead)",
+            "type": "string|array",
+            "default_value": "active",
+            "required": false
+          },
+          "ids_only": {
+            "comment": "(DEPRECATED - use search_result_format:'ids' instead) If set to true, returns ids of matching records only - no actual rows",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          },
+          "result_format": {
+            "comment": "Any of the search result formats available for this service",
+            "type": "string",
+            "default_value": "default",
+            "required": false
+          },
+          "extra_options": {
+            "comment": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          }
+        },
+        "returns": "array ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Perform a search",
+          "request": {
+            "parameters": {
+              "criteria": {
+                "required": false,
+                "definition": {
+                  "description": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+                  "type": "object"
+                }
+              },
+              "order_by": {
+                "required": false,
+                "definition": {
+                  "description": "An array keyed by field name with a value of either ASC|DESC",
+                  "type": "string"
+                }
+              },
+              "offset": {
+                "required": false,
+                "definition": {
+                  "description": "The number of rows to offset",
+                  "type": "number",
+                  "default": 0
+                }
+              },
+              "limit": {
+                "required": false,
+                "definition": {
+                  "description": "The number of rows to return",
+                  "type": "number",
+                  "default": 20
+                }
+              },
+              "create_viewstate": {
+                "required": false,
+                "definition": {
+                  "description": "True if a viewstate should be created, false to just return the records",
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "result_format": {
+                "required": false,
+                "definition": {
+                  "description": "Any of the search result formats available for this service",
+                  "type": "string",
+                  "default": "default"
+                }
+              },
+              "extra_options": {
+                "required": false,
+                "definition": {
+                  "description": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+                  "type": "array"
+                }
+              },
+              "search_state": {
+                "required": false,
+                "definition": {
+                  "description": "(DEPRECATED - provide system_record_state as a criteria instead)",
+                  "type": "string|array",
+                  "default": "active"
+                }
+              },
+              "ids_only": {
+                "required": false,
+                "definition": {
+                  "description": "(DEPRECATED - use search_result_format:'ids' instead) If set to true, returns ids of matching records only - no actual rows",
+                  "type": "bool",
+                  "default": false
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "limit": 10,
+                "offset": 0
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The search results",
+                "example": {
+                  "result": {
+                    "rows": [
+                      {
+                        "system_search_key": "2 / 265 Roberts Road, Subiaco WA 6008",
+                        "system_record_state": "active",
+                        "system_ctime": "1558571329",
+                        "system_modtime": "1558608659",
+                        "business_name": null,
+                        "adr_latitude": null,
+                        "adr_longitude": null,
+                        "adr_unit_number": "2",
+                        "adr_street_number": "265",
+                        "adr_street_name": "Roberts Road",
+                        "adr_state_or_region": "WA",
+                        "adr_locality": null,
+                        "adr_suburb_or_town": "Subiaco",
+                        "adr_postcode": "6008",
+                        "adr_country": "aus",
+                        "adr_estate_name": null,
+                        "adr_estate_stage": null,
+                        "title_number": "HL12345",
+                        "meta_zone": null,
+                        "system_owner_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io"
+                        },
+                        "system_modified_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io"
+                        },
+                        "system_created_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io"
+                        },
+                        "adr_building": {
+                          "name": "Sample Building",
+                          "adr_street_number": "265",
+                          "adr_street_name": "Roberts Road",
+                          "adr_suburb_or_town": "Subiaco",
+                          "adr_state_or_region": "WA",
+                          "adr_locality": null,
+                          "adr_postcode": "6008",
+                          "adr_country": "aus",
+                          "building_image": null,
+                          "id": 1
+                        },
+                        "property_category": {
+                          "id": "residential",
+                          "text": "Residential"
+                        },
+                        "property_image": {
+                          "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643.jpg",
+                          "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643.jpg",
+                          "thumbs": {
+                            "800x600": {
+                              "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_800x600.jpg",
+                              "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_800x600.jpg"
+                            },
+                            "400x300": {
+                              "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_400x300.jpg",
+                              "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_400x300.jpg"
+                            },
+                            "200x150": {
+                              "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_200x150.jpg",
+                              "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_200x150.jpg"
+                            },
+                            "80x60": {
+                              "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_80x60.jpg",
+                              "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_80x60.jpg"
+                            }
+                          }
+                        },
+                        "security_user_rights": [
+                          "read",
+                          "update",
+                          "archive",
+                          "trash",
+                          "purge",
+                          "perms"
+                        ],
+                        "etag": "1-1558608659",
+                        "id": "1"
+                      },
+                      {
+                        "system_search_key": "3 Monks Place, Port Hedland WA 6721",
+                        "system_record_state": "active",
+                        "system_ctime": "1551329476",
+                        "system_modtime": "1551329476",
+                        "business_name": null,
+                        "adr_latitude": null,
+                        "adr_longitude": null,
+                        "adr_unit_number": null,
+                        "adr_street_number": "3",
+                        "adr_street_name": "Monks Place",
+                        "adr_state_or_region": "WA",
+                        "adr_locality": null,
+                        "adr_suburb_or_town": "Port Hedland",
+                        "adr_postcode": "6721",
+                        "adr_country": "aus",
+                        "adr_estate_name": null,
+                        "adr_estate_stage": null,
+                        "title_number": "HL12345",
+                        "system_owner_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io"
+                        },
+                        "system_modified_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io"
+                        },
+                        "system_created_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io"
+                        },
+                        "adr_building": null,
+                        "property_category": {
+                          "id": "residential",
+                          "text": "Residential"
+                        },
+                        "property_image": null,
+                        "security_user_rights": [
+                          "read",
+                          "update",
+                          "archive",
+                          "trash",
+                          "purge",
+                          "perms"
+                        ],
+                        "etag": "2-1551329476",
+                        "id": "2"
+                      }
+                    ],
+                    "total": 2,
+                    "viewstate_id": null,
+                    "criteria": [
+                      {
+                        "name": "system_record_state",
+                        "value": "active"
+                      }
+                    ],
+                    "order_by": []
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "setGeoLocation": {
+        "description": "Set geo location",
+        "parameters": {
+          "id": {
+            "comment": "The property id",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          },
+          "latitude": {
+            "comment": "Latitude",
+            "type": "float",
+            "default_value": null,
+            "required": true
+          },
+          "longitude": {
+            "comment": "Longitude",
+            "type": "float",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "array ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Set geo location",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The property id",
+                  "type": "int",
+                  "default": null
+                }
+              },
+              "latitude": {
+                "required": true,
+                "definition": {
+                  "description": "Latitude",
+                  "type": "float",
+                  "default": null
+                }
+              },
+              "longitude": {
+                "required": true,
+                "definition": {
+                  "description": "Longitude",
+                  "type": "float",
+                  "default": null
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "trash": {
+        "description": "Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system).",
+        "parameters": {
+          "id": {
+            "comment": "The id of the record that should be trashed",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "bool True on success",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system).",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the record that should be trashed.",
+                  "type": "number"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "id": 1
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The result of the trash",
+                "example": {
+                  "result": 1,
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "update": {
+        "description": "Update the record. To remove sub records include the _destroy flag",
+        "parameters": {
+          "data": {
+            "comment": "An array of data to update. Record must exist to be updated",
+            "type": "array",
+            "default_value": null,
+            "required": true
+          },
+          "fields": {
+            "comment": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          },
+          "extra_fields": {
+            "comment": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          }
+        },
+        "returns": "array The record after the update is complete",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Update the record. To remove sub records include the _destroy flag",
+          "request": {
+            "parameters": {
+              "data": {
+                "required": true,
+                "default": false,
+                "definition": {
+                  "description": "An array of data to add to the record",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "ID of the property to update"
+                    },
+                    "adr_unit_number": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property unit number or the lot number if the property category is land or rural"
+                    },
+                    "adr_street_number": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property street number - required for residential properties"
+                    },
+                    "adr_street_name": {
+                      "type": "string",
+                      "nullable": false,
+                      "description": "Property street name"
+                    },
+                    "adr_suburb_or_town": {
+                      "type": "string",
+                      "nullable": false,
+                      "description": "Property suburb or town"
+                    },
+                    "adr_locality": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property locality - always null for AU properties"
+                    },
+                    "adr_state_or_region": {
+                      "type": "string",
+                      "nullable": false,
+                      "description": "Property state or region"
+                    },
+                    "adr_postcode": {
+                      "type": "string",
+                      "nullable": false,
+                      "description": "Property postcode"
+                    },
+                    "adr_country": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property country (aus|nz|uk) - will be set automatically from account settings if not provided"
+                    },
+                    "adr_latitude": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property latitude - calculated automatically from address if not provided"
+                    },
+                    "adr_longitude": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property longitude - calculated automatically from address if not provided"
+                    },
+                    "adr_building": {
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "nullable": true,
+                          "description": "The id of the building/site in which the property exists"
+                        }
+                      }
+                    },
+                    "adr_estate_name": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property estate name"
+                    },
+                    "adr_estate_stage": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property estate stage"
+                    },
+                    "title_number": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property title number"
+                    },
+                    "property_image_uri": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property image URI"
+                    },
+                    "property_category": {
+                      "type": "object",
+                      "nullable": false,
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "nullable": false,
+                          "description": "Property category id (valuelist: property_category)"
+                        }
+                      }
+                    },
+                    "property_subcategory_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property subcategory id (deprecated)"
+                    },
+                    "meta_rates_business": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Business rates for a property"
+                    },
+                    "meta_rates_council_exempt": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property is exempt from council tax - available in UK only"
+                    },
+                    "meta_rates_council": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Council rates for a property"
+                    },
+                    "meta_rates_bodycorp": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Bodycorp rates for a property"
+                    },
+                    "meta_rates_water": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Water rates for a property"
+                    },
+                    "meta_rates_land": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Land rates for a property"
+                    },
+                    "meta_rates_other": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Other rates for a property"
+                    },
+                    "meta_rates_domestic": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Domestic rates - available in Northern Ireland"
+                    },
+                    "meta_parking_notes": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Parking notes for a property"
+                    },
+                    "meta_zone": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property zone"
+                    },
+                    "meta_tax_band": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Tax band the property falls under - available in UK only (valuelist: property_tax_band)"
+                    },
+                    "meta_council_authority": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "The council authority of the property - available in UK only"
+                    },
+                    "is_dnd": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property owner has requested no contact regarding this property"
+                    },
+                    "business_name": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property business name - only available for business properties"
+                    },
+                    "attr_bedrooms": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of bedrooms - only residential properties"
+                    },
+                    "attr_bathrooms": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of bathrooms - only residential properties"
+                    },
+                    "attr_ensuites": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of ensuites - only residential properties"
+                    },
+                    "attr_toilets": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of toilets - only residential properties"
+                    },
+                    "attr_living_areas": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of living areas - only residential properties"
+                    },
+                    "attr_garages": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of garages - only residential properties"
+                    },
+                    "attr_carports": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of carports - only residential properties"
+                    },
+                    "attr_open_spaces": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of open spaces - only residential and commercial properties"
+                    },
+                    "attr_floor": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "The floor on which the property is located in a multi-story building"
+                    },
+                    "attr_stories": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of stories in the property"
+                    },
+                    "attr_buildarea": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property build area - not available for land properties"
+                    },
+                    "attr_buildarea_m2": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property build area m2 - not available for land properties"
+                    },
+                    "attr_buildarea_unit_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property build area unit type (valuelist: unit_of_area_building)"
+                    },
+                    "attr_landarea": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property land area"
+                    },
+                    "attr_landarea_m2": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property land area m2"
+                    },
+                    "attr_landarea_unit_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property land area unit type (valuelist: unit_of_area_land)"
+                    },
+                    "attr_energy_rating": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property energy rating - only AU and NZ commercial properties",
+                      "minimum": 0,
+                      "maximum": 10
+                    },
+                    "attr_build_year": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Property build year - only available for residential properties"
+                    },
+                    "attr_sleeps": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Number of people who can sleep at the property"
+                    },
+                    "attr_roi_pa": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property return on investment per annum - only commercial properties"
+                    },
+                    "attr_takings": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property yearly takings"
+                    },
+                    "attr_valuation_date": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property valuation date performed by registered valuer"
+                    },
+                    "attr_valuation_amount": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "The valuation amount for the entire value of the property performed by registered valuer"
+                    },
+                    "attr_valuation_land_amount": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "The valuation amount for the land component only performed by registered valuer"
+                    },
+                    "attr_is_house_land": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property is a house and land package"
+                    },
+                    "attr_is_franchise": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property is a franchise"
+                    },
+                    "attr_is_corner_block": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Property corner block"
+                    },
+                    "attr_land_depth_rear": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property rear depth in meters"
+                    },
+                    "attr_land_depth_left": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property left depth in meters"
+                    },
+                    "attr_land_depth_right": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property right depth in meters"
+                    },
+                    "attr_land_frontage": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property frontage - only available for land properties"
+                    },
+                    "attr_land_crossover_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property land crossover (valuelist: property_crossover)"
+                    },
+                    "attr_exterior_id": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Property exterior type (valuelist: property_exterior)"
+                    },
+                    "attr_roof_id": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Property roof type (valuelist: property_roof)"
+                    },
+                    "attr_whole_part_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Whether it is whole or part of the building (valuelist: property_part)"
+                    },
+                    "attr_tenure_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property tenure type (valuelist: property_tenure)"
+                    },
+                    "attr_tenure_ground_rent": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property tenure ground rent"
+                    },
+                    "attr_tenure_service_charge": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property tenure service charge"
+                    },
+                    "attr_tenure_agent_id": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Property tenure agent id"
+                    },
+                    "attr_tenure_expiry_year": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Property tenure expiry year"
+                    },
+                    "attr_tenure_other": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property tenure other"
+                    },
+                    "attr_tenure_ground_rent_review_year": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "Property tenure ground rent review year - available in UK only"
+                    },
+                    "attr_tenure_ground_rent_increase_percentage": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Property tenure ground rent increase as percentage - available in UK only"
+                    },
+                    "attr_shared_ownership_percentage": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Shared ownership percentage - available in UK only"
+                    },
+                    "attr_shared_ownership": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property is shared ownership - available in UK only"
+                    },
+                    "attr_shared_ownership_rent": {
+                      "type": "float",
+                      "nullable": true,
+                      "description": "Shared ownership rent amount - available in UK only"
+                    },
+                    "attr_shared_ownership_rent_period_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Shared ownership rent frequency (valuelist: shared_ownership_rent_period) - available in UK only"
+                    },
+                    "attr_primary_sewerage_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "List of available sewerage types (valuelist: property_sewerage_supply) - available in UK only"
+                    },
+                    "attr_primary_water_supply_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "List of available water supply types (valuelist: property_water_supply)- available in UK only"
+                    },
+                    "attr_primary_electricity_supply_ids": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "List of available electricity supply types (valuelist: property_electricity_supply)- available in UK only"
+                    },
+                    "attr_broadband_ids": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "List of available broadband connection types (valuelist: property_broadband_value_list)- available in UK only"
+                    },
+                    "attr_last_flooded_date": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Last flooded date - available in UK only"
+                    },
+                    "attr_has_flood_defences": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property has flood defences or not - available in UK only"
+                    },
+                    "attr_sources_of_flooding_ids": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": " (valuelist: property_flooding_source)- available in UK only"
+                    },
+                    "attr_has_restrictions": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Whether the property has restrictions or not - available in UK only"
+                    },
+                    "attr_private_rights_of_way": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Any easements, servitudes or wayleaves - available in UK only"
+                    },
+                    "attr_public_rights_of_way": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Property has public rights of way - available in UK only"
+                    },
+                    "attr_stopcock_location": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Stopcock location - available in UK only"
+                    },
+                    "attr_water_meter_location": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Water meter location - available in UK only"
+                    },
+                    "attr_electricity_meter_location": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Electricity meter location - available in UK only"
+                    },
+                    "attr_gas_meter_location": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Gas meter location - available in UK only"
+                    },
+                    "attr_has_gas": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property has gas (yes/no) - available in UK only"
+                    },
+                    "attr_pre_paid_gas_meter": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property has pre-paid gas meter (yes/no) - available in UK only"
+                    },
+                    "attr_has_parking": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property has parking (yes/no)"
+                    },
+                    "attr_parking_type_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Parking type (valuelist: property_parking_type)"
+                    },
+                    "attr_parking_details": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Parking details"
+                    },
+                    "attr_has_open_space": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property has open space (yes/no)"
+                    },
+                    "attr_open_space_details": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Open space details"
+                    },
+                    "rural_fences": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Fences details for rural property"
+                    },
+                    "rural_annual_rainfall": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Annual rainfall details for rural property"
+                    },
+                    "rural_soil_types": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Soil types details for rural property"
+                    },
+                    "rural_improvements": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Improvements details for rural property"
+                    },
+                    "rural_irrigation": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Irrigation details for rural property"
+                    },
+                    "rural_carrying_capacity": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Carrying capacity details for rural property"
+                    },
+                    "rural_services": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Services details for rural property"
+                    },
+                    "default_property_image": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Default property image"
+                    },
+                    "note": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Property notes"
+                    }
+                  }
+                }
+              },
+              "fields": {
+                "required": false,
+                "definition": {
+                  "description": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+                  "type": "object"
+                }
+              },
+              "extra_fields": {
+                "required": false,
+                "definition": {
+                  "description": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                  "type": "object"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "data": {
+                  "id": 1,
+                  "property_category": {
+                    "id": "residential"
+                  },
+                  "adr_unit_number": "2",
+                  "adr_street_number": "265",
+                  "adr_street_name": "Roberts Road",
+                  "adr_suburb_or_town": "Subiaco",
+                  "adr_locality": null,
+                  "adr_state_or_region": "WA",
+                  "adr_postcode": "6008",
+                  "adr_country": "aus",
+                  "adr_building": {
+                    "id": 1
+                  },
+                  "meta_rates_business": "$1,800.08 p/a",
+                  "meta_rates_council_exempt": false,
+                  "meta_rates_council": "$1,500.04 p/a",
+                  "meta_rates_bodycorp": "$80 p/q",
+                  "meta_rates_water": "$531.00 p/annum + usage",
+                  "meta_rates_domestic": 2342.12,
+                  "meta_tax_band": "B",
+                  "meta_council_authority": null,
+                  "attr_bedrooms": 5,
+                  "attr_bathrooms": 3,
+                  "attr_ensuites": 1,
+                  "attr_toilets": 3,
+                  "attr_living_areas": 2,
+                  "attr_garages": 2,
+                  "attr_carports": "1",
+                  "attr_open_spaces": "1",
+                  "attr_total_car_accom": "4",
+                  "attr_floor": "2",
+                  "attr_stories": null,
+                  "attr_buildarea": 942,
+                  "attr_buildarea_m2": 942,
+                  "attr_landarea": 989,
+                  "attr_landarea_m2": 989,
+                  "attr_tenure_ground_rent": 2342,
+                  "attr_tenure_service_charge": 10.5,
+                  "attr_tenure_expiry_year": 2025,
+                  "attr_tenure_other": null,
+                  "attr_tenure_ground_rent_review_year": 2022,
+                  "attr_tenure_ground_rent_increase_percentage": 15.2,
+                  "attr_shared_ownership_percentage": 10,
+                  "attr_shared_ownership": true,
+                  "attr_shared_ownership_rent": 1023,
+                  "attr_shared_ownership_rent_period_id": "week",
+                  "attr_energy_rating": 8,
+                  "attr_build_year": "2000",
+                  "attr_valuation_date": "2019-05-01",
+                  "attr_valuation_amount": 1500000,
+                  "attr_exterior": {
+                    "id": "212"
+                  },
+                  "attr_roof": {
+                    "id": "209"
+                  },
+                  "attr_primary_sewerage_id": "mains_supply",
+                  "attr_primary_water_supply_id": "mains_supply",
+                  "attr_primary_electricity_supply_ids": [
+                    "private_supply"
+                  ],
+                  "attr_broadband_ids": [
+                    "adsl",
+                    "fttc"
+                  ],
+                  "attr_last_flooded_date": "2021-04-15",
+                  "attr_has_flood_defences": true,
+                  "attr_sources_of_flooding_ids": [
+                    "river"
+                  ],
+                  "attr_has_restrictions": false,
+                  "attr_private_rights_of_way": true,
+                  "attr_public_rights_of_way": false,
+                  "attr_stopcock_location": "Front Yard",
+                  "attr_water_meter_location": "Front Yard",
+                  "attr_electricity_meter_location": "Front Yard",
+                  "attr_gas_meter_location": "Front Yard",
+                  "attr_has_gas": "yes",
+                  "attr_pre_paid_gas_meter": "no",
+                  "attr_has_open_space": "no",
+                  "attr_has_parking": "yes",
+                  "attr_parking_type_id": "allocated_bay",
+                  "attr_parking_details": "Outside of the property",
+                  "attr_open_space_details": null,
+                  "default_property_image": {
+                    "uri": "rextmp://2/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643.jpg"
+                  },
+                  "note": "Note about property",
+                  "related": {
+                    "property_tags": [
+                      {
+                        "id": 1
+                      }
+                    ],
+                    "property_features": [
+                      {
+                        "feature": {
+                          "id": "study"
+                        }
+                      },
+                      {
+                        "feature": {
+                          "id": "secureParking"
+                        }
+                      },
+                      {
+                        "feature": {
+                          "id": "airConditioning"
+                        }
+                      }
+                    ],
+                    "property_views": [
+                      {
+                        "view": {
+                          "id": "city"
+                        }
+                      },
+                      {
+                        "view": {
+                          "id": "valley"
+                        }
+                      }
+                    ],
+                    "property_documents": [],
+                    "contact_reln_property": [
+                      {
+                        "reln_type": {
+                          "id": "owner"
+                        },
+                        "contact": {
+                          "id": "1"
+                        }
+                      },
+                      {
+                        "reln_type": {
+                          "id": "owner"
+                        },
+                        "contact": {
+                          "id": "6"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The record after the update is complete",
+                "example": {
+                  "result": {
+                    "system_record_state": "active",
+                    "system_ctime": 1558571329,
+                    "system_modtime": 1558607501,
+                    "system_search_key": "2 / 265 Roberts Road, Subiaco WA 6008",
+                    "adr_unit_number": "2",
+                    "adr_street_number": "265",
+                    "adr_street_name": "Roberts Road",
+                    "adr_suburb_or_town": "Subiaco",
+                    "adr_locality": null,
+                    "adr_state_or_region": "WA",
+                    "adr_postcode": "6008",
+                    "adr_country": "aus",
+                    "adr_estate_name": null,
+                    "adr_estate_stage": null,
+                    "title_number": "HL12345",
+                    "meta_rates_business": "$1,800.08 p/a",
+                    "meta_rates_council_exempt": false,
+                    "meta_rates_council": "$1,500.04 p/a",
+                    "meta_rates_bodycorp": "$80 p/q",
+                    "meta_rates_water": "$531.00 p/annum + usage",
+                    "meta_rates_land": null,
+                    "meta_rates_other": null,
+                    "meta_rates_domestic": 2342.12,
+                    "meta_parking_notes": null,
+                    "meta_zone": null,
+                    "meta_tax_band": "B",
+                    "meta_council_authority": null,
+                    "is_dnd": null,
+                    "business_name": null,
+                    "id": 1,
+                    "etag": "1-1558607501",
+                    "system_owner_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "system_modified_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "system_created_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "adr_latitude": "-31.9458237",
+                    "adr_longitude": "115.8273202",
+                    "attr_bedrooms": 5,
+                    "attr_bathrooms": 3,
+                    "attr_ensuites": 1,
+                    "attr_toilets": 3,
+                    "attr_living_areas": 2,
+                    "attr_garages": 2,
+                    "attr_carports": "1",
+                    "attr_open_spaces": "1",
+                    "attr_total_car_accom": "4",
+                    "attr_floor": "2",
+                    "attr_stories": null,
+                    "attr_buildarea": 942,
+                    "attr_buildarea_m2": 942,
+                    "attr_landarea": 989,
+                    "attr_landarea_m2": 989,
+                    "attr_energy_rating": 8,
+                    "attr_build_year": "2000",
+                    "attr_sleeps": null,
+                    "attr_roi_pa": null,
+                    "attr_takings": null,
+                    "attr_valuation_date": "2019-05-01",
+                    "attr_valuation_amount": 1500000,
+                    "attr_valuation_land_amount": null,
+                    "attr_is_house_land": null,
+                    "attr_is_franchise": null,
+                    "attr_is_corner_block": null,
+                    "attr_land_depth_rear": null,
+                    "attr_land_depth_left": null,
+                    "attr_land_depth_right": null,
+                    "attr_land_frontage": null,
+                    "attr_tenure_ground_rent": 2342,
+                    "attr_tenure_service_charge": 10.5,
+                    "attr_tenure_expiry_year": 2025,
+                    "attr_tenure_other": null,
+                    "attr_tenure_ground_rent_review_year": 2022,
+                    "attr_tenure_ground_rent_increase_percentage": 15.2,
+                    "attr_shared_ownership_percentage": 10,
+                    "attr_shared_ownership": true,
+                    "attr_shared_ownership_rent": 1023,
+                    "attr_shared_ownership_rent_period_id": {
+                      "id": "week",
+                      "text": "Weekly"
+                    },
+                    "attr_primary_sewerage": {
+                      "id": "mains_supply",
+                      "text": "Mains Supply"
+                    },
+                    "attr_primary_water_supply": {
+                      "id": "mains_supply",
+                      "text": "Mains Supply"
+                    },
+                    "attr_primary_electricity_supply": [
+                      {
+                        "id": "private_supply",
+                        "text": "Private Supply"
+                      }
+                    ],
+                    "attr_broadband": [
+                      {
+                        "id": "adsl",
+                        "text": "ADSL"
+                      },
+                      {
+                        "id": "fttc",
+                        "text": "FTTC"
+                      }
+                    ],
+                    "attr_sources_of_flooding": [
+                      {
+                        "id": "river",
+                        "text": "River"
+                      }
+                    ],
+                    "attr_last_flooded_date": "2021-04-15",
+                    "attr_has_flood_defences": true,
+                    "attr_has_restrictions": null,
+                    "attr_private_rights_of_way": true,
+                    "attr_public_rights_of_way": null,
+                    "attr_stopcock_location": "Front Yard",
+                    "attr_water_meter_location": "Front Yard",
+                    "attr_electricity_meter_location": "Front Yard",
+                    "attr_gas_meter_location": "Front Yard",
+                    "attr_has_gas": "yes",
+                    "attr_pre_paid_gas_meter": "no",
+                    "attr_has_open_space": "no",
+                    "attr_has_parking": "yes",
+                    "attr_parking_type": {
+                      "id": "allocated_bay",
+                      "text": "Allocated Bay"
+                    },
+                    "attr_parking_details": "Outside of the property",
+                    "attr_open_space_details": null,
+                    "rural_fences": null,
+                    "rural_annual_rainfall": null,
+                    "rural_soil_types": null,
+                    "rural_improvements": null,
+                    "rural_irrigation": null,
+                    "rural_carrying_capacity": null,
+                    "rural_services": null,
+                    "adr_building": {
+                      "name": "Sample Building",
+                      "adr_street_number": "265",
+                      "adr_street_name": "Roberts Road",
+                      "adr_suburb_or_town": "Subiaco",
+                      "adr_state_or_region": "WA",
+                      "adr_locality": null,
+                      "adr_postcode": "6008",
+                      "adr_country": "aus",
+                      "building_image": null,
+                      "id": 1
+                    },
+                    "attr_buildarea_unit": {
+                      "id": "m2",
+                      "text": "m2"
+                    },
+                    "attr_landarea_unit": {
+                      "id": "m2",
+                      "text": "m2"
+                    },
+                    "attr_roof": {
+                      "id": "209",
+                      "text": "Tin"
+                    },
+                    "attr_exterior": {
+                      "id": "212",
+                      "text": "Brick"
+                    },
+                    "attr_whole_part": null,
+                    "attr_land_crossover": null,
+                    "attr_tenure": null,
+                    "attr_tenure_agent": null,
+                    "property_category": {
+                      "id": "residential",
+                      "text": "Residential"
+                    },
+                    "property_image": {
+                      "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643.jpg",
+                      "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643.jpg",
+                      "thumbs": {
+                        "800x600": {
+                          "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_800x600.jpg",
+                          "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_800x600.jpg"
+                        },
+                        "400x300": {
+                          "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_400x300.jpg",
+                          "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_400x300.jpg"
+                        },
+                        "200x150": {
+                          "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_200x150.jpg",
+                          "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_200x150.jpg"
+                        },
+                        "80x60": {
+                          "uri": "rexlive://2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_80x60.jpg",
+                          "url": "//s3-ap-southeast-2.amazonaws.com/cdn.rexsoftware.com/app/livestore/accounts/2/properties/4/images/image4_ac45-2937-6193-f71c-70e7-95d0-6bd3-ffea_20190523084643_80x60.jpg"
+                        }
+                      }
+                    },
+                    "note": null,
+                    "related": {
+                      "property_tags": [
+                        {
+                          "tag": "Sample Tag",
+                          "id": 1
+                        }
+                      ],
+                      "property_features": [
+                        {
+                          "feature_id": "study",
+                          "id": 10,
+                          "feature_name": "Study",
+                          "feature": {
+                            "id": "study",
+                            "text": "Study"
+                          }
+                        },
+                        {
+                          "feature_id": "secureParking",
+                          "id": 11,
+                          "feature_name": "Secure Parking",
+                          "feature": {
+                            "id": "secureParking",
+                            "text": "Secure Parking"
+                          }
+                        },
+                        {
+                          "feature_id": "airConditioning",
+                          "id": 271,
+                          "feature_name": "Air Conditioning",
+                          "feature": {
+                            "id": "airConditioning",
+                            "text": "Air Conditioning"
+                          }
+                        }
+                      ],
+                      "property_views": [
+                        {
+                          "view_id": "city",
+                          "id": 12,
+                          "view_name": "City",
+                          "view": {
+                            "id": "city",
+                            "text": "City"
+                          }
+                        },
+                        {
+                          "view_id": "valley",
+                          "id": 271,
+                          "view_name": "Valley",
+                          "view": {
+                            "id": "valley",
+                            "text": "Valley"
+                          }
+                        }
+                      ],
+                      "property_documents": [],
+                      "contact_reln_property": [
+                        {
+                          "id": 1,
+                          "reln_type": {
+                            "id": "owner",
+                            "text": "Owner"
+                          },
+                          "contact": {
+                            "system_record_state": "active",
+                            "system_ctime": "1558571309",
+                            "system_modtime": "1558571309",
+                            "name": "Will Wyman",
+                            "email_address": "emie74@breitenberg.com",
+                            "phone_number": "(03) 5251 7119",
+                            "fax_number": null,
+                            "is_dnd": "1",
+                            "type": "person",
+                            "last_contacted_date": "2019-05-22",
+                            "name_last": "Wyman",
+                            "address_postal": "385C Bartell Alleyway\nConnland, SA 2668",
+                            "address": "Level 5 671 Kohler Ridge\nWest Joaquinport, ACT 2665",
+                            "interest_level": "warm",
+                            "marketing_birthday": "1984-03-05",
+                            "marketing_enquiry_source": "Internet",
+                            "marketing_enquiry_method": null,
+                            "marketing_gender": "male",
+                            "marketing_postcode": "1198",
+                            "system_owner_user": {
+                              "id": "1",
+                              "name": "Sample User",
+                              "first_name": "Sample",
+                              "last_name": "User",
+                              "email_address": "sample.user@rexlabs.io"
+                            },
+                            "contact_image": null,
+                            "etag": "1-1558571309",
+                            "id": "1"
+                          }
+                        },
+                        {
+                          "id": 2,
+                          "reln_type": {
+                            "id": "owner",
+                            "text": "Owner"
+                          },
+                          "contact": {
+                            "system_record_state": "active",
+                            "system_ctime": "1558571310",
+                            "system_modtime": "1558571310",
+                            "name": "Emma Dickinson",
+                            "email_address": "laverne.volkman@gmail.com.au",
+                            "phone_number": "(02) 3536 6439",
+                            "fax_number": null,
+                            "is_dnd": null,
+                            "type": "person",
+                            "last_contacted_date": "2019-05-23",
+                            "name_last": "Dickinson",
+                            "address_postal": "09B Ray Little\nSouth May, NSW 2673",
+                            "address": "600 Lowe Road\nSouth Demariohaven, VIC 7118",
+                            "interest_level": "cold",
+                            "marketing_birthday": "1973-02-01",
+                            "marketing_enquiry_source": null,
+                            "marketing_enquiry_method": null,
+                            "marketing_gender": "female",
+                            "marketing_postcode": "5746",
+                            "system_owner_user": {
+                              "id": "1",
+                              "name": "Sample User",
+                              "first_name": "Sample",
+                              "last_name": "User",
+                              "email_address": "sample.user@rexlabs.io"
+                            },
+                            "contact_image": null,
+                            "etag": "2-1558571310",
+                            "id": "2"
+                          }
+                        }
+                      ]
+                    },
+                    "security_user_rights": [
+                      "read",
+                      "update",
+                      "archive",
+                      "trash",
+                      "purge",
+                      "perms"
+                    ]
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "is_internal": false
+  }
+}

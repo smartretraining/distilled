@@ -1,0 +1,2315 @@
+{
+  "result": {
+    "search_result_formats": [
+      {
+        "id": "default",
+        "description": "The default response format containing preselected fields.",
+        "limit": 100
+      },
+      {
+        "id": "etags",
+        "description": "Constructs unique etags for record ids that represent a record at a given time. If the etag has changed the next time you request etags you should request the full record.",
+        "limit": 50000
+      },
+      {
+        "id": "ids",
+        "description": "Returns an array of id's only. Id sets are subject to much higher search result limits (10000 items per page).",
+        "limit": 1000000
+      },
+      {
+        "id": "default_no_stubs",
+        "description": "The default response format containing preselected fields but not containing stubs.",
+        "limit": 100
+      },
+      {
+        "id": "stocklist",
+        "description": "Returns an array of data required to produce a stocklist (provided the user has read rights)",
+        "limit": 100
+      },
+      {
+        "id": "basic",
+        "description": "Returns an array of very basic information about a listing that doesn't require security checks. I.e. address, and listing category are revealed.",
+        "limit": 100
+      },
+      {
+        "id": "map",
+        "description": "Id, latitude, longitude and listing status. Ideal for displaying listings on a map.",
+        "limit": 50000
+      }
+    ],
+    "search_extra_options": {
+      "extra_fields": {
+        "description": "Including values from this option will increase the amount of data included in the response",
+        "fields": {
+          "related.contact_reln_listing": "Related contact_reln_listing",
+          "related.listing_adverts": "Related listing_adverts",
+          "related.listing_allowances": "Related listing_allowances",
+          "related.listing_documents": "Related listing_documents",
+          "related.listing_events": "Related listing_events",
+          "related.listing_floorplans": "Related listing_floorplans",
+          "related.listing_highlights": "Related listing_highlights. Only available for France, United Kingdom of Great Britain and Northern Ireland",
+          "related.listing_holidaybookings": "Related listing_holidaybookings",
+          "related.listing_idealfors": "Related listing_idealfors",
+          "related.listing_images": "Related listing_images",
+          "related.listing_insurances": "Related listing_insurances",
+          "related.listing_service_packages": "Related listing_service_packages. Only available for France, United Kingdom of Great Britain and Northern Ireland",
+          "related.listing_links": "Related listing_links",
+          "related.listing_rooms": "Related listing_rooms. Only available for France, United Kingdom of Great Britain and Northern Ireland",
+          "related.listing_subcategories": "Related listing_subcategories",
+          "related.reinz_form_chattels": "Related reinz_form_chattels. Only available for New Zealand",
+          "core_attributes": "Multiple extra fields in property stubs describing certainkey attributes for different property types - e.g. bedrooms, bathrooms etc.",
+          "address_formats": "An array of address formats in property stubs",
+          "stats": "An array of stats",
+          "portal_links": "An array of portal links with each link in the format {portal_profile: {id, name}, link_on_portal}"
+        }
+      }
+    },
+    "data_structure": {
+      "description": "This is not necessarily a full and accurate representation of the data model. For a full representation, query an existing record.",
+      "structure": [
+        "id",
+        "account_id",
+        "property_id",
+        "location_id",
+        "system_listing_state",
+        "system_ctime",
+        "system_modtime",
+        "system_publication_time",
+        "system_owner_user_id",
+        "system_modified_user_id",
+        "system_created_user_id",
+        "system_publication_user_id",
+        "system_publication_status",
+        "system_overpayment_balance",
+        "system_has_preupload_errors",
+        "authority_date_start",
+        "authority_duration_days",
+        "authority_date_expires",
+        "authority_type_id",
+        "exclusivity_id",
+        "let_type_id",
+        "let_minimum_term_months",
+        "lettings_service_type_id",
+        "listing_agent_1_id",
+        "listing_agent_2_id",
+        "listing_category_id",
+        "price_advertise_as",
+        "price_est_rent_pw",
+        "price_rent",
+        "price_rent_period_id",
+        "price_rent_tax_id",
+        "price_match",
+        "price_match_sale",
+        "price_match_rent_pa_inc_tax",
+        "price_bond",
+        "price_rent_per_m2",
+        "available_from_date",
+        "inspection_alarm_code",
+        "inspection_type_id",
+        "inspection_notes",
+        "tenancy_type_id",
+        "outgoings_annual",
+        "outgoings_rent_is_plus",
+        "meta_highlight_1",
+        "meta_highlight_2",
+        "meta_highlight_3",
+        "meta_other_features",
+        "feedback_offer_level",
+        "feedback_price_rank",
+        "feedback_notes",
+        "legal_prop_lot",
+        "legal_prop_subdivision",
+        "legal_prop_address",
+        "legal_prop_description",
+        "legal_prop_titleref",
+        "legal_vendor_name",
+        "legal_vendor_residence",
+        "state_value_price",
+        "state_value_price_rent_period_id",
+        "state_value_deposit",
+        "state_date",
+        "state_reason_id",
+        "state_reason_note",
+        "state_lost_agency_id",
+        "state_change_timestamp",
+        "legal_solicitor_id",
+        "legal_solicitor_contact_id",
+        "inbound_unique_id",
+        "inbound_last_update",
+        "publish_to_portals",
+        "publish_to_automatch",
+        "publish_to_external",
+        "publish_to_general",
+        "project_stage_id",
+        "status_is_not_for_sale",
+        "baseline_price",
+        "parent_listing_id",
+        "new_home",
+        "image_cycling_number_of_images",
+        "image_cycling_active_image_number",
+        "image_cycling_frequency_days",
+        "image_cycling_delay_in_hours",
+        "image_cycling_delayed_until",
+        "image_cycling_next_cycle_at",
+        "comm_structure_id",
+        "comm_amount_model_id",
+        "comm_amount_fixed",
+        "comm_amount_percentage",
+        "comm_is_inc_tax",
+        "comm_est_based_on_service",
+        "comm_est_based_on_object_id",
+        "comm_est_based_on_amount",
+        "comm_est_amount_net_of_tax",
+        "comm_est_amount_inc_tax",
+        "comm_base_amount_override",
+        "is_multiple",
+        "price_match_max",
+        "price_match_max_sale",
+        "price_rent_max",
+        "price_rent_max_per_m2",
+        "price_match_rent_max_pa_inc_tax",
+        "let_agreed",
+        "lead_auto_response_template_id",
+        "permit_number",
+        "landlord_has_contractor",
+        "landlord_spend_limit",
+        "landlord_contractor_details",
+        "council_tax_included_in_rent",
+        "compliance_snapshot_date",
+        "landlord_float",
+        "rex_home_enabled",
+        "tenancy_id"
+      ]
+    },
+    "read_fields": {
+      "core": "Returns core information about a record. This is technically always included regardless of what is passed in to read fields but this field allows you to explicitly request ONLY core data.",
+      "property_core": "Only core property fields ('core' for property, 'property_detail' and 'property_detailrural')",
+      "property": "property_core AND _related.property_features, _related.property_views, _related.property_tags",
+      "related.property_features": "Features available at the property",
+      "related.property_views": "Views available at the property",
+      "related_property_tags": "Tags associated with the property",
+      "related.contact_reln_listing": "Contacts that are related to property",
+      "related.listing_idealfors": "Who this listing is appropriate for",
+      "related.listing_allowances": "Rental allowances for the listing",
+      "related.listing_adverts": "An ad body and ad heading for three adverts 'internet','brochure','stocklist'",
+      "related.listing_events": "Open homes and an auction (if applicable)",
+      "related.listing_images": "Images for the listing",
+      "related.listing_insurances": "Insurances associated with the listing",
+      "related.listing_service_packages": "Service packages associated with the listing (UK accounts only)",
+      "related.listing_documents": "Private documents associated with the listing",
+      "related.listing_floorplans": "Up to two floor plan images for the property",
+      "related.listing_holidaybookings": "Details regarding bookings for holiday rentals",
+      "related.listing_links": "Links associated with the listing - e.g. videos, external links, virtual tours etc.",
+      "related.listing_highlights": "Highlights for the listing (UK accounts only)",
+      "related.listing_rooms": "Rooms associated with the listing (UK accounts only)",
+      "listing_epc": "Energy Performance Certificate for the listing (UK accounts only)"
+    },
+    "read_extra_fields": {
+      "overrides": "Marketing overrides obtained from ListingPublication::getMarketingOverrides",
+      "publication_status": "Current publication status obtained from ListingPublication::getPublicationStatus",
+      "portal_statuses": "Current portal statuses obtained from ListingPortalUploads::getStatuses",
+      "portal_errors_preventing_upload": "Current portal upload validity obtained from ListingPortalUploads::getErrorsPreventingUpload",
+      "auto_update_status": "The most recent auto update status obtained from ListingMatchAlerts::readCurrentForListing",
+      "custom_tabs": "Custom tab definitions and data for the related property",
+      "security_user_rights": "The rights the current user has on the record",
+      "default_external_id": "The default id that will be sent to portals if not overridden",
+      "keys": "List of current and archived keys from key register",
+      "open_home_checkin": "An object in the form {token, link} that can be used to facilitate self service checkin",
+      "stats": "An array of stats"
+    },
+    "searchable_fields": {
+      "system_owner_user_id": {
+        "name": "system_owner_user_id",
+        "label": "Owning User",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "real_field": true,
+        "category": "Record Meta"
+      },
+      "system_created_user_id": {
+        "name": "system_created_user_id",
+        "label": "Created User",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "real_field": true,
+        "category": "Record Meta"
+      },
+      "system_modified_user_id": {
+        "name": "system_modified_user_id",
+        "label": "Last Modified By",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "real_field": true,
+        "category": "Record Meta"
+      },
+      "system_ctime": {
+        "name": "system_ctime",
+        "label": "Created Time",
+        "type": "timestamp",
+        "real_field": true,
+        "category": "Record Meta"
+      },
+      "system_modtime": {
+        "name": "system_modtime",
+        "label": "Modified Time",
+        "type": "timestamp",
+        "real_field": true,
+        "category": "Record Meta"
+      },
+      "id": {
+        "name": "id",
+        "label": "Record Id",
+        "type": "integer",
+        "real_field": true,
+        "category": "Record Meta"
+      },
+      "property_id": {
+        "name": "property_id",
+        "label": "Property Id",
+        "type": "integer",
+        "real_field": true,
+        "category": "Record Meta"
+      },
+      "property.system_search_key": {
+        "name": "property.system_search_key",
+        "label": "Full Address",
+        "type": "string",
+        "real_field": true,
+        "category": "Property Address"
+      },
+      "property.adr_unit_number": {
+        "name": "property.adr_unit_number",
+        "label": "Unit Number",
+        "type": "string",
+        "real_field": true,
+        "category": "Property Address"
+      },
+      "property.adr_street_number": {
+        "name": "property.adr_street_number",
+        "label": "Street Number",
+        "type": "string",
+        "real_field": true,
+        "category": "Property Address"
+      },
+      "property.adr_street_name": {
+        "name": "property.adr_street_name",
+        "label": "Street Name",
+        "type": "string",
+        "real_field": true,
+        "category": "Property Address"
+      },
+      "property.adr_state_or_region": {
+        "name": "property.adr_state_or_region",
+        "label": "State / Region",
+        "type": "string",
+        "real_field": true,
+        "category": "Property Address"
+      },
+      "property.adr_locality": {
+        "name": "property.adr_locality",
+        "label": "Locality",
+        "type": "string",
+        "real_field": true,
+        "category": "Property Address"
+      },
+      "property.adr_suburb_or_town": {
+        "name": "property.adr_suburb_or_town",
+        "label": "Suburb / Town",
+        "type": "string",
+        "real_field": true,
+        "category": "Property Address"
+      },
+      "property.adr_postcode": {
+        "name": "property.adr_postcode",
+        "label": "Postcode",
+        "type": "string",
+        "real_field": true,
+        "category": "Property Address"
+      },
+      "property.adr_estate_name": {
+        "name": "property.adr_estate_name",
+        "label": "Estate Name",
+        "type": "string",
+        "real_field": true,
+        "category": "Property Address"
+      },
+      "property.adr_estate_stage": {
+        "name": "property.adr_estate_stage",
+        "label": "Estate Stage",
+        "type": "string",
+        "real_field": true,
+        "category": "Property Address"
+      },
+      "property.adr_building_id": {
+        "name": "property.adr_building_id",
+        "label": "Building Id",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Address"
+      },
+      "property.building_name": {
+        "name": "property.building_name",
+        "label": "Building Name",
+        "type": "string",
+        "real_field": false,
+        "category": "Property Address"
+      },
+      "property.attr_exterior_id": {
+        "name": "property.attr_exterior_id",
+        "label": "Exterior Type",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "property_exterior"
+        },
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_roof_id": {
+        "name": "property.attr_roof_id",
+        "label": "Roof Type",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "property_roof"
+        },
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_whole_part_id": {
+        "name": "property.attr_whole_part_id",
+        "label": "Whole / Part",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "property_part"
+        },
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_bedrooms": {
+        "name": "property.attr_bedrooms",
+        "label": "Bedrooms",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_bathrooms": {
+        "name": "property.attr_bathrooms",
+        "label": "Bathrooms",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_ensuites": {
+        "name": "property.attr_ensuites",
+        "label": "Ensuites",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_toilets": {
+        "name": "property.attr_toilets",
+        "label": "Toilets",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_living_areas": {
+        "name": "property.attr_living_areas",
+        "label": "Living Areas",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_garages": {
+        "name": "property.attr_garages",
+        "label": "Car Spaces (Garages)",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_carports": {
+        "name": "property.attr_carports",
+        "label": "Car Spaces (Carports)",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_open_spaces": {
+        "name": "property.attr_open_spaces",
+        "label": "Car Spaces (Open Spaces)",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_total_car_accom": {
+        "name": "property.attr_total_car_accom",
+        "label": "Total Car Spaces",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_buildarea_m2": {
+        "name": "property.attr_buildarea_m2",
+        "label": "Build Area (m2)",
+        "type": "double",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_buildarea_max_m2": {
+        "name": "property.attr_buildarea_max_m2",
+        "label": "Build Area Max (m2)",
+        "type": "double",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_landarea_m2": {
+        "name": "property.attr_landarea_m2",
+        "label": "Land Area (m2)",
+        "type": "double",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_energy_rating": {
+        "name": "property.attr_energy_rating",
+        "label": "Energy Rating",
+        "type": "double",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_build_year": {
+        "name": "property.attr_build_year",
+        "label": "Build Year",
+        "type": "year",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_sleeps": {
+        "name": "property.attr_sleeps",
+        "label": "Sleeps",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_roi_pa": {
+        "name": "property.attr_roi_pa",
+        "label": "ROI p/a (%)",
+        "type": "double",
+        "options": {
+          "format": "%"
+        },
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_takings": {
+        "name": "property.attr_takings",
+        "label": "Takings",
+        "type": "double",
+        "options": {
+          "format": "$"
+        },
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_is_house_land": {
+        "name": "property.attr_is_house_land",
+        "label": "House and Land",
+        "type": "boolean",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_is_franchise": {
+        "name": "property.attr_is_franchise",
+        "label": "Is a Franchise",
+        "type": "boolean",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_land_depth_rear": {
+        "name": "property.attr_land_depth_rear",
+        "label": "Land Depth (Rear m)",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_land_depth_left": {
+        "name": "property.attr_land_depth_left",
+        "label": "Land Depth (Left m)",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_land_depth_right": {
+        "name": "property.attr_land_depth_right",
+        "label": "Land Depth (Right m)",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_land_frontage": {
+        "name": "property.attr_land_frontage",
+        "label": "Land Frontage m",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_land_crossover_id": {
+        "name": "property.attr_land_crossover_id",
+        "label": "Land Crossover",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "property_crossover"
+        },
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.car_accom": {
+        "name": "property.car_accom",
+        "label": "Car Spaces (Garages + Carports + Secure)",
+        "type": "integer",
+        "real_field": false,
+        "category": "Property Attributes"
+      },
+      "property.attr_is_corner_block": {
+        "name": "property.attr_is_corner_block",
+        "label": "Is Corner Block",
+        "type": "boolean",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.features": {
+        "name": "property.features",
+        "label": "Features",
+        "type": "enum",
+        "options": {
+          "multi": true,
+          "source": "remote",
+          "list": "property_feature"
+        },
+        "category": "Property Attributes"
+      },
+      "property.views": {
+        "name": "property.views",
+        "label": "Views",
+        "type": "enum",
+        "options": {
+          "multi": true,
+          "source": "remote",
+          "list": "property_view"
+        },
+        "category": "Property Attributes"
+      },
+      "property.tags": {
+        "name": "property.tags",
+        "label": "Tags",
+        "type": "string",
+        "options": {
+          "multi": true,
+          "tag_type": "property"
+        },
+        "category": "Property Attributes"
+      },
+      "property.property_category_id": {
+        "name": "property.property_category_id",
+        "label": "Property Category",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "property_category"
+        },
+        "category": "Property Attributes"
+      },
+      "property.property_subcategory_id": {
+        "name": "property.property_subcategory_id",
+        "label": "Property Subcategory",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "property_subcategory_with_category"
+        },
+        "category": "Property Attributes"
+      },
+      "property.attr_tenure_id": {
+        "name": "property.attr_tenure_id",
+        "label": "Tenure Type",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "property_tenure"
+        },
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_tenure_agent_id": {
+        "name": "property.attr_tenure_agent_id",
+        "label": "Tenure Managing Agent ID",
+        "type": "integer",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_tenure_expiry_year": {
+        "name": "property.attr_tenure_expiry_year",
+        "label": "Tenure Expiry Year",
+        "type": "year",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_tenure_ground_rent": {
+        "name": "property.attr_tenure_ground_rent",
+        "label": "Tenure Ground Rent",
+        "type": "double",
+        "options": {
+          "format": "$"
+        },
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_tenure_service_charge": {
+        "name": "property.attr_tenure_service_charge",
+        "label": "Tenure Service Charge",
+        "type": "double",
+        "options": {
+          "format": "$"
+        },
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.attr_tenure_other": {
+        "name": "property.attr_tenure_other",
+        "label": "Tenure Other Info",
+        "type": "string",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.is_dnd": {
+        "name": "property.is_dnd",
+        "label": "Do Not Contact",
+        "type": "boolean",
+        "real_field": true,
+        "category": "Property Attributes"
+      },
+      "property.status_is_current_oab": {
+        "name": "property.status_is_current_oab",
+        "label": "Current OAB",
+        "type": "boolean",
+        "category": "Property Status"
+      },
+      "property.status_is_current_appraisal": {
+        "name": "property.status_is_current_appraisal",
+        "label": "Current Appraisal",
+        "type": "boolean",
+        "category": "Property Status"
+      },
+      "property.status_is_current_listing": {
+        "name": "property.status_is_current_listing",
+        "label": "Current Listing",
+        "type": "boolean",
+        "category": "Property Status"
+      },
+      "owning_contacts.system_owner_user_id": {
+        "name": "owning_contacts.system_owner_user_id",
+        "label": "Owning User",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.system_created_user_id": {
+        "name": "owning_contacts.system_created_user_id",
+        "label": "Created User",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.system_modified_user_id": {
+        "name": "owning_contacts.system_modified_user_id",
+        "label": "Last Modified By",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.system_ctime": {
+        "name": "owning_contacts.system_ctime",
+        "label": "Created Time",
+        "type": "timestamp",
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.system_modtime": {
+        "name": "owning_contacts.system_modtime",
+        "label": "Modified Time",
+        "type": "timestamp",
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.id": {
+        "name": "owning_contacts.id",
+        "label": "Record Id",
+        "type": "integer",
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.system_record_state": {
+        "name": "owning_contacts.system_record_state",
+        "label": "Record State",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "record_state"
+        },
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.has_active_match_profile": {
+        "name": "owning_contacts.contact.has_active_match_profile",
+        "label": "Has Active Match Profile",
+        "type": "boolean",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.has_active_match_campaign": {
+        "name": "owning_contacts.contact.has_active_match_campaign",
+        "label": "Has Active Match Campaign",
+        "type": "boolean",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.has_terminated_match_campaign": {
+        "name": "owning_contacts.contact.has_terminated_match_campaign",
+        "label": "Has Terminated Match Campaign",
+        "type": "boolean",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.email_address": {
+        "name": "owning_contacts.contact.email_address",
+        "label": "Email Address",
+        "type": "string",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.is_dnd": {
+        "name": "owning_contacts.contact.is_dnd",
+        "label": "Do Not Contact",
+        "type": "boolean",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.phone_number": {
+        "name": "owning_contacts.contact.phone_number",
+        "label": "Phone Number",
+        "type": "string",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.has_address": {
+        "name": "owning_contacts.contact.has_address",
+        "label": "Has Address",
+        "type": "boolean",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.has_address_postal": {
+        "name": "owning_contacts.contact.has_address_postal",
+        "label": "Has Postal Address",
+        "type": "boolean",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.has_address_or_address_postal": {
+        "name": "owning_contacts.contact.has_address_or_address_postal",
+        "label": "Has Postable Address",
+        "type": "boolean",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.interest_level": {
+        "name": "owning_contacts.contact.interest_level",
+        "label": "Interest Level",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "interest_level"
+        },
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.marketing_enquiry_source_id": {
+        "name": "owning_contacts.contact.marketing_enquiry_source_id",
+        "label": "Enquiry Source",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "enquiry_source"
+        },
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.marketing_enquiry_method_id": {
+        "name": "owning_contacts.contact.marketing_enquiry_method_id",
+        "label": "Enquiry Method",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "enquiry_method"
+        },
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.company_size_id": {
+        "name": "owning_contacts.contact.company_size_id",
+        "label": "Company Size",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "contact_company_size"
+        },
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.marketing_gender": {
+        "name": "owning_contacts.contact.marketing_gender",
+        "label": "Gender",
+        "type": "string",
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.marketing_postcode": {
+        "name": "owning_contacts.contact.marketing_postcode",
+        "label": "Postcode",
+        "type": "string",
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.marketing_birthday": {
+        "name": "owning_contacts.contact.marketing_birthday",
+        "label": "DOB",
+        "type": "date",
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.marketing_birthday_occurrence": {
+        "name": "owning_contacts.contact.marketing_birthday_occurrence",
+        "label": "Birthday",
+        "type": "date",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.last_contacted_date": {
+        "name": "owning_contacts.contact.last_contacted_date",
+        "label": "Last Contacted Date",
+        "type": "date",
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.has_invalid_email": {
+        "name": "owning_contacts.contact.has_invalid_email",
+        "label": "Has Invalid Email",
+        "type": "boolean",
+        "real_field": false,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.type": {
+        "name": "owning_contacts.contact.type",
+        "label": "Contact Type",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "contact_type"
+        },
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.tags": {
+        "name": "owning_contacts.contact.tags",
+        "label": "Tags",
+        "type": "string",
+        "options": {
+          "multi": true,
+          "tag_type": "contact"
+        },
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.mailing_list_ids": {
+        "name": "owning_contacts.contact.mailing_list_ids",
+        "label": "Mailing List",
+        "type": "enum",
+        "options": {
+          "multi": true,
+          "source": "remote",
+          "list": "mailing_lists"
+        },
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.mailing_list_name": {
+        "name": "owning_contacts.contact.mailing_list_name",
+        "label": "Mailing List Name",
+        "type": "string",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.smart_categories": {
+        "name": "owning_contacts.contact.smart_categories",
+        "label": "Smart Categories",
+        "type": "enum",
+        "options": {
+          "multi": true,
+          "source": "remote",
+          "list": "contact_smart_categories"
+        },
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.name_full": {
+        "name": "owning_contacts.contact.name_full",
+        "label": "Full Name or Company Name",
+        "type": "string",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.name_first": {
+        "name": "owning_contacts.contact.name_first",
+        "label": "First Name",
+        "type": "string",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.name_last": {
+        "name": "owning_contacts.contact.name_last",
+        "label": "Last Name",
+        "type": "string",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.assigned_to_user": {
+        "name": "owning_contacts.contact.assigned_to_user",
+        "label": "Assigned to User",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact.user_has_update_permission": {
+        "name": "owning_contacts.contact.user_has_update_permission",
+        "label": "User has update permission",
+        "type": "boolean",
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.active_tracks.track_id": {
+        "name": "owning_contacts.active_tracks.track_id",
+        "label": "Track",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "admin_tracks"
+        },
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.active_tracks.track_name": {
+        "name": "owning_contacts.active_tracks.track_name",
+        "label": "Track Name",
+        "type": "string",
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.deal_type.id": {
+        "name": "owning_contacts.deal_type.id",
+        "label": "Deal Type",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "admin_deal_types"
+        },
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.deal_type.name": {
+        "name": "owning_contacts.deal_type.name",
+        "label": "Deal Type Name",
+        "type": "string",
+        "real_field": true,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.deal_status.id": {
+        "name": "owning_contacts.deal_status.id",
+        "label": "Deal Status",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "admin_deal_status_inc_deal_type"
+        },
+        "real_field": false,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.deal_status.name": {
+        "name": "owning_contacts.deal_status.name",
+        "label": "Deal Status Name",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "admin_deal_status_name"
+        },
+        "real_field": false,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.deal_status.percentage": {
+        "name": "owning_contacts.deal_status.percentage",
+        "label": "Deal Status Percentage",
+        "type": "integer",
+        "real_field": false,
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact_buyer_motivation.buyer_motivation_id": {
+        "name": "owning_contacts.contact_buyer_motivation.buyer_motivation_id",
+        "label": "Buyer Motivation",
+        "type": "enum",
+        "options": {
+          "multi": true,
+          "source": "remote",
+          "list": "buyer_motivation"
+        },
+        "category": "Owning Contacts"
+      },
+      "owning_contacts.contact_buyer_motivation.buyer_position_id": {
+        "name": "owning_contacts.contact_buyer_motivation.buyer_position_id",
+        "label": "Buyer Position",
+        "type": "enum",
+        "options": {
+          "multi": true,
+          "source": "remote",
+          "list": "buyer_position"
+        },
+        "category": "Owning Contacts"
+      },
+      "listing.authority_type_id": {
+        "name": "listing.authority_type_id",
+        "label": "Authority Type",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "listing_authority_all"
+        },
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.under_contract": {
+        "name": "listing.under_contract",
+        "label": "Under Contract",
+        "type": "boolean",
+        "category": "Listing Details"
+      },
+      "listing.under_application": {
+        "name": "listing.under_application",
+        "label": "Under Application",
+        "type": "boolean",
+        "category": "Listing Details"
+      },
+      "listing.on_hold": {
+        "name": "listing.on_hold",
+        "label": "On Hold",
+        "type": "boolean",
+        "category": "Listing Details"
+      },
+      "listing.account_id": {
+        "name": "listing.account_id",
+        "label": "Listing Account",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "shared_accounts"
+        },
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.location_id": {
+        "name": "listing.location_id",
+        "label": "Listing Location",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "office_locations"
+        },
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.listing_category_id": {
+        "name": "listing.listing_category_id",
+        "label": "Listing Category",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "listing_category"
+        },
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.price_rent_per_m2": {
+        "name": "listing.price_rent_per_m2",
+        "label": "Rent Per Sqm",
+        "type": "integer",
+        "options": {
+          "format": "$"
+        },
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.price_match": {
+        "name": "listing.price_match",
+        "label": "Match Price",
+        "type": "integer",
+        "options": {
+          "format": "$"
+        },
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.price_match_sale": {
+        "name": "listing.price_match_sale",
+        "label": "Match Price (Sale)",
+        "type": "integer",
+        "options": {
+          "format": "$"
+        },
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.price_match_rent_pa_inc_tax_week": {
+        "name": "listing.price_match_rent_pa_inc_tax_week",
+        "label": "Match Price (Weekly Rent)",
+        "type": "integer",
+        "options": {
+          "format": "$"
+        },
+        "real_field": false,
+        "category": "Listing Details"
+      },
+      "listing.price_match_rent_pa_inc_tax_fortnight": {
+        "name": "listing.price_match_rent_pa_inc_tax_fortnight",
+        "label": "Match Price (Fortnightly Rent)",
+        "type": "integer",
+        "options": {
+          "format": "$"
+        },
+        "real_field": false,
+        "category": "Listing Details"
+      },
+      "listing.price_match_rent_pa_inc_tax_month": {
+        "name": "listing.price_match_rent_pa_inc_tax_month",
+        "label": "Match Price (Monthly Rent)",
+        "type": "integer",
+        "options": {
+          "format": "$"
+        },
+        "real_field": false,
+        "category": "Listing Details"
+      },
+      "listing.price_match_rent_pa_inc_tax": {
+        "name": "listing.price_match_rent_pa_inc_tax",
+        "label": "Match Price (Annual Rent)",
+        "type": "integer",
+        "options": {
+          "format": "$"
+        },
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.system_overpayment_balance": {
+        "name": "listing.system_overpayment_balance",
+        "label": "Overpayment Balance",
+        "type": "integer",
+        "options": {
+          "format": "$"
+        },
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.system_has_preupload_errors": {
+        "name": "listing.system_has_preupload_errors",
+        "label": "Has Errors Preventing Upload",
+        "type": "boolean",
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.available_from_date": {
+        "name": "listing.available_from_date",
+        "label": "Available Date",
+        "type": "date",
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.authority_date_expires": {
+        "name": "listing.authority_date_expires",
+        "label": "Authority Expiry Date",
+        "type": "date",
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.authority_date_start": {
+        "name": "listing.authority_date_start",
+        "label": "Authority Date Start",
+        "type": "date",
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.exclusivity_id": {
+        "name": "listing.exclusivity_id",
+        "label": "Exclusivity",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "listing_exclusivity"
+        },
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.let_minimum_term_months": {
+        "name": "listing.let_minimum_term_months",
+        "label": "Minimum Rental Term (Months)",
+        "type": "integer",
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.inbound_unique_id": {
+        "name": "listing.inbound_unique_id",
+        "label": "Inbound Feed ID",
+        "type": "string",
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.listing_agent_id": {
+        "name": "listing.listing_agent_id",
+        "label": "Listing Agent",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "type": "enum",
+        "category": "Listing Details"
+      },
+      "listing.listing_agent_1_id": {
+        "name": "listing.listing_agent_1_id",
+        "label": "Listing Agent (Primary)",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "type": "enum",
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.listing_agent_2_id": {
+        "name": "listing.listing_agent_2_id",
+        "label": "Listing Agent (Secondary)",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "type": "enum",
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.allowances": {
+        "name": "listing.allowances",
+        "label": "Listing Allowances",
+        "type": "enum",
+        "options": {
+          "multi": true,
+          "source": "remote",
+          "list": "listing_allowance"
+        },
+        "category": "Listing Details"
+      },
+      "listing.idealfors": {
+        "name": "listing.idealfors",
+        "label": "Ideal For",
+        "type": "enum",
+        "options": {
+          "multi": true,
+          "source": "remote",
+          "list": "listing_idealfor"
+        },
+        "category": "Listing Details"
+      },
+      "listing.subcategories": {
+        "name": "listing.subcategories",
+        "label": "Listing Sub Category",
+        "type": "enum",
+        "options": {
+          "multi": true,
+          "source": "remote",
+          "list": "listing_subcat_all_w_cat"
+        },
+        "category": "Listing Details"
+      },
+      "listing.epc_current_eer": {
+        "name": "listing.epc_current_eer",
+        "label": "Current Efficiency",
+        "type": "integer",
+        "category": "Listing Details"
+      },
+      "listing.epc_potential_eer": {
+        "name": "listing.epc_potential_eer",
+        "label": "Potential Efficiency",
+        "type": "integer",
+        "category": "Listing Details"
+      },
+      "listing.epc_current_eir": {
+        "name": "listing.epc_current_eir",
+        "label": "Current Impact",
+        "type": "integer",
+        "category": "Listing Details"
+      },
+      "listing.epc_potential_eir": {
+        "name": "listing.epc_potential_eir",
+        "label": "Potential Impact",
+        "type": "integer",
+        "category": "Listing Details"
+      },
+      "listing.epc_lodgement_date": {
+        "name": "listing.epc_lodgement_date",
+        "label": "EPC Lodgement Date",
+        "type": "date",
+        "category": "Listing Details"
+      },
+      "listing.epc_expiry_date": {
+        "name": "listing.epc_expiry_date",
+        "label": "EPC Expiry Date",
+        "type": "date",
+        "category": "Listing Details"
+      },
+      "listing.epc_not_required": {
+        "name": "listing.epc_not_required",
+        "label": "EPC Not Required",
+        "type": "boolean",
+        "category": "Listing Details"
+      },
+      "listing.epc_not_required_reason": {
+        "name": "listing.epc_not_required_reason",
+        "label": "EPC Not Required Reason",
+        "type": "string",
+        "category": "Listing Details"
+      },
+      "listing.comm_structure_id": {
+        "name": "listing.comm_structure_id",
+        "label": "Commission Structure ID",
+        "type": "integer",
+        "category": "Listing Details"
+      },
+      "listing.new_home": {
+        "name": "listing.new_home",
+        "label": "New Home",
+        "type": "boolean",
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.let_agreed": {
+        "name": "listing.let_agreed",
+        "label": "Let Agreed",
+        "type": "boolean",
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.key.active": {
+        "name": "listing.key.active",
+        "label": "Has Active Keys",
+        "type": "boolean",
+        "category": "Listing Details"
+      },
+      "listing.key.key_checked_out": {
+        "name": "listing.key.key_checked_out",
+        "label": "Has Keys Checked Out",
+        "type": "boolean",
+        "category": "Listing Details"
+      },
+      "listing.key.label": {
+        "name": "listing.key.label",
+        "label": "Key Label",
+        "type": "string",
+        "category": "Listing Details"
+      },
+      "listing.key.location_id": {
+        "name": "listing.key.location_id",
+        "label": "Key Location",
+        "type": "enum",
+        "options": {
+          "multi": false,
+          "source": "remote",
+          "list": "key_locations"
+        },
+        "category": "Listing Details"
+      },
+      "listing.rex_home_enabled": {
+        "name": "listing.rex_home_enabled",
+        "label": "Rex Home Enabled",
+        "type": "boolean",
+        "real_field": true,
+        "category": "Listing Details"
+      },
+      "listing.event_auction_date": {
+        "name": "listing.event_auction_date",
+        "label": "Auction Date",
+        "type": "date",
+        "category": "Listing Events"
+      },
+      "listing.event_open_date": {
+        "name": "listing.event_open_date",
+        "label": "Open Home Date",
+        "type": "date",
+        "category": "Listing Events"
+      },
+      "listing.event_date": {
+        "name": "listing.event_date",
+        "label": "Open / Auction Date",
+        "type": "date",
+        "category": "Listing Events"
+      },
+      "active_tracks.track_id": {
+        "name": "active_tracks.track_id",
+        "label": "Track",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "admin_tracks"
+        },
+        "real_field": true,
+        "category": "Active Tracks"
+      },
+      "active_tracks.track_name": {
+        "name": "active_tracks.track_name",
+        "label": "Track Name",
+        "type": "string",
+        "real_field": true,
+        "category": "Active Tracks"
+      },
+      "listing.system_listing_state": {
+        "name": "listing.system_listing_state",
+        "label": "Listing State",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "listing_system_state"
+        },
+        "real_field": true,
+        "category": "Listing Status"
+      },
+      "listing.system_publication_status": {
+        "name": "listing.system_publication_status",
+        "label": "Publication State",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "published_draft"
+        },
+        "real_field": true,
+        "category": "Listing Status"
+      },
+      "listing.system_publication_time": {
+        "name": "listing.system_publication_time",
+        "label": "Publication Date",
+        "type": "timestamp",
+        "real_field": true,
+        "category": "Listing Status"
+      },
+      "listing.state_change_timestamp": {
+        "name": "listing.state_change_timestamp",
+        "label": "Conversion / Archive Date",
+        "type": "timestamp",
+        "real_field": true,
+        "category": "Listing Status"
+      },
+      "listing.publish_to_portals": {
+        "name": "listing.publish_to_portals",
+        "label": "Publish to Portals",
+        "type": "boolean",
+        "real_field": true,
+        "category": "Listing Status"
+      },
+      "listing.publish_to_automatch": {
+        "name": "listing.publish_to_automatch",
+        "label": "Publish to Auto Match Service",
+        "type": "boolean",
+        "real_field": true,
+        "category": "Listing Status"
+      },
+      "listing.publish_to_external": {
+        "name": "listing.publish_to_external",
+        "label": "Publish to Website / Other External",
+        "type": "boolean",
+        "real_field": true,
+        "category": "Listing Status"
+      },
+      "listing.publish_to_general": {
+        "name": "listing.publish_to_general",
+        "label": "Publish to General",
+        "type": "boolean",
+        "real_field": true,
+        "category": "Listing Status"
+      },
+      "listing.state_date": {
+        "name": "listing.state_date",
+        "label": "Sold / Leased Date",
+        "type": "date",
+        "real_field": true,
+        "category": "Listing Status"
+      },
+      "listing.state_value_price": {
+        "name": "listing.state_value_price",
+        "label": "Sold / Leased Price",
+        "type": "integer",
+        "real_field": true,
+        "options": {
+          "format": "$"
+        },
+        "category": "Listing Status"
+      },
+      "listing.project_stage_id": {
+        "name": "listing.project_stage_id",
+        "label": "Project Stage Id",
+        "type": "integer",
+        "real_field": true,
+        "category": "Listing Project Stage"
+      },
+      "listing.status_is_not_for_sale": {
+        "name": "listing.status_is_not_for_sale",
+        "label": "Not For Sale",
+        "type": "boolean",
+        "real_field": true,
+        "category": "Listing Project Stage"
+      },
+      "listing.baseline_price": {
+        "name": "listing.baseline_price",
+        "label": "Baseline Price",
+        "type": "float",
+        "real_field": true,
+        "options": {
+          "format": "$"
+        },
+        "category": "Listing Project Stage"
+      },
+      "project_stage.id": {
+        "name": "project_stage.id",
+        "label": "Stage Id",
+        "type": "integer",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.name": {
+        "name": "project_stage.name",
+        "label": "Stage Name",
+        "type": "string",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.full_name": {
+        "name": "project_stage.full_name",
+        "label": "Full Stage Name (Includes Project Name)",
+        "type": "string",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.construction_start_date": {
+        "name": "project_stage.construction_start_date",
+        "label": "Construction start date",
+        "type": "date",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.construction_date_quoted": {
+        "name": "project_stage.construction_date_quoted",
+        "label": "Quoted construction completion date",
+        "type": "date",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.construction_current_projection": {
+        "name": "project_stage.construction_current_projection",
+        "label": "Date of current construction projection",
+        "type": "date",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.construction_last_updated": {
+        "name": "project_stage.construction_last_updated",
+        "label": "Date construction projection last updated",
+        "type": "date",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.construction_actual_finished_date": {
+        "name": "project_stage.construction_actual_finished_date",
+        "label": "Date construction completed",
+        "type": "date",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.title_date_quoted": {
+        "name": "project_stage.title_date_quoted",
+        "label": "Date of title quote",
+        "type": "date",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.title_current_projection": {
+        "name": "project_stage.title_current_projection",
+        "label": "Date title current projection",
+        "type": "date",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.title_last_updated": {
+        "name": "project_stage.title_last_updated",
+        "label": "Date title last updated",
+        "type": "date",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.title_actual_finished_date": {
+        "name": "project_stage.title_actual_finished_date",
+        "label": "Date title completed",
+        "type": "date",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.release_date_quoted": {
+        "name": "project_stage.release_date_quoted",
+        "label": "Date release quoted",
+        "type": "date",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.release_current_projection": {
+        "name": "project_stage.release_current_projection",
+        "label": "Date release current projection",
+        "type": "date",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.release_last_updated": {
+        "name": "project_stage.release_last_updated",
+        "label": "Date release last updated",
+        "type": "date",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project_stage.release_actual_finished_date": {
+        "name": "project_stage.release_actual_finished_date",
+        "label": "Date release completed",
+        "type": "date",
+        "real_field": true,
+        "category": "Project Stage Details"
+      },
+      "project.id": {
+        "name": "project.id",
+        "label": "Project Id",
+        "type": "integer",
+        "real_field": true,
+        "category": "Project Details"
+      },
+      "project.name": {
+        "name": "project.name",
+        "label": "Project Name",
+        "type": "string",
+        "real_field": true,
+        "category": "Project Details"
+      },
+      "project.tags": {
+        "name": "project.tags",
+        "label": "Project Tags",
+        "type": "string",
+        "options": {
+          "multi": true,
+          "tag_type": "project"
+        },
+        "category": "Project Details"
+      },
+      "contract.system_accepted_set_at": {
+        "name": "contract.system_accepted_set_at",
+        "type": "timestamp",
+        "label": "System Accepted Set At",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.system_unconditional_set_at": {
+        "name": "contract.system_unconditional_set_at",
+        "type": "timestamp",
+        "label": "System Unconditional Set At",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.system_settlement_set_at": {
+        "name": "contract.system_settlement_set_at",
+        "type": "timestamp",
+        "label": "System Settlement Set At",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.system_fallen_set_at": {
+        "name": "contract.system_fallen_set_at",
+        "type": "timestamp",
+        "label": "System Fallen Set At",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.is_backup_offer": {
+        "name": "contract.is_backup_offer",
+        "type": "boolean",
+        "label": "Backup Offer",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.is_primary_backup_offer": {
+        "name": "contract.is_primary_backup_offer",
+        "type": "boolean",
+        "label": "Primary Backup Offer",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.is_active": {
+        "name": "contract.is_active",
+        "type": "boolean",
+        "label": "Active Offer",
+        "real_field": false,
+        "category": "Contract Details"
+      },
+      "contract.is_active_primary": {
+        "name": "contract.is_active_primary",
+        "type": "boolean",
+        "label": "Active Primary Offer",
+        "real_field": false,
+        "category": "Contract Details"
+      },
+      "contract.is_active_backup": {
+        "name": "contract.is_active_backup",
+        "type": "boolean",
+        "label": "Active Backup Offer",
+        "real_field": false,
+        "category": "Contract Details"
+      },
+      "contract.date_expec_deposit": {
+        "name": "contract.date_expec_deposit",
+        "type": "date",
+        "label": "Expected Deposit Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_expec_finance": {
+        "name": "contract.date_expec_finance",
+        "type": "date",
+        "label": "Expected Finance Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_expec_unconditional": {
+        "name": "contract.date_expec_unconditional",
+        "type": "date",
+        "label": "Expected Unconditional Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_expec_settlement": {
+        "name": "contract.date_expec_settlement",
+        "type": "date",
+        "label": "Expected Settlement Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_expec_possession": {
+        "name": "contract.date_expec_possession",
+        "type": "date",
+        "label": "Expected Possession Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_expec_deposit_release": {
+        "name": "contract.date_expec_deposit_release",
+        "type": "date",
+        "label": "Expected Deposit Release Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_expec_agent_comm_payment": {
+        "name": "contract.date_expec_agent_comm_payment",
+        "type": "date",
+        "label": "Expected Agent Commission Payment Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_actual_offer": {
+        "name": "contract.date_actual_offer",
+        "type": "date",
+        "label": "Offer Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_actual_accepted": {
+        "name": "contract.date_actual_accepted",
+        "type": "date",
+        "label": "Contract Acceptance Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_actual_deposit": {
+        "name": "contract.date_actual_deposit",
+        "type": "date",
+        "label": "Actual Deposit Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_actual_finance": {
+        "name": "contract.date_actual_finance",
+        "type": "date",
+        "label": "Actual Finance Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_actual_unconditional": {
+        "name": "contract.date_actual_unconditional",
+        "type": "date",
+        "label": "Actual Unconditional Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_actual_settlement": {
+        "name": "contract.date_actual_settlement",
+        "type": "date",
+        "label": "Actual Settlement Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_actual_possession": {
+        "name": "contract.date_actual_possession",
+        "type": "date",
+        "label": "Actual Possession Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_actual_fallen": {
+        "name": "contract.date_actual_fallen",
+        "type": "date",
+        "label": "Actual Fallen Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_actual_withdrawn": {
+        "name": "contract.date_actual_withdrawn",
+        "type": "date",
+        "label": "Actual Withdrawn Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_actual_deposit_release": {
+        "name": "contract.date_actual_deposit_release",
+        "type": "date",
+        "label": "Actual Deposit Release Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_actual_agent_comm_payment": {
+        "name": "contract.date_actual_agent_comm_payment",
+        "type": "date",
+        "label": "Actual Agent Commission Payment Date",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.listing_id": {
+        "name": "contract.listing_id",
+        "type": "integer",
+        "label": "Listing Id",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "listing_id": {
+        "name": "listing_id",
+        "type": "integer",
+        "label": "Listing Id (Deprecated)",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.date_expec_and_incomplete": {
+        "name": "contract.date_expec_and_incomplete",
+        "type": "date",
+        "label": "Date of any incomplete event",
+        "category": "Contract Details"
+      },
+      "contract.agent_id": {
+        "name": "contract.agent_id",
+        "label": "Contract Agent",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "type": "enum",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.listing_agent_id": {
+        "name": "contract.listing_agent_id",
+        "label": "Listing Agent",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "type": "enum",
+        "category": "Contract Details"
+      },
+      "contract.listing_location_id": {
+        "name": "contract.listing_location_id",
+        "label": "Listing Location",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "office_locations"
+        },
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "contract.listing_or_contract_agent_id": {
+        "name": "contract.listing_or_contract_agent_id",
+        "label": "Contract or Listing Agent",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "type": "enum",
+        "category": "Contract Details"
+      },
+      "contract.is_template": {
+        "name": "contract.is_template",
+        "type": "boolean",
+        "label": "Is Template",
+        "real_field": true,
+        "category": "Contract Details"
+      },
+      "application.listing_id": {
+        "name": "application.listing_id",
+        "type": "integer",
+        "label": "Listing Id",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.agent_id": {
+        "name": "application.agent_id",
+        "label": "Agent",
+        "options": {
+          "source": "remote",
+          "list": "account_users_search"
+        },
+        "type": "enum",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.system_affordability_percentage": {
+        "name": "application.system_affordability_percentage",
+        "type": "float",
+        "label": "Affordability Percentage",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.offer_amount": {
+        "name": "application.offer_amount",
+        "type": "integer",
+        "label": "Offer Amount",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.offer_amount_period_id": {
+        "name": "application.offer_amount_period_id",
+        "label": "Offer Amount Period",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "application_period"
+        },
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.application_status_id": {
+        "name": "application.application_status_id",
+        "label": "Status",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "application_status"
+        },
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.date_received": {
+        "name": "application.date_received",
+        "type": "date",
+        "label": "Offer Date / Received Date",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.date_communicated": {
+        "name": "application.date_communicated",
+        "type": "date",
+        "label": "Communicated Date",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.date_accepted": {
+        "name": "application.date_accepted",
+        "type": "date",
+        "label": "Accepted Date",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.date_unsuccessful": {
+        "name": "application.date_unsuccessful",
+        "type": "date",
+        "label": "Unsuccessful Date",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.system_communicated_set_at": {
+        "name": "application.system_communicated_set_at",
+        "type": "timestamp",
+        "label": "Communicated Date Set At",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.system_accepted_set_at": {
+        "name": "application.system_accepted_set_at",
+        "type": "timestamp",
+        "label": "Accepted Date Set At",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.system_unsuccessful_set_at": {
+        "name": "application.system_unsuccessful_set_at",
+        "type": "timestamp",
+        "label": "Unsuccessful Date Set At",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.start_date": {
+        "name": "application.start_date",
+        "type": "date",
+        "label": "Start Date",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.end_date": {
+        "name": "application.end_date",
+        "type": "date",
+        "label": "End Date",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.agreement_type_id": {
+        "name": "application.agreement_type_id",
+        "label": "Agreement Type",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "application_agreement_type"
+        },
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.lease_type_id": {
+        "name": "application.lease_type_id",
+        "label": "Lease Type",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "application_lease_type"
+        },
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.num_of_dependents": {
+        "name": "application.num_of_dependents",
+        "type": "integer",
+        "label": "Number of Dependents",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.has_pets": {
+        "name": "application.has_pets",
+        "type": "boolean",
+        "label": "Has Pets",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.bond_amount_required": {
+        "name": "application.bond_amount_required",
+        "type": "float",
+        "label": "Bond / Security Deposit Amount Required",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.bond_amount_paid": {
+        "name": "application.bond_amount_paid",
+        "type": "float",
+        "label": "Bond / Security Deposit Amount Paid Direct",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.bond_deposit_type_id": {
+        "name": "application.bond_deposit_type_id",
+        "label": "Deposit Type",
+        "type": "enum",
+        "options": {
+          "source": "remote",
+          "list": "application_bond_deposit_type"
+        },
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "application.bond_deposit_registration_number": {
+        "name": "application.bond_deposit_registration_number",
+        "type": "string",
+        "label": "Deposit Registration Number",
+        "real_field": true,
+        "category": "Application Details"
+      },
+      "cf.Properties.25904": {
+        "name": "cf.Properties.25904",
+        "label": "Core: Key Details: Custom Details: City Council",
+        "type": "string",
+        "category": "Custom Field"
+      },
+      "cf.Listings.22499": {
+        "name": "cf.Listings.22499",
+        "label": "LH Panel: Test: Number",
+        "type": "double",
+        "category": "Custom Field"
+      },
+      "cf.Listings.22599": {
+        "name": "cf.Listings.22599",
+        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Total Visitors",
+        "type": "string",
+        "category": "Custom Field"
+      },
+      "cf.Listings.22600": {
+        "name": "cf.Listings.22600",
+        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Repeat Visitors",
+        "type": "string",
+        "category": "Custom Field"
+      },
+      "cf.Listings.22601": {
+        "name": "cf.Listings.22601",
+        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Unique Visitors",
+        "type": "string",
+        "category": "Custom Field"
+      },
+      "cf.Listings.22602": {
+        "name": "cf.Listings.22602",
+        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Daily Visitors",
+        "type": "string",
+        "category": "Custom Field"
+      },
+      "cf.Listings.22603": {
+        "name": "cf.Listings.22603",
+        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Average Session Time",
+        "type": "string",
+        "category": "Custom Field"
+      },
+      "cf.Listings.22605": {
+        "name": "cf.Listings.22605",
+        "label": "Digital Inspections: Little Hinges Digital Inspection Information: See Full Details",
+        "type": "string",
+        "category": "Custom Field"
+      },
+      "cf.Listings.22606": {
+        "name": "cf.Listings.22606",
+        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Tour Link",
+        "type": "string",
+        "category": "Custom Field"
+      },
+      "cf.Listings.22607": {
+        "name": "cf.Listings.22607",
+        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Last Updated",
+        "type": "string",
+        "category": "Custom Field"
+      },
+      "cf.Listings.24338": {
+        "name": "cf.Listings.24338",
+        "label": "Listing Summary: Marketing Timeline: Styling",
+        "type": "date",
+        "category": "Custom Field"
+      },
+      "cf.Listings.24339": {
+        "name": "cf.Listings.24339",
+        "label": "Listing Summary: Marketing Timeline: Photography",
+        "type": "date",
+        "category": "Custom Field"
+      },
+      "cf.Listings.24340": {
+        "name": "cf.Listings.24340",
+        "label": "Listing Summary: Marketing Timeline: Open For Inspection",
+        "type": "date",
+        "category": "Custom Field"
+      },
+      "cf.Listings.24341": {
+        "name": "cf.Listings.24341",
+        "label": "Listing Summary: Marketing Timeline: Auction",
+        "type": "date",
+        "category": "Custom Field"
+      },
+      "cf.Listings.25669": {
+        "name": "cf.Listings.25669",
+        "label": "Core: Key Details: Visibility: Visibilty",
+        "type": "enum",
+        "category": "Custom Field",
+        "options": {
+          "source": "local",
+          "list": [
+            {
+              "id": "Yes",
+              "text": "Yes"
+            },
+            {
+              "id": "No",
+              "text": "No"
+            }
+          ]
+        }
+      }
+    },
+    "orderby_fields": [
+      "id",
+      "system_ctime",
+      "system_modtime",
+      "system_publication_time",
+      "system_publication_status",
+      "state_change_timestamp",
+      "system_listing_state",
+      "state_date",
+      "price_match",
+      "price_match_max",
+      "price_match_sale",
+      "price_match_max_sale",
+      "price_match_rent_pa_inc_tax",
+      "price_match_rent_max_pa_inc_tax",
+      "available_from_date",
+      "authority_date_start",
+      "street_address",
+      "adr_suburb_or_town",
+      "building_name",
+      "listing_category_id",
+      "listing_agent_1_id",
+      "listing_agent_2_id",
+      "attr_landarea_m2",
+      "project_stage_id",
+      "authority_date_expires",
+      "adr_unit_number",
+      "contract_date_accepted",
+      "contract_date_unconditional",
+      "contract_date_settlement"
+    ],
+    "export_options": []
+  }
+}

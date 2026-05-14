@@ -18,3 +18,10 @@ lib/
 *.tgz
 pnpm-lock.yaml
 .scripts-types/
+pnpm-workspace.yaml
+.ai-workspace
+.gen-tmp
+vendor/
+.claude
+.worktrees
+.npmrc
