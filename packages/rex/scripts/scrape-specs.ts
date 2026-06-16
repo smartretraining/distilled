@@ -26,7 +26,7 @@ import * as path from "path";
 const API_BASE_URL = process.env.REX_API_BASE_URL ?? "https://api.rexsoftware.com";
 
 /** Services to scrape. Extend this list to add more Rex models. */
-const SERVICES = ["Listings", "Properties", "AdminWebhooks"] as const;
+const SERVICES = ["Listings", "Properties", "AdminWebhooks", "Feedback", "Contacts"] as const;
 
 const rootDir = path.join(import.meta.dir, "..");
 const outDir = path.join(rootDir, "specs", "rex");
