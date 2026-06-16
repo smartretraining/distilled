@@ -1,6 +1,11 @@
 {
   "result": [
     {
+      "name": "AccountAiAdminCredits",
+      "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
       "name": "AccountBilling",
       "has_openapi_docs": false,
       "service_group": "Accounts"
@@ -33,6 +38,11 @@
     {
       "name": "AccountSettingsCompliance",
       "has_openapi_docs": false,
+      "service_group": "Accounts"
+    },
+    {
+      "name": "AccountSettingsCustomComputations",
+      "has_openapi_docs": true,
       "service_group": "Accounts"
     },
     {

@@ -1,0 +1,3692 @@
+{
+  "result": {
+    "name": "Feedback",
+    "description": "",
+    "service_group": null,
+    "completed": true,
+    "experimental": false,
+    "detail": "",
+    "methods": {
+      "autocomplete": {
+        "description": "Autocomplete a simple search query",
+        "parameters": {
+          "search_string": {
+            "comment": "A search string.\n- '#xyz' to search by id\n- '~some time' to search by relative time\n- 'some string' to perform a normal search",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          },
+          "limit": {
+            "comment": "Max 100 (default 20)",
+            "type": "int",
+            "default_value": 20,
+            "required": false
+          },
+          "return_viewstate": {
+            "comment": "True to get a viewstate id rather than a set of records. Setting limit to a false like value will cause all matching records to be included in the viewstate regardless of limit parameter",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          }
+        },
+        "returns": "array|null|string A viewstate id or a list of records",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Autocomplete records on search string",
+          "request": {
+            "parameters": {
+              "search_string": {
+                "required": true,
+                "definition": {
+                  "description": "The start of the map area name to autocomplete on",
+                  "type": "string",
+                  "nullable": false
+                }
+              },
+              "limit": {
+                "required": false,
+                "definition": {
+                  "description": "Maximum number of results to return",
+                  "type": "number",
+                  "default": 20,
+                  "nullable": true
+                }
+              },
+              "return_viewstate": {
+                "required": false,
+                "definition": {
+                  "description": "Whether a viewstate id should be returned instead of the matching record ids",
+                  "type": "boolean",
+                  "default": false,
+                  "nullable": true
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "search_string": "Sampl"
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Matching records",
+                "example": {
+                  "result": [],
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "create": {
+        "description": "Create a record and return a reference to the id",
+        "parameters": {
+          "data": {
+            "comment": "An array of data to add to the record",
+            "type": "array",
+            "default_value": null,
+            "required": true
+          },
+          "return_id": {
+            "comment": "True if the id should returned only. False if the record should be returned",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          }
+        },
+        "returns": "int|array Either the id of the newly created record or the newly created record (depends if return_id is specified)",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Create a record and return a reference to the id",
+          "request": {
+            "parameters": {
+              "data": {
+                "required": true,
+                "definition": {
+                  "description": "An array of data to set for the note record",
+                  "type": "object",
+                  "properties": {
+                    "date_of": {
+                      "description": "The date the feedback was provided",
+                      "type": "string",
+                      "nullable": false
+                    },
+                    "date_time_start": {
+                      "description": "The start time of the OFI. Only available for 'ofi' feedback type.",
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "date_time_finish": {
+                      "description": "The finish time of the OFI. Only available for 'ofi' feedback type.",
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "listing": {
+                      "description": "The listing the feedback is related to",
+                      "type": "object",
+                      "nullable": true,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "ID of the listing",
+                            "type": "integer",
+                            "nullable": false
+                          }
+                        }
+                      }
+                    },
+                    "project": {
+                      "description": "The project the feedback is related to",
+                      "type": "object",
+                      "nullable": true,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "ID of the project",
+                            "type": "integer",
+                            "nullable": false
+                          }
+                        }
+                      }
+                    },
+                    "project_stage": {
+                      "description": "The project stage the feedback is related to",
+                      "type": "object",
+                      "nullable": true,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "ID of the project stage",
+                            "type": "integer",
+                            "nullable": false
+                          }
+                        }
+                      }
+                    },
+                    "amount_of": {
+                      "description": "Indicated amount price. Only available for 'inspection', 'enquiry', 'offer' and 'followup' feedback types.",
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "price_previous_advertising": {
+                      "description": "The previous listing advertising price. Only available for 'price_reduction' feedback type.",
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "price_previous_match": {
+                      "description": "The previous listing match price. Only available for 'price_reduction' feedback type.",
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "price_new_advertising": {
+                      "description": "The new listing advertising price. Only available for 'price_reduction' feedback type.",
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "price_new_match": {
+                      "description": "The new listing match price. Only available for 'price_reduction' feedback type.",
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "number_of_people": {
+                      "description": "Number of people attending the OFI or number of enquiries received. Only available for 'inspection' and 'enquiry' feedback types.",
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "agent": {
+                      "description": "The agent receiving the feedback",
+                      "type": "object",
+                      "nullable": true,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "ID of the agent",
+                            "type": "integer",
+                            "nullable": false
+                          }
+                        }
+                      }
+                    },
+                    "note": {
+                      "description": "The feedback description",
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "enquiry_source": {
+                      "description": "This field is only available for 'inspection', 'enquiry' and 'followup' feedback types",
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "id": {
+                          "description": "Enquiry source ID (valuelist: enquiry_source)",
+                          "type": "integer",
+                          "nullable": false
+                        }
+                      }
+                    },
+                    "interest_level": {
+                      "description": "This field is only available for 'inspection', 'enquiry' and 'followup' feedback types",
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "id": {
+                          "description": "Interest level ID (valuelist: interest_level)",
+                          "type": "integer",
+                          "nullable": false
+                        }
+                      }
+                    },
+                    "feedback_type": {
+                      "type": "object",
+                      "nullable": false,
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "nullable": false,
+                          "description": "Feedback type ID (valuelist: listing_feedback_type)"
+                        }
+                      }
+                    },
+                    "related": {
+                      "description": "Data related to feedback",
+                      "type": "object",
+                      "properties": {
+                        "feedback_contacts": {
+                          "description": "All contacts that are associated to the feedback. All contacts in individual feedback must be provided here too. This field is not available for 'price_reduction' and 'agent_vendor' feedback types",
+                          "type": "array",
+                          "nullable": true,
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "contact_id": {
+                                "description": "ID of the contact that is associated to the feedback",
+                                "type": "integer",
+                                "nullable": false
+                              }
+                            }
+                          }
+                        },
+                        "feedback_individual": {
+                          "description": "Feedback from individual attendees. This field is available only for 'ofi' feedback type.",
+                          "type": "array",
+                          "nullable": true,
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "contacts": {
+                                "description": "All contacts that provided individual feedback",
+                                "type": "integer",
+                                "nullable": false,
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "contact_id": {
+                                      "description": "ID of the contact that is associated to the individual feedback",
+                                      "type": "integer"
+                                    }
+                                  }
+                                }
+                              },
+                              "enquiry_source_id": {
+                                "description": "Enquiry source ID (valuelist: enquiry_source)",
+                                "type": "integer",
+                                "nullable": false
+                              },
+                              "interest_level_id": {
+                                "description": "Interest level ID (valuelist: interest_level)",
+                                "type": "integer",
+                                "nullable": false
+                              },
+                              "price_indication": {
+                                "description": "The price amount that the attendee indicated",
+                                "type": "decimal",
+                                "nullable": true
+                              },
+                              "note": {
+                                "description": "The description for this individual feedback",
+                                "type": "string",
+                                "nullable": false
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "return_id": {
+                "required": false,
+                "definition": {
+                  "description": "True if the id should returned only. False if the record should be returned",
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "data": {
+                  "date_of": "2021-10-23",
+                  "listing": {
+                    "id": 1
+                  },
+                  "project": null,
+                  "project_stage": null,
+                  "amount_of": 1000,
+                  "number_of_people": 0,
+                  "agent": {
+                    "id": "1"
+                  },
+                  "note": "Emma seemed fairly interested in this property, however she has one more inspection today.",
+                  "enquiry_source": {
+                    "id": "189"
+                  },
+                  "interest_level": {
+                    "id": "warm"
+                  },
+                  "date_time_start": null,
+                  "date_time_finish": null,
+                  "feedback_type": {
+                    "id": "inspection"
+                  },
+                  "related": {
+                    "feedback_contacts": [
+                      {
+                        "contact_id": 1
+                      }
+                    ],
+                    "feedback_individual": []
+                  }
+                }
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Either the id of the newly created record or the newly created record (depends if return_id is specified)",
+                "example": {
+                  "result": {
+                    "system_record_state": "active",
+                    "system_ctime": 1634936405,
+                    "system_modtime": 1634936405,
+                    "system_approval_status_time": 1634936405,
+                    "date_of": "2021-10-23",
+                    "date_time_start": null,
+                    "date_time_finish": null,
+                    "date_finish": null,
+                    "amount_of": 1000,
+                    "number_of_people": 1,
+                    "price_previous_match": null,
+                    "price_previous_advertising": null,
+                    "price_new_match": null,
+                    "price_new_advertising": null,
+                    "has_individual_feedback": false,
+                    "etag": "1-1634936405",
+                    "system_modified_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "system_created_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "project": null,
+                    "project_stage": null,
+                    "listing": {
+                      "id": 1,
+                      "listing_category_name": null,
+                      "listing_agent_1": {
+                        "id": "1",
+                        "name": "Sample User",
+                        "first_name": "Sample",
+                        "last_name": "User",
+                        "email_address": "sample.user@rexlabs.io",
+                        "phone_direct": null,
+                        "phone_mobile": null,
+                        "position": null,
+                        "is_account_user": "1",
+                        "profile_image": null
+                      },
+                      "listing_agent_2": null,
+                      "system_listing_state": "current",
+                      "price_advertise_as": "$373,600",
+                      "available_from_date": null,
+                      "meta_other_features": null,
+                      "state_value_price": null,
+                      "state_date": null,
+                      "listing_category": {
+                        "id": "residential_sale",
+                        "text": "Residential Sale"
+                      },
+                      "listing_subcategory_1": null,
+                      "property": {
+                        "system_search_key": "2 / 265 Roberts Road, Subiaco WA 6008",
+                        "adr_longitude": "-31.9458237",
+                        "adr_latitude": "115.8273202",
+                        "adr_unit_number": "2",
+                        "adr_street_number": "265",
+                        "adr_street_name": "Roberts Road",
+                        "adr_suburb_or_town": "Subiaco",
+                        "adr_locality": null,
+                        "adr_state_or_region": "WA",
+                        "adr_postcode": "6008",
+                        "adr_country": "aus",
+                        "adr_estate_name": null,
+                        "adr_estate_stage": null,
+                        "title_number": "HL12345",
+                        "system_owner_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io"
+                        },
+                        "adr_building": null,
+                        "property_category": {
+                          "id": "residential",
+                          "text": "Residential"
+                        },
+                        "property_image": null,
+                        "etag": "1-1558607501",
+                        "id": 1
+                      },
+                      "listing_primary_image": null,
+                      "location": {
+                        "id": "1",
+                        "text": "Sample Agency"
+                      },
+                      "project_stage": null,
+                      "system_owner_user": {
+                        "id": "1",
+                        "name": "Sample User",
+                        "first_name": "Sample",
+                        "last_name": "User",
+                        "email_address": "sample.user@rexlabs.io"
+                      },
+                      "legal_solicitor_contact": null,
+                      "legal_solicitor": null,
+                      "related": {
+                        "contact_reln_listing": [
+                          {
+                            "do_not_contact": null,
+                            "id": 2,
+                            "reln_type": {
+                              "id": "owner",
+                              "text": "Listing Owner"
+                            },
+                            "contact": {
+                              "system_record_state": "active",
+                              "system_ctime": "1556241173",
+                              "system_modtime": "1556241173",
+                              "name": "Will Wyman",
+                              "email_address": "emie74@breitenberg.com",
+                              "phone_number": "(03) 5251 71194",
+                              "fax_number": null,
+                              "is_dnd": null,
+                              "type": "person",
+                              "last_contacted_date": "2021-10-23",
+                              "name_last": "Wyman",
+                              "name_first": "Will",
+                              "address_postal": "385C Bartell Alleyway\nConnland, SA 2668",
+                              "address": "Level 5 671 Kohler Ridge\nWest Joaquinport, ACT 2665",
+                              "interest_level": "warm",
+                              "marketing_birthday": "1984-02-07",
+                              "marketing_enquiry_source": "Internet",
+                              "marketing_gender": "male",
+                              "marketing_postcode": "1198",
+                              "name_legal": null,
+                              "name_salutation": "Will",
+                              "name_addressee": null,
+                              "system_owner_user": {
+                                "id": "1",
+                                "name": "Sample User",
+                                "first_name": "Sample",
+                                "last_name": "User",
+                                "email_address": "sample.user@rexlabs.io"
+                              },
+                              "contact_image": null,
+                              "marketing_enquiry_method": null,
+                              "etag": "2-1556241173",
+                              "id": "2"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "agent": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io",
+                      "phone_direct": null,
+                      "phone_mobile": null,
+                      "position": null,
+                      "is_account_user": "1",
+                      "profile_image": null
+                    },
+                    "system_approval_status_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io",
+                      "phone_direct": null,
+                      "phone_mobile": null,
+                      "position": null,
+                      "is_account_user": "1",
+                      "profile_image": null
+                    },
+                    "feedback_type": {
+                      "id": "inspection",
+                      "text": "Private Inspection"
+                    },
+                    "enquiry_source": {
+                      "id": "189",
+                      "text": "Internet (Our Website)"
+                    },
+                    "system_approval_status": {
+                      "id": "pending",
+                      "text": "Pending"
+                    },
+                    "interest_level": {
+                      "id": "warm",
+                      "text": "Warm"
+                    },
+                    "security_user_rights": [
+                      "read",
+                      "update",
+                      "archive",
+                      "trash",
+                      "purge",
+                      "perms"
+                    ],
+                    "note": "Emma seemed fairly interested in this property, however she has one more inspection today.",
+                    "related": {
+                      "feedback_contacts": [
+                        {
+                          "id": "874",
+                          "contact": {
+                            "system_record_state": "active",
+                            "system_ctime": "1556241174",
+                            "system_modtime": "1556241174",
+                            "name": "Emma Dickinson",
+                            "email_address": "laverne.volkman@gmail.com.au",
+                            "phone_number": "(02) 3536 6439",
+                            "fax_number": null,
+                            "is_dnd": null,
+                            "type": "person",
+                            "last_contacted_date": "2019-04-26",
+                            "name_last": "Dickinson",
+                            "name_first": "Emma",
+                            "address_postal": "09B Ray Little\nSouth May, NSW 2673",
+                            "address": "600 Lowe Road\nSouth Demariohaven, VIC 7118",
+                            "interest_level": "cold",
+                            "marketing_birthday": "1973-01-05",
+                            "marketing_enquiry_method": null,
+                            "marketing_enquiry_source": null,
+                            "marketing_gender": "female",
+                            "marketing_postcode": "5746",
+                            "name_legal": null,
+                            "name_salutation": "Emma",
+                            "name_addressee": "Mrs. Dickinson",
+                            "system_owner_user": {
+                              "id": "1",
+                              "name": "Sample User",
+                              "first_name": "Sample",
+                              "last_name": "User",
+                              "email_address": "sample.user@rexlabs.io"
+                            },
+                            "contact_image": null,
+                            "etag": "10-1630281453",
+                            "id": "10"
+                          }
+                        }
+                      ],
+                      "feedback_individual": []
+                    },
+                    "id": 1
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "describe": {
+        "description": "Describes the class and its methods - simply or in detail",
+        "parameters": {
+          "include_detail": {
+            "comment": "True if detailed descriptions of each method should be included",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          }
+        },
+        "returns": "array An array describing the class",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": null,
+          "request": {
+            "parameters": {
+              "include_detail": {
+                "required": false,
+                "definition": {
+                  "description": "True if detailed descriptions of each method should be included",
+                  "type": "boolean"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "include_detail": true
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Object describing the service",
+                "example": {
+                  "result": {
+                    "name": "Service",
+                    "description": "",
+                    "detail": "",
+                    "methods": {
+                      "archive": {
+                        "description": "Archives a record - archived records are omitted from search results but can be restored at any time.",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be archived.",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Archives a record - archived records are omitted from search results but can be restored at any time.",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be archived.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result of the archive"
+                            }
+                          }
+                        }
+                      },
+                      "create": {
+                        "description": "Create a record and return a reference to the id",
+                        "parameters": {
+                          "data": {
+                            "comment": "An array of data to add to the record",
+                            "type": "array",
+                            "default_value": null,
+                            "required": true
+                          },
+                          "return_id": {
+                            "comment": "True if the id should returned only. False if the record should be returned",
+                            "type": "bool",
+                            "default_value": false,
+                            "required": false
+                          }
+                        },
+                        "returns": "int|array Either the id of the newly created record or the newly created record (depends if return_id is specified)",
+                        "openapi": {
+                          "available": true,
+                          "description": "Create a record and return a reference to the id",
+                          "request": {
+                            "parameters": {
+                              "data": [],
+                              "return_id": {
+                                "required": false,
+                                "definition": {
+                                  "description": "True if the id should returned only. False if the record should be returned",
+                                  "type": "boolean",
+                                  "default": false
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": []
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": []
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "Either the id of the newly created record or the newly created record (depends if return_id is specified)"
+                            }
+                          }
+                        }
+                      },
+                      "read": {
+                        "description": "Read a record by id",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record to return",
+                            "type": "int|string",
+                            "default_value": null,
+                            "required": true
+                          },
+                          "fields": {
+                            "comment": "An array of fields to read",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "extra_fields": {
+                            "comment": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                            "type": "array",
+                            "default_value": [
+                              "smart_categories"
+                            ],
+                            "required": false
+                          }
+                        },
+                        "returns": "array ",
+                        "openapi": {
+                          "available": false,
+                          "description": "",
+                          "request": {
+                            "parameters": [],
+                            "examples": []
+                          },
+                          "response": {
+                            "examples": [],
+                            "schema": [],
+                            "statuses": []
+                          }
+                        }
+                      },
+                      "recoverFromArchive": {
+                        "description": "Recovers a record from the archive",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be recovered from the archive",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Recovers a record from the archive",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be recovered from the archive.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result recovered"
+                            }
+                          }
+                        }
+                      },
+                      "recoverFromTrash": {
+                        "description": "Recover a record from the trash",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be recovered from the trash",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Recovers a record from the trash",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be recovered from the trash.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result recovered"
+                            }
+                          }
+                        }
+                      },
+                      "search": {
+                        "description": "Perform a search",
+                        "parameters": {
+                          "criteria": {
+                            "comment": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "order_by": {
+                            "comment": "An array keyed by field name with a value of either ASC|DESC",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "offset": {
+                            "comment": "The number of rows to offset",
+                            "type": "int",
+                            "default_value": 0,
+                            "required": false
+                          },
+                          "limit": {
+                            "comment": "The number of rows to return",
+                            "type": "int",
+                            "default_value": 20,
+                            "required": false
+                          },
+                          "create_viewstate": {
+                            "comment": "True if a viewstate should be created, false to just return the records",
+                            "type": "bool",
+                            "default_value": false,
+                            "required": false
+                          },
+                          "search_state": {
+                            "comment": "(DEPRECATED - provide system_record_state as a criteria instead)",
+                            "type": "string|array",
+                            "default_value": "active",
+                            "required": false
+                          },
+                          "ids_only": {
+                            "comment": "(DEPRECATED - use search_result_format:'ids' instead) If set to true, returns ids of matching records only - no actual rows",
+                            "type": "bool",
+                            "default_value": false,
+                            "required": false
+                          },
+                          "result_format": {
+                            "comment": "Any of the SEARCH_RESULT_FORMAT_* constants (ids, etags, stubs). Default is 'stubs'",
+                            "type": "string",
+                            "default_value": "default",
+                            "required": false
+                          },
+                          "extra_options": {
+                            "comment": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          }
+                        },
+                        "returns": "array ",
+                        "openapi": {
+                          "available": true,
+                          "description": "Perform a search",
+                          "request": {
+                            "parameters": {
+                              "criteria": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+                                  "type": "object"
+                                }
+                              },
+                              "order_by": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array keyed by field name with a value of either ASC|DESC",
+                                  "type": "string"
+                                }
+                              },
+                              "offset": {
+                                "required": false,
+                                "definition": {
+                                  "description": "The number of rows to offset",
+                                  "type": "number",
+                                  "default": 0
+                                }
+                              },
+                              "limit": {
+                                "required": false,
+                                "definition": {
+                                  "description": "The number of rows to return",
+                                  "type": "number",
+                                  "default": 20
+                                }
+                              },
+                              "create_viewstate": {
+                                "required": false,
+                                "definition": {
+                                  "description": "True if a viewstate should be created, false to just return the records",
+                                  "type": "boolean",
+                                  "default": false
+                                }
+                              },
+                              "result_format": {
+                                "required": false,
+                                "definition": {
+                                  "description": "Any of the SEARCH_RESULT_FORMAT_* constants (ids, etags, stubs).",
+                                  "type": "string",
+                                  "default": "stubs"
+                                }
+                              },
+                              "extra_options": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+                                  "type": "array"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "limit": 2,
+                                "offset": 10
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": []
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The search results"
+                            }
+                          }
+                        }
+                      },
+                      "trash": {
+                        "description": "Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system).",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be trashed",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system).",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be trashed.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result of the trash"
+                            }
+                          }
+                        }
+                      },
+                      "update": {
+                        "description": "Update the record. To remove sub records include the _destroy flag",
+                        "parameters": {
+                          "data": {
+                            "comment": "An array of data to update. Record must exist to be updated",
+                            "type": "array",
+                            "default_value": null,
+                            "required": true
+                          },
+                          "fields": {
+                            "comment": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "extra_fields": {
+                            "comment": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          }
+                        },
+                        "returns": "array The record after the update is complete",
+                        "openapi": {
+                          "available": true,
+                          "description": "Update the record. To remove sub records include the _destroy flag",
+                          "request": {
+                            "parameters": {
+                              "data": [],
+                              "fields": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+                                  "type": "object"
+                                }
+                              },
+                              "extra_fields": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                                  "type": "object"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": []
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": []
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The record after the update is complete"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "describeDeleteModes": {
+        "description": "Describes available delete modes",
+        "parameters": [],
+        "returns": "array ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": null,
+          "request": {
+            "parameters": [],
+            "examples": []
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Available delete modes",
+                "example": {
+                  "result": [
+                    "archive",
+                    "trash",
+                    "purge"
+                  ],
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "describeModel": {
+        "description": "Describes certain characteristics of the model including searchable fields, orderby fields and delete modes",
+        "parameters": [],
+        "returns": "array An array keyed by characteristic",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": null,
+          "request": {
+            "parameters": [],
+            "examples": []
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Available characteristics of the model",
+                "example": {
+                  "result": {
+                    "search_result_formats": [
+                      {
+                        "id": "default",
+                        "description": "The default response format containing preselected fields.",
+                        "limit": 100
+                      },
+                      {
+                        "id": "etags",
+                        "description": "Constructs unique etags for record ids that represent a record at a given time. If the etag has changed the next time you request etags you should request the full record.",
+                        "limit": 50000
+                      },
+                      {
+                        "id": "ids",
+                        "description": "Returns an array of id's only. Id sets are subject to much higher search result limits (10000 items per page).",
+                        "limit": 1000000
+                      },
+                      {
+                        "id": "default_no_stubs",
+                        "description": "The default response format containing preselected fields but not containing stubs.",
+                        "limit": 100
+                      }
+                    ],
+                    "delete_modes": [
+                      "archive",
+                      "trash",
+                      "purge"
+                    ],
+                    "data_structure": {
+                      "description": "This is not necessarily a full and accurate representation of the data model. For a full representation, query an existing record.",
+                      "structure": [
+                        "id",
+                        "account_id",
+                        "system_record_state",
+                        "system_ctime",
+                        "system_modtime",
+                        "system_owner_user_id",
+                        "system_modified_user_id",
+                        "system_created_user_id"
+                      ]
+                    },
+                    "read_fields": {
+                      "core": "Returns core information about a record. This is technically always included regardless of what is passed in to read fields but this field allows you to explicitly request ONLY core data."
+                    },
+                    "read_extra_fields": {},
+                    "searchable_fields": {
+                      "system_owner_user_id": {
+                        "name": "system_owner_user_id",
+                        "label": "Owning User",
+                        "type": "enum",
+                        "options": {
+                          "source": "remote",
+                          "list": "account_users_search"
+                        },
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_created_user_id": {
+                        "name": "system_created_user_id",
+                        "label": "Created User",
+                        "type": "enum",
+                        "options": {
+                          "source": "remote",
+                          "list": "account_users_search"
+                        },
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_modified_user_id": {
+                        "name": "system_modified_user_id",
+                        "label": "Last Modified By",
+                        "type": "enum",
+                        "options": {
+                          "source": "remote",
+                          "list": "account_users_search"
+                        },
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_ctime": {
+                        "name": "system_ctime",
+                        "label": "Created Time",
+                        "type": "timestamp",
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_modtime": {
+                        "name": "system_modtime",
+                        "label": "Modified Time",
+                        "type": "timestamp",
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "id": {
+                        "name": "id",
+                        "label": "Record Id",
+                        "type": "integer",
+                        "real_field": true,
+                        "category": "Record Meta"
+                      },
+                      "system_record_state": {
+                        "name": "system_record_state",
+                        "label": "Record State",
+                        "type": "enum",
+                        "options": {
+                          "source": "remote",
+                          "list": "record_state"
+                        },
+                        "real_field": true,
+                        "category": "Record Meta"
+                      }
+                    },
+                    "orderby_fields": [
+                      "system_ctime",
+                      "system_modtime"
+                    ],
+                    "export_options": []
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "describeSearchFields": {
+        "description": "Describes search fields",
+        "parameters": {
+          "include_detail": {
+            "comment": "True if detail about the fields should be included",
+            "type": "bool",
+            "default_value": true,
+            "required": false
+          }
+        },
+        "returns": "array An array of fields",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": null,
+          "request": {
+            "parameters": {
+              "include_detail": {
+                "required": false,
+                "definition": {
+                  "description": "True if detail about the fields should be included",
+                  "type": "boolean"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "include_detail": true
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Available search fields",
+                "example": {
+                  "result": {
+                    "id": {
+                      "name": "id",
+                      "label": "Record Id",
+                      "type": "integer",
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_owner_user_id": {
+                      "name": "system_owner_user_id",
+                      "label": "Owning User",
+                      "type": "enum",
+                      "options": {
+                        "source": "remote",
+                        "list": "account_users_search"
+                      },
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_created_user_id": {
+                      "name": "system_created_user_id",
+                      "label": "Created User",
+                      "type": "enum",
+                      "options": {
+                        "source": "remote",
+                        "list": "account_users_search"
+                      },
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_modified_user_id": {
+                      "name": "system_modified_user_id",
+                      "label": "Last Modified By",
+                      "type": "enum",
+                      "options": {
+                        "source": "remote",
+                        "list": "account_users_search"
+                      },
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_ctime": {
+                      "name": "system_ctime",
+                      "label": "Created Time",
+                      "type": "timestamp",
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_modtime": {
+                      "name": "system_modtime",
+                      "label": "Modified Time",
+                      "type": "timestamp",
+                      "real_field": true,
+                      "category": "Record Meta"
+                    },
+                    "system_record_state": {
+                      "name": "system_record_state",
+                      "label": "Record State",
+                      "type": "enum",
+                      "options": {
+                        "source": "remote",
+                        "list": "record_state"
+                      },
+                      "real_field": true,
+                      "category": "Record Meta"
+                    }
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "getContactViewstateForSearch": {
+        "description": "Get a contact view state",
+        "parameters": {
+          "criteria": {
+            "comment": "An array of criteria",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          }
+        },
+        "returns": "int|false If any results returned the contact viewstate or false if no results",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Get a contact view state",
+          "request": {
+            "parameters": {
+              "criteria": {
+                "required": false,
+                "definition": {
+                  "description": "An array of criteria",
+                  "type": "array",
+                  "default": []
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "getListingFilters": {
+        "description": "Gets a list of listings that have feedback to use for filtering",
+        "parameters": {
+          "criteria": {
+            "comment": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          }
+        },
+        "returns": "array ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Gets a list of listings that have feedback to use for filtering",
+          "request": {
+            "parameters": {
+              "criteria": {
+                "required": false,
+                "definition": {
+                  "description": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+                  "type": "array",
+                  "default": []
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The search results",
+                "example": {
+                  "result": [
+                    {
+                      "id": "1",
+                      "formatted_address": "2 / 265 Roberts Road, Subiaco WA 6008"
+                    },
+                    {
+                      "id": "2",
+                      "formatted_address": "3 / 265 Roberts Road, Subiaco WA 6008"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "getListingViewstateForSearch": {
+        "description": "Get a listing view state",
+        "parameters": {
+          "criteria": {
+            "comment": "An array of criteria",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          }
+        },
+        "returns": "int|false If any results returned the listing viewstate or false if no results",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Get a listing view state",
+          "request": {
+            "parameters": {
+              "criteria": {
+                "required": false,
+                "definition": {
+                  "description": "An array of criteria",
+                  "type": "array",
+                  "default": []
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "offlineSync": {
+        "description": "",
+        "parameters": {
+          "listing_id": {
+            "comment": "",
+            "type": "unknown",
+            "default_value": null,
+            "required": true
+          },
+          "open_home": {
+            "comment": "",
+            "type": "unknown",
+            "default_value": null,
+            "required": true
+          },
+          "contact": {
+            "comment": "",
+            "type": "unknown",
+            "default_value": null,
+            "required": true
+          },
+          "feedback": {
+            "comment": "",
+            "type": "unknown",
+            "default_value": null,
+            "required": false
+          },
+          "retry_count": {
+            "comment": "",
+            "type": "unknown",
+            "default_value": 0,
+            "required": false
+          }
+        },
+        "returns": "void",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "",
+          "request": {
+            "parameters": {
+              "listing_id": {
+                "required": true,
+                "definition": {
+                  "description": "",
+                  "type": "unknown",
+                  "default": null
+                }
+              },
+              "open_home": {
+                "required": true,
+                "definition": {
+                  "description": "",
+                  "type": "unknown",
+                  "default": null
+                }
+              },
+              "contact": {
+                "required": true,
+                "definition": {
+                  "description": "",
+                  "type": "unknown",
+                  "default": null
+                }
+              },
+              "feedback": {
+                "required": false,
+                "definition": {
+                  "description": "",
+                  "type": "unknown",
+                  "default": null
+                }
+              },
+              "retry_count": {
+                "required": false,
+                "definition": {
+                  "description": "",
+                  "type": "unknown",
+                  "default": 0
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "read": {
+        "description": "Read a record by id",
+        "parameters": {
+          "id": {
+            "comment": "",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          },
+          "fields": {
+            "comment": "",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          },
+          "extra_fields": {
+            "comment": "* @return array",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          }
+        },
+        "returns": "void",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Read a record by id",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The record id to read",
+                  "type": "number"
+                }
+              },
+              "fields": {
+                "required": false,
+                "definition": {
+                  "description": "",
+                  "type": "array",
+                  "default": []
+                }
+              },
+              "extra_fields": {
+                "required": false,
+                "definition": {
+                  "description": "* @return array",
+                  "type": "array",
+                  "default": []
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "id": 1
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The record",
+                "example": {
+                  "result": {
+                    "system_record_state": "active",
+                    "system_ctime": 1634936405,
+                    "system_modtime": 1634936405,
+                    "system_approval_status_time": 1634936405,
+                    "date_of": "2021-10-23",
+                    "date_time_start": null,
+                    "date_time_finish": null,
+                    "date_finish": null,
+                    "amount_of": 1000,
+                    "number_of_people": 1,
+                    "price_previous_match": null,
+                    "price_previous_advertising": null,
+                    "price_new_match": null,
+                    "price_new_advertising": null,
+                    "has_individual_feedback": false,
+                    "etag": "1-1634936405",
+                    "system_modified_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "system_created_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "project": null,
+                    "project_stage": null,
+                    "listing": {
+                      "id": 1,
+                      "listing_category_name": null,
+                      "listing_agent_1": {
+                        "id": "1",
+                        "name": "Sample User",
+                        "first_name": "Sample",
+                        "last_name": "User",
+                        "email_address": "sample.user@rexlabs.io",
+                        "phone_direct": null,
+                        "phone_mobile": null,
+                        "position": null,
+                        "is_account_user": "1",
+                        "profile_image": null
+                      },
+                      "listing_agent_2": null,
+                      "system_listing_state": "current",
+                      "price_advertise_as": "$373,600",
+                      "available_from_date": null,
+                      "meta_other_features": null,
+                      "state_value_price": null,
+                      "state_date": null,
+                      "listing_category": {
+                        "id": "residential_sale",
+                        "text": "Residential Sale"
+                      },
+                      "listing_subcategory_1": null,
+                      "property": {
+                        "system_search_key": "2 / 265 Roberts Road, Subiaco WA 6008",
+                        "adr_longitude": "-31.9458237",
+                        "adr_latitude": "115.8273202",
+                        "adr_unit_number": "2",
+                        "adr_street_number": "265",
+                        "adr_street_name": "Roberts Road",
+                        "adr_suburb_or_town": "Subiaco",
+                        "adr_locality": null,
+                        "adr_state_or_region": "WA",
+                        "adr_postcode": "6008",
+                        "adr_country": "aus",
+                        "adr_estate_name": null,
+                        "adr_estate_stage": null,
+                        "title_number": "HL12345",
+                        "system_owner_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io"
+                        },
+                        "adr_building": null,
+                        "property_category": {
+                          "id": "residential",
+                          "text": "Residential"
+                        },
+                        "property_image": null,
+                        "etag": "1-1558607501",
+                        "id": 1
+                      },
+                      "listing_primary_image": null,
+                      "location": {
+                        "id": "1",
+                        "text": "Sample Agency"
+                      },
+                      "project_stage": null,
+                      "system_owner_user": {
+                        "id": "1",
+                        "name": "Sample User",
+                        "first_name": "Sample",
+                        "last_name": "User",
+                        "email_address": "sample.user@rexlabs.io"
+                      },
+                      "legal_solicitor_contact": null,
+                      "legal_solicitor": null,
+                      "related": {
+                        "contact_reln_listing": [
+                          {
+                            "do_not_contact": null,
+                            "id": 2,
+                            "reln_type": {
+                              "id": "owner",
+                              "text": "Listing Owner"
+                            },
+                            "contact": {
+                              "system_record_state": "active",
+                              "system_ctime": "1556241173",
+                              "system_modtime": "1556241173",
+                              "name": "Will Wyman",
+                              "email_address": "emie74@breitenberg.com",
+                              "phone_number": "(03) 5251 71194",
+                              "fax_number": null,
+                              "is_dnd": null,
+                              "type": "person",
+                              "last_contacted_date": "2021-10-23",
+                              "name_last": "Wyman",
+                              "name_first": "Will",
+                              "address_postal": "385C Bartell Alleyway\nConnland, SA 2668",
+                              "address": "Level 5 671 Kohler Ridge\nWest Joaquinport, ACT 2665",
+                              "interest_level": "warm",
+                              "marketing_birthday": "1984-02-07",
+                              "marketing_enquiry_source": "Internet",
+                              "marketing_gender": "male",
+                              "marketing_postcode": "1198",
+                              "name_legal": null,
+                              "name_salutation": "Will",
+                              "name_addressee": null,
+                              "system_owner_user": {
+                                "id": "1",
+                                "name": "Sample User",
+                                "first_name": "Sample",
+                                "last_name": "User",
+                                "email_address": "sample.user@rexlabs.io"
+                              },
+                              "contact_image": null,
+                              "marketing_enquiry_method": null,
+                              "etag": "2-1556241173",
+                              "id": "2"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "agent": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io",
+                      "phone_direct": null,
+                      "phone_mobile": null,
+                      "position": null,
+                      "is_account_user": "1",
+                      "profile_image": null
+                    },
+                    "system_approval_status_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io",
+                      "phone_direct": null,
+                      "phone_mobile": null,
+                      "position": null,
+                      "is_account_user": "1",
+                      "profile_image": null
+                    },
+                    "feedback_type": {
+                      "id": "inspection",
+                      "text": "Private Inspection"
+                    },
+                    "enquiry_source": {
+                      "id": "189",
+                      "text": "Internet (Our Website)"
+                    },
+                    "system_approval_status": {
+                      "id": "pending",
+                      "text": "Pending"
+                    },
+                    "interest_level": {
+                      "id": "warm",
+                      "text": "Warm"
+                    },
+                    "security_user_rights": [
+                      "read",
+                      "update",
+                      "archive",
+                      "trash",
+                      "purge",
+                      "perms"
+                    ],
+                    "note": "Emma seemed fairly interested in this property, however she has one more inspection today.",
+                    "related": {
+                      "feedback_contacts": [
+                        {
+                          "id": "874",
+                          "contact": {
+                            "system_record_state": "active",
+                            "system_ctime": "1556241174",
+                            "system_modtime": "1556241174",
+                            "name": "Emma Dickinson",
+                            "email_address": "laverne.volkman@gmail.com.au",
+                            "phone_number": "(02) 3536 6439",
+                            "fax_number": null,
+                            "is_dnd": null,
+                            "type": "person",
+                            "last_contacted_date": "2019-04-26",
+                            "name_last": "Dickinson",
+                            "name_first": "Emma",
+                            "address_postal": "09B Ray Little\nSouth May, NSW 2673",
+                            "address": "600 Lowe Road\nSouth Demariohaven, VIC 7118",
+                            "interest_level": "cold",
+                            "marketing_birthday": "1973-01-05",
+                            "marketing_enquiry_method": null,
+                            "marketing_enquiry_source": null,
+                            "marketing_gender": "female",
+                            "marketing_postcode": "5746",
+                            "name_legal": null,
+                            "name_salutation": "Emma",
+                            "name_addressee": "Mrs. Dickinson",
+                            "system_owner_user": {
+                              "id": "1",
+                              "name": "Sample User",
+                              "first_name": "Sample",
+                              "last_name": "User",
+                              "email_address": "sample.user@rexlabs.io"
+                            },
+                            "contact_image": null,
+                            "etag": "10-1630281453",
+                            "id": "10"
+                          }
+                        }
+                      ],
+                      "feedback_individual": []
+                    },
+                    "id": 1
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "recoverFromTrash": {
+        "description": "Recover a record from the trash",
+        "parameters": {
+          "id": {
+            "comment": "The id of the record that should be recovered from the trash",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "bool True on success",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Recovers a record from the trash",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the record that should be recovered from the trash.",
+                  "type": "number"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "id": 1
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The result recovered",
+                "example": {
+                  "result": 1,
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "search": {
+        "description": "Perform a search",
+        "parameters": {
+          "criteria": {
+            "comment": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          },
+          "order_by": {
+            "comment": "An array keyed by field name with a value of either ASC|DESC",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          },
+          "offset": {
+            "comment": "The number of rows to offset",
+            "type": "int",
+            "default_value": 0,
+            "required": false
+          },
+          "limit": {
+            "comment": "The number of rows to return",
+            "type": "int",
+            "default_value": 20,
+            "required": false
+          },
+          "create_viewstate": {
+            "comment": "True if a viewstate should be created, false to just return the records",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          },
+          "search_state": {
+            "comment": "(DEPRECATED - provide system_record_state as a criteria instead)",
+            "type": "string|array",
+            "default_value": "active",
+            "required": false
+          },
+          "ids_only": {
+            "comment": "(DEPRECATED - use search_result_format:'ids' instead) If set to true, returns ids of matching records only - no actual rows",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          },
+          "result_format": {
+            "comment": "Any of the search result formats available for this service",
+            "type": "string",
+            "default_value": "default",
+            "required": false
+          },
+          "extra_options": {
+            "comment": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          }
+        },
+        "returns": "array ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Perform a search",
+          "request": {
+            "parameters": {
+              "criteria": {
+                "required": false,
+                "definition": {
+                  "description": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+                  "type": "object"
+                }
+              },
+              "order_by": {
+                "required": false,
+                "definition": {
+                  "description": "An array keyed by field name with a value of either ASC|DESC",
+                  "type": "string"
+                }
+              },
+              "offset": {
+                "required": false,
+                "definition": {
+                  "description": "The number of rows to offset",
+                  "type": "number",
+                  "default": 0
+                }
+              },
+              "limit": {
+                "required": false,
+                "definition": {
+                  "description": "The number of rows to return",
+                  "type": "number",
+                  "default": 20
+                }
+              },
+              "create_viewstate": {
+                "required": false,
+                "definition": {
+                  "description": "True if a viewstate should be created, false to just return the records",
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "result_format": {
+                "required": false,
+                "definition": {
+                  "description": "Any of the search result formats available for this service",
+                  "type": "string",
+                  "default": "default"
+                }
+              },
+              "extra_options": {
+                "required": false,
+                "definition": {
+                  "description": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+                  "type": "array"
+                }
+              },
+              "search_state": {
+                "required": false,
+                "definition": {
+                  "description": "(DEPRECATED - provide system_record_state as a criteria instead)",
+                  "type": "string|array",
+                  "default": "active"
+                }
+              },
+              "ids_only": {
+                "required": false,
+                "definition": {
+                  "description": "(DEPRECATED - use search_result_format:'ids' instead) If set to true, returns ids of matching records only - no actual rows",
+                  "type": "bool",
+                  "default": false
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "limit": 10,
+                "offset": 0
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The search results",
+                "example": {
+                  "result": {
+                    "rows": [
+                      {
+                        "system_record_state": "active",
+                        "system_ctime": 1634936405,
+                        "system_modtime": 1634936405,
+                        "system_approval_status_time": 1634936405,
+                        "date_of": "2021-10-23",
+                        "date_time_start": null,
+                        "date_time_finish": null,
+                        "date_finish": null,
+                        "amount_of": 1000,
+                        "number_of_people": 1,
+                        "price_previous_match": null,
+                        "price_previous_advertising": null,
+                        "price_new_match": null,
+                        "price_new_advertising": null,
+                        "has_individual_feedback": false,
+                        "etag": "1-1634936405",
+                        "system_modified_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io"
+                        },
+                        "system_created_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io"
+                        },
+                        "project": null,
+                        "project_stage": null,
+                        "listing": {
+                          "id": 1,
+                          "listing_category_name": null,
+                          "listing_agent_1": {
+                            "id": "1",
+                            "name": "Sample User",
+                            "first_name": "Sample",
+                            "last_name": "User",
+                            "email_address": "sample.user@rexlabs.io",
+                            "phone_direct": null,
+                            "phone_mobile": null,
+                            "position": null,
+                            "is_account_user": "1",
+                            "profile_image": null
+                          },
+                          "listing_agent_2": null,
+                          "system_listing_state": "current",
+                          "price_advertise_as": "$373,600",
+                          "available_from_date": null,
+                          "meta_other_features": null,
+                          "state_value_price": null,
+                          "state_date": null,
+                          "listing_category": {
+                            "id": "residential_sale",
+                            "text": "Residential Sale"
+                          },
+                          "listing_subcategory_1": null,
+                          "property": {
+                            "system_search_key": "2 / 265 Roberts Road, Subiaco WA 6008",
+                            "adr_longitude": "-31.9458237",
+                            "adr_latitude": "115.8273202",
+                            "adr_unit_number": "2",
+                            "adr_street_number": "265",
+                            "adr_street_name": "Roberts Road",
+                            "adr_suburb_or_town": "Subiaco",
+                            "adr_locality": null,
+                            "adr_state_or_region": "WA",
+                            "adr_postcode": "6008",
+                            "adr_country": "aus",
+                            "adr_estate_name": null,
+                            "adr_estate_stage": null,
+                            "title_number": "HL12345",
+                            "system_owner_user": {
+                              "id": "1",
+                              "name": "Sample User",
+                              "first_name": "Sample",
+                              "last_name": "User",
+                              "email_address": "sample.user@rexlabs.io"
+                            },
+                            "adr_building": null,
+                            "property_category": {
+                              "id": "residential",
+                              "text": "Residential"
+                            },
+                            "property_image": null,
+                            "etag": "1-1558607501",
+                            "id": 1
+                          },
+                          "listing_primary_image": null,
+                          "location": {
+                            "id": "1",
+                            "text": "Sample Agency"
+                          },
+                          "project_stage": null,
+                          "system_owner_user": {
+                            "id": "1",
+                            "name": "Sample User",
+                            "first_name": "Sample",
+                            "last_name": "User",
+                            "email_address": "sample.user@rexlabs.io"
+                          },
+                          "legal_solicitor_contact": null,
+                          "legal_solicitor": null,
+                          "related": {
+                            "contact_reln_listing": [
+                              {
+                                "do_not_contact": null,
+                                "id": 2,
+                                "reln_type": {
+                                  "id": "owner",
+                                  "text": "Listing Owner"
+                                },
+                                "contact": {
+                                  "system_record_state": "active",
+                                  "system_ctime": "1556241173",
+                                  "system_modtime": "1556241173",
+                                  "name": "Will Wyman",
+                                  "email_address": "emie74@breitenberg.com",
+                                  "phone_number": "(03) 5251 71194",
+                                  "fax_number": null,
+                                  "is_dnd": null,
+                                  "type": "person",
+                                  "last_contacted_date": "2021-10-23",
+                                  "name_last": "Wyman",
+                                  "name_first": "Will",
+                                  "address_postal": "385C Bartell Alleyway\nConnland, SA 2668",
+                                  "address": "Level 5 671 Kohler Ridge\nWest Joaquinport, ACT 2665",
+                                  "interest_level": "warm",
+                                  "marketing_birthday": "1984-02-07",
+                                  "marketing_enquiry_source": "Internet",
+                                  "marketing_gender": "male",
+                                  "marketing_postcode": "1198",
+                                  "name_legal": null,
+                                  "name_salutation": "Will",
+                                  "name_addressee": null,
+                                  "system_owner_user": {
+                                    "id": "1",
+                                    "name": "Sample User",
+                                    "first_name": "Sample",
+                                    "last_name": "User",
+                                    "email_address": "sample.user@rexlabs.io"
+                                  },
+                                  "contact_image": null,
+                                  "marketing_enquiry_method": null,
+                                  "etag": "2-1556241173",
+                                  "id": "2"
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        "agent": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io",
+                          "phone_direct": null,
+                          "phone_mobile": null,
+                          "position": null,
+                          "is_account_user": "1",
+                          "profile_image": null
+                        },
+                        "system_approval_status_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io",
+                          "phone_direct": null,
+                          "phone_mobile": null,
+                          "position": null,
+                          "is_account_user": "1",
+                          "profile_image": null
+                        },
+                        "feedback_type": {
+                          "id": "inspection",
+                          "text": "Private Inspection"
+                        },
+                        "enquiry_source": {
+                          "id": "189",
+                          "text": "Internet (Our Website)"
+                        },
+                        "system_approval_status": {
+                          "id": "pending",
+                          "text": "Pending"
+                        },
+                        "interest_level": {
+                          "id": "warm",
+                          "text": "Warm"
+                        },
+                        "security_user_rights": [
+                          "read",
+                          "update",
+                          "archive",
+                          "trash",
+                          "purge",
+                          "perms"
+                        ],
+                        "note": "Emma seemed fairly interested in this property, however she has one more inspection today.",
+                        "related": {
+                          "feedback_contacts": [
+                            {
+                              "id": "874",
+                              "contact": {
+                                "system_record_state": "active",
+                                "system_ctime": "1556241174",
+                                "system_modtime": "1556241174",
+                                "name": "Emma Dickinson",
+                                "email_address": "laverne.volkman@gmail.com.au",
+                                "phone_number": "(02) 3536 6439",
+                                "fax_number": null,
+                                "is_dnd": null,
+                                "type": "person",
+                                "last_contacted_date": "2019-04-26",
+                                "name_last": "Dickinson",
+                                "name_first": "Emma",
+                                "address_postal": "09B Ray Little\nSouth May, NSW 2673",
+                                "address": "600 Lowe Road\nSouth Demariohaven, VIC 7118",
+                                "interest_level": "cold",
+                                "marketing_birthday": "1973-01-05",
+                                "marketing_enquiry_method": null,
+                                "marketing_enquiry_source": null,
+                                "marketing_gender": "female",
+                                "marketing_postcode": "5746",
+                                "name_legal": null,
+                                "name_salutation": "Emma",
+                                "name_addressee": "Mrs. Dickinson",
+                                "system_owner_user": {
+                                  "id": "1",
+                                  "name": "Sample User",
+                                  "first_name": "Sample",
+                                  "last_name": "User",
+                                  "email_address": "sample.user@rexlabs.io"
+                                },
+                                "contact_image": null,
+                                "etag": "10-1630281453",
+                                "id": "10"
+                              }
+                            }
+                          ],
+                          "feedback_individual": []
+                        },
+                        "id": 1
+                      },
+                      {
+                        "system_record_state": "active",
+                        "system_ctime": 1635195074,
+                        "system_modtime": 1635198430,
+                        "system_approval_status_time": 1635195076,
+                        "date_of": "2021-10-26",
+                        "date_time_start": "10:30:00",
+                        "date_time_finish": "11:00:00",
+                        "date_finish": null,
+                        "amount_of": null,
+                        "number_of_people": "2",
+                        "price_previous_match": null,
+                        "price_previous_advertising": null,
+                        "price_new_match": null,
+                        "price_new_advertising": null,
+                        "has_individual_feedback": null,
+                        "etag": "2-1635198430",
+                        "system_modified_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io"
+                        },
+                        "system_created_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io"
+                        },
+                        "project": null,
+                        "project_stage": null,
+                        "listing": {
+                          "id": 1,
+                          "listing_category_name": null,
+                          "listing_agent_1": {
+                            "id": "1",
+                            "name": "Sample User",
+                            "first_name": "Sample",
+                            "last_name": "User",
+                            "email_address": "sample.user@rexlabs.io",
+                            "phone_direct": null,
+                            "phone_mobile": null,
+                            "position": null,
+                            "is_account_user": "1",
+                            "profile_image": null
+                          },
+                          "listing_agent_2": null,
+                          "system_listing_state": "current",
+                          "price_advertise_as": "$373,600",
+                          "available_from_date": null,
+                          "meta_other_features": null,
+                          "state_value_price": null,
+                          "state_date": null,
+                          "listing_category": {
+                            "id": "residential_sale",
+                            "text": "Residential Sale"
+                          },
+                          "listing_subcategory_1": null,
+                          "property": {
+                            "system_search_key": "2 / 265 Roberts Road, Subiaco WA 6008",
+                            "adr_longitude": "-31.9458237",
+                            "adr_latitude": "115.8273202",
+                            "adr_unit_number": "2",
+                            "adr_street_number": "265",
+                            "adr_street_name": "Roberts Road",
+                            "adr_suburb_or_town": "Subiaco",
+                            "adr_locality": null,
+                            "adr_state_or_region": "WA",
+                            "adr_postcode": "6008",
+                            "adr_country": "aus",
+                            "adr_estate_name": null,
+                            "adr_estate_stage": null,
+                            "title_number": "HL12345",
+                            "system_owner_user": {
+                              "id": "1",
+                              "name": "Sample User",
+                              "first_name": "Sample",
+                              "last_name": "User",
+                              "email_address": "sample.user@rexlabs.io"
+                            },
+                            "adr_building": null,
+                            "property_category": {
+                              "id": "residential",
+                              "text": "Residential"
+                            },
+                            "property_image": null,
+                            "etag": "1-1558607501",
+                            "id": 1
+                          },
+                          "listing_primary_image": null,
+                          "location": {
+                            "id": "1",
+                            "text": "Sample Agency"
+                          },
+                          "project_stage": null,
+                          "system_owner_user": {
+                            "id": "1",
+                            "name": "Sample User",
+                            "first_name": "Sample",
+                            "last_name": "User",
+                            "email_address": "sample.user@rexlabs.io"
+                          },
+                          "legal_solicitor_contact": null,
+                          "legal_solicitor": null,
+                          "related": {
+                            "contact_reln_listing": [
+                              {
+                                "do_not_contact": null,
+                                "id": 2,
+                                "reln_type": {
+                                  "id": "owner",
+                                  "text": "Listing Owner"
+                                },
+                                "contact": {
+                                  "system_record_state": "active",
+                                  "system_ctime": "1556241173",
+                                  "system_modtime": "1556241173",
+                                  "name": "Will Wyman",
+                                  "email_address": "emie74@breitenberg.com",
+                                  "phone_number": "(03) 5251 71194",
+                                  "fax_number": null,
+                                  "is_dnd": null,
+                                  "type": "person",
+                                  "last_contacted_date": "2021-10-23",
+                                  "name_last": "Wyman",
+                                  "name_first": "Will",
+                                  "address_postal": "385C Bartell Alleyway\nConnland, SA 2668",
+                                  "address": "Level 5 671 Kohler Ridge\nWest Joaquinport, ACT 2665",
+                                  "interest_level": "warm",
+                                  "marketing_birthday": "1984-02-07",
+                                  "marketing_enquiry_source": "Internet",
+                                  "marketing_gender": "male",
+                                  "marketing_postcode": "1198",
+                                  "name_legal": null,
+                                  "name_salutation": "Will",
+                                  "name_addressee": null,
+                                  "system_owner_user": {
+                                    "id": "1",
+                                    "name": "Sample User",
+                                    "first_name": "Sample",
+                                    "last_name": "User",
+                                    "email_address": "sample.user@rexlabs.io"
+                                  },
+                                  "contact_image": null,
+                                  "marketing_enquiry_method": null,
+                                  "etag": "2-1556241173",
+                                  "id": "2"
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        "agent": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io",
+                          "phone_direct": null,
+                          "phone_mobile": null,
+                          "position": null,
+                          "is_account_user": "1",
+                          "profile_image": null
+                        },
+                        "system_approval_status_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io",
+                          "phone_direct": null,
+                          "phone_mobile": null,
+                          "position": null,
+                          "is_account_user": "1",
+                          "profile_image": null
+                        },
+                        "feedback_type": {
+                          "id": "ofi",
+                          "text": "OFI"
+                        },
+                        "enquiry_source": {
+                          "id": "189",
+                          "text": "Internet (Our Website)"
+                        },
+                        "system_approval_status": {
+                          "id": "pending",
+                          "text": "Pending"
+                        },
+                        "interest_level": null,
+                        "_security_user_rights": [
+                          "read",
+                          "update",
+                          "archive",
+                          "trash",
+                          "purge",
+                          "perms"
+                        ],
+                        "note": null,
+                        "related": {
+                          "feedback_contacts": [
+                            {
+                              "id": "874",
+                              "contact": {
+                                "system_record_state": "active",
+                                "system_ctime": "1556241174",
+                                "system_modtime": "1556241174",
+                                "name": "Emma Dickinson",
+                                "email_address": "laverne.volkman@gmail.com.au",
+                                "phone_number": "(02) 3536 6439",
+                                "fax_number": null,
+                                "is_dnd": null,
+                                "type": "person",
+                                "last_contacted_date": "2019-04-26",
+                                "name_last": "Dickinson",
+                                "name_first": "Emma",
+                                "address_postal": "09B Ray Little\nSouth May, NSW 2673",
+                                "address": "600 Lowe Road\nSouth Demariohaven, VIC 7118",
+                                "interest_level": "cold",
+                                "marketing_birthday": "1973-01-05",
+                                "marketing_enquiry_method": null,
+                                "marketing_enquiry_source": null,
+                                "marketing_gender": "female",
+                                "marketing_postcode": "5746",
+                                "name_legal": null,
+                                "name_salutation": "Emma",
+                                "name_addressee": "Mrs. Dickinson",
+                                "system_owner_user": {
+                                  "id": "1",
+                                  "name": "Sample User",
+                                  "first_name": "Sample",
+                                  "last_name": "User",
+                                  "email_address": "sample.user@rexlabs.io"
+                                },
+                                "contact_image": null,
+                                "etag": "10-1630281453",
+                                "id": "10"
+                              }
+                            },
+                            {
+                              "id": "873",
+                              "contact": {
+                                "system_record_state": "active",
+                                "system_ctime": "1629236530",
+                                "system_modtime": "1630281679",
+                                "name": "Queenie Wolf",
+                                "email_address": "cummerata.wayne@example.org",
+                                "phone_number": null,
+                                "fax_number": null,
+                                "is_dnd": null,
+                                "type": "person",
+                                "last_contacted_date": "2021-08-30",
+                                "name_last": "Wolf",
+                                "name_first": "Queenie",
+                                "address_postal": null,
+                                "address": null,
+                                "interest_level": "warm",
+                                "marketing_birthday": "1978-10-16",
+                                "marketing_enquiry_source": null,
+                                "marketing_gender": "female",
+                                "marketing_postcode": null,
+                                "name_legal": null,
+                                "name_salutation": null,
+                                "name_addressee": "Miss Wolf",
+                                "system_owner_user": {
+                                  "id": "1",
+                                  "name": "Sample User",
+                                  "first_name": "Sample",
+                                  "last_name": "User",
+                                  "email_address": "sample.user@rexlabs.io"
+                                },
+                                "contact_image": null,
+                                "marketing_enquiry_method": null,
+                                "etag": "13-1630281679",
+                                "id": "13"
+                              }
+                            }
+                          ],
+                          "feedback_individual": [
+                            {
+                              "price_indication": 370000,
+                              "enquiry_source": {
+                                "id": "189",
+                                "text": "Internet (Our Website)"
+                              },
+                              "interest_level": {
+                                "id": "hot",
+                                "text": "Hot"
+                              },
+                              "id": 7,
+                              "note": "Feedback about the property provided by Emma",
+                              "contacts": [
+                                {
+                                  "contact": {
+                                    "system_record_state": "active",
+                                    "system_ctime": "1556241174",
+                                    "system_modtime": "1556241174",
+                                    "name": "Emma Dickinson",
+                                    "email_address": "laverne.volkman@gmail.com.au",
+                                    "phone_number": "(02) 3536 6439",
+                                    "fax_number": null,
+                                    "is_dnd": null,
+                                    "type": "person",
+                                    "last_contacted_date": "2019-04-26",
+                                    "name_last": "Dickinson",
+                                    "name_first": "Emma",
+                                    "address_postal": "09B Ray Little\nSouth May, NSW 2673",
+                                    "address": "600 Lowe Road\nSouth Demariohaven, VIC 7118",
+                                    "interest_level": "cold",
+                                    "marketing_birthday": "1973-01-05",
+                                    "marketing_enquiry_method": null,
+                                    "marketing_enquiry_source": null,
+                                    "marketing_gender": "female",
+                                    "marketing_postcode": "5746",
+                                    "name_legal": null,
+                                    "name_salutation": "Emma",
+                                    "name_addressee": "Mrs. Dickinson",
+                                    "system_owner_user": {
+                                      "id": "1",
+                                      "name": "Sample User",
+                                      "first_name": "Sample",
+                                      "last_name": "User",
+                                      "email_address": "sample.user@rexlabs.io"
+                                    },
+                                    "contact_image": null,
+                                    "etag": "10-1630281453",
+                                    "id": "10"
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "price_indication": null,
+                              "enquiry_source": {
+                                "id": "200",
+                                "text": "Internet (Portal)"
+                              },
+                              "interest_level": {
+                                "id": "cold",
+                                "text": "Cold"
+                              },
+                              "id": 9,
+                              "note": "Feedback about the property provided by Queenie",
+                              "contacts": [
+                                {
+                                  "contact": {
+                                    "system_record_state": "active",
+                                    "system_ctime": "1629236530",
+                                    "system_modtime": "1630281679",
+                                    "name": "Queenie Wolf",
+                                    "email_address": "cummerata.wayne@example.org",
+                                    "phone_number": null,
+                                    "fax_number": null,
+                                    "is_dnd": null,
+                                    "type": "person",
+                                    "last_contacted_date": "2021-08-30",
+                                    "name_last": "Wolf",
+                                    "name_first": "Queenie",
+                                    "address_postal": null,
+                                    "address": null,
+                                    "interest_level": "warm",
+                                    "marketing_birthday": "1978-10-16",
+                                    "marketing_enquiry_source": null,
+                                    "marketing_gender": "female",
+                                    "marketing_postcode": null,
+                                    "name_legal": null,
+                                    "name_salutation": null,
+                                    "name_addressee": "Miss Wolf",
+                                    "system_owner_user": {
+                                      "id": "1",
+                                      "name": "Sample User",
+                                      "first_name": "Sample",
+                                      "last_name": "User",
+                                      "email_address": "sample.user@rexlabs.io"
+                                    },
+                                    "contact_image": null,
+                                    "marketing_enquiry_method": null,
+                                    "etag": "13-1630281679",
+                                    "id": "13"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "id": 2
+                      }
+                    ],
+                    "total": 2,
+                    "viewstate_id": null,
+                    "criteria": [
+                      {
+                        "name": "system_record_state",
+                        "value": "active"
+                      }
+                    ],
+                    "order_by": []
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "searchValidateCriteria": {
+        "description": "Validates search criteria based on allowable (searchable) fields. If searchable fields provided, uses this, otherwise limited to non restricted search fields.",
+        "parameters": {
+          "criteria": {
+            "comment": "An array of valid criteria",
+            "type": "array",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "void - will throw exception on invalid field",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Validates search criteria based on allowable (searchable) fields. If searchable fields provided, uses this, otherwise limited to non restricted search fields.",
+          "request": {
+            "parameters": {
+              "criteria": {
+                "required": true,
+                "definition": {
+                  "description": "An array of valid criteria",
+                  "type": "array",
+                  "default": null
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "searchValidateOrderBys": {
+        "description": "Validates orderby based on allowable (orderby) fields. If orderby fields provided, uses this, otherwise limited to non restricted search fields.",
+        "parameters": {
+          "order_bys": {
+            "comment": "An array of valid order bys (field=>direction)",
+            "type": "array",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "void - will throw exception on invalid field",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Validates orderby based on allowable (orderby) fields. If orderby fields provided, uses this, otherwise limited to non restricted search fields.",
+          "request": {
+            "parameters": {
+              "order_bys": {
+                "required": true,
+                "definition": {
+                  "description": "An array of valid order bys (field=>direction)",
+                  "type": "array",
+                  "default": null
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "trash": {
+        "description": "Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system).",
+        "parameters": {
+          "id": {
+            "comment": "The id of the record that should be trashed",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "bool True on success",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system).",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the record that should be trashed.",
+                  "type": "number"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "id": 1
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The result of the trash",
+                "example": {
+                  "result": 1,
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "update": {
+        "description": "Update the record. To remove sub records include the _destroy flag",
+        "parameters": {
+          "data": {
+            "comment": "An array of data to update. Record must exist to be updated",
+            "type": "array",
+            "default_value": null,
+            "required": true
+          },
+          "fields": {
+            "comment": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          },
+          "extra_fields": {
+            "comment": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+            "type": "array",
+            "default_value": [],
+            "required": false
+          }
+        },
+        "returns": "array The record after the update is complete",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Update the record. To remove sub records include the _destroy flag",
+          "request": {
+            "parameters": {
+              "data": {
+                "required": true,
+                "definition": {
+                  "description": "An array of data to set for the feedback record",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "ID of the feedback to update",
+                      "type": "integer",
+                      "nullable": false
+                    },
+                    "date_of": {
+                      "description": "The date the feedback was provided",
+                      "type": "string",
+                      "nullable": false
+                    },
+                    "date_time_start": {
+                      "description": "The start time of the OFI. Only available for 'ofi' feedback type.",
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "date_time_finish": {
+                      "description": "The finish time of the OFI. Only available for 'ofi' feedback type.",
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "listing": {
+                      "description": "The listing the feedback is related to",
+                      "type": "object",
+                      "nullable": true,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "ID of the listing",
+                            "type": "integer",
+                            "nullable": false
+                          }
+                        }
+                      }
+                    },
+                    "project": {
+                      "description": "The project the feedback is related to",
+                      "type": "object",
+                      "nullable": true,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "ID of the project",
+                            "type": "integer",
+                            "nullable": false
+                          }
+                        }
+                      }
+                    },
+                    "project_stage": {
+                      "description": "The project stage the feedback is related to",
+                      "type": "object",
+                      "nullable": true,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "ID of the project stage",
+                            "type": "integer",
+                            "nullable": false
+                          }
+                        }
+                      }
+                    },
+                    "amount_of": {
+                      "description": "Indicated amount price. Only available for 'inspection', 'enquiry', 'offer' and 'followup' feedback types.",
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "price_previous_advertising": {
+                      "description": "The previous listing advertising price. Only available for 'price_reduction' feedback type.",
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "price_previous_match": {
+                      "description": "The previous listing match price. Only available for 'price_reduction' feedback type.",
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "price_new_advertising": {
+                      "description": "The new listing advertising price. Only available for 'price_reduction' feedback type.",
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "price_new_match": {
+                      "description": "The new listing match price. Only available for 'price_reduction' feedback type.",
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "number_of_people": {
+                      "description": "Number of people attending the OFI or number of enquiries received. Only available for 'inspection' and 'enquiry' feedback types.",
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "agent": {
+                      "description": "The agent receiving the feedback",
+                      "type": "object",
+                      "nullable": true,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "ID of the agent",
+                            "type": "integer",
+                            "nullable": false
+                          }
+                        }
+                      }
+                    },
+                    "note": {
+                      "description": "The feedback description",
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "enquiry_source": {
+                      "description": "This field is only available for 'inspection', 'enquiry' and 'followup' feedback types",
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "id": {
+                          "description": "Enquiry source ID (valuelist: enquiry_source)",
+                          "type": "integer",
+                          "nullable": false
+                        }
+                      }
+                    },
+                    "interest_level": {
+                      "description": "This field is only available for 'inspection', 'enquiry' and 'followup' feedback types",
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "id": {
+                          "description": "Interest level ID (valuelist: interest_level)",
+                          "type": "integer",
+                          "nullable": false
+                        }
+                      }
+                    },
+                    "feedback_type": {
+                      "type": "object",
+                      "nullable": false,
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "nullable": false,
+                          "description": "Feedback type ID (valuelist: listing_feedback_type)"
+                        }
+                      }
+                    },
+                    "related": {
+                      "description": "Data related to feedback",
+                      "type": "object",
+                      "properties": {
+                        "feedback_contacts": {
+                          "description": "All contacts that are associated to the feedback. All contacts in individual feedback must be provided here too. This field is not available for 'price_reduction' and 'agent_vendor' feedback types",
+                          "type": "array",
+                          "nullable": true,
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "contact_id": {
+                                "description": "ID of the contact that is associated to the feedback",
+                                "type": "integer",
+                                "nullable": false
+                              }
+                            }
+                          }
+                        },
+                        "feedback_individual": {
+                          "description": "Feedback from individual attendees. This field is available only for 'ofi' feedback type.",
+                          "type": "array",
+                          "nullable": true,
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "contacts": {
+                                "description": "All contacts that provided individual feedback",
+                                "type": "integer",
+                                "nullable": false,
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "contact_id": {
+                                      "description": "ID of the contact that is associated to the individual feedback",
+                                      "type": "integer"
+                                    }
+                                  }
+                                }
+                              },
+                              "enquiry_source_id": {
+                                "description": "Enquiry source ID (valuelist: enquiry_source)",
+                                "type": "integer",
+                                "nullable": false
+                              },
+                              "interest_level_id": {
+                                "description": "Interest level ID (valuelist: interest_level)",
+                                "type": "integer",
+                                "nullable": false
+                              },
+                              "price_indication": {
+                                "description": "The price amount that the attendee indicated",
+                                "type": "decimal",
+                                "nullable": true
+                              },
+                              "note": {
+                                "description": "The description for this individual feedback",
+                                "type": "string",
+                                "nullable": false
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "fields": {
+                "required": false,
+                "definition": {
+                  "description": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+                  "type": "object"
+                }
+              },
+              "extra_fields": {
+                "required": false,
+                "definition": {
+                  "description": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                  "type": "object"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "data": {
+                  "id": 1,
+                  "date_of": "2021-10-26",
+                  "date_time_start": "10:30:00",
+                  "date_time_finish": "11:00:00",
+                  "listing": {
+                    "id": 1
+                  },
+                  "project": null,
+                  "project_stage": null,
+                  "number_of_people": 2,
+                  "agent": {
+                    "id": "1"
+                  },
+                  "enquiry_source": {
+                    "id": "189"
+                  },
+                  "feedback_type": {
+                    "id": "ofi"
+                  },
+                  "related": {
+                    "feedback_contacts": [
+                      {
+                        "contact_id": 1
+                      },
+                      {
+                        "contact_id": 2
+                      }
+                    ],
+                    "feedback_individual": [
+                      {
+                        "contacts": [
+                          {
+                            "contact_id": "2"
+                          }
+                        ],
+                        "enquiry_source_id": "189",
+                        "interest_level_id": "hot",
+                        "price_indication": 370000,
+                        "note": "Feedback about the property provided by Emma"
+                      },
+                      {
+                        "contacts": [
+                          {
+                            "contact_id": "3"
+                          }
+                        ],
+                        "enquiry_source_id": "200",
+                        "interest_level_id": "cold",
+                        "price_indication": null,
+                        "note": "Feedback about the property provided by Queenie"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "The record after the update is complete",
+                "example": {
+                  "result": {
+                    "system_record_state": "active",
+                    "system_ctime": 1635195074,
+                    "system_modtime": 1635198430,
+                    "system_approval_status_time": 1635195076,
+                    "date_of": "2021-10-26",
+                    "date_time_start": "10:30:00",
+                    "date_time_finish": "11:00:00",
+                    "date_finish": null,
+                    "amount_of": null,
+                    "number_of_people": "2",
+                    "price_previous_match": null,
+                    "price_previous_advertising": null,
+                    "price_new_match": null,
+                    "price_new_advertising": null,
+                    "has_individual_feedback": null,
+                    "etag": "1-1635198430",
+                    "system_modified_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "system_created_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io"
+                    },
+                    "project": null,
+                    "project_stage": null,
+                    "listing": {
+                      "id": 1,
+                      "listing_category_name": null,
+                      "listing_agent_1": {
+                        "id": "1",
+                        "name": "Sample User",
+                        "first_name": "Sample",
+                        "last_name": "User",
+                        "email_address": "sample.user@rexlabs.io",
+                        "phone_direct": null,
+                        "phone_mobile": null,
+                        "position": null,
+                        "is_account_user": "1",
+                        "profile_image": null
+                      },
+                      "listing_agent_2": null,
+                      "system_listing_state": "current",
+                      "price_advertise_as": "$373,600",
+                      "available_from_date": null,
+                      "meta_other_features": null,
+                      "state_value_price": null,
+                      "state_date": null,
+                      "listing_category": {
+                        "id": "residential_sale",
+                        "text": "Residential Sale"
+                      },
+                      "listing_subcategory_1": null,
+                      "property": {
+                        "system_search_key": "2 / 265 Roberts Road, Subiaco WA 6008",
+                        "adr_longitude": "-31.9458237",
+                        "adr_latitude": "115.8273202",
+                        "adr_unit_number": "2",
+                        "adr_street_number": "265",
+                        "adr_street_name": "Roberts Road",
+                        "adr_suburb_or_town": "Subiaco",
+                        "adr_locality": null,
+                        "adr_state_or_region": "WA",
+                        "adr_postcode": "6008",
+                        "adr_country": "aus",
+                        "adr_estate_name": null,
+                        "adr_estate_stage": null,
+                        "title_number": "HL12345",
+                        "system_owner_user": {
+                          "id": "1",
+                          "name": "Sample User",
+                          "first_name": "Sample",
+                          "last_name": "User",
+                          "email_address": "sample.user@rexlabs.io"
+                        },
+                        "adr_building": null,
+                        "property_category": {
+                          "id": "residential",
+                          "text": "Residential"
+                        },
+                        "property_image": null,
+                        "etag": "1-1558607501",
+                        "id": 1
+                      },
+                      "listing_primary_image": null,
+                      "location": {
+                        "id": "1",
+                        "text": "Sample Agency"
+                      },
+                      "project_stage": null,
+                      "system_owner_user": {
+                        "id": "1",
+                        "name": "Sample User",
+                        "first_name": "Sample",
+                        "last_name": "User",
+                        "email_address": "sample.user@rexlabs.io"
+                      },
+                      "legal_solicitor_contact": null,
+                      "legal_solicitor": null,
+                      "related": {
+                        "contact_reln_listing": [
+                          {
+                            "do_not_contact": null,
+                            "id": 2,
+                            "reln_type": {
+                              "id": "owner",
+                              "text": "Listing Owner"
+                            },
+                            "contact": {
+                              "system_record_state": "active",
+                              "system_ctime": "1556241173",
+                              "system_modtime": "1556241173",
+                              "name": "Will Wyman",
+                              "email_address": "emie74@breitenberg.com",
+                              "phone_number": "(03) 5251 71194",
+                              "fax_number": null,
+                              "is_dnd": null,
+                              "type": "person",
+                              "last_contacted_date": "2021-10-23",
+                              "name_last": "Wyman",
+                              "name_first": "Will",
+                              "address_postal": "385C Bartell Alleyway\nConnland, SA 2668",
+                              "address": "Level 5 671 Kohler Ridge\nWest Joaquinport, ACT 2665",
+                              "interest_level": "warm",
+                              "marketing_birthday": "1984-02-07",
+                              "marketing_enquiry_source": "Internet",
+                              "marketing_gender": "male",
+                              "marketing_postcode": "1198",
+                              "name_legal": null,
+                              "name_salutation": "Will",
+                              "name_addressee": null,
+                              "system_owner_user": {
+                                "id": "1",
+                                "name": "Sample User",
+                                "first_name": "Sample",
+                                "last_name": "User",
+                                "email_address": "sample.user@rexlabs.io"
+                              },
+                              "contact_image": null,
+                              "marketing_enquiry_method": null,
+                              "etag": "2-1556241173",
+                              "id": "2"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "agent": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io",
+                      "phone_direct": null,
+                      "phone_mobile": null,
+                      "position": null,
+                      "is_account_user": "1",
+                      "profile_image": null
+                    },
+                    "system_approval_status_user": {
+                      "id": "1",
+                      "name": "Sample User",
+                      "first_name": "Sample",
+                      "last_name": "User",
+                      "email_address": "sample.user@rexlabs.io",
+                      "phone_direct": null,
+                      "phone_mobile": null,
+                      "position": null,
+                      "is_account_user": "1",
+                      "profile_image": null
+                    },
+                    "feedback_type": {
+                      "id": "ofi",
+                      "text": "OFI"
+                    },
+                    "enquiry_source": {
+                      "id": "189",
+                      "text": "Internet (Our Website)"
+                    },
+                    "system_approval_status": {
+                      "id": "pending",
+                      "text": "Pending"
+                    },
+                    "interest_level": null,
+                    "_security_user_rights": [
+                      "read",
+                      "update",
+                      "archive",
+                      "trash",
+                      "purge",
+                      "perms"
+                    ],
+                    "note": null,
+                    "related": {
+                      "feedback_contacts": [
+                        {
+                          "id": "874",
+                          "contact": {
+                            "system_record_state": "active",
+                            "system_ctime": "1556241174",
+                            "system_modtime": "1556241174",
+                            "name": "Emma Dickinson",
+                            "email_address": "laverne.volkman@gmail.com.au",
+                            "phone_number": "(02) 3536 6439",
+                            "fax_number": null,
+                            "is_dnd": null,
+                            "type": "person",
+                            "last_contacted_date": "2019-04-26",
+                            "name_last": "Dickinson",
+                            "name_first": "Emma",
+                            "address_postal": "09B Ray Little\nSouth May, NSW 2673",
+                            "address": "600 Lowe Road\nSouth Demariohaven, VIC 7118",
+                            "interest_level": "cold",
+                            "marketing_birthday": "1973-01-05",
+                            "marketing_enquiry_method": null,
+                            "marketing_enquiry_source": null,
+                            "marketing_gender": "female",
+                            "marketing_postcode": "5746",
+                            "name_legal": null,
+                            "name_salutation": "Emma",
+                            "name_addressee": "Mrs. Dickinson",
+                            "system_owner_user": {
+                              "id": "1",
+                              "name": "Sample User",
+                              "first_name": "Sample",
+                              "last_name": "User",
+                              "email_address": "sample.user@rexlabs.io"
+                            },
+                            "contact_image": null,
+                            "etag": "10-1630281453",
+                            "id": "10"
+                          }
+                        },
+                        {
+                          "id": "873",
+                          "contact": {
+                            "system_record_state": "active",
+                            "system_ctime": "1629236530",
+                            "system_modtime": "1630281679",
+                            "name": "Queenie Wolf",
+                            "email_address": "cummerata.wayne@example.org",
+                            "phone_number": null,
+                            "fax_number": null,
+                            "is_dnd": null,
+                            "type": "person",
+                            "last_contacted_date": "2021-08-30",
+                            "name_last": "Wolf",
+                            "name_first": "Queenie",
+                            "address_postal": null,
+                            "address": null,
+                            "interest_level": "warm",
+                            "marketing_birthday": "1978-10-16",
+                            "marketing_enquiry_source": null,
+                            "marketing_gender": "female",
+                            "marketing_postcode": null,
+                            "name_legal": null,
+                            "name_salutation": null,
+                            "name_addressee": "Miss Wolf",
+                            "system_owner_user": {
+                              "id": "1",
+                              "name": "Sample User",
+                              "first_name": "Sample",
+                              "last_name": "User",
+                              "email_address": "sample.user@rexlabs.io"
+                            },
+                            "contact_image": null,
+                            "marketing_enquiry_method": null,
+                            "etag": "13-1630281679",
+                            "id": "13"
+                          }
+                        }
+                      ],
+                      "feedback_individual": [
+                        {
+                          "price_indication": 370000,
+                          "enquiry_source": {
+                            "id": "189",
+                            "text": "Internet (Our Website)"
+                          },
+                          "interest_level": {
+                            "id": "hot",
+                            "text": "Hot"
+                          },
+                          "id": 7,
+                          "note": "Feedback about the property provided by Emma",
+                          "contacts": [
+                            {
+                              "contact": {
+                                "system_record_state": "active",
+                                "system_ctime": "1556241174",
+                                "system_modtime": "1556241174",
+                                "name": "Emma Dickinson",
+                                "email_address": "laverne.volkman@gmail.com.au",
+                                "phone_number": "(02) 3536 6439",
+                                "fax_number": null,
+                                "is_dnd": null,
+                                "type": "person",
+                                "last_contacted_date": "2019-04-26",
+                                "name_last": "Dickinson",
+                                "name_first": "Emma",
+                                "address_postal": "09B Ray Little\nSouth May, NSW 2673",
+                                "address": "600 Lowe Road\nSouth Demariohaven, VIC 7118",
+                                "interest_level": "cold",
+                                "marketing_birthday": "1973-01-05",
+                                "marketing_enquiry_method": null,
+                                "marketing_enquiry_source": null,
+                                "marketing_gender": "female",
+                                "marketing_postcode": "5746",
+                                "name_legal": null,
+                                "name_salutation": "Emma",
+                                "name_addressee": "Mrs. Dickinson",
+                                "system_owner_user": {
+                                  "id": "1",
+                                  "name": "Sample User",
+                                  "first_name": "Sample",
+                                  "last_name": "User",
+                                  "email_address": "sample.user@rexlabs.io"
+                                },
+                                "contact_image": null,
+                                "etag": "10-1630281453",
+                                "id": "10"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "price_indication": null,
+                          "enquiry_source": {
+                            "id": "200",
+                            "text": "Internet (Portal)"
+                          },
+                          "interest_level": {
+                            "id": "cold",
+                            "text": "Cold"
+                          },
+                          "id": 9,
+                          "note": "Feedback about the property provided by Queenie",
+                          "contacts": [
+                            {
+                              "contact": {
+                                "system_record_state": "active",
+                                "system_ctime": "1629236530",
+                                "system_modtime": "1630281679",
+                                "name": "Queenie Wolf",
+                                "email_address": "cummerata.wayne@example.org",
+                                "phone_number": null,
+                                "fax_number": null,
+                                "is_dnd": null,
+                                "type": "person",
+                                "last_contacted_date": "2021-08-30",
+                                "name_last": "Wolf",
+                                "name_first": "Queenie",
+                                "address_postal": null,
+                                "address": null,
+                                "interest_level": "warm",
+                                "marketing_birthday": "1978-10-16",
+                                "marketing_enquiry_source": null,
+                                "marketing_gender": "female",
+                                "marketing_postcode": null,
+                                "name_legal": null,
+                                "name_salutation": null,
+                                "name_addressee": "Miss Wolf",
+                                "system_owner_user": {
+                                  "id": "1",
+                                  "name": "Sample User",
+                                  "first_name": "Sample",
+                                  "last_name": "User",
+                                  "email_address": "sample.user@rexlabs.io"
+                                },
+                                "contact_image": null,
+                                "marketing_enquiry_method": null,
+                                "etag": "13-1630281679",
+                                "id": "13"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "id": 1
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "updateApprovalStatus": {
+        "description": "Change the state of the feedback entry",
+        "parameters": {
+          "id": {
+            "comment": "The id of the feedback entry to update",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          },
+          "status": {
+            "comment": "(\"approved\",\"pending\",\"rejected\")",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "array A read after the update",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Change the state of the feedback entry",
+          "request": {
+            "parameters": {
+              "id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the feedback entry to update",
+                  "type": "int",
+                  "default": null
+                }
+              },
+              "status": {
+                "required": true,
+                "definition": {
+                  "description": "(\"approved\",\"pending\",\"rejected\")",
+                  "type": "string",
+                  "default": null
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      }
+    },
+    "is_internal": false
+  }
+}
