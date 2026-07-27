@@ -26,7 +26,17 @@ import * as path from "path";
 const API_BASE_URL = process.env.REX_API_BASE_URL ?? "https://api.rexsoftware.com";
 
 /** Services to scrape. Extend this list to add more Rex models. */
-const SERVICES = ["Listings", "Properties", "AdminWebhooks", "Feedback", "Contacts"] as const;
+const SERVICES = [
+  "Listings",
+  "Properties",
+  "AdminWebhooks",
+  "Feedback",
+  "Contacts",
+  // The only route to `enquiry_source`, whose valuelist is declared
+  // `source: "remote"` — its permitted values are per-account and exist
+  // nowhere in the spec, so they can only be read at runtime.
+  "AdminValueLists",
+] as const;
 
 const rootDir = path.join(import.meta.dir, "..");
 const outDir = path.join(rootDir, "specs", "rex");
@@ -110,11 +120,16 @@ async function main(): Promise<void> {
     );
     write(`${service}.describe.json`, { result: describe });
 
-    const describeModel = await rexCall<unknown>(
-      `${service}::describeModel`,
-      {},
-      token,
-    );
+    // Only Rex's *model* services expose `describeModel`; utility services
+    // like AdminValueLists answer 405. A missing query surface is a fact
+    // about the service, not a scrape failure.
+    let describeModel: unknown;
+    try {
+      describeModel = await rexCall<unknown>(`${service}::describeModel`, {}, token);
+    } catch {
+      console.log(`  no describeModel (not a searchable model) — skipping`);
+      continue;
+    }
     write(`${service}.describeModel.json`, { result: describeModel });
   }
 

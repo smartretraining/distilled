@@ -9,6 +9,7 @@ export const ContactsAutocompleteInput =
     limit_to_contact_type: Schema.optional(Schema.Unknown),
     limit: Schema.optional(Schema.Number),
     return_viewstate: Schema.optional(Schema.Boolean),
+    filters: Schema.optional(Schema.Unknown),
   }).pipe(T.Http({ method: "POST", path: "/v1/rex/Contacts::autocomplete" }));
 export type ContactsAutocompleteInput = typeof ContactsAutocompleteInput.Type;
 

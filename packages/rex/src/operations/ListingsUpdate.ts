@@ -47,7 +47,7 @@ export const ListingsUpdateInput = /*@__PURE__*/ /*#__PURE__*/ Schema.Struct({
     parent_listing_id: Schema.optional(Schema.NullOr(Schema.Number)),
     new_home: Schema.optional(Schema.NullOr(Schema.Boolean)),
     let_agreed: Schema.optional(Schema.NullOr(Schema.Boolean)),
-    comm_structure_id: Schema.optional(Schema.NullOr(Schema.Number)),
+    comm_structure_id: Schema.optional(Schema.NullOr(Schema.String)),
     comm_amount_fixed: Schema.optional(Schema.NullOr(Schema.Number)),
     comm_amount_percentage: Schema.optional(Schema.NullOr(Schema.Number)),
     comm_is_inc_tax: Schema.optional(Schema.NullOr(Schema.Boolean)),

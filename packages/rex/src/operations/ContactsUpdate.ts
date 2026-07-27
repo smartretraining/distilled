@@ -11,14 +11,14 @@ export const ContactsUpdateInput = /*@__PURE__*/ /*#__PURE__*/ Schema.Struct({
     marketing_enquiry_method: Schema.optional(
       Schema.NullOr(
         Schema.Struct({
-          id: Schema.optional(Schema.NullOr(Schema.Number)),
+          id: Schema.optional(Schema.NullOr(Schema.String)),
         }),
       ),
     ),
     marketing_enquiry_source: Schema.optional(
       Schema.NullOr(
         Schema.Struct({
-          id: Schema.optional(Schema.NullOr(Schema.Number)),
+          id: Schema.optional(Schema.NullOr(Schema.String)),
         }),
       ),
     ),
@@ -28,7 +28,7 @@ export const ContactsUpdateInput = /*@__PURE__*/ /*#__PURE__*/ Schema.Struct({
     company_abn: Schema.optional(Schema.NullOr(Schema.String)),
     company_size_id: Schema.optional(
       Schema.Struct({
-        id: Schema.optional(Schema.NullOr(Schema.Number)),
+        id: Schema.optional(Schema.NullOr(Schema.String)),
       }),
     ),
     website_url: Schema.optional(Schema.NullOr(Schema.String)),

@@ -150,6 +150,14 @@ function mapType(rexType: string | undefined): string | undefined {
   }
 }
 
+/**
+ * Rex marks valuelist-backed fields in prose: `"… (valuelist: enquiry_source)"`.
+ * It is the only machine-readable signal that a field carries a valuelist id.
+ */
+function isValuelistRef(description: string | undefined): boolean {
+  return description !== undefined && /\(valuelist:\s*[\w-]+\)/.test(description);
+}
+
 /** Convert a Rex parameter/field definition into a JSON Schema node. */
 function convertDefinition(def: RexDefinition | undefined): JsonSchema {
   if (def === undefined || def === null || typeof def !== "object") {
@@ -165,6 +173,13 @@ function convertDefinition(def: RexDefinition | undefined): JsonSchema {
   }
   if (Array.isArray(def.enum) && def.enum.length > 0) schema.enum = def.enum;
 
+  // Valuelist ids are always strings on the wire — every one of the 194
+  // `{id, text}` nodes across Rex's own response examples has a string `id`,
+  // mixing slugs (`"warm"`, `"residential_sale"`) with numeric strings
+  // (`"189"`). Rex nonetheless declares a third of them `integer`, which
+  // generated `Schema.Number` and rejected the real values.
+  if (isValuelistRef(def.description)) schema.type = "string";
+
   if (def.properties && typeof def.properties === "object") {
     schema.type = "object";
     schema.properties = {};
@@ -172,9 +187,23 @@ function convertDefinition(def: RexDefinition | undefined): JsonSchema {
       schema.properties[k] = convertDefinition(v);
     }
   }
+
+  // Rex overloads `items`. On a node it declares `type: "object"`, `items` is
+  // NOT an element schema — it carries that object's own shape, and Rex's own
+  // documented examples send a bare object (`listing: {id: 1}`, never
+  // `listing: [{id: 1}]`). Treating it as an array made every such request
+  // fail. Everywhere else `items` really does mean array — including nodes
+  // whose declared type is junk (`related.feedback_individual[].contacts` is
+  // declared `integer` but is plainly a list), so `items` stays the stronger
+  // signal and only an explicit `object` overrides it.
   if (def.items !== undefined) {
-    schema.type = "array";
-    schema.items = convertDefinition(def.items);
+    if (def.type === "object") {
+      schema.type = "object";
+      schema.properties = { ...schema.properties, ...convertDefinition(def.items).properties };
+    } else {
+      schema.type = "array";
+      schema.items = convertDefinition(def.items);
+    }
   }
   return schema;
 }
@@ -218,6 +247,12 @@ function inferSchema(value: unknown): JsonSchema {
   }
 }
 
+/** Does this method take Rex's `return_id` flag, which switches its response shape? */
+function acceptsReturnId(openapi: RexOpenApiBlock): boolean {
+  const params = openapi.request?.parameters;
+  return !!params && !Array.isArray(params) && "return_id" in params;
+}
+
 /**
  * Pull a response schema out of a method's `openapi.response.examples`.
  * Examples are wrapped in Rex's `{ result, error }` envelope — we infer
@@ -228,6 +263,15 @@ function inferResponseSchema(openapi: RexOpenApiBlock): {
   schema: JsonSchema;
   fromExample: boolean;
 } {
+  // Methods taking `return_id` return EITHER a bare id OR the whole record,
+  // chosen at call time by that flag — a union OpenAPI can't express and the
+  // examples only ever show the record half of. Inferring the record struct
+  // made `return_id: true` (the cheap call, and the one the idempotency
+  // design needs) fail to decode, so these stay permissive.
+  if (acceptsReturnId(openapi)) {
+    return { schema: {}, fromExample: false };
+  }
+
   const examples = openapi.response?.examples;
   if (examples && !Array.isArray(examples)) {
     for (const ex of Object.values(examples)) {
