@@ -11,29 +11,23 @@ export const FeedbackUpdateInput = /*@__PURE__*/ /*#__PURE__*/ Schema.Struct({
     date_time_finish: Schema.optional(Schema.NullOr(Schema.String)),
     listing: Schema.optional(
       Schema.NullOr(
-        Schema.Array(
-          Schema.Struct({
-            id: Schema.optional(Schema.Number),
-          }),
-        ),
+        Schema.Struct({
+          id: Schema.optional(Schema.Number),
+        }),
       ),
     ),
     project: Schema.optional(
       Schema.NullOr(
-        Schema.Array(
-          Schema.Struct({
-            id: Schema.optional(Schema.Number),
-          }),
-        ),
+        Schema.Struct({
+          id: Schema.optional(Schema.Number),
+        }),
       ),
     ),
     project_stage: Schema.optional(
       Schema.NullOr(
-        Schema.Array(
-          Schema.Struct({
-            id: Schema.optional(Schema.Number),
-          }),
-        ),
+        Schema.Struct({
+          id: Schema.optional(Schema.Number),
+        }),
       ),
     ),
     amount_of: Schema.optional(Schema.NullOr(Schema.Number)),
@@ -44,25 +38,23 @@ export const FeedbackUpdateInput = /*@__PURE__*/ /*#__PURE__*/ Schema.Struct({
     number_of_people: Schema.optional(Schema.NullOr(Schema.Number)),
     agent: Schema.optional(
       Schema.NullOr(
-        Schema.Array(
-          Schema.Struct({
-            id: Schema.optional(Schema.Number),
-          }),
-        ),
+        Schema.Struct({
+          id: Schema.optional(Schema.Number),
+        }),
       ),
     ),
     note: Schema.optional(Schema.NullOr(Schema.String)),
     enquiry_source: Schema.optional(
       Schema.NullOr(
         Schema.Struct({
-          id: Schema.optional(Schema.Number),
+          id: Schema.optional(Schema.String),
         }),
       ),
     ),
     interest_level: Schema.optional(
       Schema.NullOr(
         Schema.Struct({
-          id: Schema.optional(Schema.Number),
+          id: Schema.optional(Schema.String),
         }),
       ),
     ),
@@ -93,8 +85,8 @@ export const FeedbackUpdateInput = /*@__PURE__*/ /*#__PURE__*/ Schema.Struct({
                     }),
                   ),
                 ),
-                enquiry_source_id: Schema.optional(Schema.Number),
-                interest_level_id: Schema.optional(Schema.Number),
+                enquiry_source_id: Schema.optional(Schema.String),
+                interest_level_id: Schema.optional(Schema.String),
                 price_indication: Schema.optional(
                   Schema.NullOr(Schema.Unknown),
                 ),

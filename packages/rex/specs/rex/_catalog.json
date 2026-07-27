@@ -526,6 +526,11 @@
       "service_group": null
     },
     {
+      "name": "ContactContracts",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
       "name": "ContactIdentityVerifications",
       "has_openapi_docs": false,
       "service_group": null
@@ -563,6 +568,11 @@
     {
       "name": "Contracts",
       "has_openapi_docs": true,
+      "service_group": null
+    },
+    {
+      "name": "ContractsList",
+      "has_openapi_docs": false,
       "service_group": null
     },
     {
@@ -607,6 +617,11 @@
     },
     {
       "name": "EmailDropbox",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "EmailHealth",
       "has_openapi_docs": false,
       "service_group": null
     },
@@ -797,6 +812,11 @@
     },
     {
       "name": "NewsletterReports",
+      "has_openapi_docs": false,
+      "service_group": null
+    },
+    {
+      "name": "NewsletterSends",
       "has_openapi_docs": false,
       "service_group": null
     },

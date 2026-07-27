@@ -78,6 +78,12 @@
             "type": "bool",
             "default_value": false,
             "required": false
+          },
+          "filters": {
+            "comment": "Optional ownership filter of shape ['assigned_to_user' => [<user_id>, ...]]; empty/absent = no ownership restriction (CRM-13066)",
+            "type": "array|null",
+            "default_value": null,
+            "required": false
           }
         },
         "returns": "array|string|null An array containing contact stubs (same as that returned by the search method) or a viewstate id",
@@ -117,6 +123,14 @@
                   "description": "True to get a viewstate id rather than a set of records. Setting limit to a false like value will cause all matching records to be included in the viewstate regardless of limit parameter",
                   "type": "bool",
                   "default": false
+                }
+              },
+              "filters": {
+                "required": false,
+                "definition": {
+                  "description": "Optional ownership filter of shape ['assigned_to_user' => [<user_id>, ...]]; empty/absent = no ownership restriction (CRM-13066)",
+                  "type": "array|null",
+                  "default": null
                 }
               }
             },

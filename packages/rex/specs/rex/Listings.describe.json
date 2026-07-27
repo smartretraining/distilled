@@ -3255,6 +3255,23 @@
           }
         }
       },
+      "isGhostSession": {
+        "description": "True when the current session is a \"ghost\" account-user — i.e. a group-app /\nhead-office user who logged into this (child) account via switchToAccount\nrather than being a real member of it. This is a session-TYPE predicate, NOT\nan authorisation check: a ghost account_users row is only ever created once\nthe user's group-app visibility privilege (login_to_sub_accounts on a parent,\nor an account-group privilege-set assignment) has been enforced upstream at\ntoken creation, so a ghost session is proof that privilege already held — do\nnot treat this as a substitute for a privilege check. Used to grant such users\nseat-free access to AI Prospecting (CRM-13865).",
+        "parameters": [],
+        "returns": "bool ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "True when the current session is a \"ghost\" account-user — i.e. a group-app /\nhead-office user who logged into this (child) account via switchToAccount\nrather than being a real member of it. This is a session-TYPE predicate, NOT\nan authorisation check: a ghost account_users row is only ever created once\nthe user's group-app visibility privilege (login_to_sub_accounts on a parent,\nor an account-group privilege-set assignment) has been enforced upstream at\ntoken creation, so a ghost session is proof that privilege already held — do\nnot treat this as a substitute for a privilege check. Used to grant such users\nseat-free access to AI Prospecting (CRM-13865).",
+          "request": {
+            "parameters": [],
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
       "link": {
         "description": "Link one listing to another\nOnly applicable for commercial listings\nNeeded for reaxml uploads, where same commercial listing can be sale and rental at the same time",
         "parameters": {

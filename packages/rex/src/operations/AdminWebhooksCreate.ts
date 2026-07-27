@@ -12,7 +12,7 @@ export type AdminWebhooksCreateInput = typeof AdminWebhooksCreateInput.Type;
 
 // Output Schema
 export const AdminWebhooksCreateOutput =
-  /*@__PURE__*/ /*#__PURE__*/ Schema.NullOr(Schema.Array(Schema.Unknown));
+  /*@__PURE__*/ /*#__PURE__*/ Schema.Unknown;
 export type AdminWebhooksCreateOutput = typeof AdminWebhooksCreateOutput.Type;
 
 // The operation
