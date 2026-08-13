@@ -4,8 +4,12 @@ name: release-smartretraining
 #
 # VERSIONING — the one-version pattern, matching how alchemy-run/actions
 # releases the upstream packages: every @smartretraining package shares a
-# single version line and ships together under one `v<version>` tag. The
-# version lives in each package.json and is bumped in a normal reviewed
+# single version line and ships together. Tags and GitHub Releases are
+# per-package (`smartretraining/rex-effect@0.4.0`) so each has its own
+# release history and so nothing collides with the 113 `v*` tags this fork
+# inherited from upstream.
+#
+# The version lives in each package.json and is bumped in a normal reviewed
 # commit, so a release is always something a human approved. The workflow
 # refuses to run if the packages disagree, or if the version is already on
 # npm.
@@ -104,7 +108,6 @@ jobs:
             fi
           done
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "tag=v$version" >> "$GITHUB_OUTPUT"
 
       - name: Refuse to republish an existing version
         run: |
@@ -159,24 +162,44 @@ jobs:
             (cd "$dir" && npm publish --access public)
           done
 
-      - name: Tag and create the GitHub Release
+      # One tag and one Release PER PACKAGE, e.g.
+      # `smartretraining/rex-effect@0.4.0`.
+      #
+      # A bare `v<version>` tag is not usable here: this repo is a fork of
+      # alchemy-run/distilled and inherited 113 upstream `v*` tags, so
+      # `v0.4.0`, `v0.5.0`, `v0.6.0` and friends already point at unrelated
+      # upstream releases. Namespacing by package avoids that collision
+      # entirely, and gives each package its own release history — someone
+      # watching reapit-effect is not shown rex's notes.
+      - name: Tag and create a GitHub Release per package
         if: ${{ !inputs.dry-run }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="${{ steps.version.outputs.tag }}"
-          git tag "$tag"
-          git push origin "$tag"
+          version="${{ steps.version.outputs.version }}"
 
-          notes=""
           for dir in $PACKAGES; do
             name=$(node -p "require('./$dir/package.json').name")
-            notes="$notes- \`$name@${{ steps.version.outputs.version }}\`"$'\n'
+            # @smartretraining/rex-effect -> smartretraining/rex-effect
+            slug="${name#@}"
+            tag="$slug@$version"
+
+            if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+              echo "::error::Tag $tag already exists."
+              exit 1
+            fi
+
+            git tag "$tag"
+            git push origin "$tag"
+
+            # Notes run from this package's previous tag, so each release
+            # lists only its own changes.
+            previous=$(git tag --list "$slug@*" --sort=-v:refname | sed -n '2p')
+            args=(--title "$name $version" --generate-notes)
+            [ -n "$previous" ] && args+=(--notes-start-tag "$previous")
+
+            gh release create "$tag" "${args[@]}" \
+              --notes "Published to npm with trusted publishing (OIDC) — the tarball carries a provenance attestation linking it to this commit and workflow run.
+
+          https://www.npmjs.com/package/$name/v/$version"
           done
-
-          gh release create "$tag" \
-            --title "$tag" \
-            --notes "Published to npm with trusted publishing (OIDC) — every tarball carries a provenance attestation linking it to this commit and workflow run.
-
-          $notes" \
-            --generate-notes
