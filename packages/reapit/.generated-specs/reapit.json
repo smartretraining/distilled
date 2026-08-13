@@ -4653,6 +4653,30 @@
       },
       "traits": {}
     },
+    "com.reapit.agentbox#GetListingsResponseListingsItemAuctionVenueDetails": {
+      "type": "structure",
+      "members": {
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#required": {}
+          }
+        },
+        "address": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#required": {}
+          }
+        },
+        "phone": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#required": {}
+          }
+        }
+      },
+      "traits": {}
+    },
     "com.reapit.agentbox#GetListingsResponseListingsItem": {
       "type": "structure",
       "members": {
@@ -4759,10 +4783,7 @@
           }
         },
         "availableDate": {
-          "target": "smithy.api#String",
-          "traits": {
-            "smithy.api#required": {}
-          }
+          "target": "smithy.api#String"
         },
         "onMarketDate": {
           "target": "smithy.api#String",
@@ -4777,16 +4798,10 @@
           }
         },
         "leasedDate": {
-          "target": "smithy.api#String",
-          "traits": {
-            "smithy.api#required": {}
-          }
+          "target": "smithy.api#String"
         },
         "bond": {
-          "target": "smithy.api#String",
-          "traits": {
-            "smithy.api#required": {}
-          }
+          "target": "smithy.api#String"
         },
         "displayPrice": {
           "target": "smithy.api#String",
@@ -4841,6 +4856,9 @@
           "traits": {
             "smithy.api#required": {}
           }
+        },
+        "auctionVenueDetails": {
+          "target": "com.reapit.agentbox#GetListingsResponseListingsItemAuctionVenueDetails"
         }
       },
       "traits": {}
@@ -7361,10 +7379,40 @@
       },
       "traits": {}
     },
+    "com.reapit.agentbox#GetSearchRequirementsResponseSearchRequirementsItemSuburbsItem": {
+      "type": "structure",
+      "members": {
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#required": {}
+          }
+        },
+        "postcode": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#required": {}
+          }
+        },
+        "state": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#required": {}
+          }
+        },
+        "country": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#required": {}
+          }
+        }
+      },
+      "traits": {}
+    },
     "com.reapit.agentbox#GetSearchRequirementsResponseSearchRequirementsItemSuburbsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Document"
+        "target": "com.reapit.agentbox#GetSearchRequirementsResponseSearchRequirementsItemSuburbsItem"
       },
       "traits": {}
     },
@@ -8830,10 +8878,22 @@
         "smithy.api#input": {}
       }
     },
+    "com.reapit.agentbox#GetStaffResponseStaffMembersItemWebDisplayItem": {
+      "type": "structure",
+      "members": {
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#required": {}
+          }
+        }
+      },
+      "traits": {}
+    },
     "com.reapit.agentbox#GetStaffResponseStaffMembersItemWebDisplayList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Document"
+        "target": "com.reapit.agentbox#GetStaffResponseStaffMembersItemWebDisplayItem"
       },
       "traits": {}
     },

@@ -75,10 +75,31 @@ const stampPagination = (model: any): string => {
   return `paginated ${paginated.length} operation(s): ${paginated.join(", ")}`;
 };
 
+/**
+ * Reapit's filters are bracketed query parameters — `filter[memberId]`,
+ * `filter[type]`, `filter[query]`. Those brackets are not legal in a Smithy
+ * member name, so the converter sanitises them to `filter_memberId_`, which
+ * then surfaces verbatim on the TypeScript call site:
+ *
+ *     getListings({ filter_memberId_: "42" })   // before
+ *     getListings({ filterMemberId: "42" })     // after
+ *
+ * The wire name is carried separately on the member's `smithy.api#httpQuery`
+ * trait, so renaming the TS-facing name changes nothing about the request —
+ * `filter[memberId]` is still what goes over the wire.
+ */
+const readableMemberName = (name: string): string => {
+  const match = /^([A-Za-z0-9]+)_(.+)_$/.exec(name);
+  if (!match) return name;
+  const [, head, inner] = match;
+  return `${head}${inner![0]!.toUpperCase()}${inner!.slice(1)}`;
+};
+
 /** Reapit's provider spec for the shared smithy→SDK compiler. */
 const reapitSpec: SdkSpec = {
   nullableTrait: NULLABLE_TRAIT,
   errorMatchersTrait: ERROR_MATCHERS_TRAIT,
+  memberName: readableMemberName,
 
   extraBindings: [
     {

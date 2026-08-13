@@ -3025,6 +3025,25 @@
                               "otherOutgoings",
                               "totalOutgoings"
                             ]
+                          },
+                          "auctionVenueDetails": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "address": {
+                                "type": "string"
+                              },
+                              "phone": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "name",
+                              "address",
+                              "phone"
+                            ]
                           }
                         },
                         "required": [
@@ -3045,11 +3064,8 @@
                           "timezone",
                           "auctionVenue",
                           "eoiClosingDate",
-                          "availableDate",
                           "onMarketDate",
                           "expectedOnMarketDate",
-                          "leasedDate",
-                          "bond",
                           "displayPrice",
                           "soldDate",
                           "property",
@@ -4809,7 +4825,29 @@
                           },
                           "suburbs": {
                             "type": "array",
-                            "items": {}
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "postcode": {
+                                  "type": "string"
+                                },
+                                "state": {
+                                  "type": "string"
+                                },
+                                "country": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "postcode",
+                                "state",
+                                "country"
+                              ]
+                            }
                           },
                           "surroundingSuburbs": {
                             "type": "boolean"
@@ -5590,7 +5628,17 @@
                           },
                           "webDisplay": {
                             "type": "array",
-                            "items": {}
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "name"
+                              ]
+                            }
                           },
                           "firstCreated": {
                             "type": "string"

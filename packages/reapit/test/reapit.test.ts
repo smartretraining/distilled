@@ -55,6 +55,40 @@ describe("Reapit (live)", () => {
     });
   });
 
+  describe("shape variation", () => {
+    // Reapit fills most absent values with "" rather than omitting the key,
+    // so schemas built from a handful of records look deceptively uniform.
+    // Sale and Lease listings genuinely diverge (`bond`/`leasedDate`/
+    // `availableDate` are Lease-side, `auctionVenueDetails` auction-side).
+    // A schema that marked those required would decode one of these and
+    // fail the other.
+    it("decodes both Sale and Lease listings", async () => {
+      const [sale, lease] = await Promise.all([
+        runEffect(getListings({ limit: 25, filterType: "Sale" })),
+        runEffect(getListings({ limit: 25, filterType: "Lease" })),
+      ]);
+
+      expect(sale.listings!.length).toBeGreaterThan(0);
+      expect(lease.listings!.length).toBeGreaterThan(0);
+    });
+
+    it("decodes a full page of 25 records", async () => {
+      const page = await runEffect(getListings({ limit: 25 }));
+      expect(page.listings!.length).toBe(25);
+    });
+
+    it("decodes with include=all, which adds expanded members", async () => {
+      const page = await runEffect(getListings({ limit: 5, include: "all" }));
+      expect(page.listings!.length).toBeGreaterThan(0);
+    });
+
+    it("decodes a deep page, where other record types appear", async () => {
+      const page = await runEffect(getContacts({ limit: 25, page: 11 }));
+      expect(page.contacts!.length).toBeGreaterThan(0);
+      expect(page.current).toBe("11");
+    });
+  });
+
   describe("detail reads", () => {
     it("getListing returns the single-listing envelope", async () => {
       const page = await runEffect(getListings({ limit: 1 }));

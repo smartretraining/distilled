@@ -53,6 +53,19 @@ const ENDPOINTS: ReadonlyArray<{
   readonly path: string;
   readonly query?: Record<string, string>;
   /**
+   * Extra query variants to call and merge into the same observation.
+   *
+   * Optionality is only as good as the variation we see. A single call
+   * returns records that happen to share keys, and merging identical shapes
+   * marks EVERY field required — so one listing missing one key would fail
+   * to decode. These variants deliberately disagree with each other:
+   * `include=all` adds expanded members that are absent by default, and
+   * later pages hold records of other types (Sale vs Lease, company vs
+   * person) with different fields populated. Anything not present in all of
+   * them becomes optional.
+   */
+  readonly variants?: ReadonlyArray<Record<string, string>>;
+  /**
    * Detail endpoints need a real id. `from` names a collection captured
    * earlier in this list; the first record's `id` is substituted for `{id}`
    * in `path`. Ids are never written to `specs/observed.json` — only the
@@ -63,27 +76,47 @@ const ENDPOINTS: ReadonlyArray<{
   {
     operationId: "getListings",
     path: "/listings",
-    query: { limit: "3", include: "all" },
+    query: { limit: "25" },
+    variants: [
+      { limit: "25", include: "all" },
+      { limit: "25", page: "7" },
+      { limit: "25", "filter[type]": "Sale" },
+      { limit: "25", "filter[type]": "Lease" },
+    ],
   },
   {
     operationId: "getContacts",
     path: "/contacts",
-    query: { limit: "3", include: "all" },
+    query: { limit: "25" },
+    variants: [
+      { limit: "25", include: "all" },
+      { limit: "25", page: "11" },
+      { limit: "25", "filter[type]": "Company" },
+    ],
   },
   {
     operationId: "getStaff",
     path: "/staff",
-    query: { limit: "3", include: "all" },
+    query: { limit: "25" },
+    variants: [
+      { limit: "25", include: "all" },
+      { limit: "25", page: "3" },
+    ],
   },
   {
     operationId: "getOffices",
     path: "/offices",
-    query: { limit: "3", include: "all" },
+    query: { limit: "25" },
+    variants: [{ limit: "25", include: "all" }],
   },
   {
     operationId: "getSearchRequirements",
     path: "/search-requirements",
-    query: { limit: "3", include: "all" },
+    query: { limit: "25" },
+    variants: [
+      { limit: "25", include: "all" },
+      { limit: "25", page: "9" },
+    ],
   },
   { operationId: "getRegions", path: "/regions", query: { limit: "5" } },
   // `/suburbs` refuses a bare call. Its error names the parameters without
@@ -245,42 +278,68 @@ for (const endpoint of ENDPOINTS) {
     endpointPath = endpointPath.replace("{id}", encodeURIComponent(String(id)));
   }
 
-  const url = new URL(baseUrl + endpointPath);
-  url.searchParams.set("version", "2");
-  for (const [k, v] of Object.entries(endpoint.query ?? {})) {
-    url.searchParams.set(k, v);
+  const fetchOne = async (query) => {
+    const url = new URL(baseUrl + endpointPath);
+    url.searchParams.set("version", "2");
+    for (const [k, v] of Object.entries(query)) url.searchParams.set(k, v);
+
+    const res = await fetch(url, {
+      headers: {
+        "X-Client-ID": clientId,
+        "X-API-Key": apiKey,
+        Accept: "application/json",
+      },
+    });
+    const body = await res.json().catch(() => undefined);
+    return { body: res.ok ? body : undefined, status: res.status };
+  };
+
+  const queries = [endpoint.query ?? {}, ...(endpoint.variants ?? [])];
+  let shape: Observed | undefined;
+  let primary: unknown;
+  let ok = 0;
+  let lastStatus = 0;
+
+  for (const [i, query] of queries.entries()) {
+    const result = await fetchOne(query);
+    lastStatus = result.status;
+    if (result.body === undefined) continue;
+
+    // Only the canonical call is kept on disk; the variants exist to widen
+    // optionality, not to accumulate records.
+    if (i === 0) {
+      await writeFile(
+        path.join(sampleDir, `${endpoint.operationId}.json`),
+        JSON.stringify(result.body, null, 2),
+      );
+    }
+
+    // Record the shape INSIDE the `response` envelope — that is what the
+    // protocol hands to the output schema.
+    const body = result.body;
+    const payload =
+      typeof body === "object" && body !== null && "response" in body
+        ? (body as { response: unknown }).response
+        : body;
+
+    if (i === 0) primary = payload;
+    const observation = observe(payload);
+    shape = shape ? merge(shape, observation) : observation;
+    ok++;
   }
 
-  const res = await fetch(url, {
-    headers: {
-      "X-Client-ID": clientId,
-      "X-API-Key": apiKey,
-      Accept: "application/json",
-    },
-  });
-  const body = await res.json().catch(() => undefined);
-
-  if (!res.ok || body === undefined) {
-    failures.push(`${endpoint.operationId} (HTTP ${res.status})`);
-    console.error(`   ✗ ${endpoint.operationId}: HTTP ${res.status}`);
+  if (shape === undefined) {
+    failures.push(`${endpoint.operationId} (HTTP ${lastStatus})`);
+    console.error(`   ✗ ${endpoint.operationId}: HTTP ${lastStatus}`);
     continue;
   }
 
-  await writeFile(
-    path.join(sampleDir, `${endpoint.operationId}.json`),
-    JSON.stringify(body, null, 2),
+  payloads[endpoint.operationId] = primary;
+  observed[endpoint.operationId] = shape;
+  console.log(
+    `   ✓ ${endpoint.operationId}` +
+      (queries.length > 1 ? ` (${ok}/${queries.length} variants)` : ""),
   );
-
-  // Record the shape INSIDE the `response` envelope — that is what the
-  // protocol hands to the output schema.
-  const payload =
-    typeof body === "object" && body !== null && "response" in body
-      ? (body as { response: unknown }).response
-      : body;
-
-  payloads[endpoint.operationId] = payload;
-  observed[endpoint.operationId] = observe(payload);
-  console.log(`   ✓ ${endpoint.operationId}`);
 }
 
 await writeFile(

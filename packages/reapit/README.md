@@ -15,7 +15,7 @@ import * as Layer from "effect/Layer";
 import * as Reapit from "@smartretraining/reapit-effect";
 
 const program = Effect.gen(function* () {
-  const page = yield* Reapit.getListings({ limit: 10, "filter[status]": "Available" });
+  const page = yield* Reapit.getListings({ limit: 10, filterType: "Sale" });
   return page.listings;
 });
 
@@ -95,6 +95,22 @@ const total = Number(page.items);
 ```
 
 Booleans are the one exception; they arrive as real JSON booleans.
+
+### Filters
+
+Reapit's filters are bracketed query parameters. They surface as camelCase —
+`filter[memberId]` is `filterMemberId` — and the bracketed form is what goes
+over the wire:
+
+```ts
+Reapit.getListings({ filterType: "Lease", filterMemberId: "1stf0142" });
+// GET /listings?version=2&filter[type]=Lease&filter[memberId]=1stf0142
+```
+
+One trap worth knowing: `/suburbs` requires a filter and its own 422 message
+names them *without* the prefix ("Please specify one of postcode, suburbName,
+state or region"), but only the `filter[...]` forms are accepted — so it is
+`filterState`, not `state`.
 
 ## How this package is generated
 

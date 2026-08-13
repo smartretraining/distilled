@@ -324,9 +324,29 @@
                 }
               },
               "optional": []
+            },
+            "auctionVenueDetails": {
+              "kind": "object",
+              "properties": {
+                "name": {
+                  "kind": "string"
+                },
+                "address": {
+                  "kind": "string"
+                },
+                "phone": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
             }
           },
-          "optional": []
+          "optional": [
+            "auctionVenueDetails",
+            "availableDate",
+            "bond",
+            "leasedDate"
+          ]
         }
       }
     },
@@ -476,7 +496,16 @@
               "kind": "boolean"
             },
             "webDisplay": {
-              "kind": "array"
+              "kind": "array",
+              "items": {
+                "kind": "object",
+                "properties": {
+                  "name": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              }
             },
             "firstCreated": {
               "kind": "string"
@@ -733,7 +762,25 @@
               "optional": []
             },
             "suburbs": {
-              "kind": "array"
+              "kind": "array",
+              "items": {
+                "kind": "object",
+                "properties": {
+                  "name": {
+                    "kind": "string"
+                  },
+                  "postcode": {
+                    "kind": "string"
+                  },
+                  "state": {
+                    "kind": "string"
+                  },
+                  "country": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              }
             },
             "surroundingSuburbs": {
               "kind": "boolean"

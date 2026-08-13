@@ -781,7 +781,7 @@ export const GetContactClassesRequestInclude = /*@__PURE__*/ S.String;
 
 export interface GetContactClassesRequest {
   /** Filter results by contact class name */
-  filter_query_?: string;
+  filterQuery?: string;
   /** Output additional objects in the response. Supports multiple comma-separated values. */
   include?: GetContactClassesRequestInclude | (string & {});
   /** Which page of results should be returned */
@@ -791,7 +791,7 @@ export interface GetContactClassesRequest {
 }
 export const GetContactClassesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    filter_query_: S.optional(S.String.pipe(T.Query("filter[query]"))),
+    filterQuery: S.optional(S.String.pipe(T.Query("filter[query]"))),
     include: S.optional(GetContactClassesRequestInclude.pipe(T.Query())),
     page: S.optional(S.Number.pipe(T.Query())),
     limit: S.optional(S.Number.pipe(T.Query())),
@@ -949,119 +949,117 @@ export interface GetContactsRequest {
   /** The number of records to return per page (Default 20) */
   limit?: number;
   /** Filter results by first name / last name / email / phone number */
-  filter_query_?: string;
+  filterQuery?: string;
   /** Filter results by contact id. Supports multiple comma-separated values. */
-  filter_id_?: string;
+  filterId?: string;
   /** Filter results by first name */
-  filter_firstName_?: string;
+  filterFirstName?: string;
   /** Filter results by last name */
-  filter_lastName_?: string;
+  filterLastName?: string;
   /** Filter results by email address */
-  filter_email_?: string;
+  filterEmail?: string;
   /** By default only Active records are returned, pass filter[status]=All to get all records. Supports multiple comma-separated values. */
-  filter_status_?: GetContactsRequestFilterStatus | (string & {});
+  filterStatus?: GetContactsRequestFilterStatus | (string & {});
   /** Filter results by Company Name */
-  filter_companyName_?: string;
+  filterCompanyName?: string;
   /** Filter results by Mobile Number */
-  filter_mobile_?: string;
+  filterMobile?: string;
   /** Filter results by Home Phone */
-  filter_homePhone_?: string;
+  filterHomePhone?: string;
   /** Filter results by Work Phone */
-  filter_workPhone_?: string;
+  filterWorkPhone?: string;
   /** Filter results by Contact Class that are attached to the contact. Supports multiple comma-separated values. */
-  filter_contactClass_?: string;
+  filterContactClass?: string;
   /** Filter results by Contact Class that are not attached to the contact. Supports multiple comma-separated values. */
-  filter_contactClassExclude_?: string;
+  filterContactClassExclude?: string;
   /** Filter results by Contact Class Id that are attached to the contact. Supports multiple comma-separated values. */
-  filter_contactClassId_?: string;
+  filterContactClassId?: string;
   /** Filter results by Contact Class Id that are not attached to the contact. Supports multiple comma-separated values. */
-  filter_contactClassIdExclude_?: string;
+  filterContactClassIdExclude?: string;
   /** Contact Class Filter must match all input */
-  filter_matchAllContactClass_?: boolean;
+  filterMatchAllContactClass?: boolean;
   /** Filter results by Address */
-  filter_address_?: string;
+  filterAddress?: string;
   /** Filter results by Suburb. Supports multiple comma-separated values. */
-  filter_suburb_?: string;
+  filterSuburb?: string;
   /** Filter results by Postcode. Supports multiple comma-separated values. */
-  filter_postcode_?: string;
+  filterPostcode?: string;
   /** Filter results by State. Supports multiple comma-separated values. */
-  filter_state_?: string;
+  filterState?: string;
   /** Filter results by associated agent. Supports multiple comma-separated values. */
-  filter_memberId_?: string;
+  filterMemberId?: string;
   /** Filter results by associated agent role. Supports multiple comma-separated values. */
-  filter_memberRole_?: GetContactsRequestFilterMemberRole | (string & {});
+  filterMemberRole?: GetContactsRequestFilterMemberRole | (string & {});
   /** Filter results by associated agents from specified team. Supports multiple comma-separated values. */
-  filter_memberTeamId_?: string;
+  filterMemberTeamId?: string;
   /** Filter results by associated agents from specified office. Supports multiple comma-separated values. */
-  filter_memberOfficeId_?: string;
+  filterMemberOfficeId?: string;
   /** Filter results by associated subscription. Supports multiple comma-separated values. */
-  filter_subscription_?: string;
+  filterSubscription?: string;
   /** Filter Results by Contact Type */
-  filter_type_?: GetContactsRequestFilterType | (string & {});
+  filterType?: GetContactsRequestFilterType | (string & {});
   /** Match contact's search requirements to a listing, this will overwrite any of the search requirements filters */
-  filter_reqMatchListingId_?: string;
+  filterReqMatchListingId?: string;
   /** Filter contacts by search requirements's listing type */
-  filter_reqListingType_?:
-    | GetContactsRequestFilterReqListingType
-    | (string & {});
+  filterReqListingType?: GetContactsRequestFilterReqListingType | (string & {});
   /** Filter contacts by search requirements's property type */
-  filter_reqPropertyType_?:
+  filterReqPropertyType?:
     | GetContactsRequestFilterReqPropertyType
     | (string & {});
   /** Filter contacts by search requirements's by property category (a full list of valid categories can be obtained using the GET/property-types endpoint). Supports multiple comma-separated values. */
-  filter_reqPropertyCategory_?:
+  filterReqPropertyCategory?:
     | GetContactsRequestFilterReqPropertyCategory
     | (string & {});
   /** Filter contacts by search requirements's suburb. Supports multiple comma-separated values. */
-  filter_reqSuburb_?: string;
+  filterReqSuburb?: string;
   /** Filter contacts by search requirements's states, (accepts state short name e.g. WA). Supports multiple comma-separated values. */
-  filter_reqState_?: string;
+  filterReqState?: string;
   /** Filter contacts by search requirements's post code. Supports multiple comma-separated values. */
-  filter_reqPostcode_?: string;
+  filterReqPostcode?: string;
   /** Filter contacts by search requirements's surrounding suburbs */
-  filter_reqIncSurroundSuburbs_?: boolean;
+  filterReqIncSurroundSuburbs?: boolean;
   /** When set to true, will exclude contacts missing criteria searched (e.g. contacts with no preference) */
-  filter_limitSearch_?: boolean;
+  filterLimitSearch?: boolean;
   /** Filter results by Region (accepts region names). Supports multiple comma-separated values. */
-  filter_reqRegion_?: string;
+  filterReqRegion?: string;
   /** Filter results by features. Supports multiple comma-separated values. */
-  filter_reqFeature_?: string;
+  filterReqFeature?: string;
   /** Minimum price of properties for a contact search requirements */
-  filter_reqPriceFrom_?: number;
+  filterReqPriceFrom?: number;
   /** Maximum price of properties for a contact search requirements */
-  filter_reqPriceTo_?: number;
+  filterReqPriceTo?: number;
   /** Minimum number of bedrooms for a contact search requirements */
-  filter_reqBedroomsFrom_?: number;
+  filterReqBedroomsFrom?: number;
   /** Maximum number of bedrooms for a contact search requirements */
-  filter_reqBedroomsTo_?: number;
+  filterReqBedroomsTo?: number;
   /** Minimum number of bathrooms for a contact search requirements */
-  filter_reqBathroomsFrom_?: number;
+  filterReqBathroomsFrom?: number;
   /** Maximum number of bathrooms for a contact search requirements */
-  filter_reqBathroomsTo_?: number;
+  filterReqBathroomsTo?: number;
   /** Minimum number of car parking spaces for a contact search requirements */
-  filter_reqTotalParkingFrom_?: number;
+  filterReqTotalParkingFrom?: number;
   /** Maximum number of car parking spaces for a contact search requirements */
-  filter_reqTotalParkingTo_?: number;
+  filterReqTotalParkingTo?: number;
   /** Minimum land area (in square meters) for a contact search requirements */
-  filter_reqLandAreaFrom_?: number;
+  filterReqLandAreaFrom?: number;
   /** Maximum land area (in square meters) for a contact search requirements */
-  filter_reqLandAreaTo_?: number;
+  filterReqLandAreaTo?: number;
   /** Minimum building area (in square meters) for a contact search requirements */
-  filter_reqBuildingAreaFrom_?: number;
+  filterReqBuildingAreaFrom?: number;
   /** Maximum building area (in square meters) for a contact search requirements */
-  filter_reqBuildingAreaTo_?: number;
+  filterReqBuildingAreaTo?: number;
   /** Output additional objects in the response. Supports multiple comma-separated values. */
   include?: GetContactsRequestInclude | (string & {});
   /** Return records that were modified before the supplied date. */
-  filter_modifiedBefore_?: string;
+  filterModifiedBefore?: string;
   /** Return records that were modified after the supplied date. If a modifiedBefore is also supplied, this will return records between the two dates. */
-  filter_modifiedAfter_?: string;
+  filterModifiedAfter?: string;
   /** Return records that were created before the supplied date. If a createdAfter is also supplied, this will return records between the two dates. */
-  filter_createdBefore_?: string;
+  filterCreatedBefore?: string;
   /** Return records that were created after the supplied date. */
-  filter_createdAfter_?: string;
+  filterCreatedAfter?: string;
   /** Return records that match the supplied clientRef. */
-  filter_clientRef_?: string;
+  filterClientRef?: string;
   /** Output additional fields in the response. Supports multiple comma-separated values. */
   fields?: GetContactsRequestFields | (string & {});
   /** Order results by appointment start data, appointment end date */
@@ -1073,138 +1071,134 @@ export const GetContactsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     page: S.optional(S.Number.pipe(T.Query())),
     limit: S.optional(S.Number.pipe(T.Query())),
-    filter_query_: S.optional(S.String.pipe(T.Query("filter[query]"))),
-    filter_id_: S.optional(S.String.pipe(T.Query("filter[id]"))),
-    filter_firstName_: S.optional(S.String.pipe(T.Query("filter[firstName]"))),
-    filter_lastName_: S.optional(S.String.pipe(T.Query("filter[lastName]"))),
-    filter_email_: S.optional(S.String.pipe(T.Query("filter[email]"))),
-    filter_status_: S.optional(
+    filterQuery: S.optional(S.String.pipe(T.Query("filter[query]"))),
+    filterId: S.optional(S.String.pipe(T.Query("filter[id]"))),
+    filterFirstName: S.optional(S.String.pipe(T.Query("filter[firstName]"))),
+    filterLastName: S.optional(S.String.pipe(T.Query("filter[lastName]"))),
+    filterEmail: S.optional(S.String.pipe(T.Query("filter[email]"))),
+    filterStatus: S.optional(
       GetContactsRequestFilterStatus.pipe(T.Query("filter[status]")),
     ),
-    filter_companyName_: S.optional(
+    filterCompanyName: S.optional(
       S.String.pipe(T.Query("filter[companyName]")),
     ),
-    filter_mobile_: S.optional(S.String.pipe(T.Query("filter[mobile]"))),
-    filter_homePhone_: S.optional(S.String.pipe(T.Query("filter[homePhone]"))),
-    filter_workPhone_: S.optional(S.String.pipe(T.Query("filter[workPhone]"))),
-    filter_contactClass_: S.optional(
+    filterMobile: S.optional(S.String.pipe(T.Query("filter[mobile]"))),
+    filterHomePhone: S.optional(S.String.pipe(T.Query("filter[homePhone]"))),
+    filterWorkPhone: S.optional(S.String.pipe(T.Query("filter[workPhone]"))),
+    filterContactClass: S.optional(
       S.String.pipe(T.Query("filter[contactClass]")),
     ),
-    filter_contactClassExclude_: S.optional(
+    filterContactClassExclude: S.optional(
       S.String.pipe(T.Query("filter[contactClassExclude]")),
     ),
-    filter_contactClassId_: S.optional(
+    filterContactClassId: S.optional(
       S.String.pipe(T.Query("filter[contactClassId]")),
     ),
-    filter_contactClassIdExclude_: S.optional(
+    filterContactClassIdExclude: S.optional(
       S.String.pipe(T.Query("filter[contactClassIdExclude]")),
     ),
-    filter_matchAllContactClass_: S.optional(
+    filterMatchAllContactClass: S.optional(
       S.Boolean.pipe(T.Query("filter[matchAllContactClass]")),
     ),
-    filter_address_: S.optional(S.String.pipe(T.Query("filter[address]"))),
-    filter_suburb_: S.optional(S.String.pipe(T.Query("filter[suburb]"))),
-    filter_postcode_: S.optional(S.String.pipe(T.Query("filter[postcode]"))),
-    filter_state_: S.optional(S.String.pipe(T.Query("filter[state]"))),
-    filter_memberId_: S.optional(S.String.pipe(T.Query("filter[memberId]"))),
-    filter_memberRole_: S.optional(
+    filterAddress: S.optional(S.String.pipe(T.Query("filter[address]"))),
+    filterSuburb: S.optional(S.String.pipe(T.Query("filter[suburb]"))),
+    filterPostcode: S.optional(S.String.pipe(T.Query("filter[postcode]"))),
+    filterState: S.optional(S.String.pipe(T.Query("filter[state]"))),
+    filterMemberId: S.optional(S.String.pipe(T.Query("filter[memberId]"))),
+    filterMemberRole: S.optional(
       GetContactsRequestFilterMemberRole.pipe(T.Query("filter[memberRole]")),
     ),
-    filter_memberTeamId_: S.optional(
+    filterMemberTeamId: S.optional(
       S.String.pipe(T.Query("filter[memberTeamId]")),
     ),
-    filter_memberOfficeId_: S.optional(
+    filterMemberOfficeId: S.optional(
       S.String.pipe(T.Query("filter[memberOfficeId]")),
     ),
-    filter_subscription_: S.optional(
+    filterSubscription: S.optional(
       S.String.pipe(T.Query("filter[subscription]")),
     ),
-    filter_type_: S.optional(
+    filterType: S.optional(
       GetContactsRequestFilterType.pipe(T.Query("filter[type]")),
     ),
-    filter_reqMatchListingId_: S.optional(
+    filterReqMatchListingId: S.optional(
       S.String.pipe(T.Query("filter[reqMatchListingId]")),
     ),
-    filter_reqListingType_: S.optional(
+    filterReqListingType: S.optional(
       GetContactsRequestFilterReqListingType.pipe(
         T.Query("filter[reqListingType]"),
       ),
     ),
-    filter_reqPropertyType_: S.optional(
+    filterReqPropertyType: S.optional(
       GetContactsRequestFilterReqPropertyType.pipe(
         T.Query("filter[reqPropertyType]"),
       ),
     ),
-    filter_reqPropertyCategory_: S.optional(
+    filterReqPropertyCategory: S.optional(
       GetContactsRequestFilterReqPropertyCategory.pipe(
         T.Query("filter[reqPropertyCategory]"),
       ),
     ),
-    filter_reqSuburb_: S.optional(S.String.pipe(T.Query("filter[reqSuburb]"))),
-    filter_reqState_: S.optional(S.String.pipe(T.Query("filter[reqState]"))),
-    filter_reqPostcode_: S.optional(
+    filterReqSuburb: S.optional(S.String.pipe(T.Query("filter[reqSuburb]"))),
+    filterReqState: S.optional(S.String.pipe(T.Query("filter[reqState]"))),
+    filterReqPostcode: S.optional(
       S.String.pipe(T.Query("filter[reqPostcode]")),
     ),
-    filter_reqIncSurroundSuburbs_: S.optional(
+    filterReqIncSurroundSuburbs: S.optional(
       S.Boolean.pipe(T.Query("filter[reqIncSurroundSuburbs]")),
     ),
-    filter_limitSearch_: S.optional(
+    filterLimitSearch: S.optional(
       S.Boolean.pipe(T.Query("filter[limitSearch]")),
     ),
-    filter_reqRegion_: S.optional(S.String.pipe(T.Query("filter[reqRegion]"))),
-    filter_reqFeature_: S.optional(
-      S.String.pipe(T.Query("filter[reqFeature]")),
-    ),
-    filter_reqPriceFrom_: S.optional(
+    filterReqRegion: S.optional(S.String.pipe(T.Query("filter[reqRegion]"))),
+    filterReqFeature: S.optional(S.String.pipe(T.Query("filter[reqFeature]"))),
+    filterReqPriceFrom: S.optional(
       S.Number.pipe(T.Query("filter[reqPriceFrom]")),
     ),
-    filter_reqPriceTo_: S.optional(
-      S.Number.pipe(T.Query("filter[reqPriceTo]")),
-    ),
-    filter_reqBedroomsFrom_: S.optional(
+    filterReqPriceTo: S.optional(S.Number.pipe(T.Query("filter[reqPriceTo]"))),
+    filterReqBedroomsFrom: S.optional(
       S.Number.pipe(T.Query("filter[reqBedroomsFrom]")),
     ),
-    filter_reqBedroomsTo_: S.optional(
+    filterReqBedroomsTo: S.optional(
       S.Number.pipe(T.Query("filter[reqBedroomsTo]")),
     ),
-    filter_reqBathroomsFrom_: S.optional(
+    filterReqBathroomsFrom: S.optional(
       S.Number.pipe(T.Query("filter[reqBathroomsFrom]")),
     ),
-    filter_reqBathroomsTo_: S.optional(
+    filterReqBathroomsTo: S.optional(
       S.Number.pipe(T.Query("filter[reqBathroomsTo]")),
     ),
-    filter_reqTotalParkingFrom_: S.optional(
+    filterReqTotalParkingFrom: S.optional(
       S.Number.pipe(T.Query("filter[reqTotalParkingFrom]")),
     ),
-    filter_reqTotalParkingTo_: S.optional(
+    filterReqTotalParkingTo: S.optional(
       S.Number.pipe(T.Query("filter[reqTotalParkingTo]")),
     ),
-    filter_reqLandAreaFrom_: S.optional(
+    filterReqLandAreaFrom: S.optional(
       S.Number.pipe(T.Query("filter[reqLandAreaFrom]")),
     ),
-    filter_reqLandAreaTo_: S.optional(
+    filterReqLandAreaTo: S.optional(
       S.Number.pipe(T.Query("filter[reqLandAreaTo]")),
     ),
-    filter_reqBuildingAreaFrom_: S.optional(
+    filterReqBuildingAreaFrom: S.optional(
       S.Number.pipe(T.Query("filter[reqBuildingAreaFrom]")),
     ),
-    filter_reqBuildingAreaTo_: S.optional(
+    filterReqBuildingAreaTo: S.optional(
       S.Number.pipe(T.Query("filter[reqBuildingAreaTo]")),
     ),
     include: S.optional(GetContactsRequestInclude.pipe(T.Query())),
-    filter_modifiedBefore_: S.optional(
+    filterModifiedBefore: S.optional(
       S.String.pipe(T.Query("filter[modifiedBefore]")),
     ),
-    filter_modifiedAfter_: S.optional(
+    filterModifiedAfter: S.optional(
       S.String.pipe(T.Query("filter[modifiedAfter]")),
     ),
-    filter_createdBefore_: S.optional(
+    filterCreatedBefore: S.optional(
       S.String.pipe(T.Query("filter[createdBefore]")),
     ),
-    filter_createdAfter_: S.optional(
+    filterCreatedAfter: S.optional(
       S.String.pipe(T.Query("filter[createdAfter]")),
     ),
-    filter_clientRef_: S.optional(S.String.pipe(T.Query("filter[clientRef]"))),
+    filterClientRef: S.optional(S.String.pipe(T.Query("filter[clientRef]"))),
     fields: S.optional(GetContactsRequestFields.pipe(T.Query())),
     orderBy: S.optional(GetContactsRequestOrderBy.pipe(T.Query())),
     order: S.optional(GetContactsRequestOrder.pipe(T.Query())),
@@ -2058,151 +2052,151 @@ export interface GetListingsRequest {
   /** The number of records to return per page (Default 20) */
   limit?: number;
   /** Filter results by listing id / address / suburb / property name */
-  filter_query_?: string;
+  filterQuery?: string;
   /** Filter results by office id */
-  filter_officeId_?: string;
+  filterOfficeId?: string;
   /** Filter results by project id */
-  filter_projectId_?: string;
+  filterProjectId?: string;
   /** Filter results by associated agent. Supports multiple comma-separated values. */
-  filter_memberId_?: string;
+  filterMemberId?: string;
   /** Filter results by associated team. Supports multiple comma-separated values. */
-  filter_memberTeamId_?: string;
+  filterMemberTeamId?: string;
   /** Filter results by associated office. Supports multiple comma-separated values. */
-  filter_memberOfficeId_?: string;
+  filterMemberOfficeId?: string;
   /** Filter results by associated agent role. Supports multiple comma-separated values. */
-  filter_memberRole_?: string;
+  filterMemberRole?: string;
   /** Filter properties by associated staff members web display */
-  filter_memberWebDisplay_?: boolean;
+  filterMemberWebDisplay?: boolean;
   /** Filter results by associated contacts. Supports multiple comma-separated values. */
-  filter_contactId_?: string;
+  filterContactId?: string;
   /** Filter results by associated contact roles, valid values can be obtained from GET /contact-classes. Supports multiple comma-separated values. */
-  filter_contactRole_?: string;
+  filterContactRole?: string;
   /** Filter results by properties. Supports multiple comma-separated values. */
-  filter_propertyId_?: string;
+  filterPropertyId?: string;
   /** Filter results by unit number */
-  filter_unitNum_?: string;
+  filterUnitNum?: string;
   /** Filter results by level number */
-  filter_lvNum_?: string;
+  filterLvNum?: string;
   /** Filter results by street number */
-  filter_streetNum_?: string;
+  filterStreetNum?: string;
   /** Filter results by street name */
-  filter_streetName_?: string;
+  filterStreetName?: string;
   /** Filter results by street type. See GET /street-types. Supports multiple comma-separated values. */
-  filter_streetType_?: string;
+  filterStreetType?: string;
   /** Filter listings by type (`Sale` or `Lease`) */
-  filter_type_?: GetListingsRequestFilterType | (string & {});
+  filterType?: GetListingsRequestFilterType | (string & {});
   /** Filter properties by status. Supports multiple comma-separated values. */
-  filter_status_?: GetListingsRequestFilterStatus | (string & {});
+  filterStatus?: GetListingsRequestFilterStatus | (string & {});
   /** Filter results by marketing status. Supports multiple comma-separated values. */
-  filter_marketingStatus_?:
+  filterMarketingStatus?:
     | GetListingsRequestFilterMarketingStatus
     | (string & {});
   /** Filter results by hidden listing */
-  filter_hiddenListing_?: boolean;
+  filterHiddenListing?: boolean;
   /** Filter results by Off Market Listing */
-  filter_offMarketListing_?: boolean;
+  filterOffMarketListing?: boolean;
   /** Filter properties by type */
-  filter_propertyType_?: GetListingsRequestFilterPropertyType | (string & {});
+  filterPropertyType?: GetListingsRequestFilterPropertyType | (string & {});
   /** Filter properties by category (a full list of valid categories can be obtained using the GET/property-types endpoint). Supports multiple comma-separated values. */
-  filter_propertyCategory_?:
+  filterPropertyCategory?:
     | GetListingsRequestFilterPropertyCategory
     | (string & {});
   /** Filter properties by suburb/s name or id. Supports multiple comma-separated values. */
-  filter_suburb_?: string;
+  filterSuburb?: string;
   /** Filter properties by region/s name or id. Supports multiple comma-separated values. */
-  filter_region_?: string;
+  filterRegion?: string;
   /** Filter properties by state/s name or id. Supports multiple comma-separated values. */
-  filter_state_?: string;
+  filterState?: string;
   /** Filter properties by geographic location. Both longitude and latitude must be provided. */
-  filter_longitude_?: number;
+  filterLongitude?: number;
   /** Filter properties by geographic location. Both longitude and latitude must be provided. */
-  filter_latitude_?: number;
+  filterLatitude?: number;
   /** Filter properties within radius distance from the given longitude and latitude. The default radius unit is kilometer. */
-  filter_radius_?: number;
+  filterRadius?: number;
   /** Filter properties by surrounding suburbs */
-  filter_incSurroundSuburbs_?: boolean;
+  filterIncSurroundSuburbs?: boolean;
   /** Minimum price of properties to return */
-  filter_priceFrom_?: number;
+  filterPriceFrom?: number;
   /** Maximum price of properties to return */
-  filter_priceTo_?: number;
+  filterPriceTo?: number;
   /** Minimum sold price of properties to return */
-  filter_soldPriceFrom_?: number;
+  filterSoldPriceFrom?: number;
   /** Maximum sold price of properties to return */
-  filter_soldPriceTo_?: number;
+  filterSoldPriceTo?: number;
   /** Minimum appraisal price of properties to return */
-  filter_appraisalPriceFrom_?: number;
+  filterAppraisalPriceFrom?: number;
   /** Maximum appraisal price of properties to return */
-  filter_appraisalPriceTo_?: number;
+  filterAppraisalPriceTo?: number;
   /** Filter properties by appraisal classification. Must be one of the values from GET /appraisal-classifications. Supports multiple comma-separated values. */
-  filter_appraisalClassification_?: string;
+  filterAppraisalClassification?: string;
   /** Minimum weekly rent price of properties to return */
-  filter_weeklyRentFrom_?: number;
+  filterWeeklyRentFrom?: number;
   /** Maximum weekly rent price of properties to return */
-  filter_weeklyRentTo_?: number;
+  filterWeeklyRentTo?: number;
   /** Return properties that were sold on or after the supplied date. */
-  filter_soldDateFrom_?: string;
+  filterSoldDateFrom?: string;
   /** Return records that were sold on or before the supplied date. */
-  filter_soldDateTo_?: string;
+  filterSoldDateTo?: string;
   /** Minimum number of bedrooms for returned properties */
-  filter_bedroomsFrom_?: number;
+  filterBedroomsFrom?: number;
   /** Maximum number of bedrooms for returned properties */
-  filter_bedroomsTo_?: number;
+  filterBedroomsTo?: number;
   /** Minimum number of bathrooms for returned properties */
-  filter_bathroomsFrom_?: number;
+  filterBathroomsFrom?: number;
   /** Maximum number of bathrooms for returned properties */
-  filter_bathroomsTo_?: number;
+  filterBathroomsTo?: number;
   /** Minimum number of car parking spaces for returned properties */
-  filter_totalParkingFrom_?: number;
+  filterTotalParkingFrom?: number;
   /** Maximum number of car parking spaces for returned properties */
-  filter_totalParkingTo_?: number;
+  filterTotalParkingTo?: number;
   /** Minimum land area (in square meters) for returned properties */
-  filter_landAreaFrom_?: number;
+  filterLandAreaFrom?: number;
   /** Maximum land area (in square meters) for returned properties */
-  filter_landAreaTo_?: number;
+  filterLandAreaTo?: number;
   /** Minimum building area (in square meters) for returned properties */
-  filter_buildingAreaFrom_?: number;
+  filterBuildingAreaFrom?: number;
   /** Maximum building area (in square meters) for returned properties */
-  filter_buildingAreaTo_?: number;
+  filterBuildingAreaTo?: number;
   /** Match properties to contact(s), Supports multiple comma-separated values */
-  filter_listingMatchContactId_?: string;
+  filterListingMatchContactId?: string;
   /** Match properties to search requirement, Supports multiple comma-separated values */
-  filter_listingMatchSearchRequirementId_?: string;
+  filterListingMatchSearchRequirementId?: string;
   /** Return properties that are open for inspection start on/after the supplied date. */
-  filter_inspectionStartDateFrom_?: string;
+  filterInspectionStartDateFrom?: string;
   /** Return properties that are open for inspection start before/on the supplied date. */
-  filter_inspectionStartDateTo_?: string;
+  filterInspectionStartDateTo?: string;
   /** Return properties that are open for inspection end on/after the supplied date. */
-  filter_inspectionEndDateFrom_?: string;
+  filterInspectionEndDateFrom?: string;
   /** Return properties that are open for inspection end before/on the supplied date. */
-  filter_inspectionEndDateTo_?: string;
+  filterInspectionEndDateTo?: string;
   /** Return results that are auctioned on/after the supplied date. */
-  filter_auctionDateFrom_?: string;
+  filterAuctionDateFrom?: string;
   /** Return properties that are auctioned before/on the supplied date. */
-  filter_auctionDateTo_?: string;
+  filterAuctionDateTo?: string;
   /** Return results that are appraised on/after the supplied date. */
-  filter_appraisalDateFrom_?: string;
+  filterAppraisalDateFrom?: string;
   /** Return properties that are appraised before/on the supplied date. */
-  filter_appraisalDateTo_?: string;
+  filterAppraisalDateTo?: string;
   /** Return results that are presented on/after the supplied date. */
-  filter_presentationDateFrom_?: string;
+  filterPresentationDateFrom?: string;
   /** Return properties that are presented before/on the supplied date. */
-  filter_presentationDateTo_?: string;
+  filterPresentationDateTo?: string;
   /** Filter results by property features. Supports multiple comma-separated values. */
-  filter_features_?: string;
+  filterFeatures?: string;
   /** Feature Filter must match all input */
-  filter_matchAllFeature_?: boolean;
+  filterMatchAllFeature?: boolean;
   /** Filter listing having investment potential */
-  filter_hasInvestmentPotential_?: boolean;
+  filterHasInvestmentPotential?: boolean;
   /** Output additional objects in the response. Supports multiple comma-separated values. */
   include?: GetListingsRequestInclude | (string & {});
   /** Return properties modified on/before the supplied date. */
-  filter_modifiedBefore_?: string;
+  filterModifiedBefore?: string;
   /** Return properties modified on/after the supplied date. */
-  filter_modifiedAfter_?: string;
+  filterModifiedAfter?: string;
   /** Return records that were created before the supplied date. If a createdAfter is also supplied, this will return records between the two dates. */
-  filter_createdBefore_?: string;
+  filterCreatedBefore?: string;
   /** Return records that were created after the supplied date. */
-  filter_createdAfter_?: string;
+  filterCreatedAfter?: string;
   /** Order results by soldPrice, searchPrice, address, lastModified, firstCreated, listedDate, nextInspectionDate. When nextInspectionDate order is selected, either inspectionStartDate or inspectionEndDate filter must be applied. The next inspection date inside of the filtered results will be used in the ordering. You can also order by multiple columns by passing the `orderBy` parameter as an array, whereby the key is the column you wish to order by and the value is the order direction. **For example:** orderBy[status]=ASC& orderBy[lastModified]=DESC **Note** if you use this format, you no longer need to use the `order` parameter. */
   orderBy?: GetListingsRequestOrderBy | (string & {});
   /** order results ASC or DESC */
@@ -2212,187 +2206,173 @@ export const GetListingsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     page: S.optional(S.Number.pipe(T.Query())),
     limit: S.optional(S.Number.pipe(T.Query())),
-    filter_query_: S.optional(S.String.pipe(T.Query("filter[query]"))),
-    filter_officeId_: S.optional(S.String.pipe(T.Query("filter[officeId]"))),
-    filter_projectId_: S.optional(S.String.pipe(T.Query("filter[projectId]"))),
-    filter_memberId_: S.optional(S.String.pipe(T.Query("filter[memberId]"))),
-    filter_memberTeamId_: S.optional(
+    filterQuery: S.optional(S.String.pipe(T.Query("filter[query]"))),
+    filterOfficeId: S.optional(S.String.pipe(T.Query("filter[officeId]"))),
+    filterProjectId: S.optional(S.String.pipe(T.Query("filter[projectId]"))),
+    filterMemberId: S.optional(S.String.pipe(T.Query("filter[memberId]"))),
+    filterMemberTeamId: S.optional(
       S.String.pipe(T.Query("filter[memberTeamId]")),
     ),
-    filter_memberOfficeId_: S.optional(
+    filterMemberOfficeId: S.optional(
       S.String.pipe(T.Query("filter[memberOfficeId]")),
     ),
-    filter_memberRole_: S.optional(
-      S.String.pipe(T.Query("filter[memberRole]")),
-    ),
-    filter_memberWebDisplay_: S.optional(
+    filterMemberRole: S.optional(S.String.pipe(T.Query("filter[memberRole]"))),
+    filterMemberWebDisplay: S.optional(
       S.Boolean.pipe(T.Query("filter[memberWebDisplay]")),
     ),
-    filter_contactId_: S.optional(S.String.pipe(T.Query("filter[contactId]"))),
-    filter_contactRole_: S.optional(
+    filterContactId: S.optional(S.String.pipe(T.Query("filter[contactId]"))),
+    filterContactRole: S.optional(
       S.String.pipe(T.Query("filter[contactRole]")),
     ),
-    filter_propertyId_: S.optional(
-      S.String.pipe(T.Query("filter[propertyId]")),
-    ),
-    filter_unitNum_: S.optional(S.String.pipe(T.Query("filter[unitNum]"))),
-    filter_lvNum_: S.optional(S.String.pipe(T.Query("filter[lvNum]"))),
-    filter_streetNum_: S.optional(S.String.pipe(T.Query("filter[streetNum]"))),
-    filter_streetName_: S.optional(
-      S.String.pipe(T.Query("filter[streetName]")),
-    ),
-    filter_streetType_: S.optional(
-      S.String.pipe(T.Query("filter[streetType]")),
-    ),
-    filter_type_: S.optional(
+    filterPropertyId: S.optional(S.String.pipe(T.Query("filter[propertyId]"))),
+    filterUnitNum: S.optional(S.String.pipe(T.Query("filter[unitNum]"))),
+    filterLvNum: S.optional(S.String.pipe(T.Query("filter[lvNum]"))),
+    filterStreetNum: S.optional(S.String.pipe(T.Query("filter[streetNum]"))),
+    filterStreetName: S.optional(S.String.pipe(T.Query("filter[streetName]"))),
+    filterStreetType: S.optional(S.String.pipe(T.Query("filter[streetType]"))),
+    filterType: S.optional(
       GetListingsRequestFilterType.pipe(T.Query("filter[type]")),
     ),
-    filter_status_: S.optional(
+    filterStatus: S.optional(
       GetListingsRequestFilterStatus.pipe(T.Query("filter[status]")),
     ),
-    filter_marketingStatus_: S.optional(
+    filterMarketingStatus: S.optional(
       GetListingsRequestFilterMarketingStatus.pipe(
         T.Query("filter[marketingStatus]"),
       ),
     ),
-    filter_hiddenListing_: S.optional(
+    filterHiddenListing: S.optional(
       S.Boolean.pipe(T.Query("filter[hiddenListing]")),
     ),
-    filter_offMarketListing_: S.optional(
+    filterOffMarketListing: S.optional(
       S.Boolean.pipe(T.Query("filter[offMarketListing]")),
     ),
-    filter_propertyType_: S.optional(
+    filterPropertyType: S.optional(
       GetListingsRequestFilterPropertyType.pipe(
         T.Query("filter[propertyType]"),
       ),
     ),
-    filter_propertyCategory_: S.optional(
+    filterPropertyCategory: S.optional(
       GetListingsRequestFilterPropertyCategory.pipe(
         T.Query("filter[propertyCategory]"),
       ),
     ),
-    filter_suburb_: S.optional(S.String.pipe(T.Query("filter[suburb]"))),
-    filter_region_: S.optional(S.String.pipe(T.Query("filter[region]"))),
-    filter_state_: S.optional(S.String.pipe(T.Query("filter[state]"))),
-    filter_longitude_: S.optional(S.Number.pipe(T.Query("filter[longitude]"))),
-    filter_latitude_: S.optional(S.Number.pipe(T.Query("filter[latitude]"))),
-    filter_radius_: S.optional(S.Number.pipe(T.Query("filter[radius]"))),
-    filter_incSurroundSuburbs_: S.optional(
+    filterSuburb: S.optional(S.String.pipe(T.Query("filter[suburb]"))),
+    filterRegion: S.optional(S.String.pipe(T.Query("filter[region]"))),
+    filterState: S.optional(S.String.pipe(T.Query("filter[state]"))),
+    filterLongitude: S.optional(S.Number.pipe(T.Query("filter[longitude]"))),
+    filterLatitude: S.optional(S.Number.pipe(T.Query("filter[latitude]"))),
+    filterRadius: S.optional(S.Number.pipe(T.Query("filter[radius]"))),
+    filterIncSurroundSuburbs: S.optional(
       S.Boolean.pipe(T.Query("filter[incSurroundSuburbs]")),
     ),
-    filter_priceFrom_: S.optional(S.Number.pipe(T.Query("filter[priceFrom]"))),
-    filter_priceTo_: S.optional(S.Number.pipe(T.Query("filter[priceTo]"))),
-    filter_soldPriceFrom_: S.optional(
+    filterPriceFrom: S.optional(S.Number.pipe(T.Query("filter[priceFrom]"))),
+    filterPriceTo: S.optional(S.Number.pipe(T.Query("filter[priceTo]"))),
+    filterSoldPriceFrom: S.optional(
       S.Number.pipe(T.Query("filter[soldPriceFrom]")),
     ),
-    filter_soldPriceTo_: S.optional(
+    filterSoldPriceTo: S.optional(
       S.Number.pipe(T.Query("filter[soldPriceTo]")),
     ),
-    filter_appraisalPriceFrom_: S.optional(
+    filterAppraisalPriceFrom: S.optional(
       S.Number.pipe(T.Query("filter[appraisalPriceFrom]")),
     ),
-    filter_appraisalPriceTo_: S.optional(
+    filterAppraisalPriceTo: S.optional(
       S.Number.pipe(T.Query("filter[appraisalPriceTo]")),
     ),
-    filter_appraisalClassification_: S.optional(
+    filterAppraisalClassification: S.optional(
       S.String.pipe(T.Query("filter[appraisalClassification]")),
     ),
-    filter_weeklyRentFrom_: S.optional(
+    filterWeeklyRentFrom: S.optional(
       S.Number.pipe(T.Query("filter[weeklyRentFrom]")),
     ),
-    filter_weeklyRentTo_: S.optional(
+    filterWeeklyRentTo: S.optional(
       S.Number.pipe(T.Query("filter[weeklyRentTo]")),
     ),
-    filter_soldDateFrom_: S.optional(
+    filterSoldDateFrom: S.optional(
       S.String.pipe(T.Query("filter[soldDateFrom]")),
     ),
-    filter_soldDateTo_: S.optional(
-      S.String.pipe(T.Query("filter[soldDateTo]")),
-    ),
-    filter_bedroomsFrom_: S.optional(
+    filterSoldDateTo: S.optional(S.String.pipe(T.Query("filter[soldDateTo]"))),
+    filterBedroomsFrom: S.optional(
       S.Number.pipe(T.Query("filter[bedroomsFrom]")),
     ),
-    filter_bedroomsTo_: S.optional(
-      S.Number.pipe(T.Query("filter[bedroomsTo]")),
-    ),
-    filter_bathroomsFrom_: S.optional(
+    filterBedroomsTo: S.optional(S.Number.pipe(T.Query("filter[bedroomsTo]"))),
+    filterBathroomsFrom: S.optional(
       S.Number.pipe(T.Query("filter[bathroomsFrom]")),
     ),
-    filter_bathroomsTo_: S.optional(
+    filterBathroomsTo: S.optional(
       S.Number.pipe(T.Query("filter[bathroomsTo]")),
     ),
-    filter_totalParkingFrom_: S.optional(
+    filterTotalParkingFrom: S.optional(
       S.Number.pipe(T.Query("filter[totalParkingFrom]")),
     ),
-    filter_totalParkingTo_: S.optional(
+    filterTotalParkingTo: S.optional(
       S.Number.pipe(T.Query("filter[totalParkingTo]")),
     ),
-    filter_landAreaFrom_: S.optional(
+    filterLandAreaFrom: S.optional(
       S.Number.pipe(T.Query("filter[landAreaFrom]")),
     ),
-    filter_landAreaTo_: S.optional(
-      S.Number.pipe(T.Query("filter[landAreaTo]")),
-    ),
-    filter_buildingAreaFrom_: S.optional(
+    filterLandAreaTo: S.optional(S.Number.pipe(T.Query("filter[landAreaTo]"))),
+    filterBuildingAreaFrom: S.optional(
       S.Number.pipe(T.Query("filter[buildingAreaFrom]")),
     ),
-    filter_buildingAreaTo_: S.optional(
+    filterBuildingAreaTo: S.optional(
       S.Number.pipe(T.Query("filter[buildingAreaTo]")),
     ),
-    filter_listingMatchContactId_: S.optional(
+    filterListingMatchContactId: S.optional(
       S.String.pipe(T.Query("filter[listingMatchContactId]")),
     ),
-    filter_listingMatchSearchRequirementId_: S.optional(
+    filterListingMatchSearchRequirementId: S.optional(
       S.String.pipe(T.Query("filter[listingMatchSearchRequirementId]")),
     ),
-    filter_inspectionStartDateFrom_: S.optional(
+    filterInspectionStartDateFrom: S.optional(
       S.String.pipe(T.Query("filter[inspectionStartDateFrom]")),
     ),
-    filter_inspectionStartDateTo_: S.optional(
+    filterInspectionStartDateTo: S.optional(
       S.String.pipe(T.Query("filter[inspectionStartDateTo]")),
     ),
-    filter_inspectionEndDateFrom_: S.optional(
+    filterInspectionEndDateFrom: S.optional(
       S.String.pipe(T.Query("filter[inspectionEndDateFrom]")),
     ),
-    filter_inspectionEndDateTo_: S.optional(
+    filterInspectionEndDateTo: S.optional(
       S.String.pipe(T.Query("filter[inspectionEndDateTo]")),
     ),
-    filter_auctionDateFrom_: S.optional(
+    filterAuctionDateFrom: S.optional(
       S.String.pipe(T.Query("filter[auctionDateFrom]")),
     ),
-    filter_auctionDateTo_: S.optional(
+    filterAuctionDateTo: S.optional(
       S.String.pipe(T.Query("filter[auctionDateTo]")),
     ),
-    filter_appraisalDateFrom_: S.optional(
+    filterAppraisalDateFrom: S.optional(
       S.String.pipe(T.Query("filter[appraisalDateFrom]")),
     ),
-    filter_appraisalDateTo_: S.optional(
+    filterAppraisalDateTo: S.optional(
       S.String.pipe(T.Query("filter[appraisalDateTo]")),
     ),
-    filter_presentationDateFrom_: S.optional(
+    filterPresentationDateFrom: S.optional(
       S.String.pipe(T.Query("filter[presentationDateFrom]")),
     ),
-    filter_presentationDateTo_: S.optional(
+    filterPresentationDateTo: S.optional(
       S.String.pipe(T.Query("filter[presentationDateTo]")),
     ),
-    filter_features_: S.optional(S.String.pipe(T.Query("filter[features]"))),
-    filter_matchAllFeature_: S.optional(
+    filterFeatures: S.optional(S.String.pipe(T.Query("filter[features]"))),
+    filterMatchAllFeature: S.optional(
       S.Boolean.pipe(T.Query("filter[matchAllFeature]")),
     ),
-    filter_hasInvestmentPotential_: S.optional(
+    filterHasInvestmentPotential: S.optional(
       S.Boolean.pipe(T.Query("filter[hasInvestmentPotential]")),
     ),
     include: S.optional(GetListingsRequestInclude.pipe(T.Query())),
-    filter_modifiedBefore_: S.optional(
+    filterModifiedBefore: S.optional(
       S.String.pipe(T.Query("filter[modifiedBefore]")),
     ),
-    filter_modifiedAfter_: S.optional(
+    filterModifiedAfter: S.optional(
       S.String.pipe(T.Query("filter[modifiedAfter]")),
     ),
-    filter_createdBefore_: S.optional(
+    filterCreatedBefore: S.optional(
       S.String.pipe(T.Query("filter[createdBefore]")),
     ),
-    filter_createdAfter_: S.optional(
+    filterCreatedAfter: S.optional(
       S.String.pipe(T.Query("filter[createdAfter]")),
     ),
     orderBy: S.optional(GetListingsRequestOrderBy.pipe(T.Query())),
@@ -2508,6 +2488,22 @@ export type GetListingsResponseListingsItemOutgoings =
 export const GetListingsResponseListingsItemOutgoings =
   GetListingResponseListingOutgoings;
 
+export interface GetListingsResponseListingsItemAuctionVenueDetails {
+  name: string;
+  address: string;
+  phone: string;
+}
+export const GetListingsResponseListingsItemAuctionVenueDetails =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.String,
+      address: S.String,
+      phone: S.String,
+    }),
+  ).annotate({
+    identifier: "GetListingsResponseListingsItemAuctionVenueDetails",
+  }) as any as S.Schema<GetListingsResponseListingsItemAuctionVenueDetails>;
+
 export interface GetListingsResponseListingsItem {
   id: string;
   externalId: string;
@@ -2526,11 +2522,11 @@ export interface GetListingsResponseListingsItem {
   timezone: string;
   auctionVenue: string;
   eoiClosingDate: string;
-  availableDate: string;
+  availableDate?: string;
   onMarketDate: string;
   expectedOnMarketDate: string;
-  leasedDate: string;
-  bond: string;
+  leasedDate?: string;
+  bond?: string;
   displayPrice: string;
   soldDate: string;
   property: GetListingsResponseListingsItemProperty;
@@ -2540,6 +2536,7 @@ export interface GetListingsResponseListingsItem {
   links: GetContactsResponseContactsItemLinks;
   inspectionType: string;
   outgoings: GetListingResponseListingOutgoings;
+  auctionVenueDetails?: GetListingsResponseListingsItemAuctionVenueDetails;
 }
 export const GetListingsResponseListingsItem = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
@@ -2560,11 +2557,11 @@ export const GetListingsResponseListingsItem = /*@__PURE__*/ S.suspend(() =>
     timezone: S.String,
     auctionVenue: S.String,
     eoiClosingDate: S.String,
-    availableDate: S.String,
+    availableDate: S.optional(S.String),
     onMarketDate: S.String,
     expectedOnMarketDate: S.String,
-    leasedDate: S.String,
-    bond: S.String,
+    leasedDate: S.optional(S.String),
+    bond: S.optional(S.String),
     displayPrice: S.String,
     soldDate: S.String,
     property: GetListingsResponseListingsItemProperty,
@@ -2574,6 +2571,9 @@ export const GetListingsResponseListingsItem = /*@__PURE__*/ S.suspend(() =>
     links: GetContactsResponseContactsItemLinks,
     inspectionType: S.String,
     outgoings: GetListingResponseListingOutgoings,
+    auctionVenueDetails: S.optional(
+      GetListingsResponseListingsItemAuctionVenueDetails,
+    ),
   }),
 ).annotate({
   identifier: "GetListingsResponseListingsItem",
@@ -2776,13 +2776,13 @@ export interface GetOfficesRequest {
   /** The number of records to return per page (Default 20) */
   limit?: number;
   /** Return records that were modified before the supplied date. */
-  filter_modifiedBefore_?: string;
+  filterModifiedBefore?: string;
   /** Return records that were modified after the supplied date. */
-  filter_modifiedAfter_?: string;
+  filterModifiedAfter?: string;
   /** Filter results by status. By default only active records are returned, pass filter[status]=all to get all records */
-  filter_status_?: GetOfficesRequestFilterStatus | (string & {});
+  filterStatus?: GetOfficesRequestFilterStatus | (string & {});
   /** Filter results to include offices that can be reported on. By default, all office are returned. */
-  filter_canReportOn_?: boolean;
+  filterCanReportOn?: boolean;
   /** Output additional objects in the response. Supports multiple comma-separated values. */
   include?: GetOfficesRequestInclude | (string & {});
   /** Order results */
@@ -2794,16 +2794,16 @@ export const GetOfficesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     page: S.optional(S.Number.pipe(T.Query())),
     limit: S.optional(S.Number.pipe(T.Query())),
-    filter_modifiedBefore_: S.optional(
+    filterModifiedBefore: S.optional(
       S.String.pipe(T.Query("filter[modifiedBefore]")),
     ),
-    filter_modifiedAfter_: S.optional(
+    filterModifiedAfter: S.optional(
       S.String.pipe(T.Query("filter[modifiedAfter]")),
     ),
-    filter_status_: S.optional(
+    filterStatus: S.optional(
       GetOfficesRequestFilterStatus.pipe(T.Query("filter[status]")),
     ),
-    filter_canReportOn_: S.optional(
+    filterCanReportOn: S.optional(
       S.Boolean.pipe(T.Query("filter[canReportOn]")),
     ),
     include: S.optional(GetOfficesRequestInclude.pipe(T.Query())),
@@ -2967,9 +2967,9 @@ export const GetRegionsRequestOrder = /*@__PURE__*/ S.String;
 
 export interface GetRegionsRequest {
   /** Filter regions by region name. */
-  filter_name_?: string;
+  filterName?: string;
   /** Filter regions by state. */
-  filter_state_?: string;
+  filterState?: string;
   /** Which page of results should be returned */
   page?: number;
   /** The number of records to return per page (Default 20) */
@@ -2981,8 +2981,8 @@ export interface GetRegionsRequest {
 }
 export const GetRegionsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    filter_name_: S.optional(S.String.pipe(T.Query("filter[name]"))),
-    filter_state_: S.optional(S.String.pipe(T.Query("filter[state]"))),
+    filterName: S.optional(S.String.pipe(T.Query("filter[name]"))),
+    filterState: S.optional(S.String.pipe(T.Query("filter[state]"))),
     page: S.optional(S.Number.pipe(T.Query())),
     limit: S.optional(S.Number.pipe(T.Query())),
     orderBy: S.optional(GetRegionsRequestOrderBy.pipe(T.Query())),
@@ -3222,15 +3222,15 @@ export interface GetSearchRequirementsRequest {
   /** The number of records to return per page (Default 20) */
   limit?: number;
   /** Filter results by contactId */
-  filter_contactId_?: string;
+  filterContactId?: string;
   /** Return records that were modified before the supplied date. */
-  filter_modifiedBefore_?: string;
+  filterModifiedBefore?: string;
   /** Return records that were modified after the supplied date. If a modifiedBefore is also supplied, this will return records between the two dates. */
-  filter_modifiedAfter_?: string;
+  filterModifiedAfter?: string;
   /** Return records that were created before the supplied date. If a createdAfter is also supplied, this will return records between the two dates. */
-  filter_createdBefore_?: string;
+  filterCreatedBefore?: string;
   /** Return records that were created after the supplied date. */
-  filter_createdAfter_?: string;
+  filterCreatedAfter?: string;
   /** Output additional objects in the response. Supports multiple comma-separated values. */
   include?: GetSearchRequirementsRequestInclude | (string & {});
   /** Order results */
@@ -3242,17 +3242,17 @@ export const GetSearchRequirementsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     page: S.optional(S.Number.pipe(T.Query())),
     limit: S.optional(S.Number.pipe(T.Query())),
-    filter_contactId_: S.optional(S.String.pipe(T.Query("filter[contactId]"))),
-    filter_modifiedBefore_: S.optional(
+    filterContactId: S.optional(S.String.pipe(T.Query("filter[contactId]"))),
+    filterModifiedBefore: S.optional(
       S.String.pipe(T.Query("filter[modifiedBefore]")),
     ),
-    filter_modifiedAfter_: S.optional(
+    filterModifiedAfter: S.optional(
       S.String.pipe(T.Query("filter[modifiedAfter]")),
     ),
-    filter_createdBefore_: S.optional(
+    filterCreatedBefore: S.optional(
       S.String.pipe(T.Query("filter[createdBefore]")),
     ),
-    filter_createdAfter_: S.optional(
+    filterCreatedAfter: S.optional(
       S.String.pipe(T.Query("filter[createdAfter]")),
     ),
     include: S.optional(GetSearchRequirementsRequestInclude.pipe(T.Query())),
@@ -3316,11 +3316,30 @@ export type GetSearchRequirementsResponseSearchRequirementsItemBuildingArea =
 export const GetSearchRequirementsResponseSearchRequirementsItemBuildingArea =
   GetSearchRequirementResponseSearchRequirementLandArea;
 
+export interface GetSearchRequirementsResponseSearchRequirementsItemSuburbsItem {
+  name: string;
+  postcode: string;
+  state: string;
+  country: string;
+}
+export const GetSearchRequirementsResponseSearchRequirementsItemSuburbsItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.String,
+      postcode: S.String,
+      state: S.String,
+      country: S.String,
+    }),
+  ).annotate({
+    identifier:
+      "GetSearchRequirementsResponseSearchRequirementsItemSuburbsItem",
+  }) as any as S.Schema<GetSearchRequirementsResponseSearchRequirementsItemSuburbsItem>;
+
 export type GetSearchRequirementsResponseSearchRequirementsItemSuburbsList =
-  Array<unknown>;
+  Array<GetSearchRequirementsResponseSearchRequirementsItemSuburbsItem>;
 export const GetSearchRequirementsResponseSearchRequirementsItemSuburbsList =
   /*@__PURE__*/ S.Array(
-    S.Unknown,
+    GetSearchRequirementsResponseSearchRequirementsItemSuburbsItem,
   ) as any as S.Schema<GetSearchRequirementsResponseSearchRequirementsItemSuburbsList>;
 
 export type GetSearchRequirementsResponseSearchRequirementsItemRegionsList =
@@ -3450,41 +3469,39 @@ export interface GetStaffRequest {
   /** The number of records to return per page (Default 20) */
   limit?: number;
   /** Filter results by id / name / email */
-  filter_query_?: string;
+  filterQuery?: string;
   /** Filter results by office id */
-  filter_officeId_?: string;
+  filterOfficeId?: string;
   /** Filter results by first name */
-  filter_firstName_?: string;
+  filterFirstName?: string;
   /** Filter results by last name */
-  filter_lastName_?: string;
+  filterLastName?: string;
   /** Filter results by email address */
-  filter_email_?: string;
+  filterEmail?: string;
   /** By default only active records are returned, pass filter[status]=all to get all records */
-  filter_status_?: string;
+  filterStatus?: string;
   /** Filter results by role. Available values can be found in GET /staff-role-types. */
-  filter_role_?: string;
+  filterRole?: string;
   /** Filter results by web display. Available values can be found in GET /staff-web-display-types. Supports multiple comma-separated values. */
-  filter_webDisplay_?: string;
+  filterWebDisplay?: string;
   /** Filter results by if user has access. */
-  filter_userAccess_?: boolean;
+  filterUserAccess?: boolean;
   /** Filter results by user access level */
-  filter_userAccessLevel_?:
-    | GetStaffRequestFilterUserAccessLevel
-    | (string & {});
+  filterUserAccessLevel?: GetStaffRequestFilterUserAccessLevel | (string & {});
   /** Filter by team id */
-  filter_teamId_?: string;
+  filterTeamId?: string;
   /** Output additional objects in the response. Supports multiple comma-separated values. */
   include?: GetStaffRequestInclude | (string & {});
   /** Return records that were modified before the supplied date. */
-  filter_modifiedBefore_?: string;
+  filterModifiedBefore?: string;
   /** Return records that were modified after the supplied date. */
-  filter_modifiedAfter_?: string;
+  filterModifiedAfter?: string;
   /** Return records that were created before the supplied date. */
-  filter_createdBefore_?: string;
+  filterCreatedBefore?: string;
   /** Return records that were created after the supplied date. */
-  filter_createdAfter_?: string;
+  filterCreatedAfter?: string;
   /** Filter results to include members that can be reported on. By default, all member are returned. */
-  filter_canReportOn_?: boolean;
+  filterCanReportOn?: boolean;
   /** Order results */
   orderBy?: GetStaffRequestOrderBy | (string & {});
   /** order results ASC or DESC */
@@ -3494,39 +3511,35 @@ export const GetStaffRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     page: S.optional(S.Number.pipe(T.Query())),
     limit: S.optional(S.Number.pipe(T.Query())),
-    filter_query_: S.optional(S.String.pipe(T.Query("filter[query]"))),
-    filter_officeId_: S.optional(S.String.pipe(T.Query("filter[officeId]"))),
-    filter_firstName_: S.optional(S.String.pipe(T.Query("filter[firstName]"))),
-    filter_lastName_: S.optional(S.String.pipe(T.Query("filter[lastName]"))),
-    filter_email_: S.optional(S.String.pipe(T.Query("filter[email]"))),
-    filter_status_: S.optional(S.String.pipe(T.Query("filter[status]"))),
-    filter_role_: S.optional(S.String.pipe(T.Query("filter[role]"))),
-    filter_webDisplay_: S.optional(
-      S.String.pipe(T.Query("filter[webDisplay]")),
-    ),
-    filter_userAccess_: S.optional(
-      S.Boolean.pipe(T.Query("filter[userAccess]")),
-    ),
-    filter_userAccessLevel_: S.optional(
+    filterQuery: S.optional(S.String.pipe(T.Query("filter[query]"))),
+    filterOfficeId: S.optional(S.String.pipe(T.Query("filter[officeId]"))),
+    filterFirstName: S.optional(S.String.pipe(T.Query("filter[firstName]"))),
+    filterLastName: S.optional(S.String.pipe(T.Query("filter[lastName]"))),
+    filterEmail: S.optional(S.String.pipe(T.Query("filter[email]"))),
+    filterStatus: S.optional(S.String.pipe(T.Query("filter[status]"))),
+    filterRole: S.optional(S.String.pipe(T.Query("filter[role]"))),
+    filterWebDisplay: S.optional(S.String.pipe(T.Query("filter[webDisplay]"))),
+    filterUserAccess: S.optional(S.Boolean.pipe(T.Query("filter[userAccess]"))),
+    filterUserAccessLevel: S.optional(
       GetStaffRequestFilterUserAccessLevel.pipe(
         T.Query("filter[userAccessLevel]"),
       ),
     ),
-    filter_teamId_: S.optional(S.String.pipe(T.Query("filter[teamId]"))),
+    filterTeamId: S.optional(S.String.pipe(T.Query("filter[teamId]"))),
     include: S.optional(GetStaffRequestInclude.pipe(T.Query())),
-    filter_modifiedBefore_: S.optional(
+    filterModifiedBefore: S.optional(
       S.String.pipe(T.Query("filter[modifiedBefore]")),
     ),
-    filter_modifiedAfter_: S.optional(
+    filterModifiedAfter: S.optional(
       S.String.pipe(T.Query("filter[modifiedAfter]")),
     ),
-    filter_createdBefore_: S.optional(
+    filterCreatedBefore: S.optional(
       S.String.pipe(T.Query("filter[createdBefore]")),
     ),
-    filter_createdAfter_: S.optional(
+    filterCreatedAfter: S.optional(
       S.String.pipe(T.Query("filter[createdAfter]")),
     ),
-    filter_canReportOn_: S.optional(
+    filterCanReportOn: S.optional(
       S.Boolean.pipe(T.Query("filter[canReportOn]")),
     ),
     orderBy: S.optional(GetStaffRequestOrderBy.pipe(T.Query())),
@@ -3536,10 +3549,16 @@ export const GetStaffRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "GetStaffRequest",
 }) as any as S.Schema<GetStaffRequest>;
 
-export type GetStaffResponseStaffMembersItemWebDisplayList = Array<unknown>;
+export type GetStaffResponseStaffMembersItemWebDisplayItem =
+  GetContactResponseContactSubscriptionsItem;
+export const GetStaffResponseStaffMembersItemWebDisplayItem =
+  GetContactResponseContactSubscriptionsItem;
+
+export type GetStaffResponseStaffMembersItemWebDisplayList =
+  Array<GetContactResponseContactSubscriptionsItem>;
 export const GetStaffResponseStaffMembersItemWebDisplayList =
   /*@__PURE__*/ S.Array(
-    S.Unknown,
+    GetContactResponseContactSubscriptionsItem,
   ) as any as S.Schema<GetStaffResponseStaffMembersItemWebDisplayList>;
 
 export type GetStaffResponseStaffMembersItemLinks =
@@ -3809,15 +3828,15 @@ export interface GetSuburbsRequest {
   /** The number of records to return per page (Default 20) */
   limit?: number;
   /** Filter results by suburb name or post code */
-  filter_query_?: string;
+  filterQuery?: string;
   /** Filter results by post code */
-  filter_postcode_?: string;
+  filterPostcode?: string;
   /** Filter results by suburb name */
-  filter_name_?: string;
+  filterName?: string;
   /** Filter results by State (accepts state short name e.g. WA) */
-  filter_state_?: string;
+  filterState?: string;
   /** Filter results by Region name. Supports multiple comma-separated values. */
-  filter_region_?: string;
+  filterRegion?: string;
   /** Order results by appointment start data, appointment end date */
   orderBy?: GetSuburbsRequestOrderBy | (string & {});
   /** order results ASC or DESC */
@@ -3827,11 +3846,11 @@ export const GetSuburbsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     page: S.optional(S.Number.pipe(T.Query())),
     limit: S.optional(S.Number.pipe(T.Query())),
-    filter_query_: S.optional(S.String.pipe(T.Query("filter[query]"))),
-    filter_postcode_: S.optional(S.String.pipe(T.Query("filter[postcode]"))),
-    filter_name_: S.optional(S.String.pipe(T.Query("filter[name]"))),
-    filter_state_: S.optional(S.String.pipe(T.Query("filter[state]"))),
-    filter_region_: S.optional(S.String.pipe(T.Query("filter[region]"))),
+    filterQuery: S.optional(S.String.pipe(T.Query("filter[query]"))),
+    filterPostcode: S.optional(S.String.pipe(T.Query("filter[postcode]"))),
+    filterName: S.optional(S.String.pipe(T.Query("filter[name]"))),
+    filterState: S.optional(S.String.pipe(T.Query("filter[state]"))),
+    filterRegion: S.optional(S.String.pipe(T.Query("filter[region]"))),
     orderBy: S.optional(GetSuburbsRequestOrderBy.pipe(T.Query())),
     order: S.optional(GetSuburbsRequestOrder.pipe(T.Query())),
   }).pipe(T.Http({ method: "GET", uri: "/suburbs", code: 200 })),
