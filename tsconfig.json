@@ -36,6 +36,8 @@
     { "path": "./packages/prisma-postgres/tsconfig.scripts.json" },
     { "path": "./packages/railway/tsconfig.json" },
     { "path": "./packages/railway/tsconfig.scripts.json" },
+    { "path": "./packages/reapit/tsconfig.json" },
+    { "path": "./packages/reapit/tsconfig.scripts.json" },
     { "path": "./packages/rex/tsconfig.json" },
     { "path": "./packages/rex/tsconfig.scripts.json" },
     { "path": "./packages/stripe/tsconfig.json" },
