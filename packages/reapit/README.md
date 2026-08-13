@@ -161,9 +161,23 @@ Their **response** schemas remain unverified against a successful call.
 The live API also exposes roughly twenty endpoints absent from the vendor
 document entirely (`/tasks`, `/notes`, `/offers`, `/leads`, `/inspections`,
 `/projects`, `/appointments`, `/webhook-subscriptions`, …). They answer
-`400 "The method GET is not allowed"` rather than `404`, so they exist but are
-write-only, and their request shapes are not documented anywhere available.
-They are not yet modelled here.
+`400 "The method GET is not allowed"` rather than `404`, so they exist and are
+reachable — but only via verbs we cannot discover by reading.
+
+They are **not documented by Reapit either**, which is worth recording so the
+question is not reopened. Reapit serves its own Swagger UI at
+`/docs?client_id=…&version=…`, rendered from `/docs/swagger.yaml`. That
+document was compared against `specs/openapi.vendor.json` operation by
+operation: identical path sets, identical parameter names, identical enum
+cardinalities — **0 of 26 operations differ**. Fetching the `version=1`
+document too produced the same path set. So the vendor copy here is a
+faithful, complete rendering of everything Reapit publishes for this API key,
+and the missing endpoints appear in neither version.
+
+Discovering them would need either request shapes from Reapit directly, or
+probing writes with deliberately invalid bodies and reading the validation
+errors back. Neither is guesswork-free, so nothing is modelled here rather
+than shipping types nobody has verified.
 
 ## Testing
 
