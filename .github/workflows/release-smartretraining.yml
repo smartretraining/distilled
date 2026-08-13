@@ -1,0 +1,147 @@
+name: release-smartretraining
+
+# Publishes the @smartretraining/* packages and cuts a GitHub Release for
+# each one.
+#
+# These are versioned INDEPENDENTLY of the @distilled.cloud/* line that
+# `release.yml` ships: that workflow stamps one shared version across all 22
+# upstream packages, which would drag rex-effect off its own 0.x line. So
+# this workflow reads each package's version straight from its package.json
+# — the file is the source of truth, bumped in a normal reviewed commit —
+# and refuses to publish a version that is already on npm.
+#
+# Transparency comes from three things:
+#   * npm provenance (`--provenance`) cryptographically attests which commit
+#     and which workflow run produced the tarball; npm renders it on the
+#     package page. This needs `id-token: write`.
+#   * a package-scoped git tag (`rex-effect@0.4.0`) so history shows exactly
+#     what shipped when.
+#   * a GitHub Release per package with auto-generated notes.
+#
+# Setup required once: an `NPM_TOKEN` repository secret holding an npm
+# automation token with publish rights on the @smartretraining scope.
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Which package to release.
+        required: true
+        type: choice
+        options:
+          - rex
+          - reapit
+          - both
+        default: both
+      dry-run:
+        description: >-
+          Build, typecheck and pack, but do not publish or tag. Use this to
+          rehearse a release.
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: release-smartretraining
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - id: plan
+        run: |
+          case "${{ inputs.package }}" in
+            rex)    matrix='[{"dir":"packages/rex","name":"@smartretraining/rex-effect","tag":"rex-effect"}]' ;;
+            reapit) matrix='[{"dir":"packages/reapit","name":"@smartretraining/reapit-effect","tag":"reapit-effect"}]' ;;
+            both)   matrix='[{"dir":"packages/rex","name":"@smartretraining/rex-effect","tag":"rex-effect"},{"dir":"packages/reapit","name":"@smartretraining/reapit-effect","tag":"reapit-effect"}]' ;;
+          esac
+          echo "matrix={\"include\":$matrix}" >> "$GITHUB_OUTPUT"
+
+  release:
+    needs: plan
+    runs-on: ubuntu-latest
+    strategy:
+      # Independent version lines — one package failing should not cancel
+      # the other's release.
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    permissions:
+      contents: write # create the tag and the GitHub Release
+      id-token: write # npm provenance attestation
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history so release notes can be generated against the
+          # previous tag for this package.
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # npm (not bun) does the publishing: bun publish has no --provenance.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - run: bun install --frozen-lockfile
+
+      - name: Resolve version
+        id: version
+        run: |
+          version=$(node -p "require('./${{ matrix.dir }}/package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=${{ matrix.tag }}@$version" >> "$GITHUB_OUTPUT"
+          echo "Releasing ${{ matrix.name }} $version"
+
+      - name: Refuse to republish an existing version
+        run: |
+          if npm view "${{ matrix.name }}@${{ steps.version.outputs.version }}" version >/dev/null 2>&1; then
+            echo "::error::${{ matrix.name }}@${{ steps.version.outputs.version }} is already on npm. Bump the version in ${{ matrix.dir }}/package.json first."
+            exit 1
+          fi
+
+      # `noCheck: true` in tsconfig.base.json means day-to-day builds only
+      # emit. Nothing ships without being properly checked first.
+      - name: Typecheck (strict)
+        run: bunx tsc -p ${{ matrix.dir }}/tsconfig.json --noEmit --noCheck false
+
+      - name: Build
+        run: bunx tsc -b ${{ matrix.dir }}
+
+      - name: Pack
+        working-directory: ${{ matrix.dir }}
+        run: npm pack --dry-run
+
+      - name: Publish to npm
+        if: ${{ !inputs.dry-run }}
+        working-directory: ${{ matrix.dir }}
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Tag and create the GitHub Release
+        if: ${{ !inputs.dry-run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git tag "${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+
+          # Notes are generated against the previous tag for THIS package,
+          # so a rex release does not list reapit's commits.
+          previous=$(git tag --list "${{ matrix.tag }}@*" --sort=-v:refname | sed -n '2p')
+          if [ -n "$previous" ]; then
+            gh release create "${{ steps.version.outputs.tag }}" \
+              --title "${{ matrix.name }} ${{ steps.version.outputs.version }}" \
+              --generate-notes \
+              --notes-start-tag "$previous"
+          else
+            gh release create "${{ steps.version.outputs.tag }}" \
+              --title "${{ matrix.name }} ${{ steps.version.outputs.version }}" \
+              --generate-notes
+          fi
