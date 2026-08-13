@@ -1,12 +1,15 @@
 import * as Schema from "effect/Schema";
 import { describe, expect, it } from "vitest";
-import { FeedbackCreateInput, FeedbackCreateOutput } from "../src/operations/FeedbackCreate.ts";
+import {
+  FeedbackCreateRequest,
+  FeedbackCreateResponse,
+} from "../src/services/rex.ts";
 
 // These guard the three ways Rex's self-description misleads `build-openapi.ts`.
 // Every one of them shipped a client that could not make the call at all, and
 // nothing caught it because the rest of the suite needs live credentials.
 describe("Rex spec translation", () => {
-  const decode = Schema.decodeUnknownSync(FeedbackCreateInput);
+  const decode = Schema.decodeUnknownSync(FeedbackCreateRequest);
 
   // Rex declares `listing`/`agent`/`project`/`project_stage` as `type: "object"`
   // carrying an `items` block, which read as an array and generated
@@ -33,7 +36,9 @@ describe("Rex spec translation", () => {
   // `related.feedback_contacts` is a genuine array (`type: "array"` + `items`)
   // and must not be collateral damage of the fix above.
   it("keeps genuine arrays as arrays", () => {
-    expect(() => decode({ data: { related: { feedback_contacts: { contact_id: 3 } } } })).toThrow();
+    expect(() =>
+      decode({ data: { related: { feedback_contacts: { contact_id: 3 } } } }),
+    ).toThrow();
   });
 
   // Valuelist ids are strings on the wire — slugs for global lists, numeric
@@ -53,8 +58,11 @@ describe("Rex spec translation", () => {
   // `return_id` switches the response between a bare id and the whole record.
   // Inferring the record struct made the id half undecodable.
   it("decodes both halves of the return_id response", () => {
-    const out = Schema.decodeUnknownSync(FeedbackCreateOutput);
+    const out = Schema.decodeUnknownSync(FeedbackCreateResponse);
     expect(out(12345)).toBe(12345);
-    expect(out({ id: 1, date_of: "2026-07-27" })).toEqual({ id: 1, date_of: "2026-07-27" });
+    expect(out({ id: 1, date_of: "2026-07-27" })).toEqual({
+      id: 1,
+      date_of: "2026-07-27",
+    });
   });
 });

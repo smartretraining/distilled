@@ -10,7 +10,11 @@ const fullChangeDelivery = {
       type: "notes.updated",
       payload: {
         data: {
-          pre: { id: 7838281, etag: "7838281-140000000", note: "This is a note" },
+          pre: {
+            id: 7838281,
+            etag: "7838281-140000000",
+            note: "This is a note",
+          },
           post: { id: 7838281, etag: "7838281-140000000", note: "Edited note" },
         },
         format: "v1_full_change_detail",

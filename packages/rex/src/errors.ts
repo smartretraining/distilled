@@ -6,7 +6,7 @@
  *
  * Rex is an RPC-style API: most logical failures come back as HTTP 200 with
  * an `error` object inside the `{ result, error, correlation }` envelope
- * (see `client.ts`), discriminated by `error.type` (e.g.
+ * (see `protocol.ts`), discriminated by `error.type` (e.g.
  * `"BadMethodCallException"`, `"ValidationException"`). Transport-level
  * failures still use real HTTP status codes (401/403/429/5xx), which is what
  * `HTTP_STATUS_MAP` covers.
@@ -39,7 +39,7 @@ import * as Category from "@distilled.cloud/core/category";
  * field. Carries the Rex exception `type` and `code` so callers can match
  * on the specific failure.
  */
-export class RexApiError extends Schema.TaggedErrorClass<RexApiError>()(
+export class RexApiError extends Schema.TaggedError<RexApiError>()(
   "RexApiError",
   {
     /** Rex exception class name, e.g. "BadMethodCallException". */
@@ -53,7 +53,7 @@ export class RexApiError extends Schema.TaggedErrorClass<RexApiError>()(
 ).pipe(Category.withServerError) {}
 
 /** Returned when a Rex error response can't be matched to a known shape. */
-export class UnknownRexError extends Schema.TaggedErrorClass<UnknownRexError>()(
+export class UnknownRexError extends Schema.TaggedError<UnknownRexError>()(
   "UnknownRexError",
   {
     code: Schema.optional(Schema.String),
@@ -63,7 +63,7 @@ export class UnknownRexError extends Schema.TaggedErrorClass<UnknownRexError>()(
 ).pipe(Category.withServerError) {}
 
 /** Schema parse error wrapper — raised when a response fails schema decoding. */
-export class RexParseError extends Schema.TaggedErrorClass<RexParseError>()(
+export class RexParseError extends Schema.TaggedError<RexParseError>()(
   "RexParseError",
   {
     body: Schema.Unknown,

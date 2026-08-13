@@ -1,42 +1,71 @@
+#!/usr/bin/env bun
 /**
- * Rex SDK code generator.
+ * generate — turn the Smithy JSON model in .generated-specs into the Rex
+ * Effect SDK.
  *
- * Consumes the OpenAPI 3.1 document produced by `build-openapi.ts`
- * (`specs/openapi.generated.json`) and emits one operation module per Rex
- * method into `src/operations/`, using the shared generator from
- * `@distilled.cloud/core`.
+ * Input:  .generated-specs/rex.json  (written by scripts/convert.ts)
+ * Output: src/services/rex.ts  +  src/services/index.ts
  *
- * The Rex `{ result, error, correlation }` envelope is unwrapped globally by
- * `src/client.ts` (`transformResponse`), so generated output schemas describe
- * just the inner payload — no per-operation response-path patching needed.
+ * The smithy→SDK compiler and CLI pipeline live in
+ * `@distilled.cloud/core/codegen`; this script is Rex's provider spec.
  *
- * Run `bun run scripts/build-openapi.ts` first (or use the `generate` script,
- * which chains both).
+ * Rex keeps the wire's snake_case member names on the TS surface — Rex's
+ * own `describe` output, the REST payloads, and existing consumers all use
+ * snake_case — so no member renaming or wire dictionaries appear here.
  *
- * Usage:
- *   bun run scripts/generate.ts
+ * Every operation carries `RexApiError` in its error union: Rex signals
+ * logical failures as HTTP 200 with a non-null envelope `error`, which
+ * `src/protocol.ts` converts into that typed failure.
  */
-import * as path from "path";
-import { generateFromOpenAPI } from "@distilled.cloud/core/openapi/generate";
+import type { SdkSpec } from "@distilled.cloud/core/codegen/generator";
+import { runGeneratorCli } from "@distilled.cloud/core/codegen/cli";
 
-const rootDir = path.join(import.meta.dir, "..");
+const NULLABLE_TRAIT = "com.distilled.openapi#nullable";
+const ERROR_MATCHERS_TRAIT = "com.distilled.openapi#errorMatchers";
+const RAW_RESPONSE_TRAIT = "com.distilled.openapi#rawResponse";
 
-generateFromOpenAPI({
-  specPath: path.join(rootDir, "specs/openapi.generated.json"),
-  patchDir: path.join(rootDir, "patches"),
-  outputDir: path.join(rootDir, "src/operations"),
-  importPrefix: "..",
-  clientImport: "../client",
-  traitsImport: "../traits",
-  sensitiveImport: "../sensitive",
-  errorsImport: "../errors",
-  includeOperationErrors: true,
-  statusToErrorClass: {
-    "400": "BadRequest",
-    "403": "Forbidden",
-    "404": "NotFound",
-    "409": "Conflict",
+/** Rex's provider spec for the shared smithy→SDK compiler. */
+const rexSpec: SdkSpec = {
+  nullableTrait: NULLABLE_TRAIT,
+  errorMatchersTrait: ERROR_MATCHERS_TRAIT,
+
+  extraBindings: [
+    {
+      // Sole member of a synthesized wrapper for bare array/scalar response
+      // bodies; as the response's only member, the response IS the payload.
+      trait: RAW_RESPONSE_TRAIT,
+      binding: "rawResponse",
+      pipe: "T.RawResponse()",
+      rootPipe: "T.RawResponseRoot()",
+    },
+  ],
+
+  // Unions surface as TS type unions over an opaque schema — the REST
+  // protocol passes union content through verbatim (wire names ARE the TS
+  // names for Rex), so no runtime case discrimination is needed.
+  union: ({ name, caseTargets, tsRef }) => [
+    `export type ${name} = ${caseTargets.map(tsRef).join(" | ") || "unknown"};`,
+    `export const ${name} = /*@__PURE__*/ S.Unknown as any as S.Schema<${name}>;\n`,
+  ],
+
+  operationDecl: {
+    contextType: "RexOpContext",
+    commonErrorType: "RexOpError",
+    // RexApiError is raised by the protocol for HTTP-200 envelope failures,
+    // so it belongs on every operation's error list.
+    commonErrorClasses: ["UnknownRexError", "RexApiError"],
+    protocol: "RexProtocol",
+    retry: "Retry.Retry",
   },
-  defaultErrorStatuses: new Set(["401", "429", "500", "502", "503", "504"]),
-  skipDeprecated: false,
+
+  sourceNote: ".generated-specs (specs/rex — describe/describeModel captures)",
+};
+
+runGeneratorCli({
+  description: "Generate the Rex Effect SDK from the Smithy model",
+  root: `${import.meta.dir}/..`,
+  // patches/ holds OpenAPI-document patches consumed by scripts/convert.ts;
+  // there is no smithy-model patch chain.
+  patchesDir: false,
+  spec: () => rexSpec,
 });
