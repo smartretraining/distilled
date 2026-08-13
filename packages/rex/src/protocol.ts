@@ -129,8 +129,30 @@ const baseProtocol = makeRestProtocol<Config>({
     return inner ? { code: inner.code, message: inner.message } : undefined;
   },
   transformResponse,
-  unknownError: ({ code, message, body }) =>
-    new UnknownRexError({
+  /**
+   * Rex reports logical failures through the envelope's `error` object on
+   * error responses too, and its statuses do not always land in the shared
+   * status map (a missing record comes back as a Rex exception, not a 404).
+   * So when the body carries an envelope error, surface the structured
+   * {@link RexApiError} — with its `type` and `code` — rather than flattening
+   * it into {@link UnknownRexError}. Only bodies with no envelope error at
+   * all fall through to the unknown case.
+   */
+  unknownError: ({ code, message, body }) => {
+    const env = decodeEnvelope(body);
+    const inner =
+      env._tag === "Some" && env.value.error ? env.value.error : undefined;
+
+    if (inner) {
+      return new RexApiError({
+        type: inner.type,
+        code: inner.code,
+        message: inner.message,
+        body: inner,
+      });
+    }
+
+    return new UnknownRexError({
       code:
         typeof code === "string"
           ? code
@@ -139,7 +161,8 @@ const baseProtocol = makeRestProtocol<Config>({
             : undefined,
       message,
       body,
-    }),
+    });
+  },
 });
 
 /**

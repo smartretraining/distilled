@@ -40,6 +40,17 @@ import * as Category from "@distilled.cloud/core/category";
  * `detail`, so callers can match a specific failure without string-matching
  * the message.
  */
+/**
+ * Deliberately NOT categorised as a server error. These are *logical*
+ * failures — a missing required filter, a malformed body — and the transient
+ * retry policy retries server errors indefinitely, so categorising them that
+ * way makes a request that can never succeed spend ~30s in exponential
+ * backoff before surfacing.
+ *
+ * Genuinely transient conditions still retry: they arrive as HTTP 5xx and map
+ * to `InternalServerError` / `ServiceUnavailable` / `BadGateway`, which keep
+ * their own categories.
+ */
 export class ReapitApiError extends Schema.TaggedError<ReapitApiError>()(
   "ReapitApiError",
   {
@@ -54,7 +65,7 @@ export class ReapitApiError extends Schema.TaggedError<ReapitApiError>()(
     /** The full response body. */
     body: Schema.Unknown,
   },
-).pipe(Category.withServerError) {}
+) {}
 
 /**
  * Raised when the API rejects the `version` query parameter (code 300).
