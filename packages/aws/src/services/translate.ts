@@ -1,13 +1,13 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as redacted from "effect/Redacted";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 import { SensitiveBlob } from "../sensitive.ts";
 const svc = T.AwsApiService({
   sdkId: "Translate",
@@ -85,42 +85,120 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class ConcurrentModificationException
+  extends /*@__PURE__*/ S.TaggedError<ConcurrentModificationException>()(
+    "ConcurrentModificationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class ConflictException
+  extends /*@__PURE__*/ S.TaggedError<ConflictException>()(
+    "ConflictException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class DetectedLanguageLowConfidenceException
+  extends /*@__PURE__*/ S.TaggedError<DetectedLanguageLowConfidenceException>()(
+    "DetectedLanguageLowConfidenceException",
+    {
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+      DetectedLanguageCode: S.optional(S.String),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InternalServerException
+  extends /*@__PURE__*/ S.TaggedError<InternalServerException>()(
+    "InternalServerException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class InvalidFilterException
+  extends /*@__PURE__*/ S.TaggedError<InvalidFilterException>()(
+    "InvalidFilterException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidParameterValueException
+  extends /*@__PURE__*/ S.TaggedError<InvalidParameterValueException>()(
+    "InvalidParameterValueException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidRequestException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRequestException>()(
+    "InvalidRequestException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class LimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<LimitExceededException>()(
+    "LimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class ResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotFoundException>()(
+    "ResourceNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class ServiceUnavailableException
+  extends /*@__PURE__*/ S.TaggedError<ServiceUnavailableException>()(
+    "ServiceUnavailableException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(503),
+  ).pipe(C.withServerError) {}
+export class TextSizeLimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<TextSizeLimitExceededException>()(
+    "TextSizeLimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class TooManyRequestsException
+  extends /*@__PURE__*/ S.TaggedError<TooManyRequestsException>()(
+    "TooManyRequestsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(429),
+  ).pipe(C.withThrottlingError) {}
+export class TooManyTagsException
+  extends /*@__PURE__*/ S.TaggedError<TooManyTagsException>()(
+    "TooManyTagsException",
+    {
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+      ResourceArn: S.optional(S.String),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class UnsupportedDisplayLanguageCodeException
+  extends /*@__PURE__*/ S.TaggedError<UnsupportedDisplayLanguageCodeException>()(
+    "UnsupportedDisplayLanguageCodeException",
+    {
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+      DisplayLanguageCode: S.optional(S.String),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class UnsupportedLanguagePairException
+  extends /*@__PURE__*/ S.TaggedError<UnsupportedLanguagePairException>()(
+    "UnsupportedLanguagePairException",
+    {
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+      SourceLanguageCode: S.optional(S.String),
+      TargetLanguageCode: S.optional(S.String),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
 export type ResourceName = string;
 export type Description = string;
 export type S3Uri = string;
-export type EncryptionKeyID = string;
-export type ClientTokenString = string;
-export type TagKey = string;
-export type TagValue = string;
-export type ResourceArn = string;
-export type JobId = string;
-export type JobName = string;
-export type LanguageCodeString = string;
-export type UnboundedLengthString = string;
-export type ContentType = string;
-export type IamRoleArn = string;
-export type ParallelDataArn = string;
-export type TerminologyArn = string;
-export type TerminologyFile = Uint8Array | redacted.Redacted<Uint8Array>;
-export type NextToken = string;
-export type MaxResultsInteger = number;
-export type LocalizedNameString = string;
-export type DocumentContent = Uint8Array | redacted.Redacted<Uint8Array>;
-export type TranslatedDocumentContent =
-  | Uint8Array
-  | redacted.Redacted<Uint8Array>;
-export type BoundedLengthString = string;
-export type TranslatedTextString = string;
-
-//# Schemas
 export type ParallelDataFormat = "TSV" | "CSV" | "TMX" | (string & {});
-export const ParallelDataFormat = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ParallelDataFormat = /*@__PURE__*/ S.String;
+
 export interface ParallelDataConfig {
   S3Uri?: string;
   Format?: ParallelDataFormat;
 }
-export const ParallelDataConfig = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ParallelDataConfig = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     S3Uri: S.optional(S.String),
     Format: S.optional(ParallelDataFormat),
@@ -129,23 +207,28 @@ export const ParallelDataConfig = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ParallelDataConfig",
 }) as any as S.Schema<ParallelDataConfig>;
 export type EncryptionKeyType = "KMS" | (string & {});
-export const EncryptionKeyType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const EncryptionKeyType = /*@__PURE__*/ S.String;
+
+export type EncryptionKeyID = string;
 export interface EncryptionKey {
   Type: EncryptionKeyType;
   Id: string;
 }
-export const EncryptionKey = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EncryptionKey = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Type: EncryptionKeyType, Id: S.String }),
 ).annotate({ identifier: "EncryptionKey" }) as any as S.Schema<EncryptionKey>;
+export type ClientTokenString = string;
+export type TagKey = string;
+export type TagValue = string;
 export interface Tag {
   Key: string;
   Value: string;
 }
-export const Tag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Tag = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: S.String, Value: S.String }),
 ).annotate({ identifier: "Tag" }) as any as S.Schema<Tag>;
 export type TagList = Tag[];
-export const TagList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Tag);
+export const TagList = /*@__PURE__*/ S.Array(Tag);
 export interface CreateParallelDataRequest {
   Name: string;
   Description?: string;
@@ -154,18 +237,17 @@ export interface CreateParallelDataRequest {
   ClientToken: string;
   Tags?: Tag[];
 }
-export const CreateParallelDataRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Name: S.String,
-      Description: S.optional(S.String),
-      ParallelDataConfig: ParallelDataConfig,
-      EncryptionKey: S.optional(EncryptionKey),
-      ClientToken: S.String.pipe(T.IdempotencyToken()),
-      Tags: S.optional(TagList),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const CreateParallelDataRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Name: S.String,
+    Description: S.optional(S.String),
+    ParallelDataConfig: ParallelDataConfig,
+    EncryptionKey: S.optional(EncryptionKey),
+    ClientToken: S.String.pipe(T.IdempotencyToken()),
+    Tags: S.optional(TagList),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "CreateParallelDataRequest",
 }) as any as S.Schema<CreateParallelDataRequest>;
@@ -176,28 +258,27 @@ export type ParallelDataStatus =
   | "DELETING"
   | "FAILED"
   | (string & {});
-export const ParallelDataStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ParallelDataStatus = /*@__PURE__*/ S.String;
+
 export interface CreateParallelDataResponse {
   Name?: string;
   Status?: ParallelDataStatus;
 }
-export const CreateParallelDataResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Name: S.optional(S.String),
-      Status: S.optional(ParallelDataStatus),
-    }),
+export const CreateParallelDataResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Name: S.optional(S.String),
+    Status: S.optional(ParallelDataStatus),
+  }),
 ).annotate({
   identifier: "CreateParallelDataResponse",
 }) as any as S.Schema<CreateParallelDataResponse>;
 export interface DeleteParallelDataRequest {
   Name: string;
 }
-export const DeleteParallelDataRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ Name: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const DeleteParallelDataRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Name: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "DeleteParallelDataRequest",
 }) as any as S.Schema<DeleteParallelDataRequest>;
@@ -205,43 +286,42 @@ export interface DeleteParallelDataResponse {
   Name?: string;
   Status?: ParallelDataStatus;
 }
-export const DeleteParallelDataResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Name: S.optional(S.String),
-      Status: S.optional(ParallelDataStatus),
-    }),
+export const DeleteParallelDataResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Name: S.optional(S.String),
+    Status: S.optional(ParallelDataStatus),
+  }),
 ).annotate({
   identifier: "DeleteParallelDataResponse",
 }) as any as S.Schema<DeleteParallelDataResponse>;
 export interface DeleteTerminologyRequest {
   Name: string;
 }
-export const DeleteTerminologyRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ Name: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const DeleteTerminologyRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Name: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "DeleteTerminologyRequest",
 }) as any as S.Schema<DeleteTerminologyRequest>;
 export interface DeleteTerminologyResponse {}
-export const DeleteTerminologyResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const DeleteTerminologyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "DeleteTerminologyResponse",
 }) as any as S.Schema<DeleteTerminologyResponse>;
+export type JobId = string;
 export interface DescribeTextTranslationJobRequest {
   JobId: string;
 }
-export const DescribeTextTranslationJobRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ JobId: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "DescribeTextTranslationJobRequest",
-  }) as any as S.Schema<DescribeTextTranslationJobRequest>;
+export const DescribeTextTranslationJobRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ JobId: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "DescribeTextTranslationJobRequest",
+}) as any as S.Schema<DescribeTextTranslationJobRequest>;
+export type JobName = string;
 export type JobStatus =
   | "SUBMITTED"
   | "IN_PROGRESS"
@@ -251,30 +331,32 @@ export type JobStatus =
   | "STOP_REQUESTED"
   | "STOPPED"
   | (string & {});
-export const JobStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const JobStatus = /*@__PURE__*/ S.String;
+
 export interface JobDetails {
   TranslatedDocumentsCount?: number;
   DocumentsWithErrorsCount?: number;
   InputDocumentsCount?: number;
 }
-export const JobDetails = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const JobDetails = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     TranslatedDocumentsCount: S.optional(S.Number),
     DocumentsWithErrorsCount: S.optional(S.Number),
     InputDocumentsCount: S.optional(S.Number),
   }),
 ).annotate({ identifier: "JobDetails" }) as any as S.Schema<JobDetails>;
+export type LanguageCodeString = string;
 export type TargetLanguageCodeStringList = string[];
-export const TargetLanguageCodeStringList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const TargetLanguageCodeStringList = /*@__PURE__*/ S.Array(S.String);
 export type ResourceNameList = string[];
-export const ResourceNameList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ResourceNameList = /*@__PURE__*/ S.Array(S.String);
+export type UnboundedLengthString = string;
+export type ContentType = string;
 export interface InputDataConfig {
   S3Uri: string;
   ContentType: string;
 }
-export const InputDataConfig = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const InputDataConfig = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ S3Uri: S.String, ContentType: S.String }),
 ).annotate({
   identifier: "InputDataConfig",
@@ -283,23 +365,27 @@ export interface OutputDataConfig {
   S3Uri: string;
   EncryptionKey?: EncryptionKey;
 }
-export const OutputDataConfig = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OutputDataConfig = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ S3Uri: S.String, EncryptionKey: S.optional(EncryptionKey) }),
 ).annotate({
   identifier: "OutputDataConfig",
 }) as any as S.Schema<OutputDataConfig>;
+export type IamRoleArn = string;
 export type Formality = "FORMAL" | "INFORMAL" | (string & {});
-export const Formality = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const Formality = /*@__PURE__*/ S.String;
+
 export type Profanity = "MASK" | (string & {});
-export const Profanity = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const Profanity = /*@__PURE__*/ S.String;
+
 export type Brevity = "ON" | (string & {});
-export const Brevity = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const Brevity = /*@__PURE__*/ S.String;
+
 export interface TranslationSettings {
   Formality?: Formality;
   Profanity?: Profanity;
   Brevity?: Brevity;
 }
-export const TranslationSettings = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TranslationSettings = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Formality: S.optional(Formality),
     Profanity: S.optional(Profanity),
@@ -325,56 +411,50 @@ export interface TextTranslationJobProperties {
   DataAccessRoleArn?: string;
   Settings?: TranslationSettings;
 }
-export const TextTranslationJobProperties =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      JobId: S.optional(S.String),
-      JobName: S.optional(S.String),
-      JobStatus: S.optional(JobStatus),
-      JobDetails: S.optional(JobDetails),
-      SourceLanguageCode: S.optional(S.String),
-      TargetLanguageCodes: S.optional(TargetLanguageCodeStringList),
-      TerminologyNames: S.optional(ResourceNameList),
-      ParallelDataNames: S.optional(ResourceNameList),
-      Message: S.optional(S.String),
-      SubmittedTime: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-      EndTime: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
-      InputDataConfig: S.optional(InputDataConfig),
-      OutputDataConfig: S.optional(OutputDataConfig),
-      DataAccessRoleArn: S.optional(S.String),
-      Settings: S.optional(TranslationSettings),
-    }),
-  ).annotate({
-    identifier: "TextTranslationJobProperties",
-  }) as any as S.Schema<TextTranslationJobProperties>;
+export const TextTranslationJobProperties = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    JobId: S.optional(S.String),
+    JobName: S.optional(S.String),
+    JobStatus: S.optional(JobStatus),
+    JobDetails: S.optional(JobDetails),
+    SourceLanguageCode: S.optional(S.String),
+    TargetLanguageCodes: S.optional(TargetLanguageCodeStringList),
+    TerminologyNames: S.optional(ResourceNameList),
+    ParallelDataNames: S.optional(ResourceNameList),
+    Message: S.optional(S.String),
+    SubmittedTime: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
+    EndTime: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
+    InputDataConfig: S.optional(InputDataConfig),
+    OutputDataConfig: S.optional(OutputDataConfig),
+    DataAccessRoleArn: S.optional(S.String),
+    Settings: S.optional(TranslationSettings),
+  }),
+).annotate({
+  identifier: "TextTranslationJobProperties",
+}) as any as S.Schema<TextTranslationJobProperties>;
 export interface DescribeTextTranslationJobResponse {
   TextTranslationJobProperties?: TextTranslationJobProperties;
 }
-export const DescribeTextTranslationJobResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      TextTranslationJobProperties: S.optional(TextTranslationJobProperties),
-    }),
-  ).annotate({
-    identifier: "DescribeTextTranslationJobResponse",
-  }) as any as S.Schema<DescribeTextTranslationJobResponse>;
+export const DescribeTextTranslationJobResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    TextTranslationJobProperties: S.optional(TextTranslationJobProperties),
+  }),
+).annotate({
+  identifier: "DescribeTextTranslationJobResponse",
+}) as any as S.Schema<DescribeTextTranslationJobResponse>;
 export interface GetParallelDataRequest {
   Name: string;
 }
-export const GetParallelDataRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ Name: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const GetParallelDataRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Name: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "GetParallelDataRequest",
 }) as any as S.Schema<GetParallelDataRequest>;
+export type ParallelDataArn = string;
 export type LanguageCodeStringList = string[];
-export const LanguageCodeStringList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const LanguageCodeStringList = /*@__PURE__*/ S.Array(S.String);
 export interface ParallelDataProperties {
   Name?: string;
   Arn?: string;
@@ -394,31 +474,28 @@ export interface ParallelDataProperties {
   LatestUpdateAttemptStatus?: ParallelDataStatus;
   LatestUpdateAttemptAt?: Date;
 }
-export const ParallelDataProperties = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Name: S.optional(S.String),
-      Arn: S.optional(S.String),
-      Description: S.optional(S.String),
-      Status: S.optional(ParallelDataStatus),
-      SourceLanguageCode: S.optional(S.String),
-      TargetLanguageCodes: S.optional(LanguageCodeStringList),
-      ParallelDataConfig: S.optional(ParallelDataConfig),
-      Message: S.optional(S.String),
-      ImportedDataSize: S.optional(S.Number),
-      ImportedRecordCount: S.optional(S.Number),
-      FailedRecordCount: S.optional(S.Number),
-      SkippedRecordCount: S.optional(S.Number),
-      EncryptionKey: S.optional(EncryptionKey),
-      CreatedAt: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
-      LastUpdatedAt: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-      LatestUpdateAttemptStatus: S.optional(ParallelDataStatus),
-      LatestUpdateAttemptAt: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-    }),
+export const ParallelDataProperties = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Name: S.optional(S.String),
+    Arn: S.optional(S.String),
+    Description: S.optional(S.String),
+    Status: S.optional(ParallelDataStatus),
+    SourceLanguageCode: S.optional(S.String),
+    TargetLanguageCodes: S.optional(LanguageCodeStringList),
+    ParallelDataConfig: S.optional(ParallelDataConfig),
+    Message: S.optional(S.String),
+    ImportedDataSize: S.optional(S.Number),
+    ImportedRecordCount: S.optional(S.Number),
+    FailedRecordCount: S.optional(S.Number),
+    SkippedRecordCount: S.optional(S.Number),
+    EncryptionKey: S.optional(EncryptionKey),
+    CreatedAt: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
+    LastUpdatedAt: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
+    LatestUpdateAttemptStatus: S.optional(ParallelDataStatus),
+    LatestUpdateAttemptAt: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+  }),
 ).annotate({
   identifier: "ParallelDataProperties",
 }) as any as S.Schema<ParallelDataProperties>;
@@ -426,8 +503,8 @@ export interface ParallelDataDataLocation {
   RepositoryType: string;
   Location: string;
 }
-export const ParallelDataDataLocation = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ RepositoryType: S.String, Location: S.String }),
+export const ParallelDataDataLocation = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ RepositoryType: S.String, Location: S.String }),
 ).annotate({
   identifier: "ParallelDataDataLocation",
 }) as any as S.Schema<ParallelDataDataLocation>;
@@ -437,26 +514,26 @@ export interface GetParallelDataResponse {
   AuxiliaryDataLocation?: ParallelDataDataLocation;
   LatestUpdateAttemptAuxiliaryDataLocation?: ParallelDataDataLocation;
 }
-export const GetParallelDataResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ParallelDataProperties: S.optional(ParallelDataProperties),
-      DataLocation: S.optional(ParallelDataDataLocation),
-      AuxiliaryDataLocation: S.optional(ParallelDataDataLocation),
-      LatestUpdateAttemptAuxiliaryDataLocation: S.optional(
-        ParallelDataDataLocation,
-      ),
-    }),
+export const GetParallelDataResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ParallelDataProperties: S.optional(ParallelDataProperties),
+    DataLocation: S.optional(ParallelDataDataLocation),
+    AuxiliaryDataLocation: S.optional(ParallelDataDataLocation),
+    LatestUpdateAttemptAuxiliaryDataLocation: S.optional(
+      ParallelDataDataLocation,
+    ),
+  }),
 ).annotate({
   identifier: "GetParallelDataResponse",
 }) as any as S.Schema<GetParallelDataResponse>;
 export type TerminologyDataFormat = "CSV" | "TMX" | "TSV" | (string & {});
-export const TerminologyDataFormat = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const TerminologyDataFormat = /*@__PURE__*/ S.String;
+
 export interface GetTerminologyRequest {
   Name: string;
   TerminologyDataFormat?: TerminologyDataFormat;
 }
-export const GetTerminologyRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetTerminologyRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Name: S.String,
     TerminologyDataFormat: S.optional(TerminologyDataFormat),
@@ -466,8 +543,10 @@ export const GetTerminologyRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "GetTerminologyRequest",
 }) as any as S.Schema<GetTerminologyRequest>;
+export type TerminologyArn = string;
 export type Directionality = "UNI" | "MULTI" | (string & {});
-export const Directionality = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const Directionality = /*@__PURE__*/ S.String;
+
 export interface TerminologyProperties {
   Name?: string;
   Description?: string;
@@ -484,7 +563,7 @@ export interface TerminologyProperties {
   SkippedTermCount?: number;
   Format?: TerminologyDataFormat;
 }
-export const TerminologyProperties = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TerminologyProperties = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Name: S.optional(S.String),
     Description: S.optional(S.String),
@@ -508,8 +587,8 @@ export interface TerminologyDataLocation {
   RepositoryType: string;
   Location: string;
 }
-export const TerminologyDataLocation = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ RepositoryType: S.String, Location: S.String }),
+export const TerminologyDataLocation = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ RepositoryType: S.String, Location: S.String }),
 ).annotate({
   identifier: "TerminologyDataLocation",
 }) as any as S.Schema<TerminologyDataLocation>;
@@ -518,24 +597,25 @@ export interface GetTerminologyResponse {
   TerminologyDataLocation?: TerminologyDataLocation;
   AuxiliaryDataLocation?: TerminologyDataLocation;
 }
-export const GetTerminologyResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      TerminologyProperties: S.optional(TerminologyProperties),
-      TerminologyDataLocation: S.optional(TerminologyDataLocation),
-      AuxiliaryDataLocation: S.optional(TerminologyDataLocation),
-    }),
+export const GetTerminologyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    TerminologyProperties: S.optional(TerminologyProperties),
+    TerminologyDataLocation: S.optional(TerminologyDataLocation),
+    AuxiliaryDataLocation: S.optional(TerminologyDataLocation),
+  }),
 ).annotate({
   identifier: "GetTerminologyResponse",
 }) as any as S.Schema<GetTerminologyResponse>;
 export type MergeStrategy = "OVERWRITE" | (string & {});
-export const MergeStrategy = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const MergeStrategy = /*@__PURE__*/ S.String;
+
+export type TerminologyFile = Uint8Array | redacted.Redacted<Uint8Array>;
 export interface TerminologyData {
   File: Uint8Array | redacted.Redacted<Uint8Array>;
   Format: TerminologyDataFormat;
   Directionality?: Directionality;
 }
-export const TerminologyData = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TerminologyData = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     File: SensitiveBlob,
     Format: TerminologyDataFormat,
@@ -552,18 +632,17 @@ export interface ImportTerminologyRequest {
   EncryptionKey?: EncryptionKey;
   Tags?: Tag[];
 }
-export const ImportTerminologyRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Name: S.String,
-      MergeStrategy: MergeStrategy,
-      Description: S.optional(S.String),
-      TerminologyData: TerminologyData,
-      EncryptionKey: S.optional(EncryptionKey),
-      Tags: S.optional(TagList),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const ImportTerminologyRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Name: S.String,
+    MergeStrategy: MergeStrategy,
+    Description: S.optional(S.String),
+    TerminologyData: TerminologyData,
+    EncryptionKey: S.optional(EncryptionKey),
+    Tags: S.optional(TagList),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "ImportTerminologyRequest",
 }) as any as S.Schema<ImportTerminologyRequest>;
@@ -571,12 +650,11 @@ export interface ImportTerminologyResponse {
   TerminologyProperties?: TerminologyProperties;
   AuxiliaryDataLocation?: TerminologyDataLocation;
 }
-export const ImportTerminologyResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      TerminologyProperties: S.optional(TerminologyProperties),
-      AuxiliaryDataLocation: S.optional(TerminologyDataLocation),
-    }),
+export const ImportTerminologyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    TerminologyProperties: S.optional(TerminologyProperties),
+    AuxiliaryDataLocation: S.optional(TerminologyDataLocation),
+  }),
 ).annotate({
   identifier: "ImportTerminologyResponse",
 }) as any as S.Schema<ImportTerminologyResponse>;
@@ -592,13 +670,16 @@ export type DisplayLanguageCode =
   | "zh"
   | "zh-TW"
   | (string & {});
-export const DisplayLanguageCode = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DisplayLanguageCode = /*@__PURE__*/ S.String;
+
+export type NextToken = string;
+export type MaxResultsInteger = number;
 export interface ListLanguagesRequest {
   DisplayLanguageCode?: DisplayLanguageCode;
   NextToken?: string;
   MaxResults?: number;
 }
-export const ListLanguagesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListLanguagesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     DisplayLanguageCode: S.optional(DisplayLanguageCode),
     NextToken: S.optional(S.String),
@@ -609,21 +690,22 @@ export const ListLanguagesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ListLanguagesRequest",
 }) as any as S.Schema<ListLanguagesRequest>;
+export type LocalizedNameString = string;
 export interface Language {
   LanguageName: string;
   LanguageCode: string;
 }
-export const Language = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Language = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ LanguageName: S.String, LanguageCode: S.String }),
 ).annotate({ identifier: "Language" }) as any as S.Schema<Language>;
 export type LanguagesList = Language[];
-export const LanguagesList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Language);
+export const LanguagesList = /*@__PURE__*/ S.Array(Language);
 export interface ListLanguagesResponse {
   Languages?: Language[];
   DisplayLanguageCode?: DisplayLanguageCode;
   NextToken?: string;
 }
-export const ListLanguagesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListLanguagesResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Languages: S.optional(LanguagesList),
     DisplayLanguageCode: S.optional(DisplayLanguageCode),
@@ -636,83 +718,78 @@ export interface ListParallelDataRequest {
   NextToken?: string;
   MaxResults?: number;
 }
-export const ListParallelDataRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      NextToken: S.optional(S.String),
-      MaxResults: S.optional(S.Number),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const ListParallelDataRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    NextToken: S.optional(S.String),
+    MaxResults: S.optional(S.Number),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "ListParallelDataRequest",
 }) as any as S.Schema<ListParallelDataRequest>;
 export type ParallelDataPropertiesList = ParallelDataProperties[];
-export const ParallelDataPropertiesList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const ParallelDataPropertiesList = /*@__PURE__*/ S.Array(
   ParallelDataProperties,
 );
 export interface ListParallelDataResponse {
   ParallelDataPropertiesList?: ParallelDataProperties[];
   NextToken?: string;
 }
-export const ListParallelDataResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ParallelDataPropertiesList: S.optional(ParallelDataPropertiesList),
-      NextToken: S.optional(S.String),
-    }),
+export const ListParallelDataResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ParallelDataPropertiesList: S.optional(ParallelDataPropertiesList),
+    NextToken: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "ListParallelDataResponse",
 }) as any as S.Schema<ListParallelDataResponse>;
+export type ResourceArn = string;
 export interface ListTagsForResourceRequest {
   ResourceArn: string;
 }
-export const ListTagsForResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ ResourceArn: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const ListTagsForResourceRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "ListTagsForResourceRequest",
 }) as any as S.Schema<ListTagsForResourceRequest>;
 export interface ListTagsForResourceResponse {
   Tags?: Tag[];
 }
-export const ListTagsForResourceResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ Tags: S.optional(TagList) }),
-  ).annotate({
-    identifier: "ListTagsForResourceResponse",
-  }) as any as S.Schema<ListTagsForResourceResponse>;
+export const ListTagsForResourceResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Tags: S.optional(TagList) }),
+).annotate({
+  identifier: "ListTagsForResourceResponse",
+}) as any as S.Schema<ListTagsForResourceResponse>;
 export interface ListTerminologiesRequest {
   NextToken?: string;
   MaxResults?: number;
 }
-export const ListTerminologiesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      NextToken: S.optional(S.String),
-      MaxResults: S.optional(S.Number),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const ListTerminologiesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    NextToken: S.optional(S.String),
+    MaxResults: S.optional(S.Number),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "ListTerminologiesRequest",
 }) as any as S.Schema<ListTerminologiesRequest>;
 export type TerminologyPropertiesList = TerminologyProperties[];
-export const TerminologyPropertiesList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const TerminologyPropertiesList = /*@__PURE__*/ S.Array(
   TerminologyProperties,
 );
 export interface ListTerminologiesResponse {
   TerminologyPropertiesList?: TerminologyProperties[];
   NextToken?: string;
 }
-export const ListTerminologiesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      TerminologyPropertiesList: S.optional(TerminologyPropertiesList),
-      NextToken: S.optional(S.String),
-    }),
+export const ListTerminologiesResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    TerminologyPropertiesList: S.optional(TerminologyPropertiesList),
+    NextToken: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "ListTerminologiesResponse",
 }) as any as S.Schema<ListTerminologiesResponse>;
@@ -722,18 +799,17 @@ export interface TextTranslationJobFilter {
   SubmittedBeforeTime?: Date;
   SubmittedAfterTime?: Date;
 }
-export const TextTranslationJobFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      JobName: S.optional(S.String),
-      JobStatus: S.optional(JobStatus),
-      SubmittedBeforeTime: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-      SubmittedAfterTime: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-    }),
+export const TextTranslationJobFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    JobName: S.optional(S.String),
+    JobStatus: S.optional(JobStatus),
+    SubmittedBeforeTime: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+    SubmittedAfterTime: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+  }),
 ).annotate({
   identifier: "TextTranslationJobFilter",
 }) as any as S.Schema<TextTranslationJobFilter>;
@@ -742,36 +818,35 @@ export interface ListTextTranslationJobsRequest {
   NextToken?: string;
   MaxResults?: number;
 }
-export const ListTextTranslationJobsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      Filter: S.optional(TextTranslationJobFilter),
-      NextToken: S.optional(S.String),
-      MaxResults: S.optional(S.Number),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "ListTextTranslationJobsRequest",
-  }) as any as S.Schema<ListTextTranslationJobsRequest>;
+export const ListTextTranslationJobsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Filter: S.optional(TextTranslationJobFilter),
+    NextToken: S.optional(S.String),
+    MaxResults: S.optional(S.Number),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "ListTextTranslationJobsRequest",
+}) as any as S.Schema<ListTextTranslationJobsRequest>;
 export type TextTranslationJobPropertiesList = TextTranslationJobProperties[];
-export const TextTranslationJobPropertiesList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(TextTranslationJobProperties);
+export const TextTranslationJobPropertiesList = /*@__PURE__*/ S.Array(
+  TextTranslationJobProperties,
+);
 export interface ListTextTranslationJobsResponse {
   TextTranslationJobPropertiesList?: TextTranslationJobProperties[];
   NextToken?: string;
 }
-export const ListTextTranslationJobsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      TextTranslationJobPropertiesList: S.optional(
-        TextTranslationJobPropertiesList,
-      ),
-      NextToken: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "ListTextTranslationJobsResponse",
-  }) as any as S.Schema<ListTextTranslationJobsResponse>;
+export const ListTextTranslationJobsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    TextTranslationJobPropertiesList: S.optional(
+      TextTranslationJobPropertiesList,
+    ),
+    NextToken: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "ListTextTranslationJobsResponse",
+}) as any as S.Schema<ListTextTranslationJobsResponse>;
 export interface StartTextTranslationJobRequest {
   JobName?: string;
   InputDataConfig: InputDataConfig;
@@ -784,61 +859,57 @@ export interface StartTextTranslationJobRequest {
   ClientToken: string;
   Settings?: TranslationSettings;
 }
-export const StartTextTranslationJobRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      JobName: S.optional(S.String),
-      InputDataConfig: InputDataConfig,
-      OutputDataConfig: OutputDataConfig,
-      DataAccessRoleArn: S.String,
-      SourceLanguageCode: S.String,
-      TargetLanguageCodes: TargetLanguageCodeStringList,
-      TerminologyNames: S.optional(ResourceNameList),
-      ParallelDataNames: S.optional(ResourceNameList),
-      ClientToken: S.String.pipe(T.IdempotencyToken()),
-      Settings: S.optional(TranslationSettings),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "StartTextTranslationJobRequest",
-  }) as any as S.Schema<StartTextTranslationJobRequest>;
+export const StartTextTranslationJobRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    JobName: S.optional(S.String),
+    InputDataConfig: InputDataConfig,
+    OutputDataConfig: OutputDataConfig,
+    DataAccessRoleArn: S.String,
+    SourceLanguageCode: S.String,
+    TargetLanguageCodes: TargetLanguageCodeStringList,
+    TerminologyNames: S.optional(ResourceNameList),
+    ParallelDataNames: S.optional(ResourceNameList),
+    ClientToken: S.String.pipe(T.IdempotencyToken()),
+    Settings: S.optional(TranslationSettings),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "StartTextTranslationJobRequest",
+}) as any as S.Schema<StartTextTranslationJobRequest>;
 export interface StartTextTranslationJobResponse {
   JobId?: string;
   JobStatus?: JobStatus;
 }
-export const StartTextTranslationJobResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ JobId: S.optional(S.String), JobStatus: S.optional(JobStatus) }),
-  ).annotate({
-    identifier: "StartTextTranslationJobResponse",
-  }) as any as S.Schema<StartTextTranslationJobResponse>;
+export const StartTextTranslationJobResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ JobId: S.optional(S.String), JobStatus: S.optional(JobStatus) }),
+).annotate({
+  identifier: "StartTextTranslationJobResponse",
+}) as any as S.Schema<StartTextTranslationJobResponse>;
 export interface StopTextTranslationJobRequest {
   JobId: string;
 }
-export const StopTextTranslationJobRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ JobId: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "StopTextTranslationJobRequest",
-  }) as any as S.Schema<StopTextTranslationJobRequest>;
+export const StopTextTranslationJobRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ JobId: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "StopTextTranslationJobRequest",
+}) as any as S.Schema<StopTextTranslationJobRequest>;
 export interface StopTextTranslationJobResponse {
   JobId?: string;
   JobStatus?: JobStatus;
 }
-export const StopTextTranslationJobResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ JobId: S.optional(S.String), JobStatus: S.optional(JobStatus) }),
-  ).annotate({
-    identifier: "StopTextTranslationJobResponse",
-  }) as any as S.Schema<StopTextTranslationJobResponse>;
+export const StopTextTranslationJobResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ JobId: S.optional(S.String), JobStatus: S.optional(JobStatus) }),
+).annotate({
+  identifier: "StopTextTranslationJobResponse",
+}) as any as S.Schema<StopTextTranslationJobResponse>;
 export interface TagResourceRequest {
   ResourceArn: string;
   Tags: Tag[];
 }
-export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ResourceArn: S.String, Tags: TagList }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -846,16 +917,17 @@ export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "TagResourceRequest",
 }) as any as S.Schema<TagResourceRequest>;
 export interface TagResourceResponse {}
-export const TagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "TagResourceResponse",
 }) as any as S.Schema<TagResourceResponse>;
+export type DocumentContent = Uint8Array | redacted.Redacted<Uint8Array>;
 export interface Document {
   Content: Uint8Array | redacted.Redacted<Uint8Array>;
   ContentType: string;
 }
-export const Document = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Document = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Content: SensitiveBlob, ContentType: S.String }),
 ).annotate({ identifier: "Document" }) as any as S.Schema<Document>;
 export interface TranslateDocumentRequest {
@@ -865,24 +937,26 @@ export interface TranslateDocumentRequest {
   TargetLanguageCode: string;
   Settings?: TranslationSettings;
 }
-export const TranslateDocumentRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Document: Document,
-      TerminologyNames: S.optional(ResourceNameList),
-      SourceLanguageCode: S.String,
-      TargetLanguageCode: S.String,
-      Settings: S.optional(TranslationSettings),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const TranslateDocumentRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Document: Document,
+    TerminologyNames: S.optional(ResourceNameList),
+    SourceLanguageCode: S.String,
+    TargetLanguageCode: S.String,
+    Settings: S.optional(TranslationSettings),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "TranslateDocumentRequest",
 }) as any as S.Schema<TranslateDocumentRequest>;
+export type TranslatedDocumentContent =
+  | Uint8Array
+  | redacted.Redacted<Uint8Array>;
 export interface TranslatedDocument {
   Content: Uint8Array | redacted.Redacted<Uint8Array>;
 }
-export const TranslatedDocument = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TranslatedDocument = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Content: SensitiveBlob }),
 ).annotate({
   identifier: "TranslatedDocument",
@@ -891,26 +965,25 @@ export interface Term {
   SourceText?: string;
   TargetText?: string;
 }
-export const Term = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Term = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     SourceText: S.optional(S.String),
     TargetText: S.optional(S.String),
   }),
 ).annotate({ identifier: "Term" }) as any as S.Schema<Term>;
 export type TermList = Term[];
-export const TermList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Term);
+export const TermList = /*@__PURE__*/ S.Array(Term);
 export interface AppliedTerminology {
   Name?: string;
   Terms?: Term[];
 }
-export const AppliedTerminology = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AppliedTerminology = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Name: S.optional(S.String), Terms: S.optional(TermList) }),
 ).annotate({
   identifier: "AppliedTerminology",
 }) as any as S.Schema<AppliedTerminology>;
 export type AppliedTerminologyList = AppliedTerminology[];
-export const AppliedTerminologyList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(AppliedTerminology);
+export const AppliedTerminologyList = /*@__PURE__*/ S.Array(AppliedTerminology);
 export interface TranslateDocumentResponse {
   TranslatedDocument: TranslatedDocument;
   SourceLanguageCode: string;
@@ -918,18 +991,18 @@ export interface TranslateDocumentResponse {
   AppliedTerminologies?: AppliedTerminology[];
   AppliedSettings?: TranslationSettings;
 }
-export const TranslateDocumentResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      TranslatedDocument: TranslatedDocument,
-      SourceLanguageCode: S.String,
-      TargetLanguageCode: S.String,
-      AppliedTerminologies: S.optional(AppliedTerminologyList),
-      AppliedSettings: S.optional(TranslationSettings),
-    }),
+export const TranslateDocumentResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    TranslatedDocument: TranslatedDocument,
+    SourceLanguageCode: S.String,
+    TargetLanguageCode: S.String,
+    AppliedTerminologies: S.optional(AppliedTerminologyList),
+    AppliedSettings: S.optional(TranslationSettings),
+  }),
 ).annotate({
   identifier: "TranslateDocumentResponse",
 }) as any as S.Schema<TranslateDocumentResponse>;
+export type BoundedLengthString = string;
 export interface TranslateTextRequest {
   Text: string;
   TerminologyNames?: string[];
@@ -937,7 +1010,7 @@ export interface TranslateTextRequest {
   TargetLanguageCode: string;
   Settings?: TranslationSettings;
 }
-export const TranslateTextRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TranslateTextRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Text: S.String,
     TerminologyNames: S.optional(ResourceNameList),
@@ -950,6 +1023,7 @@ export const TranslateTextRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "TranslateTextRequest",
 }) as any as S.Schema<TranslateTextRequest>;
+export type TranslatedTextString = string;
 export interface TranslateTextResponse {
   TranslatedText: string;
   SourceLanguageCode: string;
@@ -957,7 +1031,7 @@ export interface TranslateTextResponse {
   AppliedTerminologies?: AppliedTerminology[];
   AppliedSettings?: TranslationSettings;
 }
-export const TranslateTextResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TranslateTextResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     TranslatedText: S.String,
     SourceLanguageCode: S.String,
@@ -969,12 +1043,12 @@ export const TranslateTextResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "TranslateTextResponse",
 }) as any as S.Schema<TranslateTextResponse>;
 export type TagKeyList = string[];
-export const TagKeyList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TagKeyList = /*@__PURE__*/ S.Array(S.String);
 export interface UntagResourceRequest {
   ResourceArn: string;
   TagKeys: string[];
 }
-export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ResourceArn: S.String, TagKeys: TagKeyList }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -982,7 +1056,7 @@ export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "UntagResourceRequest",
 }) as any as S.Schema<UntagResourceRequest>;
 export interface UntagResourceResponse {}
-export const UntagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "UntagResourceResponse",
@@ -993,16 +1067,15 @@ export interface UpdateParallelDataRequest {
   ParallelDataConfig: ParallelDataConfig;
   ClientToken: string;
 }
-export const UpdateParallelDataRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Name: S.String,
-      Description: S.optional(S.String),
-      ParallelDataConfig: ParallelDataConfig,
-      ClientToken: S.String.pipe(T.IdempotencyToken()),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const UpdateParallelDataRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Name: S.String,
+    Description: S.optional(S.String),
+    ParallelDataConfig: ParallelDataConfig,
+    ClientToken: S.String.pipe(T.IdempotencyToken()),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "UpdateParallelDataRequest",
 }) as any as S.Schema<UpdateParallelDataRequest>;
@@ -1012,87 +1085,18 @@ export interface UpdateParallelDataResponse {
   LatestUpdateAttemptStatus?: ParallelDataStatus;
   LatestUpdateAttemptAt?: Date;
 }
-export const UpdateParallelDataResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Name: S.optional(S.String),
-      Status: S.optional(ParallelDataStatus),
-      LatestUpdateAttemptStatus: S.optional(ParallelDataStatus),
-      LatestUpdateAttemptAt: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-    }),
+export const UpdateParallelDataResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Name: S.optional(S.String),
+    Status: S.optional(ParallelDataStatus),
+    LatestUpdateAttemptStatus: S.optional(ParallelDataStatus),
+    LatestUpdateAttemptAt: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+  }),
 ).annotate({
   identifier: "UpdateParallelDataResponse",
 }) as any as S.Schema<UpdateParallelDataResponse>;
-
-//# Errors
-export class ConcurrentModificationException extends S.TaggedErrorClass<ConcurrentModificationException>()(
-  "ConcurrentModificationException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class ConflictException extends S.TaggedErrorClass<ConflictException>()(
-  "ConflictException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class InternalServerException extends S.TaggedErrorClass<InternalServerException>()(
-  "InternalServerException",
-  { Message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class InvalidParameterValueException extends S.TaggedErrorClass<InvalidParameterValueException>()(
-  "InvalidParameterValueException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InvalidRequestException extends S.TaggedErrorClass<InvalidRequestException>()(
-  "InvalidRequestException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class LimitExceededException extends S.TaggedErrorClass<LimitExceededException>()(
-  "LimitExceededException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class TooManyRequestsException extends S.TaggedErrorClass<TooManyRequestsException>()(
-  "TooManyRequestsException",
-  { Message: S.optional(S.String) },
-).pipe(C.withThrottlingError) {}
-export class TooManyTagsException extends S.TaggedErrorClass<TooManyTagsException>()(
-  "TooManyTagsException",
-  { message: S.optional(S.String), ResourceArn: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ResourceNotFoundException extends S.TaggedErrorClass<ResourceNotFoundException>()(
-  "ResourceNotFoundException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class UnsupportedDisplayLanguageCodeException extends S.TaggedErrorClass<UnsupportedDisplayLanguageCodeException>()(
-  "UnsupportedDisplayLanguageCodeException",
-  { Message: S.optional(S.String), DisplayLanguageCode: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InvalidFilterException extends S.TaggedErrorClass<InvalidFilterException>()(
-  "InvalidFilterException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class UnsupportedLanguagePairException extends S.TaggedErrorClass<UnsupportedLanguagePairException>()(
-  "UnsupportedLanguagePairException",
-  {
-    Message: S.optional(S.String),
-    SourceLanguageCode: S.optional(S.String),
-    TargetLanguageCode: S.optional(S.String),
-  },
-).pipe(C.withBadRequestError) {}
-export class ServiceUnavailableException extends S.TaggedErrorClass<ServiceUnavailableException>()(
-  "ServiceUnavailableException",
-  { Message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class DetectedLanguageLowConfidenceException extends S.TaggedErrorClass<DetectedLanguageLowConfidenceException>()(
-  "DetectedLanguageLowConfidenceException",
-  { Message: S.optional(S.String), DetectedLanguageCode: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class TextSizeLimitExceededException extends S.TaggedErrorClass<TextSizeLimitExceededException>()(
-  "TextSizeLimitExceededException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-
-//# Operations
 export type CreateParallelDataError =
   | ConcurrentModificationException
   | ConflictException
@@ -1113,8 +1117,8 @@ export const createParallelData: API.OperationMethod<
   CreateParallelDataRequest,
   CreateParallelDataResponse,
   CreateParallelDataError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateParallelDataRequest,
   output: CreateParallelDataResponse,
   errors: [
@@ -1127,7 +1131,11 @@ export const createParallelData: API.OperationMethod<
     TooManyRequestsException,
     TooManyTagsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateParallelData",
 }));
+
 export type DeleteParallelDataError =
   | ConcurrentModificationException
   | InternalServerException
@@ -1141,8 +1149,8 @@ export const deleteParallelData: API.OperationMethod<
   DeleteParallelDataRequest,
   DeleteParallelDataResponse,
   DeleteParallelDataError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteParallelDataRequest,
   output: DeleteParallelDataResponse,
   errors: [
@@ -1151,7 +1159,11 @@ export const deleteParallelData: API.OperationMethod<
     ResourceNotFoundException,
     TooManyRequestsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteParallelData",
 }));
+
 export type DeleteTerminologyError =
   | InternalServerException
   | InvalidParameterValueException
@@ -1165,8 +1177,8 @@ export const deleteTerminology: API.OperationMethod<
   DeleteTerminologyRequest,
   DeleteTerminologyResponse,
   DeleteTerminologyError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteTerminologyRequest,
   output: DeleteTerminologyResponse,
   errors: [
@@ -1175,7 +1187,11 @@ export const deleteTerminology: API.OperationMethod<
     ResourceNotFoundException,
     TooManyRequestsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteTerminology",
 }));
+
 export type DescribeTextTranslationJobError =
   | InternalServerException
   | ResourceNotFoundException
@@ -1189,8 +1205,8 @@ export const describeTextTranslationJob: API.OperationMethod<
   DescribeTextTranslationJobRequest,
   DescribeTextTranslationJobResponse,
   DescribeTextTranslationJobError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeTextTranslationJobRequest,
   output: DescribeTextTranslationJobResponse,
   errors: [
@@ -1198,7 +1214,11 @@ export const describeTextTranslationJob: API.OperationMethod<
     ResourceNotFoundException,
     TooManyRequestsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeTextTranslationJob",
 }));
+
 export type GetParallelDataError =
   | InternalServerException
   | InvalidParameterValueException
@@ -1212,8 +1232,8 @@ export const getParallelData: API.OperationMethod<
   GetParallelDataRequest,
   GetParallelDataResponse,
   GetParallelDataError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetParallelDataRequest,
   output: GetParallelDataResponse,
   errors: [
@@ -1222,7 +1242,11 @@ export const getParallelData: API.OperationMethod<
     ResourceNotFoundException,
     TooManyRequestsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetParallelData",
 }));
+
 export type GetTerminologyError =
   | InternalServerException
   | InvalidParameterValueException
@@ -1236,8 +1260,8 @@ export const getTerminology: API.OperationMethod<
   GetTerminologyRequest,
   GetTerminologyResponse,
   GetTerminologyError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetTerminologyRequest,
   output: GetTerminologyResponse,
   errors: [
@@ -1246,7 +1270,11 @@ export const getTerminology: API.OperationMethod<
     ResourceNotFoundException,
     TooManyRequestsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetTerminology",
 }));
+
 export type ImportTerminologyError =
   | ConcurrentModificationException
   | InternalServerException
@@ -1270,8 +1298,8 @@ export const importTerminology: API.OperationMethod<
   ImportTerminologyRequest,
   ImportTerminologyResponse,
   ImportTerminologyError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ImportTerminologyRequest,
   output: ImportTerminologyResponse,
   errors: [
@@ -1282,7 +1310,11 @@ export const importTerminology: API.OperationMethod<
     TooManyRequestsException,
     TooManyTagsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ImportTerminology",
 }));
+
 export type ListLanguagesError =
   | InternalServerException
   | InvalidParameterValueException
@@ -1292,27 +1324,13 @@ export type ListLanguagesError =
 /**
  * Provides a list of languages (RFC-5646 codes and names) that Amazon Translate supports.
  */
-export const listLanguages: API.OperationMethod<
+export const listLanguages: API.PaginatedOperationMethod<
   ListLanguagesRequest,
   ListLanguagesResponse,
   ListLanguagesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListLanguagesRequest,
-  ) => stream.Stream<
-    ListLanguagesResponse,
-    ListLanguagesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListLanguagesRequest,
-  ) => stream.Stream<
-    unknown,
-    ListLanguagesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListLanguagesRequest,
   output: ListLanguagesResponse,
   errors: [
@@ -1321,12 +1339,16 @@ export const listLanguages: API.OperationMethod<
     TooManyRequestsException,
     UnsupportedDisplayLanguageCodeException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListLanguages",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ListParallelDataError =
   | InternalServerException
   | InvalidParameterValueException
@@ -1335,27 +1357,13 @@ export type ListParallelDataError =
 /**
  * Provides a list of your parallel data resources in Amazon Translate.
  */
-export const listParallelData: API.OperationMethod<
+export const listParallelData: API.PaginatedOperationMethod<
   ListParallelDataRequest,
   ListParallelDataResponse,
   ListParallelDataError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListParallelDataRequest,
-  ) => stream.Stream<
-    ListParallelDataResponse,
-    ListParallelDataError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListParallelDataRequest,
-  ) => stream.Stream<
-    unknown,
-    ListParallelDataError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListParallelDataRequest,
   output: ListParallelDataResponse,
   errors: [
@@ -1363,12 +1371,16 @@ export const listParallelData: API.OperationMethod<
     InvalidParameterValueException,
     TooManyRequestsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListParallelData",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ListTagsForResourceError =
   | InternalServerException
   | InvalidParameterValueException
@@ -1383,8 +1395,8 @@ export const listTagsForResource: API.OperationMethod<
   ListTagsForResourceRequest,
   ListTagsForResourceResponse,
   ListTagsForResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListTagsForResourceRequest,
   output: ListTagsForResourceResponse,
   errors: [
@@ -1392,7 +1404,11 @@ export const listTagsForResource: API.OperationMethod<
     InvalidParameterValueException,
     ResourceNotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTagsForResource",
 }));
+
 export type ListTerminologiesError =
   | InternalServerException
   | InvalidParameterValueException
@@ -1401,27 +1417,13 @@ export type ListTerminologiesError =
 /**
  * Provides a list of custom terminologies associated with your account.
  */
-export const listTerminologies: API.OperationMethod<
+export const listTerminologies: API.PaginatedOperationMethod<
   ListTerminologiesRequest,
   ListTerminologiesResponse,
   ListTerminologiesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListTerminologiesRequest,
-  ) => stream.Stream<
-    ListTerminologiesResponse,
-    ListTerminologiesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListTerminologiesRequest,
-  ) => stream.Stream<
-    unknown,
-    ListTerminologiesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListTerminologiesRequest,
   output: ListTerminologiesResponse,
   errors: [
@@ -1429,12 +1431,16 @@ export const listTerminologies: API.OperationMethod<
     InvalidParameterValueException,
     TooManyRequestsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTerminologies",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ListTextTranslationJobsError =
   | InternalServerException
   | InvalidFilterException
@@ -1444,27 +1450,13 @@ export type ListTextTranslationJobsError =
 /**
  * Gets a list of the batch translation jobs that you have submitted.
  */
-export const listTextTranslationJobs: API.OperationMethod<
+export const listTextTranslationJobs: API.PaginatedOperationMethod<
   ListTextTranslationJobsRequest,
   ListTextTranslationJobsResponse,
   ListTextTranslationJobsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListTextTranslationJobsRequest,
-  ) => stream.Stream<
-    ListTextTranslationJobsResponse,
-    ListTextTranslationJobsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListTextTranslationJobsRequest,
-  ) => stream.Stream<
-    unknown,
-    ListTextTranslationJobsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListTextTranslationJobsRequest,
   output: ListTextTranslationJobsResponse,
   errors: [
@@ -1473,12 +1465,16 @@ export const listTextTranslationJobs: API.OperationMethod<
     InvalidRequestException,
     TooManyRequestsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTextTranslationJobs",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type StartTextTranslationJobError =
   | InternalServerException
   | InvalidParameterValueException
@@ -1502,8 +1498,8 @@ export const startTextTranslationJob: API.OperationMethod<
   StartTextTranslationJobRequest,
   StartTextTranslationJobResponse,
   StartTextTranslationJobError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: StartTextTranslationJobRequest,
   output: StartTextTranslationJobResponse,
   errors: [
@@ -1514,7 +1510,11 @@ export const startTextTranslationJob: API.OperationMethod<
     TooManyRequestsException,
     UnsupportedLanguagePairException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "StartTextTranslationJob",
 }));
+
 export type StopTextTranslationJobError =
   | InternalServerException
   | ResourceNotFoundException
@@ -1535,8 +1535,8 @@ export const stopTextTranslationJob: API.OperationMethod<
   StopTextTranslationJobRequest,
   StopTextTranslationJobResponse,
   StopTextTranslationJobError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: StopTextTranslationJobRequest,
   output: StopTextTranslationJobResponse,
   errors: [
@@ -1544,7 +1544,11 @@ export const stopTextTranslationJob: API.OperationMethod<
     ResourceNotFoundException,
     TooManyRequestsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "StopTextTranslationJob",
 }));
+
 export type TagResourceError =
   | ConcurrentModificationException
   | InternalServerException
@@ -1562,8 +1566,8 @@ export const tagResource: API.OperationMethod<
   TagResourceRequest,
   TagResourceResponse,
   TagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TagResourceRequest,
   output: TagResourceResponse,
   errors: [
@@ -1573,7 +1577,11 @@ export const tagResource: API.OperationMethod<
     ResourceNotFoundException,
     TooManyTagsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TagResource",
 }));
+
 export type TranslateDocumentError =
   | InternalServerException
   | InvalidRequestException
@@ -1599,8 +1607,8 @@ export const translateDocument: API.OperationMethod<
   TranslateDocumentRequest,
   TranslateDocumentResponse,
   TranslateDocumentError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TranslateDocumentRequest,
   output: TranslateDocumentResponse,
   errors: [
@@ -1612,7 +1620,11 @@ export const translateDocument: API.OperationMethod<
     TooManyRequestsException,
     UnsupportedLanguagePairException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TranslateDocument",
 }));
+
 export type TranslateTextError =
   | DetectedLanguageLowConfidenceException
   | InternalServerException
@@ -1631,8 +1643,8 @@ export const translateText: API.OperationMethod<
   TranslateTextRequest,
   TranslateTextResponse,
   TranslateTextError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TranslateTextRequest,
   output: TranslateTextResponse,
   errors: [
@@ -1645,7 +1657,11 @@ export const translateText: API.OperationMethod<
     TooManyRequestsException,
     UnsupportedLanguagePairException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TranslateText",
 }));
+
 export type UntagResourceError =
   | ConcurrentModificationException
   | InternalServerException
@@ -1661,8 +1677,8 @@ export const untagResource: API.OperationMethod<
   UntagResourceRequest,
   UntagResourceResponse,
   UntagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UntagResourceRequest,
   output: UntagResourceResponse,
   errors: [
@@ -1671,7 +1687,11 @@ export const untagResource: API.OperationMethod<
     InvalidParameterValueException,
     ResourceNotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UntagResource",
 }));
+
 export type UpdateParallelDataError =
   | ConcurrentModificationException
   | ConflictException
@@ -1690,8 +1710,8 @@ export const updateParallelData: API.OperationMethod<
   UpdateParallelDataRequest,
   UpdateParallelDataResponse,
   UpdateParallelDataError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateParallelDataRequest,
   output: UpdateParallelDataResponse,
   errors: [
@@ -1704,4 +1724,7 @@ export const updateParallelData: API.OperationMethod<
     ResourceNotFoundException,
     TooManyRequestsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateParallelData",
 }));

@@ -1,11 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "forecastquery",
   serviceShapeName: "AmazonForecastRuntime",
@@ -82,21 +83,45 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class InvalidInputException
+  extends /*@__PURE__*/ S.TaggedError<InvalidInputException>()(
+    "InvalidInputException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidNextTokenException
+  extends /*@__PURE__*/ S.TaggedError<InvalidNextTokenException>()(
+    "InvalidNextTokenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class LimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<LimitExceededException>()(
+    "LimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class ResourceInUseException
+  extends /*@__PURE__*/ S.TaggedError<ResourceInUseException>()(
+    "ResourceInUseException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class ResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotFoundException>()(
+    "ResourceNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
 export type Arn = string;
 export type AttributeName = string;
 export type AttributeValue = string;
-export type NextToken = string;
-export type Statistic = string;
-export type ErrorMessage = string;
-export type LongArn = string;
-
-//# Schemas
 export type Filters = { [key: string]: string | undefined };
-export const Filters = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const Filters = /*@__PURE__*/ S.Record(
   S.String,
   S.String.pipe(S.optional),
 );
+export type NextToken = string;
 export interface QueryForecastRequest {
   ForecastArn: string;
   StartDate?: string;
@@ -104,7 +129,7 @@ export interface QueryForecastRequest {
   Filters: { [key: string]: string | undefined };
   NextToken?: string;
 }
-export const QueryForecastRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const QueryForecastRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ForecastArn: S.String,
     StartDate: S.optional(S.String),
@@ -117,34 +142,36 @@ export const QueryForecastRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "QueryForecastRequest",
 }) as any as S.Schema<QueryForecastRequest>;
+export type Statistic = string;
 export interface DataPoint {
   Timestamp?: string;
   Value?: number;
 }
-export const DataPoint = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DataPoint = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Timestamp: S.optional(S.String), Value: S.optional(S.Number) }),
 ).annotate({ identifier: "DataPoint" }) as any as S.Schema<DataPoint>;
 export type TimeSeries = DataPoint[];
-export const TimeSeries = /*@__PURE__*/ /*#__PURE__*/ S.Array(DataPoint);
+export const TimeSeries = /*@__PURE__*/ S.Array(DataPoint);
 export type Predictions = { [key: string]: DataPoint[] | undefined };
-export const Predictions = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const Predictions = /*@__PURE__*/ S.Record(
   S.String,
   TimeSeries.pipe(S.optional),
 );
 export interface Forecast {
   Predictions?: { [key: string]: DataPoint[] | undefined };
 }
-export const Forecast = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Forecast = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Predictions: S.optional(Predictions) }),
 ).annotate({ identifier: "Forecast" }) as any as S.Schema<Forecast>;
 export interface QueryForecastResponse {
   Forecast?: Forecast;
 }
-export const QueryForecastResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const QueryForecastResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Forecast: S.optional(Forecast) }),
 ).annotate({
   identifier: "QueryForecastResponse",
 }) as any as S.Schema<QueryForecastResponse>;
+export type LongArn = string;
 export interface QueryWhatIfForecastRequest {
   WhatIfForecastArn: string;
   StartDate?: string;
@@ -152,53 +179,28 @@ export interface QueryWhatIfForecastRequest {
   Filters: { [key: string]: string | undefined };
   NextToken?: string;
 }
-export const QueryWhatIfForecastRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      WhatIfForecastArn: S.String,
-      StartDate: S.optional(S.String),
-      EndDate: S.optional(S.String),
-      Filters: Filters,
-      NextToken: S.optional(S.String),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const QueryWhatIfForecastRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    WhatIfForecastArn: S.String,
+    StartDate: S.optional(S.String),
+    EndDate: S.optional(S.String),
+    Filters: Filters,
+    NextToken: S.optional(S.String),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "QueryWhatIfForecastRequest",
 }) as any as S.Schema<QueryWhatIfForecastRequest>;
 export interface QueryWhatIfForecastResponse {
   Forecast?: Forecast;
 }
-export const QueryWhatIfForecastResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ Forecast: S.optional(Forecast) }),
-  ).annotate({
-    identifier: "QueryWhatIfForecastResponse",
-  }) as any as S.Schema<QueryWhatIfForecastResponse>;
-
-//# Errors
-export class InvalidInputException extends S.TaggedErrorClass<InvalidInputException>()(
-  "InvalidInputException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InvalidNextTokenException extends S.TaggedErrorClass<InvalidNextTokenException>()(
-  "InvalidNextTokenException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class LimitExceededException extends S.TaggedErrorClass<LimitExceededException>()(
-  "LimitExceededException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class ResourceInUseException extends S.TaggedErrorClass<ResourceInUseException>()(
-  "ResourceInUseException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class ResourceNotFoundException extends S.TaggedErrorClass<ResourceNotFoundException>()(
-  "ResourceNotFoundException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-
-//# Operations
+export const QueryWhatIfForecastResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Forecast: S.optional(Forecast) }),
+).annotate({
+  identifier: "QueryWhatIfForecastResponse",
+}) as any as S.Schema<QueryWhatIfForecastResponse>;
+export type ErrorMessage = string;
 export type QueryForecastError =
   | InvalidInputException
   | InvalidNextTokenException
@@ -226,8 +228,8 @@ export const queryForecast: API.OperationMethod<
   QueryForecastRequest,
   QueryForecastResponse,
   QueryForecastError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: QueryForecastRequest,
   output: QueryForecastResponse,
   errors: [
@@ -237,7 +239,11 @@ export const queryForecast: API.OperationMethod<
     ResourceInUseException,
     ResourceNotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "QueryForecast",
 }));
+
 export type QueryWhatIfForecastError =
   | InvalidInputException
   | InvalidNextTokenException
@@ -252,8 +258,8 @@ export const queryWhatIfForecast: API.OperationMethod<
   QueryWhatIfForecastRequest,
   QueryWhatIfForecastResponse,
   QueryWhatIfForecastError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: QueryWhatIfForecastRequest,
   output: QueryWhatIfForecastResponse,
   errors: [
@@ -263,4 +269,7 @@ export const queryWhatIfForecast: API.OperationMethod<
     ResourceInUseException,
     ResourceNotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "QueryWhatIfForecast",
 }));

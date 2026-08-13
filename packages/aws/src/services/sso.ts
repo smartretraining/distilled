@@ -1,13 +1,13 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as redacted from "effect/Redacted";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 import { SensitiveString } from "../sensitive.ts";
 const svc = T.AwsApiService({
   sdkId: "SSO",
@@ -88,52 +88,67 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class InvalidRequestException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRequestException>()(
+    "InvalidRequestException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class ResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotFoundException>()(
+    "ResourceNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class TooManyRequestsException
+  extends /*@__PURE__*/ S.TaggedError<TooManyRequestsException>()(
+    "TooManyRequestsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(429),
+  ).pipe(C.withThrottlingError) {}
+export class UnauthorizedException
+  extends /*@__PURE__*/ S.TaggedError<UnauthorizedException>()(
+    "UnauthorizedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(401),
+  ).pipe(C.withAuthError) {}
 export type RoleNameType = string;
 export type AccountIdType = string;
 export type AccessTokenType = string | redacted.Redacted<string>;
-export type AccessKeyType = string;
-export type SecretAccessKeyType = string | redacted.Redacted<string>;
-export type SessionTokenType = string | redacted.Redacted<string>;
-export type ExpirationTimestampType = number;
-export type ErrorDescription = string;
-export type NextTokenType = string;
-export type MaxResultType = number;
-export type AccountNameType = string;
-export type EmailAddressType = string;
-
-//# Schemas
 export interface GetRoleCredentialsRequest {
   roleName: string;
   accountId: string;
   accessToken: string | redacted.Redacted<string>;
 }
-export const GetRoleCredentialsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      roleName: S.String.pipe(T.HttpQuery("role_name")),
-      accountId: S.String.pipe(T.HttpQuery("account_id")),
-      accessToken: SensitiveString.pipe(T.HttpHeader("x-amz-sso_bearer_token")),
-    }).pipe(
-      T.all(
-        T.Http({ method: "GET", uri: "/federation/credentials" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetRoleCredentialsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    roleName: S.String.pipe(T.HttpQuery("role_name")),
+    accountId: S.String.pipe(T.HttpQuery("account_id")),
+    accessToken: SensitiveString.pipe(T.HttpHeader("x-amz-sso_bearer_token")),
+  }).pipe(
+    T.all(
+      T.Http({ method: "GET", uri: "/federation/credentials" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetRoleCredentialsRequest",
 }) as any as S.Schema<GetRoleCredentialsRequest>;
+export type AccessKeyType = string;
+export type SecretAccessKeyType = string | redacted.Redacted<string>;
+export type SessionTokenType = string | redacted.Redacted<string>;
+export type ExpirationTimestampType = number;
 export interface RoleCredentials {
   accessKeyId?: string;
   secretAccessKey?: string | redacted.Redacted<string>;
   sessionToken?: string | redacted.Redacted<string>;
   expiration?: number;
 }
-export const RoleCredentials = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RoleCredentials = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     accessKeyId: S.optional(S.String),
     secretAccessKey: S.optional(SensitiveString),
@@ -146,34 +161,35 @@ export const RoleCredentials = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetRoleCredentialsResponse {
   roleCredentials?: RoleCredentials;
 }
-export const GetRoleCredentialsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ roleCredentials: S.optional(RoleCredentials) }),
+export const GetRoleCredentialsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ roleCredentials: S.optional(RoleCredentials) }),
 ).annotate({
   identifier: "GetRoleCredentialsResponse",
 }) as any as S.Schema<GetRoleCredentialsResponse>;
+export type NextTokenType = string;
+export type MaxResultType = number;
 export interface ListAccountRolesRequest {
   nextToken?: string;
   maxResults?: number;
   accessToken: string | redacted.Redacted<string>;
   accountId: string;
 }
-export const ListAccountRolesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      nextToken: S.optional(S.String).pipe(T.HttpQuery("next_token")),
-      maxResults: S.optional(S.Number).pipe(T.HttpQuery("max_result")),
-      accessToken: SensitiveString.pipe(T.HttpHeader("x-amz-sso_bearer_token")),
-      accountId: S.String.pipe(T.HttpQuery("account_id")),
-    }).pipe(
-      T.all(
-        T.Http({ method: "GET", uri: "/assignment/roles" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListAccountRolesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    nextToken: S.optional(S.String).pipe(T.HttpQuery("next_token")),
+    maxResults: S.optional(S.Number).pipe(T.HttpQuery("max_result")),
+    accessToken: SensitiveString.pipe(T.HttpHeader("x-amz-sso_bearer_token")),
+    accountId: S.String.pipe(T.HttpQuery("account_id")),
+  }).pipe(
+    T.all(
+      T.Http({ method: "GET", uri: "/assignment/roles" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "ListAccountRolesRequest",
 }) as any as S.Schema<ListAccountRolesRequest>;
@@ -181,21 +197,20 @@ export interface RoleInfo {
   roleName?: string;
   accountId?: string;
 }
-export const RoleInfo = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RoleInfo = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ roleName: S.optional(S.String), accountId: S.optional(S.String) }),
 ).annotate({ identifier: "RoleInfo" }) as any as S.Schema<RoleInfo>;
 export type RoleListType = RoleInfo[];
-export const RoleListType = /*@__PURE__*/ /*#__PURE__*/ S.Array(RoleInfo);
+export const RoleListType = /*@__PURE__*/ S.Array(RoleInfo);
 export interface ListAccountRolesResponse {
   nextToken?: string;
   roleList?: RoleInfo[];
 }
-export const ListAccountRolesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      nextToken: S.optional(S.String),
-      roleList: S.optional(RoleListType),
-    }),
+export const ListAccountRolesResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    nextToken: S.optional(S.String),
+    roleList: S.optional(RoleListType),
+  }),
 ).annotate({
   identifier: "ListAccountRolesResponse",
 }) as any as S.Schema<ListAccountRolesResponse>;
@@ -204,7 +219,7 @@ export interface ListAccountsRequest {
   maxResults?: number;
   accessToken: string | redacted.Redacted<string>;
 }
-export const ListAccountsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListAccountsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     nextToken: S.optional(S.String).pipe(T.HttpQuery("next_token")),
     maxResults: S.optional(S.Number).pipe(T.HttpQuery("max_result")),
@@ -222,12 +237,14 @@ export const ListAccountsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ListAccountsRequest",
 }) as any as S.Schema<ListAccountsRequest>;
+export type AccountNameType = string;
+export type EmailAddressType = string;
 export interface AccountInfo {
   accountId?: string;
   accountName?: string;
   emailAddress?: string;
 }
-export const AccountInfo = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AccountInfo = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     accountId: S.optional(S.String),
     accountName: S.optional(S.String),
@@ -235,12 +252,12 @@ export const AccountInfo = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "AccountInfo" }) as any as S.Schema<AccountInfo>;
 export type AccountListType = AccountInfo[];
-export const AccountListType = /*@__PURE__*/ /*#__PURE__*/ S.Array(AccountInfo);
+export const AccountListType = /*@__PURE__*/ S.Array(AccountInfo);
 export interface ListAccountsResponse {
   nextToken?: string;
   accountList?: AccountInfo[];
 }
-export const ListAccountsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListAccountsResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     nextToken: S.optional(S.String),
     accountList: S.optional(AccountListType),
@@ -251,7 +268,7 @@ export const ListAccountsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface LogoutRequest {
   accessToken: string | redacted.Redacted<string>;
 }
-export const LogoutRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const LogoutRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     accessToken: SensitiveString.pipe(T.HttpHeader("x-amz-sso_bearer_token")),
   }).pipe(
@@ -266,29 +283,10 @@ export const LogoutRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   ),
 ).annotate({ identifier: "LogoutRequest" }) as any as S.Schema<LogoutRequest>;
 export interface LogoutResponse {}
-export const LogoutResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const LogoutResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({ identifier: "LogoutResponse" }) as any as S.Schema<LogoutResponse>;
-
-//# Errors
-export class InvalidRequestException extends S.TaggedErrorClass<InvalidRequestException>()(
-  "InvalidRequestException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ResourceNotFoundException extends S.TaggedErrorClass<ResourceNotFoundException>()(
-  "ResourceNotFoundException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class TooManyRequestsException extends S.TaggedErrorClass<TooManyRequestsException>()(
-  "TooManyRequestsException",
-  { message: S.optional(S.String) },
-).pipe(C.withThrottlingError) {}
-export class UnauthorizedException extends S.TaggedErrorClass<UnauthorizedException>()(
-  "UnauthorizedException",
-  { message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-
-//# Operations
+export type ErrorDescription = string;
 export type GetRoleCredentialsError =
   | InvalidRequestException
   | ResourceNotFoundException
@@ -303,8 +301,8 @@ export const getRoleCredentials: API.OperationMethod<
   GetRoleCredentialsRequest,
   GetRoleCredentialsResponse,
   GetRoleCredentialsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetRoleCredentialsRequest,
   output: GetRoleCredentialsResponse,
   errors: [
@@ -313,7 +311,11 @@ export const getRoleCredentials: API.OperationMethod<
     TooManyRequestsException,
     UnauthorizedException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetRoleCredentials",
 }));
+
 export type ListAccountRolesError =
   | InvalidRequestException
   | ResourceNotFoundException
@@ -323,27 +325,13 @@ export type ListAccountRolesError =
 /**
  * Lists all roles that are assigned to the user for a given AWS account.
  */
-export const listAccountRoles: API.OperationMethod<
+export const listAccountRoles: API.PaginatedOperationMethod<
   ListAccountRolesRequest,
   ListAccountRolesResponse,
   ListAccountRolesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListAccountRolesRequest,
-  ) => stream.Stream<
-    ListAccountRolesResponse,
-    ListAccountRolesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListAccountRolesRequest,
-  ) => stream.Stream<
-    RoleInfo,
-    ListAccountRolesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  RoleInfo
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListAccountRolesRequest,
   output: ListAccountRolesResponse,
   errors: [
@@ -352,13 +340,17 @@ export const listAccountRoles: API.OperationMethod<
     TooManyRequestsException,
     UnauthorizedException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListAccountRoles",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "roleList",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type ListAccountsError =
   | InvalidRequestException
   | ResourceNotFoundException
@@ -370,27 +362,13 @@ export type ListAccountsError =
  * administrator of the account. For more information, see Assign User Access in the *IAM Identity Center User Guide*. This operation
  * returns a paginated response.
  */
-export const listAccounts: API.OperationMethod<
+export const listAccounts: API.PaginatedOperationMethod<
   ListAccountsRequest,
   ListAccountsResponse,
   ListAccountsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListAccountsRequest,
-  ) => stream.Stream<
-    ListAccountsResponse,
-    ListAccountsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListAccountsRequest,
-  ) => stream.Stream<
-    AccountInfo,
-    ListAccountsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  AccountInfo
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListAccountsRequest,
   output: ListAccountsResponse,
   errors: [
@@ -399,13 +377,17 @@ export const listAccounts: API.OperationMethod<
     TooManyRequestsException,
     UnauthorizedException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListAccounts",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "accountList",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type LogoutError =
   | InvalidRequestException
   | TooManyRequestsException
@@ -431,8 +413,8 @@ export const logout: API.OperationMethod<
   LogoutRequest,
   LogoutResponse,
   LogoutError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: LogoutRequest,
   output: LogoutResponse,
   errors: [
@@ -440,4 +422,7 @@ export const logout: API.OperationMethod<
     TooManyRequestsException,
     UnauthorizedException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "Logout",
 }));

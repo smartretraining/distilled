@@ -1,11 +1,12 @@
 {
   "name": "@distilled.cloud/fly-io",
-  "version": "0.20.2",
+  "version": "1.0.0-rc.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/alchemy-run/distilled",
     "directory": "packages/fly-io"
   },
+  "license": "Apache-2.0",
   "type": "module",
   "sideEffects": false,
   "module": "src/index.ts",
@@ -17,59 +18,57 @@
     ".": {
       "types": "./lib/index.d.ts",
       "bun": "./src/index.ts",
+      "worker": "./src/index.ts",
       "default": "./lib/index.js"
-    },
-    "./Category": {
-      "types": "./lib/category.d.ts",
-      "bun": "./src/category.ts",
-      "default": "./lib/category.js"
-    },
-    "./Client": {
-      "types": "./lib/client.d.ts",
-      "bun": "./src/client.ts",
-      "default": "./lib/client.js"
     },
     "./Credentials": {
       "types": "./lib/credentials.d.ts",
       "bun": "./src/credentials.ts",
+      "worker": "./src/credentials.ts",
       "default": "./lib/credentials.js"
     },
     "./Errors": {
       "types": "./lib/errors.d.ts",
       "bun": "./src/errors.ts",
+      "worker": "./src/errors.ts",
       "default": "./lib/errors.js"
     },
-    "./Operations": {
-      "types": "./lib/operations/index.d.ts",
-      "bun": "./src/operations/index.ts",
-      "default": "./lib/operations/index.js"
+    "./Protocol": {
+      "types": "./lib/protocol.d.ts",
+      "bun": "./src/protocol.ts",
+      "worker": "./src/protocol.ts",
+      "default": "./lib/protocol.js"
     },
     "./Retry": {
       "types": "./lib/retry.d.ts",
       "bun": "./src/retry.ts",
+      "worker": "./src/retry.ts",
       "default": "./lib/retry.js"
-    },
-    "./Sensitive": {
-      "types": "./lib/sensitive.d.ts",
-      "bun": "./src/sensitive.ts",
-      "default": "./lib/sensitive.js"
     },
     "./Traits": {
       "types": "./lib/traits.d.ts",
       "bun": "./src/traits.ts",
+      "worker": "./src/traits.ts",
       "default": "./lib/traits.js"
+    },
+    "./machines": {
+      "types": "./lib/services/machines.d.ts",
+      "bun": "./src/services/machines.ts",
+      "worker": "./src/services/machines.ts",
+      "default": "./lib/services/machines.js"
+    },
+    "./*": {
+      "types": "./lib/services/*.d.ts",
+      "bun": "./src/services/*.ts",
+      "worker": "./src/services/*.ts",
+      "default": "./lib/services/*.js"
     }
   },
   "scripts": {
-    "typecheck": "tsgo",
-    "build": "tsgo -b",
-    "fmt": "oxfmt --write src",
-    "lint": "oxlint --fix src",
-    "check": "tsgo && oxlint src && oxfmt --check src",
-    "nuke": "bun scripts/nuke.ts",
-    "test": "bunx vitest run test --exclude specs --passWithNoTests",
-    "publish:npm": "bun run build && bun publish --access public",
-    "generate": "bun run scripts/generate.ts && oxlint --fix src && oxfmt --write src && oxfmt --write src",
+    "convert": "bun scripts/convert.ts",
+    "generate": "bun scripts/generate.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "build": "tsc -b",
     "specs:fetch": "git submodule update --force --init --recursive --depth=1 specs/distilled-spec-fly-io && git -C specs/distilled-spec-fly-io checkout -- .",
     "specs:update": "git -C specs/distilled-spec-fly-io fetch && git -C specs/distilled-spec-fly-io checkout main && git -C specs/distilled-spec-fly-io pull"
   },
@@ -79,8 +78,7 @@
   "devDependencies": {
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
-    "dotenv": "catalog:",
-    "vitest": "catalog:"
+    "@effect/platform-bun": "catalog:"
   },
   "peerDependencies": {
     "effect": "catalog:"

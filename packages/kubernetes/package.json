@@ -1,75 +1,85 @@
 {
   "name": "@distilled.cloud/kubernetes",
-  "version": "0.20.2",
+  "version": "1.0.0-rc.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/alchemy-run/distilled",
     "directory": "packages/kubernetes"
   },
+  "license": "Apache-2.0",
   "type": "module",
   "sideEffects": false,
-  "module": "src/index.ts",
   "files": [
     "lib",
     "src"
   ],
   "exports": {
-    "./*": {
-      "types": "./lib/services/*.d.ts",
-      "bun": "./src/services/*.ts",
-      "default": "./lib/services/*.js"
-    },
     ".": {
       "types": "./lib/index.d.ts",
       "bun": "./src/index.ts",
+      "worker": "./src/index.ts",
       "default": "./lib/index.js"
-    },
-    "./Category": {
-      "types": "./lib/category.d.ts",
-      "bun": "./src/category.ts",
-      "default": "./lib/category.js"
-    },
-    "./Client": {
-      "types": "./lib/client/index.d.ts",
-      "bun": "./src/client/index.ts",
-      "default": "./lib/client/index.js"
     },
     "./Credentials": {
       "types": "./lib/credentials.d.ts",
       "bun": "./src/credentials.ts",
+      "worker": "./src/credentials.ts",
       "default": "./lib/credentials.js"
     },
     "./Errors": {
       "types": "./lib/errors.d.ts",
       "bun": "./src/errors.ts",
+      "worker": "./src/errors.ts",
       "default": "./lib/errors.js"
-    },
-    "./Retry": {
-      "types": "./lib/retry.d.ts",
-      "bun": "./src/retry.ts",
-      "default": "./lib/retry.js"
-    },
-    "./Sensitive": {
-      "types": "./lib/sensitive.d.ts",
-      "bun": "./src/sensitive.ts",
-      "default": "./lib/sensitive.js"
     },
     "./Traits": {
       "types": "./lib/traits.d.ts",
       "bun": "./src/traits.ts",
+      "worker": "./src/traits.ts",
       "default": "./lib/traits.js"
+    },
+    "./Protocol": {
+      "types": "./lib/protocol.d.ts",
+      "bun": "./src/protocol.ts",
+      "worker": "./src/protocol.ts",
+      "default": "./lib/protocol.js"
+    },
+    "./Retry": {
+      "types": "./lib/retry.d.ts",
+      "bun": "./src/retry.ts",
+      "worker": "./src/retry.ts",
+      "default": "./lib/retry.js"
+    },
+    "./rbac-authorization": {
+      "types": "./lib/services/rbac_authorization.d.ts",
+      "bun": "./src/services/rbac_authorization.ts",
+      "worker": "./src/services/rbac_authorization.ts",
+      "default": "./lib/services/rbac_authorization.js"
+    },
+    "./flowcontrol-apiserver": {
+      "types": "./lib/services/flowcontrol_apiserver.d.ts",
+      "bun": "./src/services/flowcontrol_apiserver.ts",
+      "worker": "./src/services/flowcontrol_apiserver.ts",
+      "default": "./lib/services/flowcontrol_apiserver.js"
+    },
+    "./internal-apiserver": {
+      "types": "./lib/services/internal_apiserver.d.ts",
+      "bun": "./src/services/internal_apiserver.ts",
+      "worker": "./src/services/internal_apiserver.ts",
+      "default": "./lib/services/internal_apiserver.js"
+    },
+    "./*": {
+      "types": "./lib/services/*.d.ts",
+      "bun": "./src/services/*.ts",
+      "worker": "./src/services/*.ts",
+      "default": "./lib/services/*.js"
     }
   },
   "scripts": {
-    "typecheck": "tsgo",
-    "build": "tsgo -b",
-    "fmt": "oxfmt --write src",
-    "lint": "oxlint --fix src",
-    "check": "tsgo && oxlint src && oxfmt --check src",
-    "nuke": "bun scripts/nuke.ts",
-    "test": "bunx vitest run test --exclude specs --passWithNoTests",
-    "publish:npm": "bun run build && bun publish --access public",
-    "generate": "bun run scripts/generate.ts && oxlint --fix src && oxfmt --write src && oxfmt --write src",
+    "build": "tsc -b",
+    "convert": "bun scripts/convert.ts",
+    "generate": "bun scripts/convert.ts && bun scripts/generate.ts",
+    "typecheck": "tsc -p tsconfig.json",
     "specs:fetch": "git submodule update --force --init --recursive --depth=1 specs/kubernetes && git -C specs/kubernetes checkout -- .",
     "specs:update": "git -C specs/kubernetes fetch && git -C specs/kubernetes checkout master && git -C specs/kubernetes pull"
   },
@@ -79,8 +89,7 @@
   "devDependencies": {
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
-    "dotenv": "catalog:",
-    "vitest": "catalog:"
+    "@effect/platform-bun": "catalog:"
   },
   "peerDependencies": {
     "effect": "catalog:"

@@ -1,13 +1,45 @@
 {
-  "errors": {
-    "SinkAuthFailed": [
-      { "code": 1012, "message": { "includes": "could not authenticate" } }
-    ],
-    "InvalidSinkConfig": [
-      { "code": 1012 }
-    ],
-    "SinkAlreadyExists": [
-      { "code": 1003 }
-    ]
-  }
+  "description": "Align pipelines#SinksCreate with distilled cloudflare/pipelines createSink",
+  "patches": [
+    {
+      "op": "move",
+      "from": "/shapes/com.cloudflare.pipelines#SinksCreate",
+      "path": "/shapes/com.cloudflare.pipelines#CreateSink"
+    },
+    {
+      "op": "move",
+      "from": "/shapes/com.cloudflare.pipelines#SinksCreateRequest",
+      "path": "/shapes/com.cloudflare.pipelines#CreateSinkRequest"
+    },
+    {
+      "op": "replace",
+      "path": "/shapes/com.cloudflare.pipelines#CreateSink/input/target",
+      "value": "com.cloudflare.pipelines#CreateSinkRequest"
+    },
+    {
+      "op": "move",
+      "from": "/shapes/com.cloudflare.pipelines#SinksCreateResponse",
+      "path": "/shapes/com.cloudflare.pipelines#CreateSinkResponse"
+    },
+    {
+      "op": "replace",
+      "path": "/shapes/com.cloudflare.pipelines#CreateSink/output/target",
+      "value": "com.cloudflare.pipelines#CreateSinkResponse"
+    },
+    {
+      "op": "add",
+      "path": "/shapes/com.cloudflare.pipelines#CreateSink/errors",
+      "value": [
+        {
+          "target": "com.cloudflare.pipelines#SinkAuthFailed"
+        },
+        {
+          "target": "com.cloudflare.pipelines#InvalidSinkConfig"
+        },
+        {
+          "target": "com.cloudflare.pipelines#SinkAlreadyExists"
+        }
+      ]
+    }
+  ]
 }

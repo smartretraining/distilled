@@ -1,12 +1,13 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as redacted from "effect/Redacted";
-import * as S from "effect/Schema";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 import { SensitiveString } from "../sensitive.ts";
 const svc = T.AwsApiService({
   sdkId: "Geo Maps",
@@ -156,40 +157,47 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
-export type MapStyle = string;
-export type ColorScheme = string;
-export type Variant = string;
-export type PositionListString = string | redacted.Redacted<string>;
-export type PositionString = string | redacted.Redacted<string>;
-export type CompactOverlay = string | redacted.Redacted<string>;
-export type GeoJsonOverlay = string | redacted.Redacted<string>;
-export type SensitiveInteger = number;
-export type ApiKey = string | redacted.Redacted<string>;
-export type LabelSize = string;
-export type LanguageTag = string;
-export type CountryCode = string | redacted.Redacted<string>;
-export type MapFeatureMode = string;
-export type DistanceMeters = number;
-export type ScaleBarUnit = string;
-export type StaticMapStyle = string;
-export type SensitiveFloat = number;
-export type ValidationExceptionReason = string;
-export type Terrain = string;
-export type ContourDensity = string;
-export type Traffic = string;
-export type TravelMode = string;
-export type Buildings = string;
-export type TileAdditionalFeature = string;
-export type Tileset = string;
-export type SensitiveString = string | redacted.Redacted<string>;
-
-//# Schemas
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class InternalServerException
+  extends /*@__PURE__*/ S.TaggedError<InternalServerException>()(
+    "InternalServerException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.all(T.HttpError(500), T.Retryable()),
+  ).pipe(C.withServerError, C.withRetryableError) {}
+export class ResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotFoundException>()(
+    "ResourceNotFoundException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class ThrottlingException
+  extends /*@__PURE__*/ S.TaggedError<ThrottlingException>()(
+    "ThrottlingException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.all(T.HttpError(429), T.Retryable()),
+  ).pipe(C.withThrottlingError, C.withRetryableError) {}
+export class ValidationException
+  extends /*@__PURE__*/ S.TaggedError<ValidationException>()(
+    "ValidationException",
+    {
+      message: S.String.pipe(T.ErrorMessage()),
+      Reason: S.String,
+      FieldList: S.suspend(() => ValidationExceptionFieldList).annotate({
+        identifier: "ValidationExceptionFieldList",
+      }),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
 export interface GetGlyphsRequest {
   FontStack: string;
   FontUnicodeRange: string;
 }
-export const GetGlyphsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetGlyphsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     FontStack: S.String.pipe(T.HttpLabel("FontStack")),
     FontUnicodeRange: S.String.pipe(T.HttpLabel("FontUnicodeRange")),
@@ -212,7 +220,7 @@ export interface GetGlyphsResponse {
   CacheControl?: string;
   ETag?: string;
 }
-export const GetGlyphsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetGlyphsResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Blob: S.optional(T.Blob).pipe(T.HttpPayload()),
     ContentType: S.optional(S.String).pipe(T.HttpHeader("Content-Type")),
@@ -222,13 +230,16 @@ export const GetGlyphsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "GetGlyphsResponse",
 }) as any as S.Schema<GetGlyphsResponse>;
+export type MapStyle = string;
+export type ColorScheme = string;
+export type Variant = string;
 export interface GetSpritesRequest {
   FileName: string;
   Style: string;
   ColorScheme: string;
   Variant: string;
 }
-export const GetSpritesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetSpritesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     FileName: S.String.pipe(T.HttpLabel("FileName")),
     Style: S.String.pipe(T.HttpLabel("Style")),
@@ -256,7 +267,7 @@ export interface GetSpritesResponse {
   CacheControl?: string;
   ETag?: string;
 }
-export const GetSpritesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetSpritesResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Blob: S.optional(T.Blob).pipe(T.HttpPayload()),
     ContentType: S.optional(S.String).pipe(T.HttpHeader("Content-Type")),
@@ -266,6 +277,20 @@ export const GetSpritesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "GetSpritesResponse",
 }) as any as S.Schema<GetSpritesResponse>;
+export type PositionListString = string | redacted.Redacted<string>;
+export type PositionString = string | redacted.Redacted<string>;
+export type CompactOverlay = string | redacted.Redacted<string>;
+export type GeoJsonOverlay = string | redacted.Redacted<string>;
+export type SensitiveInteger = number;
+export type ApiKey = string | redacted.Redacted<string>;
+export type LabelSize = string;
+export type LanguageTag = string;
+export type CountryCode = string | redacted.Redacted<string>;
+export type MapFeatureMode = string;
+export type DistanceMeters = number;
+export type ScaleBarUnit = string;
+export type StaticMapStyle = string;
+export type SensitiveFloat = number;
 export interface GetStaticMapRequest {
   BoundingBox?: string | redacted.Redacted<string>;
   BoundedPositions?: string | redacted.Redacted<string>;
@@ -288,7 +313,7 @@ export interface GetStaticMapRequest {
   Width: number;
   Zoom?: number;
 }
-export const GetStaticMapRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetStaticMapRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     BoundingBox: S.optional(SensitiveString).pipe(T.HttpQuery("bounding-box")),
     BoundedPositions: S.optional(SensitiveString).pipe(
@@ -338,7 +363,7 @@ export interface GetStaticMapResponse {
   ETag?: string;
   PricingBucket: string;
 }
-export const GetStaticMapResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetStaticMapResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Blob: S.optional(T.Blob).pipe(T.HttpPayload()),
     ContentType: S.optional(S.String).pipe(T.HttpHeader("Content-Type")),
@@ -349,24 +374,13 @@ export const GetStaticMapResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "GetStaticMapResponse",
 }) as any as S.Schema<GetStaticMapResponse>;
-export interface ValidationExceptionField {
-  Name: string;
-  Message: string;
-}
-export const ValidationExceptionField = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ Name: S.String, Message: S.String }).pipe(
-      S.encodeKeys({ Name: "name", Message: "message" }),
-    ),
-).annotate({
-  identifier: "ValidationExceptionField",
-}) as any as S.Schema<ValidationExceptionField>;
-export type ValidationExceptionFieldList = ValidationExceptionField[];
-export const ValidationExceptionFieldList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  ValidationExceptionField,
-);
+export type Terrain = string;
+export type ContourDensity = string;
+export type Traffic = string;
+export type TravelMode = string;
 export type TravelModeList = string[];
-export const TravelModeList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TravelModeList = /*@__PURE__*/ S.Array(S.String);
+export type Buildings = string;
 export interface GetStyleDescriptorRequest {
   Style: string;
   ColorScheme?: string;
@@ -378,30 +392,29 @@ export interface GetStyleDescriptorRequest {
   Buildings?: string;
   Key?: string | redacted.Redacted<string>;
 }
-export const GetStyleDescriptorRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Style: S.String.pipe(T.HttpLabel("Style")),
-      ColorScheme: S.optional(S.String).pipe(T.HttpQuery("color-scheme")),
-      PoliticalView: S.optional(SensitiveString).pipe(
-        T.HttpQuery("political-view"),
-      ),
-      Terrain: S.optional(S.String).pipe(T.HttpQuery("terrain")),
-      ContourDensity: S.optional(S.String).pipe(T.HttpQuery("contour-density")),
-      Traffic: S.optional(S.String).pipe(T.HttpQuery("traffic")),
-      TravelModes: S.optional(TravelModeList).pipe(T.HttpQuery("travel-modes")),
-      Buildings: S.optional(S.String).pipe(T.HttpQuery("buildings")),
-      Key: S.optional(SensitiveString).pipe(T.HttpQuery("key")),
-    }).pipe(
-      T.all(
-        T.Http({ method: "GET", uri: "/styles/{Style}/descriptor" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetStyleDescriptorRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Style: S.String.pipe(T.HttpLabel("Style")),
+    ColorScheme: S.optional(S.String).pipe(T.HttpQuery("color-scheme")),
+    PoliticalView: S.optional(SensitiveString).pipe(
+      T.HttpQuery("political-view"),
     ),
+    Terrain: S.optional(S.String).pipe(T.HttpQuery("terrain")),
+    ContourDensity: S.optional(S.String).pipe(T.HttpQuery("contour-density")),
+    Traffic: S.optional(S.String).pipe(T.HttpQuery("traffic")),
+    TravelModes: S.optional(TravelModeList).pipe(T.HttpQuery("travel-modes")),
+    Buildings: S.optional(S.String).pipe(T.HttpQuery("buildings")),
+    Key: S.optional(SensitiveString).pipe(T.HttpQuery("key")),
+  }).pipe(
+    T.all(
+      T.Http({ method: "GET", uri: "/styles/{Style}/descriptor" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
 ).annotate({
   identifier: "GetStyleDescriptorRequest",
 }) as any as S.Schema<GetStyleDescriptorRequest>;
@@ -411,21 +424,21 @@ export interface GetStyleDescriptorResponse {
   CacheControl?: string;
   ETag?: string;
 }
-export const GetStyleDescriptorResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Blob: S.optional(T.Blob).pipe(T.HttpPayload()),
-      ContentType: S.optional(S.String).pipe(T.HttpHeader("Content-Type")),
-      CacheControl: S.optional(S.String).pipe(T.HttpHeader("Cache-Control")),
-      ETag: S.optional(S.String).pipe(T.HttpHeader("ETag")),
-    }),
+export const GetStyleDescriptorResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Blob: S.optional(T.Blob).pipe(T.HttpPayload()),
+    ContentType: S.optional(S.String).pipe(T.HttpHeader("Content-Type")),
+    CacheControl: S.optional(S.String).pipe(T.HttpHeader("Cache-Control")),
+    ETag: S.optional(S.String).pipe(T.HttpHeader("ETag")),
+  }),
 ).annotate({
   identifier: "GetStyleDescriptorResponse",
 }) as any as S.Schema<GetStyleDescriptorResponse>;
+export type TileAdditionalFeature = string;
 export type TileAdditionalFeatureList = string[];
-export const TileAdditionalFeatureList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const TileAdditionalFeatureList = /*@__PURE__*/ S.Array(S.String);
+export type Tileset = string;
+export type SensitiveString = string | redacted.Redacted<string>;
 export interface GetTileRequest {
   AdditionalFeatures?: string[];
   Tileset: string;
@@ -434,7 +447,7 @@ export interface GetTileRequest {
   Y: string | redacted.Redacted<string>;
   Key?: string | redacted.Redacted<string>;
 }
-export const GetTileRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetTileRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AdditionalFeatures: S.optional(TileAdditionalFeatureList).pipe(
       T.HttpQuery("additional-features"),
@@ -462,7 +475,7 @@ export interface GetTileResponse {
   ETag?: string;
   PricingBucket: string;
 }
-export const GetTileResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetTileResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Blob: S.optional(T.Blob).pipe(T.HttpPayload()),
     ContentType: S.optional(S.String).pipe(T.HttpHeader("Content-Type")),
@@ -473,36 +486,22 @@ export const GetTileResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "GetTileResponse",
 }) as any as S.Schema<GetTileResponse>;
-
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { Message: S.String },
-).pipe(C.withAuthError) {}
-export class InternalServerException extends S.TaggedErrorClass<InternalServerException>()(
-  "InternalServerException",
-  { Message: S.String },
-  T.Retryable(),
-).pipe(C.withServerError, C.withRetryableError) {}
-export class ThrottlingException extends S.TaggedErrorClass<ThrottlingException>()(
-  "ThrottlingException",
-  { Message: S.String },
-  T.Retryable(),
-).pipe(C.withThrottlingError, C.withRetryableError) {}
-export class ValidationException extends S.TaggedErrorClass<ValidationException>()(
-  "ValidationException",
-  {
-    Message: S.String,
-    Reason: S.String,
-    FieldList: ValidationExceptionFieldList,
-  },
-).pipe(C.withBadRequestError) {}
-export class ResourceNotFoundException extends S.TaggedErrorClass<ResourceNotFoundException>()(
-  "ResourceNotFoundException",
-  { Message: S.String },
-).pipe(C.withBadRequestError) {}
-
-//# Operations
+export type ValidationExceptionReason = string;
+export interface ValidationExceptionField {
+  Name: string;
+  Message: string;
+}
+export const ValidationExceptionField = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Name: S.String, Message: S.String }).pipe(
+    S.encodeKeys({ Name: "name", Message: "message" }),
+  ),
+).annotate({
+  identifier: "ValidationExceptionField",
+}) as any as S.Schema<ValidationExceptionField>;
+export type ValidationExceptionFieldList = ValidationExceptionField[];
+export const ValidationExceptionFieldList = /*@__PURE__*/ S.Array(
+  ValidationExceptionField,
+);
 export type GetGlyphsError = CommonErrors;
 /**
  * `GetGlyphs` returns the map's glyphs.
@@ -513,12 +512,16 @@ export const getGlyphs: API.OperationMethod<
   GetGlyphsRequest,
   GetGlyphsResponse,
   GetGlyphsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetGlyphsRequest,
   output: GetGlyphsResponse,
   errors: [],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetGlyphs",
 }));
+
 export type GetSpritesError = CommonErrors;
 /**
  * `GetSprites` returns the map's sprites.
@@ -529,12 +532,16 @@ export const getSprites: API.OperationMethod<
   GetSpritesRequest,
   GetSpritesResponse,
   GetSpritesError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetSpritesRequest,
   output: GetSpritesResponse,
   errors: [],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetSprites",
 }));
+
 export type GetStaticMapError =
   | AccessDeniedException
   | InternalServerException
@@ -558,8 +565,8 @@ export const getStaticMap: API.OperationMethod<
   GetStaticMapRequest,
   GetStaticMapResponse,
   GetStaticMapError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetStaticMapRequest,
   output: GetStaticMapResponse,
   errors: [
@@ -568,7 +575,11 @@ export const getStaticMap: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetStaticMap",
 }));
+
 export type GetStyleDescriptorError = CommonErrors;
 /**
  * `GetStyleDescriptor` returns information about the style.
@@ -579,12 +590,16 @@ export const getStyleDescriptor: API.OperationMethod<
   GetStyleDescriptorRequest,
   GetStyleDescriptorResponse,
   GetStyleDescriptorError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetStyleDescriptorRequest,
   output: GetStyleDescriptorResponse,
   errors: [],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetStyleDescriptor",
 }));
+
 export type GetTileError =
   | AccessDeniedException
   | InternalServerException
@@ -601,8 +616,8 @@ export const getTile: API.OperationMethod<
   GetTileRequest,
   GetTileResponse,
   GetTileError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetTileRequest,
   output: GetTileResponse,
   errors: [
@@ -612,4 +627,7 @@ export const getTile: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetTile",
 }));

@@ -1,12 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const ns = T.XmlNamespace(
   "https://object.mediastore.amazonaws.com/doc/2017-09-01",
 );
@@ -86,27 +86,34 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class ContainerNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ContainerNotFoundException>()(
+    "ContainerNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class InternalServerError
+  extends /*@__PURE__*/ S.TaggedError<InternalServerError>()(
+    "InternalServerError",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ObjectNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ObjectNotFoundException>()(
+    "ObjectNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class RequestedRangeNotSatisfiableException
+  extends /*@__PURE__*/ S.TaggedError<RequestedRangeNotSatisfiableException>()(
+    "RequestedRangeNotSatisfiableException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(416),
+  ) {}
 export type PathNaming = string;
-export type ErrorMessage = string;
-export type ETag = string;
-export type ContentType = string;
-export type NonNegativeLong = number;
-export type StringPrimitive = string;
-export type RangePattern = string;
-export type ContentRangePattern = string;
-export type StatusCode = number;
-export type ListPathNaming = string;
-export type ListLimit = number;
-export type PaginationToken = string;
-export type ItemName = string;
-export type SHA256Hash = string;
-
-//# Schemas
 export interface DeleteObjectRequest {
   Path: string;
 }
-export const DeleteObjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteObjectRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Path: S.String.pipe(T.HttpLabel("Path")) }).pipe(
     T.all(
       ns,
@@ -122,7 +129,7 @@ export const DeleteObjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeleteObjectRequest",
 }) as any as S.Schema<DeleteObjectRequest>;
 export interface DeleteObjectResponse {}
-export const DeleteObjectResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteObjectResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "DeleteObjectResponse",
@@ -130,7 +137,7 @@ export const DeleteObjectResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DescribeObjectRequest {
   Path: string;
 }
-export const DescribeObjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeObjectRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Path: S.String.pipe(T.HttpLabel("Path")) }).pipe(
     T.all(
       ns,
@@ -145,6 +152,10 @@ export const DescribeObjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "DescribeObjectRequest",
 }) as any as S.Schema<DescribeObjectRequest>;
+export type ETag = string;
+export type ContentType = string;
+export type NonNegativeLong = number;
+export type StringPrimitive = string;
 export interface DescribeObjectResponse {
   ETag?: string;
   ContentType?: string;
@@ -152,25 +163,25 @@ export interface DescribeObjectResponse {
   CacheControl?: string;
   LastModified?: Date;
 }
-export const DescribeObjectResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ETag: S.optional(S.String).pipe(T.HttpHeader("ETag")),
-      ContentType: S.optional(S.String).pipe(T.HttpHeader("Content-Type")),
-      ContentLength: S.optional(S.Number).pipe(T.HttpHeader("Content-Length")),
-      CacheControl: S.optional(S.String).pipe(T.HttpHeader("Cache-Control")),
-      LastModified: S.optional(
-        S.Date.pipe(T.TimestampFormat("http-date")),
-      ).pipe(T.HttpHeader("Last-Modified")),
-    }).pipe(ns),
+export const DescribeObjectResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ETag: S.optional(S.String).pipe(T.HttpHeader("ETag")),
+    ContentType: S.optional(S.String).pipe(T.HttpHeader("Content-Type")),
+    ContentLength: S.optional(S.Number).pipe(T.HttpHeader("Content-Length")),
+    CacheControl: S.optional(S.String).pipe(T.HttpHeader("Cache-Control")),
+    LastModified: S.optional(S.Date.pipe(T.TimestampFormat("http-date"))).pipe(
+      T.HttpHeader("Last-Modified"),
+    ),
+  }).pipe(ns),
 ).annotate({
   identifier: "DescribeObjectResponse",
 }) as any as S.Schema<DescribeObjectResponse>;
+export type RangePattern = string;
 export interface GetObjectRequest {
   Path: string;
   Range?: string;
 }
-export const GetObjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetObjectRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Path: S.String.pipe(T.HttpLabel("Path")),
     Range: S.optional(S.String).pipe(T.HttpHeader("Range")),
@@ -188,6 +199,8 @@ export const GetObjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "GetObjectRequest",
 }) as any as S.Schema<GetObjectRequest>;
+export type ContentRangePattern = string;
+export type StatusCode = number;
 export interface GetObjectResponse {
   Body?: T.StreamingOutputBody;
   CacheControl?: string;
@@ -198,7 +211,7 @@ export interface GetObjectResponse {
   LastModified?: Date;
   StatusCode: number;
 }
-export const GetObjectResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetObjectResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Body: S.optional(T.StreamingOutput).pipe(T.HttpPayload()),
     CacheControl: S.optional(S.String).pipe(T.HttpHeader("Cache-Control")),
@@ -214,12 +227,15 @@ export const GetObjectResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "GetObjectResponse",
 }) as any as S.Schema<GetObjectResponse>;
+export type ListPathNaming = string;
+export type ListLimit = number;
+export type PaginationToken = string;
 export interface ListItemsRequest {
   Path?: string;
   MaxResults?: number;
   NextToken?: string;
 }
-export const ListItemsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListItemsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Path: S.optional(S.String).pipe(T.HttpQuery("Path")),
     MaxResults: S.optional(S.Number).pipe(T.HttpQuery("MaxResults")),
@@ -238,8 +254,10 @@ export const ListItemsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ListItemsRequest",
 }) as any as S.Schema<ListItemsRequest>;
+export type ItemName = string;
 export type ItemType = "OBJECT" | "FOLDER" | (string & {});
-export const ItemType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ItemType = /*@__PURE__*/ S.String;
+
 export interface Item {
   Name?: string;
   Type?: ItemType;
@@ -248,7 +266,7 @@ export interface Item {
   ContentType?: string;
   ContentLength?: number;
 }
-export const Item = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Item = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Name: S.optional(S.String),
     Type: S.optional(ItemType),
@@ -259,12 +277,12 @@ export const Item = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Item" }) as any as S.Schema<Item>;
 export type ItemList = Item[];
-export const ItemList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Item);
+export const ItemList = /*@__PURE__*/ S.Array(Item);
 export interface ListItemsResponse {
   Items?: Item[];
   NextToken?: string;
 }
-export const ListItemsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListItemsResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Items: S.optional(ItemList),
     NextToken: S.optional(S.String),
@@ -273,9 +291,11 @@ export const ListItemsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListItemsResponse",
 }) as any as S.Schema<ListItemsResponse>;
 export type StorageClass = "TEMPORAL" | (string & {});
-export const StorageClass = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const StorageClass = /*@__PURE__*/ S.String;
+
 export type UploadAvailability = "STANDARD" | "STREAMING" | (string & {});
-export const UploadAvailability = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const UploadAvailability = /*@__PURE__*/ S.String;
+
 export interface PutObjectRequest {
   Body: T.StreamingInputBody;
   Path: string;
@@ -284,7 +304,7 @@ export interface PutObjectRequest {
   StorageClass?: StorageClass;
   UploadAvailability?: UploadAvailability;
 }
-export const PutObjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PutObjectRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Body: T.StreamingInput.pipe(T.HttpPayload()),
     Path: S.String.pipe(T.HttpLabel("Path")),
@@ -310,12 +330,13 @@ export const PutObjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "PutObjectRequest",
 }) as any as S.Schema<PutObjectRequest>;
+export type SHA256Hash = string;
 export interface PutObjectResponse {
   ContentSHA256?: string;
   ETag?: string;
   StorageClass?: StorageClass;
 }
-export const PutObjectResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PutObjectResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ContentSHA256: S.optional(S.String),
     ETag: S.optional(S.String),
@@ -324,26 +345,7 @@ export const PutObjectResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "PutObjectResponse",
 }) as any as S.Schema<PutObjectResponse>;
-
-//# Errors
-export class ContainerNotFoundException extends S.TaggedErrorClass<ContainerNotFoundException>()(
-  "ContainerNotFoundException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InternalServerError extends S.TaggedErrorClass<InternalServerError>()(
-  "InternalServerError",
-  { Message: S.optional(S.String) },
-) {}
-export class ObjectNotFoundException extends S.TaggedErrorClass<ObjectNotFoundException>()(
-  "ObjectNotFoundException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class RequestedRangeNotSatisfiableException extends S.TaggedErrorClass<RequestedRangeNotSatisfiableException>()(
-  "RequestedRangeNotSatisfiableException",
-  { Message: S.optional(S.String) },
-) {}
-
-//# Operations
+export type ErrorMessage = string;
 export type DeleteObjectError =
   | ContainerNotFoundException
   | InternalServerError
@@ -356,8 +358,8 @@ export const deleteObject: API.OperationMethod<
   DeleteObjectRequest,
   DeleteObjectResponse,
   DeleteObjectError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteObjectRequest,
   output: DeleteObjectResponse,
   errors: [
@@ -365,7 +367,11 @@ export const deleteObject: API.OperationMethod<
     InternalServerError,
     ObjectNotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteObject",
 }));
+
 export type DescribeObjectError =
   | ContainerNotFoundException
   | InternalServerError
@@ -378,8 +384,8 @@ export const describeObject: API.OperationMethod<
   DescribeObjectRequest,
   DescribeObjectResponse,
   DescribeObjectError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeObjectRequest,
   output: DescribeObjectResponse,
   errors: [
@@ -387,7 +393,11 @@ export const describeObject: API.OperationMethod<
     InternalServerError,
     ObjectNotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeObject",
 }));
+
 export type GetObjectError =
   | ContainerNotFoundException
   | InternalServerError
@@ -401,8 +411,8 @@ export const getObject: API.OperationMethod<
   GetObjectRequest,
   GetObjectResponse,
   GetObjectError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetObjectRequest,
   output: GetObjectResponse,
   errors: [
@@ -411,7 +421,11 @@ export const getObject: API.OperationMethod<
     ObjectNotFoundException,
     RequestedRangeNotSatisfiableException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetObject",
 }));
+
 export type ListItemsError =
   | ContainerNotFoundException
   | InternalServerError
@@ -420,36 +434,26 @@ export type ListItemsError =
  * Provides a list of metadata entries about folders and objects in the specified
  * folder.
  */
-export const listItems: API.OperationMethod<
+export const listItems: API.PaginatedOperationMethod<
   ListItemsRequest,
   ListItemsResponse,
   ListItemsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListItemsRequest,
-  ) => stream.Stream<
-    ListItemsResponse,
-    ListItemsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListItemsRequest,
-  ) => stream.Stream<
-    unknown,
-    ListItemsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListItemsRequest,
   output: ListItemsResponse,
   errors: [ContainerNotFoundException, InternalServerError],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListItems",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type PutObjectError =
   | ContainerNotFoundException
   | InternalServerError
@@ -461,9 +465,12 @@ export const putObject: API.OperationMethod<
   PutObjectRequest,
   PutObjectResponse,
   PutObjectError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PutObjectRequest,
   output: PutObjectResponse,
   errors: [ContainerNotFoundException, InternalServerError],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PutObject",
 }));

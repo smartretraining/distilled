@@ -23,7 +23,8 @@
 import * as fs from "fs";
 import * as path from "path";
 
-const API_BASE_URL = process.env.REX_API_BASE_URL ?? "https://api.rexsoftware.com";
+const API_BASE_URL =
+  process.env.REX_API_BASE_URL ?? "https://api.rexsoftware.com";
 
 /** Services to scrape. Extend this list to add more Rex models. */
 const SERVICES = [
@@ -125,7 +126,11 @@ async function main(): Promise<void> {
     // about the service, not a scrape failure.
     let describeModel: unknown;
     try {
-      describeModel = await rexCall<unknown>(`${service}::describeModel`, {}, token);
+      describeModel = await rexCall<unknown>(
+        `${service}::describeModel`,
+        {},
+        token,
+      );
     } catch {
       console.log(`  no describeModel (not a searchable model) — skipping`);
       continue;
@@ -133,7 +138,9 @@ async function main(): Promise<void> {
     write(`${service}.describeModel.json`, { result: describeModel });
   }
 
-  console.log(`\n✓ scraped ${SERVICES.length} service(s) to ${path.relative(rootDir, outDir)}`);
+  console.log(
+    `\n✓ scraped ${SERVICES.length} service(s) to ${path.relative(rootDir, outDir)}`,
+  );
 }
 
 main().catch((err) => {

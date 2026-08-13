@@ -1,12 +1,13 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as redacted from "effect/Redacted";
-import * as S from "effect/Schema";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials as Creds } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 import { SensitiveString } from "../sensitive.ts";
 const svc = T.AwsApiService({
   sdkId: "EKS Auth",
@@ -71,49 +72,99 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError, C.withAuthError) {}
+export class ExpiredTokenException
+  extends /*@__PURE__*/ S.TaggedError<ExpiredTokenException>()(
+    "ExpiredTokenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InternalServerException
+  extends /*@__PURE__*/ S.TaggedError<InternalServerException>()(
+    "InternalServerException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class InvalidParameterException
+  extends /*@__PURE__*/ S.TaggedError<InvalidParameterException>()(
+    "InvalidParameterException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidRequestException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRequestException>()(
+    "InvalidRequestException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidTokenException
+  extends /*@__PURE__*/ S.TaggedError<InvalidTokenException>()(
+    "InvalidTokenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class ResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotFoundException>()(
+    "ResourceNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class ServiceUnavailableException
+  extends /*@__PURE__*/ S.TaggedError<ServiceUnavailableException>()(
+    "ServiceUnavailableException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(503),
+  ).pipe(C.withServerError) {}
+export class ThrottlingException
+  extends /*@__PURE__*/ S.TaggedError<ThrottlingException>()(
+    "ThrottlingException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(429),
+  ).pipe(C.withThrottlingError) {}
 export type ClusterName = string;
 export type JwtToken = string | redacted.Redacted<string>;
-
-//# Schemas
 export interface AssumeRoleForPodIdentityRequest {
   clusterName: string;
   token: string | redacted.Redacted<string>;
 }
-export const AssumeRoleForPodIdentityRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      clusterName: S.String.pipe(T.HttpLabel("clusterName")),
-      token: SensitiveString,
-    }).pipe(
-      T.all(
-        T.Http({
-          method: "POST",
-          uri: "/clusters/{clusterName}/assume-role-for-pod-identity",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const AssumeRoleForPodIdentityRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    clusterName: S.String.pipe(T.HttpLabel("clusterName")),
+    token: SensitiveString,
+  }).pipe(
+    T.all(
+      T.Http({
+        method: "POST",
+        uri: "/clusters/{clusterName}/assume-role-for-pod-identity",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "AssumeRoleForPodIdentityRequest",
-  }) as any as S.Schema<AssumeRoleForPodIdentityRequest>;
+  ),
+).annotate({
+  identifier: "AssumeRoleForPodIdentityRequest",
+}) as any as S.Schema<AssumeRoleForPodIdentityRequest>;
 export interface Subject {
   namespace: string;
   serviceAccount: string;
 }
-export const Subject = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Subject = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ namespace: S.String, serviceAccount: S.String }),
 ).annotate({ identifier: "Subject" }) as any as S.Schema<Subject>;
 export interface PodIdentityAssociation {
   associationArn: string;
   associationId: string;
 }
-export const PodIdentityAssociation = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ associationArn: S.String, associationId: S.String }),
+export const PodIdentityAssociation = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ associationArn: S.String, associationId: S.String }),
 ).annotate({
   identifier: "PodIdentityAssociation",
 }) as any as S.Schema<PodIdentityAssociation>;
@@ -121,21 +172,21 @@ export interface AssumedRoleUser {
   arn: string;
   assumeRoleId: string;
 }
-export const AssumedRoleUser = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AssumedRoleUser = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String, assumeRoleId: S.String }),
 ).annotate({
   identifier: "AssumedRoleUser",
 }) as any as S.Schema<AssumedRoleUser>;
 export interface Credentials {
-  sessionToken: string;
-  secretAccessKey: string;
+  sessionToken: string | redacted.Redacted<string>;
+  secretAccessKey: string | redacted.Redacted<string>;
   accessKeyId: string;
   expiration: Date;
 }
-export const Credentials = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Credentials = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    sessionToken: S.String,
-    secretAccessKey: S.String,
+    sessionToken: SensitiveString,
+    secretAccessKey: SensitiveString,
     accessKeyId: S.String,
     expiration: S.Date.pipe(T.TimestampFormat("epoch-seconds")),
   }),
@@ -147,58 +198,17 @@ export interface AssumeRoleForPodIdentityResponse {
   assumedRoleUser: AssumedRoleUser;
   credentials: Credentials;
 }
-export const AssumeRoleForPodIdentityResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      subject: Subject,
-      audience: S.String,
-      podIdentityAssociation: PodIdentityAssociation,
-      assumedRoleUser: AssumedRoleUser,
-      credentials: Credentials,
-    }),
-  ).annotate({
-    identifier: "AssumeRoleForPodIdentityResponse",
-  }) as any as S.Schema<AssumeRoleForPodIdentityResponse>;
-
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError, C.withAuthError) {}
-export class ExpiredTokenException extends S.TaggedErrorClass<ExpiredTokenException>()(
-  "ExpiredTokenException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InternalServerException extends S.TaggedErrorClass<InternalServerException>()(
-  "InternalServerException",
-  { message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class InvalidParameterException extends S.TaggedErrorClass<InvalidParameterException>()(
-  "InvalidParameterException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InvalidRequestException extends S.TaggedErrorClass<InvalidRequestException>()(
-  "InvalidRequestException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InvalidTokenException extends S.TaggedErrorClass<InvalidTokenException>()(
-  "InvalidTokenException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ResourceNotFoundException extends S.TaggedErrorClass<ResourceNotFoundException>()(
-  "ResourceNotFoundException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ServiceUnavailableException extends S.TaggedErrorClass<ServiceUnavailableException>()(
-  "ServiceUnavailableException",
-  { message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class ThrottlingException extends S.TaggedErrorClass<ThrottlingException>()(
-  "ThrottlingException",
-  { message: S.optional(S.String) },
-).pipe(C.withThrottlingError) {}
-
-//# Operations
+export const AssumeRoleForPodIdentityResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    subject: Subject,
+    audience: S.String,
+    podIdentityAssociation: PodIdentityAssociation,
+    assumedRoleUser: AssumedRoleUser,
+    credentials: Credentials,
+  }),
+).annotate({
+  identifier: "AssumeRoleForPodIdentityResponse",
+}) as any as S.Schema<AssumeRoleForPodIdentityResponse>;
 export type AssumeRoleForPodIdentityError =
   | AccessDeniedException
   | ExpiredTokenException
@@ -222,8 +232,8 @@ export const assumeRoleForPodIdentity: API.OperationMethod<
   AssumeRoleForPodIdentityRequest,
   AssumeRoleForPodIdentityResponse,
   AssumeRoleForPodIdentityError,
-  Creds | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Creds | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: AssumeRoleForPodIdentityRequest,
   output: AssumeRoleForPodIdentityResponse,
   errors: [
@@ -237,4 +247,7 @@ export const assumeRoleForPodIdentity: API.OperationMethod<
     ServiceUnavailableException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "AssumeRoleForPodIdentity",
 }));

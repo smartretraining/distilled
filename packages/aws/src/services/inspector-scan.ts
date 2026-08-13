@@ -1,11 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "Inspector Scan",
   serviceShapeName: "InspectorScan",
@@ -82,21 +83,62 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class InternalServerException
+  extends /*@__PURE__*/ S.TaggedError<InternalServerException>()(
+    "InternalServerException",
+    {
+      message: S.String.pipe(T.ErrorMessage()),
+      reason: S.suspend(() => InternalServerExceptionReason).annotate({
+        identifier: "InternalServerExceptionReason",
+      }),
+      retryAfterSeconds: S.optional(S.Number).pipe(T.HttpHeader("Retry-After")),
+    },
+    T.all(T.HttpError(500), T.Retryable()),
+  ).pipe(C.withServerError, C.withRetryableError) {}
+export class ThrottlingException
+  extends /*@__PURE__*/ S.TaggedError<ThrottlingException>()(
+    "ThrottlingException",
+    {
+      message: S.String.pipe(T.ErrorMessage()),
+      retryAfterSeconds: S.optional(S.Number).pipe(T.HttpHeader("Retry-After")),
+    },
+    T.all(T.HttpError(429), T.Retryable({ throttling: true })),
+  ).pipe(C.withThrottlingError, C.withRetryableError) {}
+export class ValidationException
+  extends /*@__PURE__*/ S.TaggedError<ValidationException>()(
+    "ValidationException",
+    {
+      message: S.String.pipe(T.ErrorMessage()),
+      reason: S.suspend(() => ValidationExceptionReason).annotate({
+        identifier: "ValidationExceptionReason",
+      }),
+      fields: S.optional(
+        S.suspend(() => ValidationExceptionFields).annotate({
+          identifier: "ValidationExceptionFields",
+        }),
+      ),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
 export type Sbom = unknown;
-
-//# Schemas
 export type OutputFormat =
   | "CYCLONE_DX_1_5"
   | "INSPECTOR"
   | "INSPECTOR_ALT"
   | (string & {});
-export const OutputFormat = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const OutputFormat = /*@__PURE__*/ S.String;
+
 export interface ScanSbomRequest {
   sbom: any;
   outputFormat?: OutputFormat;
 }
-export const ScanSbomRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ScanSbomRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ sbom: S.Any, outputFormat: S.optional(OutputFormat) }).pipe(
     T.all(
       T.Http({ method: "POST", uri: "/scan/sbom" }),
@@ -113,7 +155,7 @@ export const ScanSbomRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface ScanSbomResponse {
   sbom?: any;
 }
-export const ScanSbomResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ScanSbomResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ sbom: S.optional(S.Any) }),
 ).annotate({
   identifier: "ScanSbomResponse",
@@ -122,8 +164,8 @@ export type InternalServerExceptionReason =
   | "FAILED_TO_GENERATE_SBOM"
   | "OTHER"
   | (string & {});
-export const InternalServerExceptionReason =
-  /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const InternalServerExceptionReason = /*@__PURE__*/ S.String;
+
 export type ValidationExceptionReason =
   | "UNKNOWN_OPERATION"
   | "CANNOT_PARSE"
@@ -131,53 +173,21 @@ export type ValidationExceptionReason =
   | "UNSUPPORTED_SBOM_TYPE"
   | "OTHER"
   | (string & {});
-export const ValidationExceptionReason = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ValidationExceptionReason = /*@__PURE__*/ S.String;
+
 export interface ValidationExceptionField {
   name: string;
   message: string;
 }
-export const ValidationExceptionField = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ name: S.String, message: S.String }),
+export const ValidationExceptionField = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ name: S.String, message: S.String }),
 ).annotate({
   identifier: "ValidationExceptionField",
 }) as any as S.Schema<ValidationExceptionField>;
 export type ValidationExceptionFields = ValidationExceptionField[];
-export const ValidationExceptionFields = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const ValidationExceptionFields = /*@__PURE__*/ S.Array(
   ValidationExceptionField,
 );
-
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { message: S.String },
-).pipe(C.withAuthError) {}
-export class InternalServerException extends S.TaggedErrorClass<InternalServerException>()(
-  "InternalServerException",
-  {
-    message: S.String,
-    reason: InternalServerExceptionReason,
-    retryAfterSeconds: S.optional(S.Number).pipe(T.HttpHeader("Retry-After")),
-  },
-  T.Retryable(),
-).pipe(C.withServerError, C.withRetryableError) {}
-export class ThrottlingException extends S.TaggedErrorClass<ThrottlingException>()(
-  "ThrottlingException",
-  {
-    message: S.String,
-    retryAfterSeconds: S.optional(S.Number).pipe(T.HttpHeader("Retry-After")),
-  },
-  T.Retryable({ throttling: true }),
-).pipe(C.withThrottlingError, C.withRetryableError) {}
-export class ValidationException extends S.TaggedErrorClass<ValidationException>()(
-  "ValidationException",
-  {
-    message: S.String,
-    reason: ValidationExceptionReason,
-    fields: S.optional(ValidationExceptionFields),
-  },
-).pipe(C.withBadRequestError) {}
-
-//# Operations
 export type ScanSbomError =
   | AccessDeniedException
   | InternalServerException
@@ -193,8 +203,8 @@ export const scanSbom: API.OperationMethod<
   ScanSbomRequest,
   ScanSbomResponse,
   ScanSbomError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ScanSbomRequest,
   output: ScanSbomResponse,
   errors: [
@@ -203,4 +213,7 @@ export const scanSbom: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ScanSbom",
 }));

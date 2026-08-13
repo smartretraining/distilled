@@ -1,9 +1,11 @@
 /**
- * EAS (Expo Application Services) credentials.
+ * EAS (Expo Application Services) credentials — hand-written.
  *
- * The EAS backend is a single GraphQL endpoint. Authentication is via a
+ * API-compatible port of the distilled v0 expo-eas credentials module. The
+ * EAS backend is a single GraphQL endpoint. Authentication is via a
  * Personal/Organization Access Token issued from
- * https://expo.dev/settings/access-tokens, sent as `Authorization: Bearer <token>`.
+ * https://expo.dev/settings/access-tokens, sent as
+ * `Authorization: Bearer <token>`.
  */
 import { ConfigError } from "@distilled.cloud/core/errors";
 import * as EffectConfig from "effect/Config";
@@ -20,9 +22,10 @@ export interface Config {
   readonly apiBaseUrl: string;
 }
 
-export class Credentials extends Context.Service<Credentials, Config>()(
-  "EasCredentials",
-) {}
+export class Credentials extends Context.Service<
+  Credentials,
+  Effect.Effect<Config>
+>()("EasCredentials") {}
 
 const envConfig = EffectConfig.all({
   accessToken: EffectConfig.string("EXPO_TOKEN"),
@@ -40,7 +43,7 @@ const envConfig = EffectConfig.all({
  *   https://api.expo.dev). Set to `https://staging-api.expo.dev` to target
  *   staging, mirroring eas-cli's `EXPO_STAGING=1` flag.
  */
-export const CredentialsFromEnv = Layer.effect(
+export const CredentialsFromEnv = Layer.succeed(
   Credentials,
   envConfig.pipe(
     Effect.mapError(
@@ -53,5 +56,6 @@ export const CredentialsFromEnv = Layer.effect(
       accessToken: Redacted.make(accessToken),
       apiBaseUrl,
     })),
+    Effect.orDie,
   ),
 );

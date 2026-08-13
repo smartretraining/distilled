@@ -1,3 +1,11 @@
+/**
+ * Fly.io credentials — hand-written.
+ *
+ * API-compatible port of the distilled v0 fly-io credentials module: the
+ * `Credentials` service holds an *effect* that resolves the current
+ * credentials on every request. The protocol layer resolves it per request
+ * and formats the `Authorization: Bearer <apiKey>` header.
+ */
 import { ConfigError } from "@distilled.cloud/core/errors";
 import * as EffectConfig from "effect/Config";
 import * as Context from "effect/Context";
@@ -12,15 +20,16 @@ export interface Config {
   readonly apiBaseUrl: string;
 }
 
-export class Credentials extends Context.Service<Credentials, Config>()(
-  "Fly-ioCredentials",
-) {}
+export class Credentials extends Context.Service<
+  Credentials,
+  Effect.Effect<Config>
+>()("Fly-ioCredentials") {}
 
 const envConfig = EffectConfig.all({
   apiKey: EffectConfig.string("FLY_IO_API_KEY"),
 });
 
-export const CredentialsFromEnv = Layer.effect(
+export const CredentialsFromEnv = Layer.succeed(
   Credentials,
   envConfig.pipe(
     Effect.mapError(
@@ -33,5 +42,6 @@ export const CredentialsFromEnv = Layer.effect(
       apiKey: Redacted.make(apiKey),
       apiBaseUrl: DEFAULT_API_BASE_URL,
     })),
+    Effect.orDie,
   ),
 );

@@ -1,13 +1,13 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as redacted from "effect/Redacted";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 import { SensitiveString } from "../sensitive.ts";
 const ns = T.XmlNamespace("http://devicefarm.amazonaws.com/doc/2015-06-23/");
 const svc = T.AwsApiService({
@@ -86,50 +86,83 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class ArgumentException
+  extends /*@__PURE__*/ S.TaggedError<ArgumentException>()(
+    "ArgumentException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CannotDeleteException
+  extends /*@__PURE__*/ S.TaggedError<CannotDeleteException>()(
+    "CannotDeleteException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class IdempotencyException
+  extends /*@__PURE__*/ S.TaggedError<IdempotencyException>()(
+    "IdempotencyException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InternalServiceException
+  extends /*@__PURE__*/ S.TaggedError<InternalServiceException>()(
+    "InternalServiceException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class InvalidOperationException
+  extends /*@__PURE__*/ S.TaggedError<InvalidOperationException>()(
+    "InvalidOperationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class LimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<LimitExceededException>()(
+    "LimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class NotEligibleException
+  extends /*@__PURE__*/ S.TaggedError<NotEligibleException>()(
+    "NotEligibleException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class NotFoundException
+  extends /*@__PURE__*/ S.TaggedError<NotFoundException>()(
+    "NotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ServiceAccountException
+  extends /*@__PURE__*/ S.TaggedError<ServiceAccountException>()(
+    "ServiceAccountException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class TagOperationException
+  extends /*@__PURE__*/ S.TaggedError<TagOperationException>()(
+    "TagOperationException",
+    {
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+      resourceName: S.optional(S.String),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class TagPolicyException
+  extends /*@__PURE__*/ S.TaggedError<TagPolicyException>()(
+    "TagPolicyException",
+    {
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+      resourceName: S.optional(S.String),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class TooManyTagsException
+  extends /*@__PURE__*/ S.TaggedError<TooManyTagsException>()(
+    "TooManyTagsException",
+    {
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+      resourceName: S.optional(S.String),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
 export type AmazonResourceName = string;
 export type Name = string;
 export type Message = string;
-export type PercentInteger = number;
-export type JobTimeoutMinutes = number;
-export type SecurityGroupId = string;
-export type SubnetId = string;
-export type NonEmptyString = string;
-export type EnvironmentVariableName = string;
-export type EnvironmentVariableValue = string;
-export type AmazonRoleResourceName = string;
-export type ExceptionMessage = string;
-export type DeviceProxyHost = string;
-export type DeviceProxyPort = number;
-export type SkipAppResign = boolean;
-export type SensitiveURL = string | redacted.Redacted<string>;
-export type ResourceName = string;
-export type ResourceDescription = string;
-export type DeviceFarmArn = string;
-export type TestGridUrlExpiresInSecondsInput = number;
-export type SensitiveString = string | redacted.Redacted<string>;
-export type ContentType = string;
-export type Metadata = string;
-export type VPCEConfigurationName = string;
-export type VPCEServiceName = string;
-export type ServiceDnsName = string;
-export type VPCEConfigurationDescription = string;
-export type AWSAccountNumber = string;
-export type Filter = string;
-export type VideoCapture = boolean;
-export type PaginationToken = string;
-export type OfferingIdentifier = string;
-export type ResourceId = string;
-export type URL = string;
-export type OfferingPromotionIdentifier = string;
-export type TransactionIdentifier = string;
-export type TagKey = string;
-export type TagValue = string;
-export type MaxPageSize = number;
-export type AccountsCleanup = boolean;
-export type AppPackagesCleanup = boolean;
-
-//# Schemas
 export type DeviceAttribute =
   | "ARN"
   | "PLATFORM"
@@ -145,7 +178,8 @@ export type DeviceAttribute =
   | "MODEL"
   | "AVAILABILITY"
   | (string & {});
-export const DeviceAttribute = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DeviceAttribute = /*@__PURE__*/ S.String;
+
 export type RuleOperator =
   | "EQUALS"
   | "LESS_THAN"
@@ -156,13 +190,14 @@ export type RuleOperator =
   | "NOT_IN"
   | "CONTAINS"
   | (string & {});
-export const RuleOperator = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const RuleOperator = /*@__PURE__*/ S.String;
+
 export interface Rule {
   attribute?: DeviceAttribute;
   operator?: RuleOperator;
   value?: string;
 }
-export const Rule = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Rule = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     attribute: S.optional(DeviceAttribute),
     operator: S.optional(RuleOperator),
@@ -170,7 +205,7 @@ export const Rule = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Rule" }) as any as S.Schema<Rule>;
 export type Rules = Rule[];
-export const Rules = /*@__PURE__*/ /*#__PURE__*/ S.Array(Rule);
+export const Rules = /*@__PURE__*/ S.Array(Rule);
 export interface CreateDevicePoolRequest {
   projectArn: string;
   name: string;
@@ -178,30 +213,30 @@ export interface CreateDevicePoolRequest {
   rules: Rule[];
   maxDevices?: number;
 }
-export const CreateDevicePoolRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      projectArn: S.String,
-      name: S.String,
-      description: S.optional(S.String),
-      rules: Rules,
-      maxDevices: S.optional(S.Number),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreateDevicePoolRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    projectArn: S.String,
+    name: S.String,
+    description: S.optional(S.String),
+    rules: Rules,
+    maxDevices: S.optional(S.Number),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "CreateDevicePoolRequest",
 }) as any as S.Schema<CreateDevicePoolRequest>;
 export type DevicePoolType = "CURATED" | "PRIVATE" | (string & {});
-export const DevicePoolType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DevicePoolType = /*@__PURE__*/ S.String;
+
 export interface DevicePool {
   arn?: string;
   name?: string;
@@ -210,7 +245,7 @@ export interface DevicePool {
   rules?: Rule[];
   maxDevices?: number;
 }
-export const DevicePool = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DevicePool = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     name: S.optional(S.String),
@@ -223,13 +258,13 @@ export const DevicePool = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateDevicePoolResult {
   devicePool?: DevicePool;
 }
-export const CreateDevicePoolResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ devicePool: S.optional(DevicePool) }).pipe(ns),
+export const CreateDevicePoolResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ devicePool: S.optional(DevicePool) }).pipe(ns),
 ).annotate({
   identifier: "CreateDevicePoolResult",
 }) as any as S.Schema<CreateDevicePoolResult>;
 export type PackageIds = string[];
-export const PackageIds = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const PackageIds = /*@__PURE__*/ S.Array(S.String);
 export interface CreateInstanceProfileRequest {
   name: string;
   description?: string;
@@ -237,28 +272,27 @@ export interface CreateInstanceProfileRequest {
   excludeAppPackagesFromCleanup?: string[];
   rebootAfterUse?: boolean;
 }
-export const CreateInstanceProfileRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      name: S.String,
-      description: S.optional(S.String),
-      packageCleanup: S.optional(S.Boolean),
-      excludeAppPackagesFromCleanup: S.optional(PackageIds),
-      rebootAfterUse: S.optional(S.Boolean),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreateInstanceProfileRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    name: S.String,
+    description: S.optional(S.String),
+    packageCleanup: S.optional(S.Boolean),
+    excludeAppPackagesFromCleanup: S.optional(PackageIds),
+    rebootAfterUse: S.optional(S.Boolean),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "CreateInstanceProfileRequest",
-  }) as any as S.Schema<CreateInstanceProfileRequest>;
+  ),
+).annotate({
+  identifier: "CreateInstanceProfileRequest",
+}) as any as S.Schema<CreateInstanceProfileRequest>;
 export interface InstanceProfile {
   arn?: string;
   packageCleanup?: boolean;
@@ -267,7 +301,7 @@ export interface InstanceProfile {
   name?: string;
   description?: string;
 }
-export const InstanceProfile = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const InstanceProfile = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     packageCleanup: S.optional(S.Boolean),
@@ -282,14 +316,15 @@ export const InstanceProfile = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateInstanceProfileResult {
   instanceProfile?: InstanceProfile;
 }
-export const CreateInstanceProfileResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ instanceProfile: S.optional(InstanceProfile) }).pipe(ns),
-  ).annotate({
-    identifier: "CreateInstanceProfileResult",
-  }) as any as S.Schema<CreateInstanceProfileResult>;
+export const CreateInstanceProfileResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ instanceProfile: S.optional(InstanceProfile) }).pipe(ns),
+).annotate({
+  identifier: "CreateInstanceProfileResult",
+}) as any as S.Schema<CreateInstanceProfileResult>;
 export type NetworkProfileType = "CURATED" | "PRIVATE" | (string & {});
-export const NetworkProfileType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const NetworkProfileType = /*@__PURE__*/ S.String;
+
+export type PercentInteger = number;
 export interface CreateNetworkProfileRequest {
   projectArn: string;
   name: string;
@@ -304,35 +339,34 @@ export interface CreateNetworkProfileRequest {
   uplinkLossPercent?: number;
   downlinkLossPercent?: number;
 }
-export const CreateNetworkProfileRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      projectArn: S.String,
-      name: S.String,
-      description: S.optional(S.String),
-      type: S.optional(NetworkProfileType),
-      uplinkBandwidthBits: S.optional(S.Number),
-      downlinkBandwidthBits: S.optional(S.Number),
-      uplinkDelayMs: S.optional(S.Number),
-      downlinkDelayMs: S.optional(S.Number),
-      uplinkJitterMs: S.optional(S.Number),
-      downlinkJitterMs: S.optional(S.Number),
-      uplinkLossPercent: S.optional(S.Number),
-      downlinkLossPercent: S.optional(S.Number),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreateNetworkProfileRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    projectArn: S.String,
+    name: S.String,
+    description: S.optional(S.String),
+    type: S.optional(NetworkProfileType),
+    uplinkBandwidthBits: S.optional(S.Number),
+    downlinkBandwidthBits: S.optional(S.Number),
+    uplinkDelayMs: S.optional(S.Number),
+    downlinkDelayMs: S.optional(S.Number),
+    uplinkJitterMs: S.optional(S.Number),
+    downlinkJitterMs: S.optional(S.Number),
+    uplinkLossPercent: S.optional(S.Number),
+    downlinkLossPercent: S.optional(S.Number),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "CreateNetworkProfileRequest",
-  }) as any as S.Schema<CreateNetworkProfileRequest>;
+  ),
+).annotate({
+  identifier: "CreateNetworkProfileRequest",
+}) as any as S.Schema<CreateNetworkProfileRequest>;
 export interface NetworkProfile {
   arn?: string;
   name?: string;
@@ -347,7 +381,7 @@ export interface NetworkProfile {
   uplinkLossPercent?: number;
   downlinkLossPercent?: number;
 }
-export const NetworkProfile = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const NetworkProfile = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     name: S.optional(S.String),
@@ -366,41 +400,45 @@ export const NetworkProfile = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateNetworkProfileResult {
   networkProfile?: NetworkProfile;
 }
-export const CreateNetworkProfileResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ networkProfile: S.optional(NetworkProfile) }).pipe(ns),
+export const CreateNetworkProfileResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ networkProfile: S.optional(NetworkProfile) }).pipe(ns),
 ).annotate({
   identifier: "CreateNetworkProfileResult",
 }) as any as S.Schema<CreateNetworkProfileResult>;
+export type JobTimeoutMinutes = number;
+export type SecurityGroupId = string;
 export type VpcSecurityGroupIds = string[];
-export const VpcSecurityGroupIds = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const VpcSecurityGroupIds = /*@__PURE__*/ S.Array(S.String);
+export type SubnetId = string;
 export type VpcSubnetIds = string[];
-export const VpcSubnetIds = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const VpcSubnetIds = /*@__PURE__*/ S.Array(S.String);
+export type NonEmptyString = string;
 export interface VpcConfig {
   securityGroupIds: string[];
   subnetIds: string[];
   vpcId: string;
 }
-export const VpcConfig = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const VpcConfig = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     securityGroupIds: VpcSecurityGroupIds,
     subnetIds: VpcSubnetIds,
     vpcId: S.String,
   }),
 ).annotate({ identifier: "VpcConfig" }) as any as S.Schema<VpcConfig>;
+export type EnvironmentVariableName = string;
+export type EnvironmentVariableValue = string;
 export interface EnvironmentVariable {
   name: string;
   value: string;
 }
-export const EnvironmentVariable = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EnvironmentVariable = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ name: S.String, value: S.String }),
 ).annotate({
   identifier: "EnvironmentVariable",
 }) as any as S.Schema<EnvironmentVariable>;
 export type EnvironmentVariables = EnvironmentVariable[];
-export const EnvironmentVariables =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EnvironmentVariable);
+export const EnvironmentVariables = /*@__PURE__*/ S.Array(EnvironmentVariable);
+export type AmazonRoleResourceName = string;
 export interface CreateProjectRequest {
   name: string;
   defaultJobTimeoutMinutes?: number;
@@ -408,7 +446,7 @@ export interface CreateProjectRequest {
   environmentVariables?: EnvironmentVariable[];
   executionRoleArn?: string;
 }
-export const CreateProjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateProjectRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     name: S.String,
     defaultJobTimeoutMinutes: S.optional(S.Number),
@@ -438,7 +476,7 @@ export interface Project {
   environmentVariables?: EnvironmentVariable[];
   executionRoleArn?: string;
 }
-export const Project = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Project = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     name: S.optional(S.String),
@@ -452,26 +490,25 @@ export const Project = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateProjectResult {
   project?: Project;
 }
-export const CreateProjectResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateProjectResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ project: S.optional(Project) }).pipe(ns),
 ).annotate({
   identifier: "CreateProjectResult",
 }) as any as S.Schema<CreateProjectResult>;
 export type AuxiliaryAppArnList = string[];
-export const AuxiliaryAppArnList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const AuxiliaryAppArnList = /*@__PURE__*/ S.Array(S.String);
 export type BillingMethod = "METERED" | "UNMETERED" | (string & {});
-export const BillingMethod = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const BillingMethod = /*@__PURE__*/ S.String;
+
 export type AmazonResourceNames = string[];
-export const AmazonResourceNames = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const AmazonResourceNames = /*@__PURE__*/ S.Array(S.String);
+export type DeviceProxyHost = string;
+export type DeviceProxyPort = number;
 export interface DeviceProxy {
   host: string;
   port: number;
 }
-export const DeviceProxy = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeviceProxy = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ host: S.String, port: S.Number }),
 ).annotate({ identifier: "DeviceProxy" }) as any as S.Schema<DeviceProxy>;
 export interface CreateRemoteAccessSessionConfiguration {
@@ -480,23 +517,24 @@ export interface CreateRemoteAccessSessionConfiguration {
   vpceConfigurationArns?: string[];
   deviceProxy?: DeviceProxy;
 }
-export const CreateRemoteAccessSessionConfiguration =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateRemoteAccessSessionConfiguration = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       auxiliaryApps: S.optional(AuxiliaryAppArnList),
       billingMethod: S.optional(BillingMethod),
       vpceConfigurationArns: S.optional(AmazonResourceNames),
       deviceProxy: S.optional(DeviceProxy),
     }),
-  ).annotate({
-    identifier: "CreateRemoteAccessSessionConfiguration",
-  }) as any as S.Schema<CreateRemoteAccessSessionConfiguration>;
+).annotate({
+  identifier: "CreateRemoteAccessSessionConfiguration",
+}) as any as S.Schema<CreateRemoteAccessSessionConfiguration>;
 export type InteractionMode =
   | "INTERACTIVE"
   | "NO_VIDEO"
   | "VIDEO_ONLY"
   | (string & {});
-export const InteractionMode = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const InteractionMode = /*@__PURE__*/ S.String;
+
 export interface CreateRemoteAccessSessionRequest {
   projectArn: string;
   deviceArn: string;
@@ -507,31 +545,30 @@ export interface CreateRemoteAccessSessionRequest {
   interactionMode?: InteractionMode;
   skipAppResign?: boolean;
 }
-export const CreateRemoteAccessSessionRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      projectArn: S.String,
-      deviceArn: S.String,
-      appArn: S.optional(S.String),
-      instanceArn: S.optional(S.String),
-      name: S.optional(S.String),
-      configuration: S.optional(CreateRemoteAccessSessionConfiguration),
-      interactionMode: S.optional(InteractionMode),
-      skipAppResign: S.optional(S.Boolean),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreateRemoteAccessSessionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    projectArn: S.String,
+    deviceArn: S.String,
+    appArn: S.optional(S.String),
+    instanceArn: S.optional(S.String),
+    name: S.optional(S.String),
+    configuration: S.optional(CreateRemoteAccessSessionConfiguration),
+    interactionMode: S.optional(InteractionMode),
+    skipAppResign: S.optional(S.Boolean),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "CreateRemoteAccessSessionRequest",
-  }) as any as S.Schema<CreateRemoteAccessSessionRequest>;
+  ),
+).annotate({
+  identifier: "CreateRemoteAccessSessionRequest",
+}) as any as S.Schema<CreateRemoteAccessSessionRequest>;
 export type ExecutionStatus =
   | "PENDING"
   | "PENDING_CONCURRENCY"
@@ -543,7 +580,8 @@ export type ExecutionStatus =
   | "COMPLETED"
   | "STOPPING"
   | (string & {});
-export const ExecutionStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ExecutionStatus = /*@__PURE__*/ S.String;
+
 export type ExecutionResult =
   | "PENDING"
   | "PASSED"
@@ -553,17 +591,20 @@ export type ExecutionResult =
   | "ERRORED"
   | "STOPPED"
   | (string & {});
-export const ExecutionResult = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ExecutionResult = /*@__PURE__*/ S.String;
+
 export type DeviceFormFactor = "PHONE" | "TABLET" | (string & {});
-export const DeviceFormFactor = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DeviceFormFactor = /*@__PURE__*/ S.String;
+
 export type DevicePlatform = "ANDROID" | "IOS" | (string & {});
-export const DevicePlatform = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DevicePlatform = /*@__PURE__*/ S.String;
+
 export interface CPU {
   frequency?: string;
   architecture?: string;
   clock?: number;
 }
-export const CPU = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CPU = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     frequency: S.optional(S.String),
     architecture: S.optional(S.String),
@@ -574,18 +615,19 @@ export interface Resolution {
   width?: number;
   height?: number;
 }
-export const Resolution = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Resolution = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ width: S.optional(S.Number), height: S.optional(S.Number) }),
 ).annotate({ identifier: "Resolution" }) as any as S.Schema<Resolution>;
 export type InstanceLabels = string[];
-export const InstanceLabels = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const InstanceLabels = /*@__PURE__*/ S.Array(S.String);
 export type InstanceStatus =
   | "IN_USE"
   | "PREPARING"
   | "AVAILABLE"
   | "NOT_AVAILABLE"
   | (string & {});
-export const InstanceStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const InstanceStatus = /*@__PURE__*/ S.String;
+
 export interface DeviceInstance {
   arn?: string;
   deviceArn?: string;
@@ -594,7 +636,7 @@ export interface DeviceInstance {
   udid?: string;
   instanceProfile?: InstanceProfile;
 }
-export const DeviceInstance = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeviceInstance = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     deviceArn: S.optional(S.String),
@@ -605,15 +647,15 @@ export const DeviceInstance = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "DeviceInstance" }) as any as S.Schema<DeviceInstance>;
 export type DeviceInstances = DeviceInstance[];
-export const DeviceInstances =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(DeviceInstance);
+export const DeviceInstances = /*@__PURE__*/ S.Array(DeviceInstance);
 export type DeviceAvailability =
   | "TEMPORARY_NOT_AVAILABLE"
   | "BUSY"
   | "AVAILABLE"
   | "HIGHLY_AVAILABLE"
   | (string & {});
-export const DeviceAvailability = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DeviceAvailability = /*@__PURE__*/ S.String;
+
 export interface Device {
   arn?: string;
   name?: string;
@@ -637,7 +679,7 @@ export interface Device {
   instances?: DeviceInstance[];
   availability?: DeviceAvailability;
 }
-export const Device = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Device = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     name: S.optional(S.String),
@@ -667,18 +709,20 @@ export interface DeviceMinutes {
   metered?: number;
   unmetered?: number;
 }
-export const DeviceMinutes = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeviceMinutes = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     total: S.optional(S.Number),
     metered: S.optional(S.Number),
     unmetered: S.optional(S.Number),
   }),
 ).annotate({ identifier: "DeviceMinutes" }) as any as S.Schema<DeviceMinutes>;
+export type SkipAppResign = boolean;
+export type SensitiveURL = string | redacted.Redacted<string>;
 export interface RemoteAccessEndpoints {
   remoteDriverEndpoint?: string | redacted.Redacted<string>;
   interactiveEndpoint?: string | redacted.Redacted<string>;
 }
-export const RemoteAccessEndpoints = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RemoteAccessEndpoints = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     remoteDriverEndpoint: S.optional(SensitiveString),
     interactiveEndpoint: S.optional(SensitiveString),
@@ -708,7 +752,7 @@ export interface RemoteAccessSession {
   appUpload?: string;
   endpoints?: RemoteAccessEndpoints;
 }
-export const RemoteAccessSession = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RemoteAccessSession = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     name: S.optional(S.String),
@@ -737,22 +781,23 @@ export const RemoteAccessSession = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateRemoteAccessSessionResult {
   remoteAccessSession?: RemoteAccessSession;
 }
-export const CreateRemoteAccessSessionResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ remoteAccessSession: S.optional(RemoteAccessSession) }).pipe(ns),
-  ).annotate({
-    identifier: "CreateRemoteAccessSessionResult",
-  }) as any as S.Schema<CreateRemoteAccessSessionResult>;
+export const CreateRemoteAccessSessionResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ remoteAccessSession: S.optional(RemoteAccessSession) }).pipe(ns),
+).annotate({
+  identifier: "CreateRemoteAccessSessionResult",
+}) as any as S.Schema<CreateRemoteAccessSessionResult>;
+export type ResourceName = string;
+export type ResourceDescription = string;
 export type SecurityGroupIds = string[];
-export const SecurityGroupIds = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const SecurityGroupIds = /*@__PURE__*/ S.Array(S.String);
 export type SubnetIds = string[];
-export const SubnetIds = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const SubnetIds = /*@__PURE__*/ S.Array(S.String);
 export interface TestGridVpcConfig {
   securityGroupIds: string[];
   subnetIds: string[];
   vpcId: string;
 }
-export const TestGridVpcConfig = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TestGridVpcConfig = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     securityGroupIds: SecurityGroupIds,
     subnetIds: SubnetIds,
@@ -766,26 +811,26 @@ export interface CreateTestGridProjectRequest {
   description?: string;
   vpcConfig?: TestGridVpcConfig;
 }
-export const CreateTestGridProjectRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      name: S.String,
-      description: S.optional(S.String),
-      vpcConfig: S.optional(TestGridVpcConfig),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreateTestGridProjectRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    name: S.String,
+    description: S.optional(S.String),
+    vpcConfig: S.optional(TestGridVpcConfig),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "CreateTestGridProjectRequest",
-  }) as any as S.Schema<CreateTestGridProjectRequest>;
+  ),
+).annotate({
+  identifier: "CreateTestGridProjectRequest",
+}) as any as S.Schema<CreateTestGridProjectRequest>;
+export type DeviceFarmArn = string;
 export interface TestGridProject {
   arn?: string;
   name?: string;
@@ -793,7 +838,7 @@ export interface TestGridProject {
   vpcConfig?: TestGridVpcConfig;
   created?: Date;
 }
-export const TestGridProject = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TestGridProject = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     name: S.optional(S.String),
@@ -807,42 +852,41 @@ export const TestGridProject = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateTestGridProjectResult {
   testGridProject?: TestGridProject;
 }
-export const CreateTestGridProjectResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ testGridProject: S.optional(TestGridProject) }).pipe(ns),
-  ).annotate({
-    identifier: "CreateTestGridProjectResult",
-  }) as any as S.Schema<CreateTestGridProjectResult>;
+export const CreateTestGridProjectResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ testGridProject: S.optional(TestGridProject) }).pipe(ns),
+).annotate({
+  identifier: "CreateTestGridProjectResult",
+}) as any as S.Schema<CreateTestGridProjectResult>;
+export type TestGridUrlExpiresInSecondsInput = number;
 export interface CreateTestGridUrlRequest {
   projectArn: string;
   expiresInSeconds: number;
 }
-export const CreateTestGridUrlRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ projectArn: S.String, expiresInSeconds: S.Number }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreateTestGridUrlRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ projectArn: S.String, expiresInSeconds: S.Number }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "CreateTestGridUrlRequest",
 }) as any as S.Schema<CreateTestGridUrlRequest>;
+export type SensitiveString = string | redacted.Redacted<string>;
 export interface CreateTestGridUrlResult {
   url?: string | redacted.Redacted<string>;
   expires?: Date;
 }
-export const CreateTestGridUrlResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      url: S.optional(SensitiveString),
-      expires: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
-    }).pipe(ns),
+export const CreateTestGridUrlResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    url: S.optional(SensitiveString),
+    expires: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
+  }).pipe(ns),
 ).annotate({
   identifier: "CreateTestGridUrlResult",
 }) as any as S.Schema<CreateTestGridUrlResult>;
@@ -880,14 +924,16 @@ export type UploadType =
   | "INSTRUMENTATION_TEST_SPEC"
   | "XCTEST_UI_TEST_SPEC"
   | (string & {});
-export const UploadType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const UploadType = /*@__PURE__*/ S.String;
+
+export type ContentType = string;
 export interface CreateUploadRequest {
   projectArn: string;
   name: string;
   type: UploadType;
   contentType?: string;
 }
-export const CreateUploadRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateUploadRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     projectArn: S.String,
     name: S.String,
@@ -913,9 +959,12 @@ export type UploadStatus =
   | "SUCCEEDED"
   | "FAILED"
   | (string & {});
-export const UploadStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const UploadStatus = /*@__PURE__*/ S.String;
+
+export type Metadata = string;
 export type UploadCategory = "CURATED" | "PRIVATE" | (string & {});
-export const UploadCategory = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const UploadCategory = /*@__PURE__*/ S.String;
+
 export interface Upload {
   arn?: string;
   name?: string;
@@ -928,7 +977,7 @@ export interface Upload {
   message?: string;
   category?: UploadCategory;
 }
-export const Upload = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Upload = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     name: S.optional(S.String),
@@ -945,38 +994,41 @@ export const Upload = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateUploadResult {
   upload?: Upload;
 }
-export const CreateUploadResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateUploadResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ upload: S.optional(Upload) }).pipe(ns),
 ).annotate({
   identifier: "CreateUploadResult",
 }) as any as S.Schema<CreateUploadResult>;
+export type VPCEConfigurationName = string;
+export type VPCEServiceName = string;
+export type ServiceDnsName = string;
+export type VPCEConfigurationDescription = string;
 export interface CreateVPCEConfigurationRequest {
   vpceConfigurationName: string;
   vpceServiceName: string;
   serviceDnsName: string;
   vpceConfigurationDescription?: string;
 }
-export const CreateVPCEConfigurationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      vpceConfigurationName: S.String,
-      vpceServiceName: S.String,
-      serviceDnsName: S.String,
-      vpceConfigurationDescription: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreateVPCEConfigurationRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    vpceConfigurationName: S.String,
+    vpceServiceName: S.String,
+    serviceDnsName: S.String,
+    vpceConfigurationDescription: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "CreateVPCEConfigurationRequest",
-  }) as any as S.Schema<CreateVPCEConfigurationRequest>;
+  ),
+).annotate({
+  identifier: "CreateVPCEConfigurationRequest",
+}) as any as S.Schema<CreateVPCEConfigurationRequest>;
 export interface VPCEConfiguration {
   arn?: string;
   vpceConfigurationName?: string;
@@ -984,7 +1036,7 @@ export interface VPCEConfiguration {
   serviceDnsName?: string;
   vpceConfigurationDescription?: string;
 }
-export const VPCEConfiguration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const VPCEConfiguration = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     vpceConfigurationName: S.optional(S.String),
@@ -998,90 +1050,87 @@ export const VPCEConfiguration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateVPCEConfigurationResult {
   vpceConfiguration?: VPCEConfiguration;
 }
-export const CreateVPCEConfigurationResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ vpceConfiguration: S.optional(VPCEConfiguration) }).pipe(ns),
-  ).annotate({
-    identifier: "CreateVPCEConfigurationResult",
-  }) as any as S.Schema<CreateVPCEConfigurationResult>;
+export const CreateVPCEConfigurationResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ vpceConfiguration: S.optional(VPCEConfiguration) }).pipe(ns),
+).annotate({
+  identifier: "CreateVPCEConfigurationResult",
+}) as any as S.Schema<CreateVPCEConfigurationResult>;
 export interface DeleteDevicePoolRequest {
   arn: string;
 }
-export const DeleteDevicePoolRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ arn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteDevicePoolRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "DeleteDevicePoolRequest",
 }) as any as S.Schema<DeleteDevicePoolRequest>;
 export interface DeleteDevicePoolResult {}
-export const DeleteDevicePoolResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}).pipe(ns),
+export const DeleteDevicePoolResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "DeleteDevicePoolResult",
 }) as any as S.Schema<DeleteDevicePoolResult>;
 export interface DeleteInstanceProfileRequest {
   arn: string;
 }
-export const DeleteInstanceProfileRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ arn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteInstanceProfileRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "DeleteInstanceProfileRequest",
-  }) as any as S.Schema<DeleteInstanceProfileRequest>;
+  ),
+).annotate({
+  identifier: "DeleteInstanceProfileRequest",
+}) as any as S.Schema<DeleteInstanceProfileRequest>;
 export interface DeleteInstanceProfileResult {}
-export const DeleteInstanceProfileResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "DeleteInstanceProfileResult",
-  }) as any as S.Schema<DeleteInstanceProfileResult>;
+export const DeleteInstanceProfileResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "DeleteInstanceProfileResult",
+}) as any as S.Schema<DeleteInstanceProfileResult>;
 export interface DeleteNetworkProfileRequest {
   arn: string;
 }
-export const DeleteNetworkProfileRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ arn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteNetworkProfileRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "DeleteNetworkProfileRequest",
-  }) as any as S.Schema<DeleteNetworkProfileRequest>;
+  ),
+).annotate({
+  identifier: "DeleteNetworkProfileRequest",
+}) as any as S.Schema<DeleteNetworkProfileRequest>;
 export interface DeleteNetworkProfileResult {}
-export const DeleteNetworkProfileResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}).pipe(ns),
+export const DeleteNetworkProfileResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "DeleteNetworkProfileResult",
 }) as any as S.Schema<DeleteNetworkProfileResult>;
 export interface DeleteProjectRequest {
   arn: string;
 }
-export const DeleteProjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteProjectRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(
       ns,
@@ -1097,7 +1146,7 @@ export const DeleteProjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeleteProjectRequest",
 }) as any as S.Schema<DeleteProjectRequest>;
 export interface DeleteProjectResult {}
-export const DeleteProjectResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteProjectResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "DeleteProjectResult",
@@ -1105,31 +1154,31 @@ export const DeleteProjectResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DeleteRemoteAccessSessionRequest {
   arn: string;
 }
-export const DeleteRemoteAccessSessionRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ arn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteRemoteAccessSessionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "DeleteRemoteAccessSessionRequest",
-  }) as any as S.Schema<DeleteRemoteAccessSessionRequest>;
+  ),
+).annotate({
+  identifier: "DeleteRemoteAccessSessionRequest",
+}) as any as S.Schema<DeleteRemoteAccessSessionRequest>;
 export interface DeleteRemoteAccessSessionResult {}
-export const DeleteRemoteAccessSessionResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "DeleteRemoteAccessSessionResult",
-  }) as any as S.Schema<DeleteRemoteAccessSessionResult>;
+export const DeleteRemoteAccessSessionResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "DeleteRemoteAccessSessionResult",
+}) as any as S.Schema<DeleteRemoteAccessSessionResult>;
 export interface DeleteRunRequest {
   arn: string;
 }
-export const DeleteRunRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteRunRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(
       ns,
@@ -1145,7 +1194,7 @@ export const DeleteRunRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeleteRunRequest",
 }) as any as S.Schema<DeleteRunRequest>;
 export interface DeleteRunResult {}
-export const DeleteRunResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteRunResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "DeleteRunResult",
@@ -1153,31 +1202,31 @@ export const DeleteRunResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DeleteTestGridProjectRequest {
   projectArn: string;
 }
-export const DeleteTestGridProjectRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ projectArn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteTestGridProjectRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ projectArn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "DeleteTestGridProjectRequest",
-  }) as any as S.Schema<DeleteTestGridProjectRequest>;
+  ),
+).annotate({
+  identifier: "DeleteTestGridProjectRequest",
+}) as any as S.Schema<DeleteTestGridProjectRequest>;
 export interface DeleteTestGridProjectResult {}
-export const DeleteTestGridProjectResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "DeleteTestGridProjectResult",
-  }) as any as S.Schema<DeleteTestGridProjectResult>;
+export const DeleteTestGridProjectResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "DeleteTestGridProjectResult",
+}) as any as S.Schema<DeleteTestGridProjectResult>;
 export interface DeleteUploadRequest {
   arn: string;
 }
-export const DeleteUploadRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteUploadRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(
       ns,
@@ -1193,7 +1242,7 @@ export const DeleteUploadRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeleteUploadRequest",
 }) as any as S.Schema<DeleteUploadRequest>;
 export interface DeleteUploadResult {}
-export const DeleteUploadResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteUploadResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "DeleteUploadResult",
@@ -1201,46 +1250,46 @@ export const DeleteUploadResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DeleteVPCEConfigurationRequest {
   arn: string;
 }
-export const DeleteVPCEConfigurationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ arn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteVPCEConfigurationRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "DeleteVPCEConfigurationRequest",
-  }) as any as S.Schema<DeleteVPCEConfigurationRequest>;
+  ),
+).annotate({
+  identifier: "DeleteVPCEConfigurationRequest",
+}) as any as S.Schema<DeleteVPCEConfigurationRequest>;
 export interface DeleteVPCEConfigurationResult {}
-export const DeleteVPCEConfigurationResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "DeleteVPCEConfigurationResult",
-  }) as any as S.Schema<DeleteVPCEConfigurationResult>;
+export const DeleteVPCEConfigurationResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "DeleteVPCEConfigurationResult",
+}) as any as S.Schema<DeleteVPCEConfigurationResult>;
 export interface GetAccountSettingsRequest {}
-export const GetAccountSettingsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({}).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetAccountSettingsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetAccountSettingsRequest",
 }) as any as S.Schema<GetAccountSettingsRequest>;
+export type AWSAccountNumber = string;
 export type PurchasedDevicesMap = { [key in DevicePlatform]?: number };
-export const PurchasedDevicesMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const PurchasedDevicesMap = /*@__PURE__*/ S.Record(
   DevicePlatform,
   S.Number.pipe(S.optional),
 );
@@ -1248,11 +1297,11 @@ export interface TrialMinutes {
   total?: number;
   remaining?: number;
 }
-export const TrialMinutes = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TrialMinutes = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ total: S.optional(S.Number), remaining: S.optional(S.Number) }),
 ).annotate({ identifier: "TrialMinutes" }) as any as S.Schema<TrialMinutes>;
 export type MaxSlotMap = { [key: string]: number | undefined };
-export const MaxSlotMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const MaxSlotMap = /*@__PURE__*/ S.Record(
   S.String,
   S.Number.pipe(S.optional),
 );
@@ -1266,7 +1315,7 @@ export interface AccountSettings {
   defaultJobTimeoutMinutes?: number;
   skipAppResign?: boolean;
 }
-export const AccountSettings = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AccountSettings = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     awsAccountNumber: S.optional(S.String),
     unmeteredDevices: S.optional(PurchasedDevicesMap),
@@ -1283,15 +1332,15 @@ export const AccountSettings = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetAccountSettingsResult {
   accountSettings?: AccountSettings;
 }
-export const GetAccountSettingsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ accountSettings: S.optional(AccountSettings) }).pipe(ns),
+export const GetAccountSettingsResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ accountSettings: S.optional(AccountSettings) }).pipe(ns),
 ).annotate({
   identifier: "GetAccountSettingsResult",
 }) as any as S.Schema<GetAccountSettingsResult>;
 export interface GetDeviceRequest {
   arn: string;
 }
-export const GetDeviceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetDeviceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(
       ns,
@@ -1309,7 +1358,7 @@ export const GetDeviceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetDeviceResult {
   device?: Device;
 }
-export const GetDeviceResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetDeviceResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ device: S.optional(Device) }).pipe(ns),
 ).annotate({
   identifier: "GetDeviceResult",
@@ -1317,34 +1366,33 @@ export const GetDeviceResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetDeviceInstanceRequest {
   arn: string;
 }
-export const GetDeviceInstanceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ arn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetDeviceInstanceRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetDeviceInstanceRequest",
 }) as any as S.Schema<GetDeviceInstanceRequest>;
 export interface GetDeviceInstanceResult {
   deviceInstance?: DeviceInstance;
 }
-export const GetDeviceInstanceResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ deviceInstance: S.optional(DeviceInstance) }).pipe(ns),
+export const GetDeviceInstanceResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ deviceInstance: S.optional(DeviceInstance) }).pipe(ns),
 ).annotate({
   identifier: "GetDeviceInstanceResult",
 }) as any as S.Schema<GetDeviceInstanceResult>;
 export interface GetDevicePoolRequest {
   arn: string;
 }
-export const GetDevicePoolRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetDevicePoolRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(
       ns,
@@ -1362,7 +1410,7 @@ export const GetDevicePoolRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetDevicePoolResult {
   devicePool?: DevicePool;
 }
-export const GetDevicePoolResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetDevicePoolResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ devicePool: S.optional(DevicePool) }).pipe(ns),
 ).annotate({
   identifier: "GetDevicePoolResult",
@@ -1383,9 +1431,11 @@ export type TestType =
   | "XCTEST"
   | "XCTEST_UI"
   | (string & {});
-export const TestType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const TestType = /*@__PURE__*/ S.String;
+
+export type Filter = string;
 export type TestParameters = { [key: string]: string | undefined };
-export const TestParameters = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const TestParameters = /*@__PURE__*/ S.Record(
   S.String,
   S.String.pipe(S.optional),
 );
@@ -1396,7 +1446,7 @@ export interface ScheduleRunTest {
   filter?: string;
   parameters?: { [key: string]: string | undefined };
 }
-export const ScheduleRunTest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ScheduleRunTest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     type: TestType,
     testPackageArn: S.optional(S.String),
@@ -1411,21 +1461,21 @@ export interface Location {
   latitude: number;
   longitude: number;
 }
-export const Location = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Location = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ latitude: S.Number, longitude: S.Number }),
 ).annotate({ identifier: "Location" }) as any as S.Schema<Location>;
 export type IosPaths = string[];
-export const IosPaths = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const IosPaths = /*@__PURE__*/ S.Array(S.String);
 export type AndroidPaths = string[];
-export const AndroidPaths = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const AndroidPaths = /*@__PURE__*/ S.Array(S.String);
 export type DeviceHostPaths = string[];
-export const DeviceHostPaths = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const DeviceHostPaths = /*@__PURE__*/ S.Array(S.String);
 export interface CustomerArtifactPaths {
   iosPaths?: string[];
   androidPaths?: string[];
   deviceHostPaths?: string[];
 }
-export const CustomerArtifactPaths = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CustomerArtifactPaths = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     iosPaths: S.optional(IosPaths),
     androidPaths: S.optional(AndroidPaths),
@@ -1440,7 +1490,7 @@ export interface Radios {
   nfc?: boolean;
   gps?: boolean;
 }
-export const Radios = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Radios = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     wifi: S.optional(S.Boolean),
     bluetooth: S.optional(S.Boolean),
@@ -1462,22 +1512,21 @@ export interface ScheduleRunConfiguration {
   environmentVariables?: EnvironmentVariable[];
   executionRoleArn?: string;
 }
-export const ScheduleRunConfiguration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      extraDataPackageArn: S.optional(S.String),
-      networkProfileArn: S.optional(S.String),
-      locale: S.optional(S.String),
-      location: S.optional(Location),
-      vpceConfigurationArns: S.optional(AmazonResourceNames),
-      deviceProxy: S.optional(DeviceProxy),
-      customerArtifactPaths: S.optional(CustomerArtifactPaths),
-      radios: S.optional(Radios),
-      auxiliaryApps: S.optional(AmazonResourceNames),
-      billingMethod: S.optional(BillingMethod),
-      environmentVariables: S.optional(EnvironmentVariables),
-      executionRoleArn: S.optional(S.String),
-    }),
+export const ScheduleRunConfiguration = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    extraDataPackageArn: S.optional(S.String),
+    networkProfileArn: S.optional(S.String),
+    locale: S.optional(S.String),
+    location: S.optional(Location),
+    vpceConfigurationArns: S.optional(AmazonResourceNames),
+    deviceProxy: S.optional(DeviceProxy),
+    customerArtifactPaths: S.optional(CustomerArtifactPaths),
+    radios: S.optional(Radios),
+    auxiliaryApps: S.optional(AmazonResourceNames),
+    billingMethod: S.optional(BillingMethod),
+    environmentVariables: S.optional(EnvironmentVariables),
+    executionRoleArn: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "ScheduleRunConfiguration",
 }) as any as S.Schema<ScheduleRunConfiguration>;
@@ -1489,44 +1538,42 @@ export interface GetDevicePoolCompatibilityRequest {
   configuration?: ScheduleRunConfiguration;
   projectArn?: string;
 }
-export const GetDevicePoolCompatibilityRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      devicePoolArn: S.String,
-      appArn: S.optional(S.String),
-      testType: S.optional(TestType),
-      test: S.optional(ScheduleRunTest),
-      configuration: S.optional(ScheduleRunConfiguration),
-      projectArn: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetDevicePoolCompatibilityRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    devicePoolArn: S.String,
+    appArn: S.optional(S.String),
+    testType: S.optional(TestType),
+    test: S.optional(ScheduleRunTest),
+    configuration: S.optional(ScheduleRunConfiguration),
+    projectArn: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "GetDevicePoolCompatibilityRequest",
-  }) as any as S.Schema<GetDevicePoolCompatibilityRequest>;
+  ),
+).annotate({
+  identifier: "GetDevicePoolCompatibilityRequest",
+}) as any as S.Schema<GetDevicePoolCompatibilityRequest>;
 export interface IncompatibilityMessage {
   message?: string;
   type?: DeviceAttribute;
 }
-export const IncompatibilityMessage = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      message: S.optional(S.String),
-      type: S.optional(DeviceAttribute),
-    }),
+export const IncompatibilityMessage = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    message: S.optional(S.String),
+    type: S.optional(DeviceAttribute),
+  }),
 ).annotate({
   identifier: "IncompatibilityMessage",
 }) as any as S.Schema<IncompatibilityMessage>;
 export type IncompatibilityMessages = IncompatibilityMessage[];
-export const IncompatibilityMessages = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const IncompatibilityMessages = /*@__PURE__*/ S.Array(
   IncompatibilityMessage,
 );
 export interface DevicePoolCompatibilityResult {
@@ -1534,63 +1581,61 @@ export interface DevicePoolCompatibilityResult {
   compatible?: boolean;
   incompatibilityMessages?: IncompatibilityMessage[];
 }
-export const DevicePoolCompatibilityResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      device: S.optional(Device),
-      compatible: S.optional(S.Boolean),
-      incompatibilityMessages: S.optional(IncompatibilityMessages),
-    }),
-  ).annotate({
-    identifier: "DevicePoolCompatibilityResult",
-  }) as any as S.Schema<DevicePoolCompatibilityResult>;
+export const DevicePoolCompatibilityResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    device: S.optional(Device),
+    compatible: S.optional(S.Boolean),
+    incompatibilityMessages: S.optional(IncompatibilityMessages),
+  }),
+).annotate({
+  identifier: "DevicePoolCompatibilityResult",
+}) as any as S.Schema<DevicePoolCompatibilityResult>;
 export type DevicePoolCompatibilityResults = DevicePoolCompatibilityResult[];
-export const DevicePoolCompatibilityResults =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(DevicePoolCompatibilityResult);
+export const DevicePoolCompatibilityResults = /*@__PURE__*/ S.Array(
+  DevicePoolCompatibilityResult,
+);
 export interface GetDevicePoolCompatibilityResult {
   compatibleDevices?: DevicePoolCompatibilityResult[];
   incompatibleDevices?: DevicePoolCompatibilityResult[];
 }
-export const GetDevicePoolCompatibilityResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      compatibleDevices: S.optional(DevicePoolCompatibilityResults),
-      incompatibleDevices: S.optional(DevicePoolCompatibilityResults),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "GetDevicePoolCompatibilityResult",
-  }) as any as S.Schema<GetDevicePoolCompatibilityResult>;
+export const GetDevicePoolCompatibilityResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    compatibleDevices: S.optional(DevicePoolCompatibilityResults),
+    incompatibleDevices: S.optional(DevicePoolCompatibilityResults),
+  }).pipe(ns),
+).annotate({
+  identifier: "GetDevicePoolCompatibilityResult",
+}) as any as S.Schema<GetDevicePoolCompatibilityResult>;
 export interface GetInstanceProfileRequest {
   arn: string;
 }
-export const GetInstanceProfileRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ arn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetInstanceProfileRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetInstanceProfileRequest",
 }) as any as S.Schema<GetInstanceProfileRequest>;
 export interface GetInstanceProfileResult {
   instanceProfile?: InstanceProfile;
 }
-export const GetInstanceProfileResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ instanceProfile: S.optional(InstanceProfile) }).pipe(ns),
+export const GetInstanceProfileResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ instanceProfile: S.optional(InstanceProfile) }).pipe(ns),
 ).annotate({
   identifier: "GetInstanceProfileResult",
 }) as any as S.Schema<GetInstanceProfileResult>;
 export interface GetJobRequest {
   arn: string;
 }
-export const GetJobRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetJobRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(
       ns,
@@ -1612,7 +1657,7 @@ export interface Counters {
   stopped?: number;
   skipped?: number;
 }
-export const Counters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Counters = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     total: S.optional(S.Number),
     passed: S.optional(S.Number),
@@ -1623,6 +1668,7 @@ export const Counters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
     skipped: S.optional(S.Number),
   }),
 ).annotate({ identifier: "Counters" }) as any as S.Schema<Counters>;
+export type VideoCapture = boolean;
 export interface Job {
   arn?: string;
   name?: string;
@@ -1640,7 +1686,7 @@ export interface Job {
   videoEndpoint?: string;
   videoCapture?: boolean;
 }
-export const Job = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Job = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     name: S.optional(S.String),
@@ -1662,82 +1708,86 @@ export const Job = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetJobResult {
   job?: Job;
 }
-export const GetJobResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetJobResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ job: S.optional(Job) }).pipe(ns),
 ).annotate({ identifier: "GetJobResult" }) as any as S.Schema<GetJobResult>;
 export interface GetNetworkProfileRequest {
   arn: string;
 }
-export const GetNetworkProfileRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ arn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetNetworkProfileRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetNetworkProfileRequest",
 }) as any as S.Schema<GetNetworkProfileRequest>;
 export interface GetNetworkProfileResult {
   networkProfile?: NetworkProfile;
 }
-export const GetNetworkProfileResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ networkProfile: S.optional(NetworkProfile) }).pipe(ns),
+export const GetNetworkProfileResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ networkProfile: S.optional(NetworkProfile) }).pipe(ns),
 ).annotate({
   identifier: "GetNetworkProfileResult",
 }) as any as S.Schema<GetNetworkProfileResult>;
+export type PaginationToken = string;
 export interface GetOfferingStatusRequest {
   nextToken?: string;
 }
-export const GetOfferingStatusRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ nextToken: S.optional(S.String) }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetOfferingStatusRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ nextToken: S.optional(S.String) }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetOfferingStatusRequest",
 }) as any as S.Schema<GetOfferingStatusRequest>;
+export type OfferingIdentifier = string;
 export type OfferingTransactionType =
   | "PURCHASE"
   | "RENEW"
   | "SYSTEM"
   | (string & {});
-export const OfferingTransactionType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const OfferingTransactionType = /*@__PURE__*/ S.String;
+
 export type OfferingType = "RECURRING" | (string & {});
-export const OfferingType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const OfferingType = /*@__PURE__*/ S.String;
+
 export type CurrencyCode = "USD" | (string & {});
-export const CurrencyCode = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const CurrencyCode = /*@__PURE__*/ S.String;
+
 export interface MonetaryAmount {
   amount?: number;
   currencyCode?: CurrencyCode;
 }
-export const MonetaryAmount = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const MonetaryAmount = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     amount: S.optional(S.Number),
     currencyCode: S.optional(CurrencyCode),
   }),
 ).annotate({ identifier: "MonetaryAmount" }) as any as S.Schema<MonetaryAmount>;
 export type RecurringChargeFrequency = "MONTHLY" | (string & {});
-export const RecurringChargeFrequency = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const RecurringChargeFrequency = /*@__PURE__*/ S.String;
+
 export interface RecurringCharge {
   cost?: MonetaryAmount;
   frequency?: RecurringChargeFrequency;
 }
-export const RecurringCharge = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RecurringCharge = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     cost: S.optional(MonetaryAmount),
     frequency: S.optional(RecurringChargeFrequency),
@@ -1746,8 +1796,7 @@ export const RecurringCharge = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "RecurringCharge",
 }) as any as S.Schema<RecurringCharge>;
 export type RecurringCharges = RecurringCharge[];
-export const RecurringCharges =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(RecurringCharge);
+export const RecurringCharges = /*@__PURE__*/ S.Array(RecurringCharge);
 export interface Offering {
   id?: string;
   description?: string;
@@ -1755,7 +1804,7 @@ export interface Offering {
   platform?: DevicePlatform;
   recurringCharges?: RecurringCharge[];
 }
-export const Offering = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Offering = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     id: S.optional(S.String),
     description: S.optional(S.String),
@@ -1770,7 +1819,7 @@ export interface OfferingStatus {
   quantity?: number;
   effectiveOn?: Date;
 }
-export const OfferingStatus = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferingStatus = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     type: S.optional(OfferingTransactionType),
     offering: S.optional(Offering),
@@ -1779,7 +1828,7 @@ export const OfferingStatus = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "OfferingStatus" }) as any as S.Schema<OfferingStatus>;
 export type OfferingStatusMap = { [key: string]: OfferingStatus | undefined };
-export const OfferingStatusMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const OfferingStatusMap = /*@__PURE__*/ S.Record(
   S.String,
   OfferingStatus.pipe(S.optional),
 );
@@ -1788,20 +1837,19 @@ export interface GetOfferingStatusResult {
   nextPeriod?: { [key: string]: OfferingStatus | undefined };
   nextToken?: string;
 }
-export const GetOfferingStatusResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      current: S.optional(OfferingStatusMap),
-      nextPeriod: S.optional(OfferingStatusMap),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
+export const GetOfferingStatusResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    current: S.optional(OfferingStatusMap),
+    nextPeriod: S.optional(OfferingStatusMap),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "GetOfferingStatusResult",
 }) as any as S.Schema<GetOfferingStatusResult>;
 export interface GetProjectRequest {
   arn: string;
 }
-export const GetProjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetProjectRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(
       ns,
@@ -1819,7 +1867,7 @@ export const GetProjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetProjectResult {
   project?: Project;
 }
-export const GetProjectResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetProjectResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ project: S.optional(Project) }).pipe(ns),
 ).annotate({
   identifier: "GetProjectResult",
@@ -1827,35 +1875,33 @@ export const GetProjectResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetRemoteAccessSessionRequest {
   arn: string;
 }
-export const GetRemoteAccessSessionRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ arn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetRemoteAccessSessionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "GetRemoteAccessSessionRequest",
-  }) as any as S.Schema<GetRemoteAccessSessionRequest>;
+  ),
+).annotate({
+  identifier: "GetRemoteAccessSessionRequest",
+}) as any as S.Schema<GetRemoteAccessSessionRequest>;
 export interface GetRemoteAccessSessionResult {
   remoteAccessSession?: RemoteAccessSession;
 }
-export const GetRemoteAccessSessionResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ remoteAccessSession: S.optional(RemoteAccessSession) }).pipe(ns),
-  ).annotate({
-    identifier: "GetRemoteAccessSessionResult",
-  }) as any as S.Schema<GetRemoteAccessSessionResult>;
+export const GetRemoteAccessSessionResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ remoteAccessSession: S.optional(RemoteAccessSession) }).pipe(ns),
+).annotate({
+  identifier: "GetRemoteAccessSessionResult",
+}) as any as S.Schema<GetRemoteAccessSessionResult>;
 export interface GetRunRequest {
   arn: string;
 }
-export const GetRunRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetRunRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(
       ns,
@@ -1872,7 +1918,8 @@ export type ExecutionResultCode =
   | "PARSING_FAILED"
   | "VPC_ENDPOINT_SETUP_FAILED"
   | (string & {});
-export const ExecutionResultCode = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ExecutionResultCode = /*@__PURE__*/ S.String;
+
 export type DeviceFilterAttribute =
   | "ARN"
   | "PLATFORM"
@@ -1887,15 +1934,16 @@ export type DeviceFilterAttribute =
   | "INSTANCE_LABELS"
   | "FLEET_TYPE"
   | (string & {});
-export const DeviceFilterAttribute = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DeviceFilterAttribute = /*@__PURE__*/ S.String;
+
 export type DeviceFilterValues = string[];
-export const DeviceFilterValues = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const DeviceFilterValues = /*@__PURE__*/ S.Array(S.String);
 export interface DeviceFilter {
   attribute: DeviceFilterAttribute;
   operator: RuleOperator;
   values: string[];
 }
-export const DeviceFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeviceFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     attribute: DeviceFilterAttribute,
     operator: RuleOperator,
@@ -1903,13 +1951,13 @@ export const DeviceFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "DeviceFilter" }) as any as S.Schema<DeviceFilter>;
 export type DeviceFilters = DeviceFilter[];
-export const DeviceFilters = /*@__PURE__*/ /*#__PURE__*/ S.Array(DeviceFilter);
+export const DeviceFilters = /*@__PURE__*/ S.Array(DeviceFilter);
 export interface DeviceSelectionResult {
   filters?: DeviceFilter[];
   matchedDevicesCount?: number;
   maxDevices?: number;
 }
-export const DeviceSelectionResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeviceSelectionResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     filters: S.optional(DeviceFilters),
     matchedDevicesCount: S.optional(S.Number),
@@ -1955,7 +2003,7 @@ export interface Run {
   executionRoleArn?: string;
   environmentVariables?: EnvironmentVariable[];
 }
-export const Run = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Run = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     name: S.optional(S.String),
@@ -1997,13 +2045,13 @@ export const Run = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetRunResult {
   run?: Run;
 }
-export const GetRunResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetRunResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ run: S.optional(Run) }).pipe(ns),
 ).annotate({ identifier: "GetRunResult" }) as any as S.Schema<GetRunResult>;
 export interface GetSuiteRequest {
   arn: string;
 }
-export const GetSuiteRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetSuiteRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(
       ns,
@@ -2031,7 +2079,7 @@ export interface Suite {
   message?: string;
   deviceMinutes?: DeviceMinutes;
 }
-export const Suite = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Suite = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     name: S.optional(S.String),
@@ -2049,13 +2097,13 @@ export const Suite = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetSuiteResult {
   suite?: Suite;
 }
-export const GetSuiteResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetSuiteResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ suite: S.optional(Suite) }).pipe(ns),
 ).annotate({ identifier: "GetSuiteResult" }) as any as S.Schema<GetSuiteResult>;
 export interface GetTestRequest {
   arn: string;
 }
-export const GetTestRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetTestRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(
       ns,
@@ -2081,7 +2129,7 @@ export interface Test {
   message?: string;
   deviceMinutes?: DeviceMinutes;
 }
-export const Test = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Test = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     name: S.optional(S.String),
@@ -2099,58 +2147,57 @@ export const Test = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetTestResult {
   test?: Test;
 }
-export const GetTestResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetTestResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ test: S.optional(Test) }).pipe(ns),
 ).annotate({ identifier: "GetTestResult" }) as any as S.Schema<GetTestResult>;
 export interface GetTestGridProjectRequest {
   projectArn: string;
 }
-export const GetTestGridProjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ projectArn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetTestGridProjectRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ projectArn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetTestGridProjectRequest",
 }) as any as S.Schema<GetTestGridProjectRequest>;
 export interface GetTestGridProjectResult {
   testGridProject?: TestGridProject;
 }
-export const GetTestGridProjectResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ testGridProject: S.optional(TestGridProject) }).pipe(ns),
+export const GetTestGridProjectResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ testGridProject: S.optional(TestGridProject) }).pipe(ns),
 ).annotate({
   identifier: "GetTestGridProjectResult",
 }) as any as S.Schema<GetTestGridProjectResult>;
+export type ResourceId = string;
 export interface GetTestGridSessionRequest {
   projectArn?: string;
   sessionId?: string;
   sessionArn?: string;
 }
-export const GetTestGridSessionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      projectArn: S.optional(S.String),
-      sessionId: S.optional(S.String),
-      sessionArn: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetTestGridSessionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    projectArn: S.optional(S.String),
+    sessionId: S.optional(S.String),
+    sessionArn: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetTestGridSessionRequest",
 }) as any as S.Schema<GetTestGridSessionRequest>;
@@ -2159,7 +2206,8 @@ export type TestGridSessionStatus =
   | "CLOSED"
   | "ERRORED"
   | (string & {});
-export const TestGridSessionStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const TestGridSessionStatus = /*@__PURE__*/ S.String;
+
 export interface TestGridSession {
   arn?: string;
   status?: TestGridSessionStatus;
@@ -2168,7 +2216,7 @@ export interface TestGridSession {
   billingMinutes?: number;
   seleniumProperties?: string;
 }
-export const TestGridSession = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TestGridSession = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     status: S.optional(TestGridSessionStatus),
@@ -2183,15 +2231,15 @@ export const TestGridSession = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetTestGridSessionResult {
   testGridSession?: TestGridSession;
 }
-export const GetTestGridSessionResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ testGridSession: S.optional(TestGridSession) }).pipe(ns),
+export const GetTestGridSessionResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ testGridSession: S.optional(TestGridSession) }).pipe(ns),
 ).annotate({
   identifier: "GetTestGridSessionResult",
 }) as any as S.Schema<GetTestGridSessionResult>;
 export interface GetUploadRequest {
   arn: string;
 }
-export const GetUploadRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetUploadRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(
       ns,
@@ -2209,7 +2257,7 @@ export const GetUploadRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetUploadResult {
   upload?: Upload;
 }
-export const GetUploadResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetUploadResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ upload: S.optional(Upload) }).pipe(ns),
 ).annotate({
   identifier: "GetUploadResult",
@@ -2217,27 +2265,26 @@ export const GetUploadResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetVPCEConfigurationRequest {
   arn: string;
 }
-export const GetVPCEConfigurationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ arn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetVPCEConfigurationRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "GetVPCEConfigurationRequest",
-  }) as any as S.Schema<GetVPCEConfigurationRequest>;
+  ),
+).annotate({
+  identifier: "GetVPCEConfigurationRequest",
+}) as any as S.Schema<GetVPCEConfigurationRequest>;
 export interface GetVPCEConfigurationResult {
   vpceConfiguration?: VPCEConfiguration;
 }
-export const GetVPCEConfigurationResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ vpceConfiguration: S.optional(VPCEConfiguration) }).pipe(ns),
+export const GetVPCEConfigurationResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ vpceConfiguration: S.optional(VPCEConfiguration) }).pipe(ns),
 ).annotate({
   identifier: "GetVPCEConfigurationResult",
 }) as any as S.Schema<GetVPCEConfigurationResult>;
@@ -2245,39 +2292,38 @@ export interface InstallToRemoteAccessSessionRequest {
   remoteAccessSessionArn: string;
   appArn: string;
 }
-export const InstallToRemoteAccessSessionRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ remoteAccessSessionArn: S.String, appArn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const InstallToRemoteAccessSessionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ remoteAccessSessionArn: S.String, appArn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "InstallToRemoteAccessSessionRequest",
-  }) as any as S.Schema<InstallToRemoteAccessSessionRequest>;
+  ),
+).annotate({
+  identifier: "InstallToRemoteAccessSessionRequest",
+}) as any as S.Schema<InstallToRemoteAccessSessionRequest>;
 export interface InstallToRemoteAccessSessionResult {
   appUpload?: Upload;
 }
-export const InstallToRemoteAccessSessionResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ appUpload: S.optional(Upload) }).pipe(ns),
-  ).annotate({
-    identifier: "InstallToRemoteAccessSessionResult",
-  }) as any as S.Schema<InstallToRemoteAccessSessionResult>;
+export const InstallToRemoteAccessSessionResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ appUpload: S.optional(Upload) }).pipe(ns),
+).annotate({
+  identifier: "InstallToRemoteAccessSessionResult",
+}) as any as S.Schema<InstallToRemoteAccessSessionResult>;
 export type ArtifactCategory = "SCREENSHOT" | "FILE" | "LOG" | (string & {});
-export const ArtifactCategory = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ArtifactCategory = /*@__PURE__*/ S.String;
+
 export interface ListArtifactsRequest {
   arn: string;
   type: ArtifactCategory;
   nextToken?: string;
 }
-export const ListArtifactsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListArtifactsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.String,
     type: ArtifactCategory,
@@ -2326,7 +2372,9 @@ export type ArtifactType =
   | "CUSTOMER_ARTIFACT_LOG"
   | "TESTSPEC_OUTPUT"
   | (string & {});
-export const ArtifactType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ArtifactType = /*@__PURE__*/ S.String;
+
+export type URL = string;
 export interface Artifact {
   arn?: string;
   name?: string;
@@ -2334,7 +2382,7 @@ export interface Artifact {
   extension?: string;
   url?: string;
 }
-export const Artifact = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Artifact = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     name: S.optional(S.String),
@@ -2344,12 +2392,12 @@ export const Artifact = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Artifact" }) as any as S.Schema<Artifact>;
 export type Artifacts = Artifact[];
-export const Artifacts = /*@__PURE__*/ /*#__PURE__*/ S.Array(Artifact);
+export const Artifacts = /*@__PURE__*/ S.Array(Artifact);
 export interface ListArtifactsResult {
   artifacts?: Artifact[];
   nextToken?: string;
 }
-export const ListArtifactsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListArtifactsResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     artifacts: S.optional(Artifacts),
     nextToken: S.optional(S.String),
@@ -2361,22 +2409,21 @@ export interface ListDeviceInstancesRequest {
   maxResults?: number;
   nextToken?: string;
 }
-export const ListDeviceInstancesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      maxResults: S.optional(S.Number),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListDeviceInstancesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    maxResults: S.optional(S.Number),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "ListDeviceInstancesRequest",
 }) as any as S.Schema<ListDeviceInstancesRequest>;
@@ -2384,12 +2431,11 @@ export interface ListDeviceInstancesResult {
   deviceInstances?: DeviceInstance[];
   nextToken?: string;
 }
-export const ListDeviceInstancesResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      deviceInstances: S.optional(DeviceInstances),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
+export const ListDeviceInstancesResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    deviceInstances: S.optional(DeviceInstances),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "ListDeviceInstancesResult",
 }) as any as S.Schema<ListDeviceInstancesResult>;
@@ -2398,33 +2444,32 @@ export interface ListDevicePoolsRequest {
   type?: DevicePoolType;
   nextToken?: string;
 }
-export const ListDevicePoolsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      arn: S.String,
-      type: S.optional(DevicePoolType),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListDevicePoolsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    arn: S.String,
+    type: S.optional(DevicePoolType),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "ListDevicePoolsRequest",
 }) as any as S.Schema<ListDevicePoolsRequest>;
 export type DevicePools = DevicePool[];
-export const DevicePools = /*@__PURE__*/ /*#__PURE__*/ S.Array(DevicePool);
+export const DevicePools = /*@__PURE__*/ S.Array(DevicePool);
 export interface ListDevicePoolsResult {
   devicePools?: DevicePool[];
   nextToken?: string;
 }
-export const ListDevicePoolsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListDevicePoolsResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     devicePools: S.optional(DevicePools),
     nextToken: S.optional(S.String),
@@ -2437,7 +2482,7 @@ export interface ListDevicesRequest {
   nextToken?: string;
   filters?: DeviceFilter[];
 }
-export const ListDevicesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListDevicesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     nextToken: S.optional(S.String),
@@ -2457,12 +2502,12 @@ export const ListDevicesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListDevicesRequest",
 }) as any as S.Schema<ListDevicesRequest>;
 export type Devices = Device[];
-export const Devices = /*@__PURE__*/ /*#__PURE__*/ S.Array(Device);
+export const Devices = /*@__PURE__*/ S.Array(Device);
 export interface ListDevicesResult {
   devices?: Device[];
   nextToken?: string;
 }
-export const ListDevicesResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListDevicesResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     devices: S.optional(Devices),
     nextToken: S.optional(S.String),
@@ -2474,38 +2519,35 @@ export interface ListInstanceProfilesRequest {
   maxResults?: number;
   nextToken?: string;
 }
-export const ListInstanceProfilesRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      maxResults: S.optional(S.Number),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListInstanceProfilesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    maxResults: S.optional(S.Number),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "ListInstanceProfilesRequest",
-  }) as any as S.Schema<ListInstanceProfilesRequest>;
+  ),
+).annotate({
+  identifier: "ListInstanceProfilesRequest",
+}) as any as S.Schema<ListInstanceProfilesRequest>;
 export type InstanceProfiles = InstanceProfile[];
-export const InstanceProfiles =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(InstanceProfile);
+export const InstanceProfiles = /*@__PURE__*/ S.Array(InstanceProfile);
 export interface ListInstanceProfilesResult {
   instanceProfiles?: InstanceProfile[];
   nextToken?: string;
 }
-export const ListInstanceProfilesResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      instanceProfiles: S.optional(InstanceProfiles),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
+export const ListInstanceProfilesResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    instanceProfiles: S.optional(InstanceProfiles),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "ListInstanceProfilesResult",
 }) as any as S.Schema<ListInstanceProfilesResult>;
@@ -2513,7 +2555,7 @@ export interface ListJobsRequest {
   arn: string;
   nextToken?: string;
 }
-export const ListJobsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListJobsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String, nextToken: S.optional(S.String) }).pipe(
     T.all(
       ns,
@@ -2529,12 +2571,12 @@ export const ListJobsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListJobsRequest",
 }) as any as S.Schema<ListJobsRequest>;
 export type Jobs = Job[];
-export const Jobs = /*@__PURE__*/ /*#__PURE__*/ S.Array(Job);
+export const Jobs = /*@__PURE__*/ S.Array(Job);
 export interface ListJobsResult {
   jobs?: Job[];
   nextToken?: string;
 }
-export const ListJobsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListJobsResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ jobs: S.optional(Jobs), nextToken: S.optional(S.String) }).pipe(
     ns,
   ),
@@ -2544,90 +2586,85 @@ export interface ListNetworkProfilesRequest {
   type?: NetworkProfileType;
   nextToken?: string;
 }
-export const ListNetworkProfilesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      arn: S.String,
-      type: S.optional(NetworkProfileType),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListNetworkProfilesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    arn: S.String,
+    type: S.optional(NetworkProfileType),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "ListNetworkProfilesRequest",
 }) as any as S.Schema<ListNetworkProfilesRequest>;
 export type NetworkProfiles = NetworkProfile[];
-export const NetworkProfiles =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(NetworkProfile);
+export const NetworkProfiles = /*@__PURE__*/ S.Array(NetworkProfile);
 export interface ListNetworkProfilesResult {
   networkProfiles?: NetworkProfile[];
   nextToken?: string;
 }
-export const ListNetworkProfilesResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      networkProfiles: S.optional(NetworkProfiles),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
+export const ListNetworkProfilesResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    networkProfiles: S.optional(NetworkProfiles),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "ListNetworkProfilesResult",
 }) as any as S.Schema<ListNetworkProfilesResult>;
 export interface ListOfferingPromotionsRequest {
   nextToken?: string;
 }
-export const ListOfferingPromotionsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ nextToken: S.optional(S.String) }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListOfferingPromotionsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ nextToken: S.optional(S.String) }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "ListOfferingPromotionsRequest",
-  }) as any as S.Schema<ListOfferingPromotionsRequest>;
+  ),
+).annotate({
+  identifier: "ListOfferingPromotionsRequest",
+}) as any as S.Schema<ListOfferingPromotionsRequest>;
+export type OfferingPromotionIdentifier = string;
 export interface OfferingPromotion {
   id?: string;
   description?: string;
 }
-export const OfferingPromotion = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferingPromotion = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ id: S.optional(S.String), description: S.optional(S.String) }),
 ).annotate({
   identifier: "OfferingPromotion",
 }) as any as S.Schema<OfferingPromotion>;
 export type OfferingPromotions = OfferingPromotion[];
-export const OfferingPromotions =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(OfferingPromotion);
+export const OfferingPromotions = /*@__PURE__*/ S.Array(OfferingPromotion);
 export interface ListOfferingPromotionsResult {
   offeringPromotions?: OfferingPromotion[];
   nextToken?: string;
 }
-export const ListOfferingPromotionsResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      offeringPromotions: S.optional(OfferingPromotions),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "ListOfferingPromotionsResult",
-  }) as any as S.Schema<ListOfferingPromotionsResult>;
+export const ListOfferingPromotionsResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    offeringPromotions: S.optional(OfferingPromotions),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "ListOfferingPromotionsResult",
+}) as any as S.Schema<ListOfferingPromotionsResult>;
 export interface ListOfferingsRequest {
   nextToken?: string;
 }
-export const ListOfferingsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListOfferingsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ nextToken: S.optional(S.String) }).pipe(
     T.all(
       ns,
@@ -2643,12 +2680,12 @@ export const ListOfferingsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListOfferingsRequest",
 }) as any as S.Schema<ListOfferingsRequest>;
 export type Offerings = Offering[];
-export const Offerings = /*@__PURE__*/ /*#__PURE__*/ S.Array(Offering);
+export const Offerings = /*@__PURE__*/ S.Array(Offering);
 export interface ListOfferingsResult {
   offerings?: Offering[];
   nextToken?: string;
 }
-export const ListOfferingsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListOfferingsResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     offerings: S.optional(Offerings),
     nextToken: S.optional(S.String),
@@ -2659,22 +2696,22 @@ export const ListOfferingsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface ListOfferingTransactionsRequest {
   nextToken?: string;
 }
-export const ListOfferingTransactionsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ nextToken: S.optional(S.String) }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListOfferingTransactionsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ nextToken: S.optional(S.String) }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "ListOfferingTransactionsRequest",
-  }) as any as S.Schema<ListOfferingTransactionsRequest>;
+  ),
+).annotate({
+  identifier: "ListOfferingTransactionsRequest",
+}) as any as S.Schema<ListOfferingTransactionsRequest>;
+export type TransactionIdentifier = string;
 export interface OfferingTransaction {
   offeringStatus?: OfferingStatus;
   transactionId?: string;
@@ -2682,7 +2719,7 @@ export interface OfferingTransaction {
   createdOn?: Date;
   cost?: MonetaryAmount;
 }
-export const OfferingTransaction = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferingTransaction = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     offeringStatus: S.optional(OfferingStatus),
     transactionId: S.optional(S.String),
@@ -2694,26 +2731,24 @@ export const OfferingTransaction = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "OfferingTransaction",
 }) as any as S.Schema<OfferingTransaction>;
 export type OfferingTransactions = OfferingTransaction[];
-export const OfferingTransactions =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(OfferingTransaction);
+export const OfferingTransactions = /*@__PURE__*/ S.Array(OfferingTransaction);
 export interface ListOfferingTransactionsResult {
   offeringTransactions?: OfferingTransaction[];
   nextToken?: string;
 }
-export const ListOfferingTransactionsResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      offeringTransactions: S.optional(OfferingTransactions),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "ListOfferingTransactionsResult",
-  }) as any as S.Schema<ListOfferingTransactionsResult>;
+export const ListOfferingTransactionsResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    offeringTransactions: S.optional(OfferingTransactions),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "ListOfferingTransactionsResult",
+}) as any as S.Schema<ListOfferingTransactionsResult>;
 export interface ListProjectsRequest {
   arn?: string;
   nextToken?: string;
 }
-export const ListProjectsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListProjectsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.optional(S.String), nextToken: S.optional(S.String) }).pipe(
     T.all(
       ns,
@@ -2729,12 +2764,12 @@ export const ListProjectsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListProjectsRequest",
 }) as any as S.Schema<ListProjectsRequest>;
 export type Projects = Project[];
-export const Projects = /*@__PURE__*/ /*#__PURE__*/ S.Array(Project);
+export const Projects = /*@__PURE__*/ S.Array(Project);
 export interface ListProjectsResult {
   projects?: Project[];
   nextToken?: string;
 }
-export const ListProjectsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListProjectsResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     projects: S.optional(Projects),
     nextToken: S.optional(S.String),
@@ -2746,43 +2781,40 @@ export interface ListRemoteAccessSessionsRequest {
   arn: string;
   nextToken?: string;
 }
-export const ListRemoteAccessSessionsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ arn: S.String, nextToken: S.optional(S.String) }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListRemoteAccessSessionsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String, nextToken: S.optional(S.String) }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "ListRemoteAccessSessionsRequest",
-  }) as any as S.Schema<ListRemoteAccessSessionsRequest>;
+  ),
+).annotate({
+  identifier: "ListRemoteAccessSessionsRequest",
+}) as any as S.Schema<ListRemoteAccessSessionsRequest>;
 export type RemoteAccessSessions = RemoteAccessSession[];
-export const RemoteAccessSessions =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(RemoteAccessSession);
+export const RemoteAccessSessions = /*@__PURE__*/ S.Array(RemoteAccessSession);
 export interface ListRemoteAccessSessionsResult {
   remoteAccessSessions?: RemoteAccessSession[];
   nextToken?: string;
 }
-export const ListRemoteAccessSessionsResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      remoteAccessSessions: S.optional(RemoteAccessSessions),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "ListRemoteAccessSessionsResult",
-  }) as any as S.Schema<ListRemoteAccessSessionsResult>;
+export const ListRemoteAccessSessionsResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    remoteAccessSessions: S.optional(RemoteAccessSessions),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "ListRemoteAccessSessionsResult",
+}) as any as S.Schema<ListRemoteAccessSessionsResult>;
 export interface ListRunsRequest {
   arn: string;
   nextToken?: string;
 }
-export const ListRunsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListRunsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String, nextToken: S.optional(S.String) }).pipe(
     T.all(
       ns,
@@ -2798,12 +2830,12 @@ export const ListRunsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListRunsRequest",
 }) as any as S.Schema<ListRunsRequest>;
 export type Runs = Run[];
-export const Runs = /*@__PURE__*/ /*#__PURE__*/ S.Array(Run);
+export const Runs = /*@__PURE__*/ S.Array(Run);
 export interface ListRunsResult {
   runs?: Run[];
   nextToken?: string;
 }
-export const ListRunsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListRunsResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ runs: S.optional(Runs), nextToken: S.optional(S.String) }).pipe(
     ns,
   ),
@@ -2812,7 +2844,7 @@ export interface ListSamplesRequest {
   arn: string;
   nextToken?: string;
 }
-export const ListSamplesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListSamplesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String, nextToken: S.optional(S.String) }).pipe(
     T.all(
       ns,
@@ -2846,13 +2878,14 @@ export type SampleType =
   | "OPENGL_AVG_DRAWTIME"
   | "OPENGL_MAX_DRAWTIME"
   | (string & {});
-export const SampleType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SampleType = /*@__PURE__*/ S.String;
+
 export interface Sample {
   arn?: string;
   type?: SampleType;
   url?: string;
 }
-export const Sample = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Sample = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     type: S.optional(SampleType),
@@ -2860,12 +2893,12 @@ export const Sample = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Sample" }) as any as S.Schema<Sample>;
 export type Samples = Sample[];
-export const Samples = /*@__PURE__*/ /*#__PURE__*/ S.Array(Sample);
+export const Samples = /*@__PURE__*/ S.Array(Sample);
 export interface ListSamplesResult {
   samples?: Sample[];
   nextToken?: string;
 }
-export const ListSamplesResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListSamplesResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     samples: S.optional(Samples),
     nextToken: S.optional(S.String),
@@ -2877,7 +2910,7 @@ export interface ListSuitesRequest {
   arn: string;
   nextToken?: string;
 }
-export const ListSuitesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListSuitesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String, nextToken: S.optional(S.String) }).pipe(
     T.all(
       ns,
@@ -2893,12 +2926,12 @@ export const ListSuitesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListSuitesRequest",
 }) as any as S.Schema<ListSuitesRequest>;
 export type Suites = Suite[];
-export const Suites = /*@__PURE__*/ /*#__PURE__*/ S.Array(Suite);
+export const Suites = /*@__PURE__*/ S.Array(Suite);
 export interface ListSuitesResult {
   suites?: Suite[];
   nextToken?: string;
 }
-export const ListSuitesResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListSuitesResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     suites: S.optional(Suites),
     nextToken: S.optional(S.String),
@@ -2909,76 +2942,74 @@ export const ListSuitesResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface ListTagsForResourceRequest {
   ResourceARN: string;
 }
-export const ListTagsForResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ ResourceARN: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListTagsForResourceRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceARN: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "ListTagsForResourceRequest",
 }) as any as S.Schema<ListTagsForResourceRequest>;
+export type TagKey = string;
+export type TagValue = string;
 export interface Tag {
   Key: string;
   Value: string;
 }
-export const Tag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Tag = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: S.String, Value: S.String }),
 ).annotate({ identifier: "Tag" }) as any as S.Schema<Tag>;
 export type TagList = Tag[];
-export const TagList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Tag);
+export const TagList = /*@__PURE__*/ S.Array(Tag);
 export interface ListTagsForResourceResponse {
   Tags?: Tag[];
 }
-export const ListTagsForResourceResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ Tags: S.optional(TagList) }).pipe(ns),
-  ).annotate({
-    identifier: "ListTagsForResourceResponse",
-  }) as any as S.Schema<ListTagsForResourceResponse>;
+export const ListTagsForResourceResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Tags: S.optional(TagList) }).pipe(ns),
+).annotate({
+  identifier: "ListTagsForResourceResponse",
+}) as any as S.Schema<ListTagsForResourceResponse>;
+export type MaxPageSize = number;
 export interface ListTestGridProjectsRequest {
   maxResult?: number;
   nextToken?: string;
 }
-export const ListTestGridProjectsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      maxResult: S.optional(S.Number),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListTestGridProjectsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    maxResult: S.optional(S.Number),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "ListTestGridProjectsRequest",
-  }) as any as S.Schema<ListTestGridProjectsRequest>;
+  ),
+).annotate({
+  identifier: "ListTestGridProjectsRequest",
+}) as any as S.Schema<ListTestGridProjectsRequest>;
 export type TestGridProjects = TestGridProject[];
-export const TestGridProjects =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(TestGridProject);
+export const TestGridProjects = /*@__PURE__*/ S.Array(TestGridProject);
 export interface ListTestGridProjectsResult {
   testGridProjects?: TestGridProject[];
   nextToken?: string;
 }
-export const ListTestGridProjectsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      testGridProjects: S.optional(TestGridProjects),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
+export const ListTestGridProjectsResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    testGridProjects: S.optional(TestGridProjects),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "ListTestGridProjectsResult",
 }) as any as S.Schema<ListTestGridProjectsResult>;
@@ -2987,26 +3018,25 @@ export interface ListTestGridSessionActionsRequest {
   maxResult?: number;
   nextToken?: string;
 }
-export const ListTestGridSessionActionsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      sessionArn: S.String,
-      maxResult: S.optional(S.Number),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListTestGridSessionActionsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    sessionArn: S.String,
+    maxResult: S.optional(S.Number),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "ListTestGridSessionActionsRequest",
-  }) as any as S.Schema<ListTestGridSessionActionsRequest>;
+  ),
+).annotate({
+  identifier: "ListTestGridSessionActionsRequest",
+}) as any as S.Schema<ListTestGridSessionActionsRequest>;
 export interface TestGridSessionAction {
   action?: string;
   started?: Date;
@@ -3014,7 +3044,7 @@ export interface TestGridSessionAction {
   statusCode?: string;
   requestMethod?: string;
 }
-export const TestGridSessionAction = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TestGridSessionAction = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     action: S.optional(S.String),
     started: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
@@ -3026,90 +3056,87 @@ export const TestGridSessionAction = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "TestGridSessionAction",
 }) as any as S.Schema<TestGridSessionAction>;
 export type TestGridSessionActions = TestGridSessionAction[];
-export const TestGridSessionActions = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const TestGridSessionActions = /*@__PURE__*/ S.Array(
   TestGridSessionAction,
 );
 export interface ListTestGridSessionActionsResult {
   actions?: TestGridSessionAction[];
   nextToken?: string;
 }
-export const ListTestGridSessionActionsResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      actions: S.optional(TestGridSessionActions),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "ListTestGridSessionActionsResult",
-  }) as any as S.Schema<ListTestGridSessionActionsResult>;
+export const ListTestGridSessionActionsResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    actions: S.optional(TestGridSessionActions),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "ListTestGridSessionActionsResult",
+}) as any as S.Schema<ListTestGridSessionActionsResult>;
 export type TestGridSessionArtifactCategory = "VIDEO" | "LOG" | (string & {});
-export const TestGridSessionArtifactCategory =
-  /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const TestGridSessionArtifactCategory = /*@__PURE__*/ S.String;
+
 export interface ListTestGridSessionArtifactsRequest {
   sessionArn: string;
   type?: TestGridSessionArtifactCategory;
   maxResult?: number;
   nextToken?: string;
 }
-export const ListTestGridSessionArtifactsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      sessionArn: S.String,
-      type: S.optional(TestGridSessionArtifactCategory),
-      maxResult: S.optional(S.Number),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListTestGridSessionArtifactsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    sessionArn: S.String,
+    type: S.optional(TestGridSessionArtifactCategory),
+    maxResult: S.optional(S.Number),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "ListTestGridSessionArtifactsRequest",
-  }) as any as S.Schema<ListTestGridSessionArtifactsRequest>;
+  ),
+).annotate({
+  identifier: "ListTestGridSessionArtifactsRequest",
+}) as any as S.Schema<ListTestGridSessionArtifactsRequest>;
 export type TestGridSessionArtifactType =
   | "UNKNOWN"
   | "VIDEO"
   | "SELENIUM_LOG"
   | (string & {});
-export const TestGridSessionArtifactType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const TestGridSessionArtifactType = /*@__PURE__*/ S.String;
+
 export interface TestGridSessionArtifact {
   filename?: string;
   type?: TestGridSessionArtifactType;
   url?: string | redacted.Redacted<string>;
 }
-export const TestGridSessionArtifact = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      filename: S.optional(S.String),
-      type: S.optional(TestGridSessionArtifactType),
-      url: S.optional(SensitiveString),
-    }),
+export const TestGridSessionArtifact = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    filename: S.optional(S.String),
+    type: S.optional(TestGridSessionArtifactType),
+    url: S.optional(SensitiveString),
+  }),
 ).annotate({
   identifier: "TestGridSessionArtifact",
 }) as any as S.Schema<TestGridSessionArtifact>;
 export type TestGridSessionArtifacts = TestGridSessionArtifact[];
-export const TestGridSessionArtifacts = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const TestGridSessionArtifacts = /*@__PURE__*/ S.Array(
   TestGridSessionArtifact,
 );
 export interface ListTestGridSessionArtifactsResult {
   artifacts?: TestGridSessionArtifact[];
   nextToken?: string;
 }
-export const ListTestGridSessionArtifactsResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      artifacts: S.optional(TestGridSessionArtifacts),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "ListTestGridSessionArtifactsResult",
-  }) as any as S.Schema<ListTestGridSessionArtifactsResult>;
+export const ListTestGridSessionArtifactsResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    artifacts: S.optional(TestGridSessionArtifacts),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "ListTestGridSessionArtifactsResult",
+}) as any as S.Schema<ListTestGridSessionArtifactsResult>;
 export interface ListTestGridSessionsRequest {
   projectArn: string;
   status?: TestGridSessionStatus;
@@ -3120,50 +3147,45 @@ export interface ListTestGridSessionsRequest {
   maxResult?: number;
   nextToken?: string;
 }
-export const ListTestGridSessionsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      projectArn: S.String,
-      status: S.optional(TestGridSessionStatus),
-      creationTimeAfter: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-      creationTimeBefore: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-      endTimeAfter: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
-      endTimeBefore: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-      maxResult: S.optional(S.Number),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListTestGridSessionsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    projectArn: S.String,
+    status: S.optional(TestGridSessionStatus),
+    creationTimeAfter: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
     ),
-  ).annotate({
-    identifier: "ListTestGridSessionsRequest",
-  }) as any as S.Schema<ListTestGridSessionsRequest>;
+    creationTimeBefore: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+    endTimeAfter: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
+    endTimeBefore: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
+    maxResult: S.optional(S.Number),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "ListTestGridSessionsRequest",
+}) as any as S.Schema<ListTestGridSessionsRequest>;
 export type TestGridSessions = TestGridSession[];
-export const TestGridSessions =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(TestGridSession);
+export const TestGridSessions = /*@__PURE__*/ S.Array(TestGridSession);
 export interface ListTestGridSessionsResult {
   testGridSessions?: TestGridSession[];
   nextToken?: string;
 }
-export const ListTestGridSessionsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      testGridSessions: S.optional(TestGridSessions),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
+export const ListTestGridSessionsResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    testGridSessions: S.optional(TestGridSessions),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "ListTestGridSessionsResult",
 }) as any as S.Schema<ListTestGridSessionsResult>;
@@ -3171,7 +3193,7 @@ export interface ListTestsRequest {
   arn: string;
   nextToken?: string;
 }
-export const ListTestsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListTestsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String, nextToken: S.optional(S.String) }).pipe(
     T.all(
       ns,
@@ -3187,12 +3209,12 @@ export const ListTestsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListTestsRequest",
 }) as any as S.Schema<ListTestsRequest>;
 export type Tests = Test[];
-export const Tests = /*@__PURE__*/ /*#__PURE__*/ S.Array(Test);
+export const Tests = /*@__PURE__*/ S.Array(Test);
 export interface ListTestsResult {
   tests?: Test[];
   nextToken?: string;
 }
-export const ListTestsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListTestsResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ tests: S.optional(Tests), nextToken: S.optional(S.String) }).pipe(
     ns,
   ),
@@ -3203,19 +3225,18 @@ export interface ListUniqueProblemsRequest {
   arn: string;
   nextToken?: string;
 }
-export const ListUniqueProblemsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ arn: S.String, nextToken: S.optional(S.String) }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListUniqueProblemsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String, nextToken: S.optional(S.String) }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "ListUniqueProblemsRequest",
 }) as any as S.Schema<ListUniqueProblemsRequest>;
@@ -3223,7 +3244,7 @@ export interface ProblemDetail {
   arn?: string;
   name?: string;
 }
-export const ProblemDetail = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ProblemDetail = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.optional(S.String), name: S.optional(S.String) }),
 ).annotate({ identifier: "ProblemDetail" }) as any as S.Schema<ProblemDetail>;
 export interface Problem {
@@ -3235,7 +3256,7 @@ export interface Problem {
   result?: ExecutionResult;
   message?: string;
 }
-export const Problem = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Problem = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     run: S.optional(ProblemDetail),
     job: S.optional(ProblemDetail),
@@ -3247,35 +3268,32 @@ export const Problem = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Problem" }) as any as S.Schema<Problem>;
 export type Problems = Problem[];
-export const Problems = /*@__PURE__*/ /*#__PURE__*/ S.Array(Problem);
+export const Problems = /*@__PURE__*/ S.Array(Problem);
 export interface UniqueProblem {
   message?: string;
   problems?: Problem[];
 }
-export const UniqueProblem = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UniqueProblem = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ message: S.optional(S.String), problems: S.optional(Problems) }),
 ).annotate({ identifier: "UniqueProblem" }) as any as S.Schema<UniqueProblem>;
 export type UniqueProblems = UniqueProblem[];
-export const UniqueProblems =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(UniqueProblem);
+export const UniqueProblems = /*@__PURE__*/ S.Array(UniqueProblem);
 export type UniqueProblemsByExecutionResultMap = {
   [key in ExecutionResult]?: UniqueProblem[];
 };
-export const UniqueProblemsByExecutionResultMap =
-  /*@__PURE__*/ /*#__PURE__*/ S.Record(
-    ExecutionResult,
-    UniqueProblems.pipe(S.optional),
-  );
+export const UniqueProblemsByExecutionResultMap = /*@__PURE__*/ S.Record(
+  ExecutionResult,
+  UniqueProblems.pipe(S.optional),
+);
 export interface ListUniqueProblemsResult {
   uniqueProblems?: { [key: string]: UniqueProblem[] | undefined };
   nextToken?: string;
 }
-export const ListUniqueProblemsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      uniqueProblems: S.optional(UniqueProblemsByExecutionResultMap),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
+export const ListUniqueProblemsResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    uniqueProblems: S.optional(UniqueProblemsByExecutionResultMap),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "ListUniqueProblemsResult",
 }) as any as S.Schema<ListUniqueProblemsResult>;
@@ -3284,7 +3302,7 @@ export interface ListUploadsRequest {
   type?: UploadType;
   nextToken?: string;
 }
-export const ListUploadsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListUploadsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.String,
     type: S.optional(UploadType),
@@ -3304,12 +3322,12 @@ export const ListUploadsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListUploadsRequest",
 }) as any as S.Schema<ListUploadsRequest>;
 export type Uploads = Upload[];
-export const Uploads = /*@__PURE__*/ /*#__PURE__*/ S.Array(Upload);
+export const Uploads = /*@__PURE__*/ S.Array(Upload);
 export interface ListUploadsResult {
   uploads?: Upload[];
   nextToken?: string;
 }
-export const ListUploadsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListUploadsResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     uploads: S.optional(Uploads),
     nextToken: S.optional(S.String),
@@ -3321,72 +3339,67 @@ export interface ListVPCEConfigurationsRequest {
   maxResults?: number;
   nextToken?: string;
 }
-export const ListVPCEConfigurationsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      maxResults: S.optional(S.Number),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListVPCEConfigurationsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    maxResults: S.optional(S.Number),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "ListVPCEConfigurationsRequest",
-  }) as any as S.Schema<ListVPCEConfigurationsRequest>;
+  ),
+).annotate({
+  identifier: "ListVPCEConfigurationsRequest",
+}) as any as S.Schema<ListVPCEConfigurationsRequest>;
 export type VPCEConfigurations = VPCEConfiguration[];
-export const VPCEConfigurations =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(VPCEConfiguration);
+export const VPCEConfigurations = /*@__PURE__*/ S.Array(VPCEConfiguration);
 export interface ListVPCEConfigurationsResult {
   vpceConfigurations?: VPCEConfiguration[];
   nextToken?: string;
 }
-export const ListVPCEConfigurationsResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      vpceConfigurations: S.optional(VPCEConfigurations),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "ListVPCEConfigurationsResult",
-  }) as any as S.Schema<ListVPCEConfigurationsResult>;
+export const ListVPCEConfigurationsResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    vpceConfigurations: S.optional(VPCEConfigurations),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "ListVPCEConfigurationsResult",
+}) as any as S.Schema<ListVPCEConfigurationsResult>;
 export interface PurchaseOfferingRequest {
   offeringId: string;
   quantity: number;
   offeringPromotionId?: string;
 }
-export const PurchaseOfferingRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      offeringId: S.String,
-      quantity: S.Number,
-      offeringPromotionId: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const PurchaseOfferingRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    offeringId: S.String,
+    quantity: S.Number,
+    offeringPromotionId: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "PurchaseOfferingRequest",
 }) as any as S.Schema<PurchaseOfferingRequest>;
 export interface PurchaseOfferingResult {
   offeringTransaction?: OfferingTransaction;
 }
-export const PurchaseOfferingResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ offeringTransaction: S.optional(OfferingTransaction) }).pipe(ns),
+export const PurchaseOfferingResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ offeringTransaction: S.optional(OfferingTransaction) }).pipe(ns),
 ).annotate({
   identifier: "PurchaseOfferingResult",
 }) as any as S.Schema<PurchaseOfferingResult>;
@@ -3394,7 +3407,7 @@ export interface RenewOfferingRequest {
   offeringId: string;
   quantity: number;
 }
-export const RenewOfferingRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RenewOfferingRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ offeringId: S.String, quantity: S.Number }).pipe(
     T.all(
       ns,
@@ -3412,7 +3425,7 @@ export const RenewOfferingRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface RenewOfferingResult {
   offeringTransaction?: OfferingTransaction;
 }
-export const RenewOfferingResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RenewOfferingResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ offeringTransaction: S.optional(OfferingTransaction) }).pipe(ns),
 ).annotate({
   identifier: "RenewOfferingResult",
@@ -3421,12 +3434,13 @@ export interface DeviceSelectionConfiguration {
   filters: DeviceFilter[];
   maxDevices: number;
 }
-export const DeviceSelectionConfiguration =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ filters: DeviceFilters, maxDevices: S.Number }),
-  ).annotate({
-    identifier: "DeviceSelectionConfiguration",
-  }) as any as S.Schema<DeviceSelectionConfiguration>;
+export const DeviceSelectionConfiguration = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ filters: DeviceFilters, maxDevices: S.Number }),
+).annotate({
+  identifier: "DeviceSelectionConfiguration",
+}) as any as S.Schema<DeviceSelectionConfiguration>;
+export type AccountsCleanup = boolean;
+export type AppPackagesCleanup = boolean;
 export interface ExecutionConfiguration {
   jobTimeoutMinutes?: number;
   accountsCleanup?: boolean;
@@ -3434,15 +3448,14 @@ export interface ExecutionConfiguration {
   videoCapture?: boolean;
   skipAppResign?: boolean;
 }
-export const ExecutionConfiguration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      jobTimeoutMinutes: S.optional(S.Number),
-      accountsCleanup: S.optional(S.Boolean),
-      appPackagesCleanup: S.optional(S.Boolean),
-      videoCapture: S.optional(S.Boolean),
-      skipAppResign: S.optional(S.Boolean),
-    }),
+export const ExecutionConfiguration = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    jobTimeoutMinutes: S.optional(S.Number),
+    accountsCleanup: S.optional(S.Boolean),
+    appPackagesCleanup: S.optional(S.Boolean),
+    videoCapture: S.optional(S.Boolean),
+    skipAppResign: S.optional(S.Boolean),
+  }),
 ).annotate({
   identifier: "ExecutionConfiguration",
 }) as any as S.Schema<ExecutionConfiguration>;
@@ -3456,7 +3469,7 @@ export interface ScheduleRunRequest {
   configuration?: ScheduleRunConfiguration;
   executionConfiguration?: ExecutionConfiguration;
 }
-export const ScheduleRunRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ScheduleRunRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     projectArn: S.String,
     appArn: S.optional(S.String),
@@ -3483,7 +3496,7 @@ export const ScheduleRunRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface ScheduleRunResult {
   run?: Run;
 }
-export const ScheduleRunResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ScheduleRunResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ run: S.optional(Run) }).pipe(ns),
 ).annotate({
   identifier: "ScheduleRunResult",
@@ -3491,7 +3504,7 @@ export const ScheduleRunResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface StopJobRequest {
   arn: string;
 }
-export const StopJobRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StopJobRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(
       ns,
@@ -3507,41 +3520,39 @@ export const StopJobRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface StopJobResult {
   job?: Job;
 }
-export const StopJobResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StopJobResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ job: S.optional(Job) }).pipe(ns),
 ).annotate({ identifier: "StopJobResult" }) as any as S.Schema<StopJobResult>;
 export interface StopRemoteAccessSessionRequest {
   arn: string;
 }
-export const StopRemoteAccessSessionRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ arn: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const StopRemoteAccessSessionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "StopRemoteAccessSessionRequest",
-  }) as any as S.Schema<StopRemoteAccessSessionRequest>;
+  ),
+).annotate({
+  identifier: "StopRemoteAccessSessionRequest",
+}) as any as S.Schema<StopRemoteAccessSessionRequest>;
 export interface StopRemoteAccessSessionResult {
   remoteAccessSession?: RemoteAccessSession;
 }
-export const StopRemoteAccessSessionResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ remoteAccessSession: S.optional(RemoteAccessSession) }).pipe(ns),
-  ).annotate({
-    identifier: "StopRemoteAccessSessionResult",
-  }) as any as S.Schema<StopRemoteAccessSessionResult>;
+export const StopRemoteAccessSessionResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ remoteAccessSession: S.optional(RemoteAccessSession) }).pipe(ns),
+).annotate({
+  identifier: "StopRemoteAccessSessionResult",
+}) as any as S.Schema<StopRemoteAccessSessionResult>;
 export interface StopRunRequest {
   arn: string;
 }
-export const StopRunRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StopRunRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(
       ns,
@@ -3557,14 +3568,14 @@ export const StopRunRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface StopRunResult {
   run?: Run;
 }
-export const StopRunResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StopRunResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ run: S.optional(Run) }).pipe(ns),
 ).annotate({ identifier: "StopRunResult" }) as any as S.Schema<StopRunResult>;
 export interface TagResourceRequest {
   ResourceARN: string;
   Tags: Tag[];
 }
-export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ResourceARN: S.String, Tags: TagList }).pipe(
     T.all(
       ns,
@@ -3580,18 +3591,18 @@ export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "TagResourceRequest",
 }) as any as S.Schema<TagResourceRequest>;
 export interface TagResourceResponse {}
-export const TagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "TagResourceResponse",
 }) as any as S.Schema<TagResourceResponse>;
 export type TagKeyList = string[];
-export const TagKeyList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TagKeyList = /*@__PURE__*/ S.Array(S.String);
 export interface UntagResourceRequest {
   ResourceARN: string;
   TagKeys: string[];
 }
-export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ResourceARN: S.String, TagKeys: TagKeyList }).pipe(
     T.all(
       ns,
@@ -3607,7 +3618,7 @@ export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "UntagResourceRequest",
 }) as any as S.Schema<UntagResourceRequest>;
 export interface UntagResourceResponse {}
-export const UntagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "UntagResourceResponse",
@@ -3617,31 +3628,30 @@ export interface UpdateDeviceInstanceRequest {
   profileArn?: string;
   labels?: string[];
 }
-export const UpdateDeviceInstanceRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      arn: S.String,
-      profileArn: S.optional(S.String),
-      labels: S.optional(InstanceLabels),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdateDeviceInstanceRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    arn: S.String,
+    profileArn: S.optional(S.String),
+    labels: S.optional(InstanceLabels),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "UpdateDeviceInstanceRequest",
-  }) as any as S.Schema<UpdateDeviceInstanceRequest>;
+  ),
+).annotate({
+  identifier: "UpdateDeviceInstanceRequest",
+}) as any as S.Schema<UpdateDeviceInstanceRequest>;
 export interface UpdateDeviceInstanceResult {
   deviceInstance?: DeviceInstance;
 }
-export const UpdateDeviceInstanceResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ deviceInstance: S.optional(DeviceInstance) }).pipe(ns),
+export const UpdateDeviceInstanceResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ deviceInstance: S.optional(DeviceInstance) }).pipe(ns),
 ).annotate({
   identifier: "UpdateDeviceInstanceResult",
 }) as any as S.Schema<UpdateDeviceInstanceResult>;
@@ -3653,34 +3663,33 @@ export interface UpdateDevicePoolRequest {
   maxDevices?: number;
   clearMaxDevices?: boolean;
 }
-export const UpdateDevicePoolRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      arn: S.String,
-      name: S.optional(S.String),
-      description: S.optional(S.String),
-      rules: S.optional(Rules),
-      maxDevices: S.optional(S.Number),
-      clearMaxDevices: S.optional(S.Boolean),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdateDevicePoolRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    arn: S.String,
+    name: S.optional(S.String),
+    description: S.optional(S.String),
+    rules: S.optional(Rules),
+    maxDevices: S.optional(S.Number),
+    clearMaxDevices: S.optional(S.Boolean),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "UpdateDevicePoolRequest",
 }) as any as S.Schema<UpdateDevicePoolRequest>;
 export interface UpdateDevicePoolResult {
   devicePool?: DevicePool;
 }
-export const UpdateDevicePoolResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ devicePool: S.optional(DevicePool) }).pipe(ns),
+export const UpdateDevicePoolResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ devicePool: S.optional(DevicePool) }).pipe(ns),
 ).annotate({
   identifier: "UpdateDevicePoolResult",
 }) as any as S.Schema<UpdateDevicePoolResult>;
@@ -3692,38 +3701,36 @@ export interface UpdateInstanceProfileRequest {
   excludeAppPackagesFromCleanup?: string[];
   rebootAfterUse?: boolean;
 }
-export const UpdateInstanceProfileRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      arn: S.String,
-      name: S.optional(S.String),
-      description: S.optional(S.String),
-      packageCleanup: S.optional(S.Boolean),
-      excludeAppPackagesFromCleanup: S.optional(PackageIds),
-      rebootAfterUse: S.optional(S.Boolean),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdateInstanceProfileRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    arn: S.String,
+    name: S.optional(S.String),
+    description: S.optional(S.String),
+    packageCleanup: S.optional(S.Boolean),
+    excludeAppPackagesFromCleanup: S.optional(PackageIds),
+    rebootAfterUse: S.optional(S.Boolean),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "UpdateInstanceProfileRequest",
-  }) as any as S.Schema<UpdateInstanceProfileRequest>;
+  ),
+).annotate({
+  identifier: "UpdateInstanceProfileRequest",
+}) as any as S.Schema<UpdateInstanceProfileRequest>;
 export interface UpdateInstanceProfileResult {
   instanceProfile?: InstanceProfile;
 }
-export const UpdateInstanceProfileResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ instanceProfile: S.optional(InstanceProfile) }).pipe(ns),
-  ).annotate({
-    identifier: "UpdateInstanceProfileResult",
-  }) as any as S.Schema<UpdateInstanceProfileResult>;
+export const UpdateInstanceProfileResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ instanceProfile: S.optional(InstanceProfile) }).pipe(ns),
+).annotate({
+  identifier: "UpdateInstanceProfileResult",
+}) as any as S.Schema<UpdateInstanceProfileResult>;
 export interface UpdateNetworkProfileRequest {
   arn: string;
   name?: string;
@@ -3738,40 +3745,39 @@ export interface UpdateNetworkProfileRequest {
   uplinkLossPercent?: number;
   downlinkLossPercent?: number;
 }
-export const UpdateNetworkProfileRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      arn: S.String,
-      name: S.optional(S.String),
-      description: S.optional(S.String),
-      type: S.optional(NetworkProfileType),
-      uplinkBandwidthBits: S.optional(S.Number),
-      downlinkBandwidthBits: S.optional(S.Number),
-      uplinkDelayMs: S.optional(S.Number),
-      downlinkDelayMs: S.optional(S.Number),
-      uplinkJitterMs: S.optional(S.Number),
-      downlinkJitterMs: S.optional(S.Number),
-      uplinkLossPercent: S.optional(S.Number),
-      downlinkLossPercent: S.optional(S.Number),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdateNetworkProfileRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    arn: S.String,
+    name: S.optional(S.String),
+    description: S.optional(S.String),
+    type: S.optional(NetworkProfileType),
+    uplinkBandwidthBits: S.optional(S.Number),
+    downlinkBandwidthBits: S.optional(S.Number),
+    uplinkDelayMs: S.optional(S.Number),
+    downlinkDelayMs: S.optional(S.Number),
+    uplinkJitterMs: S.optional(S.Number),
+    downlinkJitterMs: S.optional(S.Number),
+    uplinkLossPercent: S.optional(S.Number),
+    downlinkLossPercent: S.optional(S.Number),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "UpdateNetworkProfileRequest",
-  }) as any as S.Schema<UpdateNetworkProfileRequest>;
+  ),
+).annotate({
+  identifier: "UpdateNetworkProfileRequest",
+}) as any as S.Schema<UpdateNetworkProfileRequest>;
 export interface UpdateNetworkProfileResult {
   networkProfile?: NetworkProfile;
 }
-export const UpdateNetworkProfileResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ networkProfile: S.optional(NetworkProfile) }).pipe(ns),
+export const UpdateNetworkProfileResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ networkProfile: S.optional(NetworkProfile) }).pipe(ns),
 ).annotate({
   identifier: "UpdateNetworkProfileResult",
 }) as any as S.Schema<UpdateNetworkProfileResult>;
@@ -3783,7 +3789,7 @@ export interface UpdateProjectRequest {
   environmentVariables?: EnvironmentVariable[];
   executionRoleArn?: string;
 }
-export const UpdateProjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateProjectRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.String,
     name: S.optional(S.String),
@@ -3808,7 +3814,7 @@ export const UpdateProjectRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface UpdateProjectResult {
   project?: Project;
 }
-export const UpdateProjectResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateProjectResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ project: S.optional(Project) }).pipe(ns),
 ).annotate({
   identifier: "UpdateProjectResult",
@@ -3819,43 +3825,41 @@ export interface UpdateTestGridProjectRequest {
   description?: string;
   vpcConfig?: TestGridVpcConfig;
 }
-export const UpdateTestGridProjectRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      projectArn: S.String,
-      name: S.optional(S.String),
-      description: S.optional(S.String),
-      vpcConfig: S.optional(TestGridVpcConfig),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdateTestGridProjectRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    projectArn: S.String,
+    name: S.optional(S.String),
+    description: S.optional(S.String),
+    vpcConfig: S.optional(TestGridVpcConfig),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "UpdateTestGridProjectRequest",
-  }) as any as S.Schema<UpdateTestGridProjectRequest>;
+  ),
+).annotate({
+  identifier: "UpdateTestGridProjectRequest",
+}) as any as S.Schema<UpdateTestGridProjectRequest>;
 export interface UpdateTestGridProjectResult {
   testGridProject?: TestGridProject;
 }
-export const UpdateTestGridProjectResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ testGridProject: S.optional(TestGridProject) }).pipe(ns),
-  ).annotate({
-    identifier: "UpdateTestGridProjectResult",
-  }) as any as S.Schema<UpdateTestGridProjectResult>;
+export const UpdateTestGridProjectResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ testGridProject: S.optional(TestGridProject) }).pipe(ns),
+).annotate({
+  identifier: "UpdateTestGridProjectResult",
+}) as any as S.Schema<UpdateTestGridProjectResult>;
 export interface UpdateUploadRequest {
   arn: string;
   name?: string;
   contentType?: string;
   editContent?: boolean;
 }
-export const UpdateUploadRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateUploadRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.String,
     name: S.optional(S.String),
@@ -3878,7 +3882,7 @@ export const UpdateUploadRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface UpdateUploadResult {
   upload?: Upload;
 }
-export const UpdateUploadResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateUploadResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ upload: S.optional(Upload) }).pipe(ns),
 ).annotate({
   identifier: "UpdateUploadResult",
@@ -3890,89 +3894,36 @@ export interface UpdateVPCEConfigurationRequest {
   serviceDnsName?: string;
   vpceConfigurationDescription?: string;
 }
-export const UpdateVPCEConfigurationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      arn: S.String,
-      vpceConfigurationName: S.optional(S.String),
-      vpceServiceName: S.optional(S.String),
-      serviceDnsName: S.optional(S.String),
-      vpceConfigurationDescription: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdateVPCEConfigurationRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    arn: S.String,
+    vpceConfigurationName: S.optional(S.String),
+    vpceServiceName: S.optional(S.String),
+    serviceDnsName: S.optional(S.String),
+    vpceConfigurationDescription: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "UpdateVPCEConfigurationRequest",
-  }) as any as S.Schema<UpdateVPCEConfigurationRequest>;
+  ),
+).annotate({
+  identifier: "UpdateVPCEConfigurationRequest",
+}) as any as S.Schema<UpdateVPCEConfigurationRequest>;
 export interface UpdateVPCEConfigurationResult {
   vpceConfiguration?: VPCEConfiguration;
 }
-export const UpdateVPCEConfigurationResult =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ vpceConfiguration: S.optional(VPCEConfiguration) }).pipe(ns),
-  ).annotate({
-    identifier: "UpdateVPCEConfigurationResult",
-  }) as any as S.Schema<UpdateVPCEConfigurationResult>;
-
-//# Errors
-export class ArgumentException extends S.TaggedErrorClass<ArgumentException>()(
-  "ArgumentException",
-  { message: S.optional(S.String) },
-) {}
-export class LimitExceededException extends S.TaggedErrorClass<LimitExceededException>()(
-  "LimitExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class NotFoundException extends S.TaggedErrorClass<NotFoundException>()(
-  "NotFoundException",
-  { message: S.optional(S.String) },
-) {}
-export class ServiceAccountException extends S.TaggedErrorClass<ServiceAccountException>()(
-  "ServiceAccountException",
-  { message: S.optional(S.String) },
-) {}
-export class TagOperationException extends S.TaggedErrorClass<TagOperationException>()(
-  "TagOperationException",
-  { message: S.optional(S.String), resourceName: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InternalServiceException extends S.TaggedErrorClass<InternalServiceException>()(
-  "InternalServiceException",
-  { message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class CannotDeleteException extends S.TaggedErrorClass<CannotDeleteException>()(
-  "CannotDeleteException",
-  { message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class InvalidOperationException extends S.TaggedErrorClass<InvalidOperationException>()(
-  "InvalidOperationException",
-  { message: S.optional(S.String) },
-) {}
-export class NotEligibleException extends S.TaggedErrorClass<NotEligibleException>()(
-  "NotEligibleException",
-  { message: S.optional(S.String) },
-) {}
-export class IdempotencyException extends S.TaggedErrorClass<IdempotencyException>()(
-  "IdempotencyException",
-  { message: S.optional(S.String) },
-) {}
-export class TagPolicyException extends S.TaggedErrorClass<TagPolicyException>()(
-  "TagPolicyException",
-  { message: S.optional(S.String), resourceName: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class TooManyTagsException extends S.TaggedErrorClass<TooManyTagsException>()(
-  "TooManyTagsException",
-  { message: S.optional(S.String), resourceName: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-
-//# Operations
+export const UpdateVPCEConfigurationResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ vpceConfiguration: S.optional(VPCEConfiguration) }).pipe(ns),
+).annotate({
+  identifier: "UpdateVPCEConfigurationResult",
+}) as any as S.Schema<UpdateVPCEConfigurationResult>;
+export type ExceptionMessage = string;
 export type CreateDevicePoolError =
   | ArgumentException
   | LimitExceededException
@@ -3986,8 +3937,8 @@ export const createDevicePool: API.OperationMethod<
   CreateDevicePoolRequest,
   CreateDevicePoolResult,
   CreateDevicePoolError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateDevicePoolRequest,
   output: CreateDevicePoolResult,
   errors: [
@@ -3996,7 +3947,11 @@ export const createDevicePool: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateDevicePool",
 }));
+
 export type CreateInstanceProfileError =
   | ArgumentException
   | LimitExceededException
@@ -4011,8 +3966,8 @@ export const createInstanceProfile: API.OperationMethod<
   CreateInstanceProfileRequest,
   CreateInstanceProfileResult,
   CreateInstanceProfileError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateInstanceProfileRequest,
   output: CreateInstanceProfileResult,
   errors: [
@@ -4021,7 +3976,11 @@ export const createInstanceProfile: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateInstanceProfile",
 }));
+
 export type CreateNetworkProfileError =
   | ArgumentException
   | LimitExceededException
@@ -4035,8 +3994,8 @@ export const createNetworkProfile: API.OperationMethod<
   CreateNetworkProfileRequest,
   CreateNetworkProfileResult,
   CreateNetworkProfileError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateNetworkProfileRequest,
   output: CreateNetworkProfileResult,
   errors: [
@@ -4045,7 +4004,11 @@ export const createNetworkProfile: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateNetworkProfile",
 }));
+
 export type CreateProjectError =
   | ArgumentException
   | LimitExceededException
@@ -4060,8 +4023,8 @@ export const createProject: API.OperationMethod<
   CreateProjectRequest,
   CreateProjectResult,
   CreateProjectError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateProjectRequest,
   output: CreateProjectResult,
   errors: [
@@ -4071,7 +4034,11 @@ export const createProject: API.OperationMethod<
     ServiceAccountException,
     TagOperationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateProject",
 }));
+
 export type CreateRemoteAccessSessionError =
   | ArgumentException
   | LimitExceededException
@@ -4085,8 +4052,8 @@ export const createRemoteAccessSession: API.OperationMethod<
   CreateRemoteAccessSessionRequest,
   CreateRemoteAccessSessionResult,
   CreateRemoteAccessSessionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateRemoteAccessSessionRequest,
   output: CreateRemoteAccessSessionResult,
   errors: [
@@ -4095,7 +4062,11 @@ export const createRemoteAccessSession: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateRemoteAccessSession",
 }));
+
 export type CreateTestGridProjectError =
   | ArgumentException
   | InternalServiceException
@@ -4109,12 +4080,16 @@ export const createTestGridProject: API.OperationMethod<
   CreateTestGridProjectRequest,
   CreateTestGridProjectResult,
   CreateTestGridProjectError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateTestGridProjectRequest,
   output: CreateTestGridProjectResult,
   errors: [ArgumentException, InternalServiceException, LimitExceededException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateTestGridProject",
 }));
+
 export type CreateTestGridUrlError =
   | ArgumentException
   | InternalServiceException
@@ -4128,12 +4103,16 @@ export const createTestGridUrl: API.OperationMethod<
   CreateTestGridUrlRequest,
   CreateTestGridUrlResult,
   CreateTestGridUrlError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateTestGridUrlRequest,
   output: CreateTestGridUrlResult,
   errors: [ArgumentException, InternalServiceException, NotFoundException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateTestGridUrl",
 }));
+
 export type CreateUploadError =
   | ArgumentException
   | LimitExceededException
@@ -4147,8 +4126,8 @@ export const createUpload: API.OperationMethod<
   CreateUploadRequest,
   CreateUploadResult,
   CreateUploadError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateUploadRequest,
   output: CreateUploadResult,
   errors: [
@@ -4157,7 +4136,11 @@ export const createUpload: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateUpload",
 }));
+
 export type CreateVPCEConfigurationError =
   | ArgumentException
   | LimitExceededException
@@ -4171,12 +4154,16 @@ export const createVPCEConfiguration: API.OperationMethod<
   CreateVPCEConfigurationRequest,
   CreateVPCEConfigurationResult,
   CreateVPCEConfigurationError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateVPCEConfigurationRequest,
   output: CreateVPCEConfigurationResult,
   errors: [ArgumentException, LimitExceededException, ServiceAccountException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateVPCEConfiguration",
 }));
+
 export type DeleteDevicePoolError =
   | ArgumentException
   | LimitExceededException
@@ -4191,8 +4178,8 @@ export const deleteDevicePool: API.OperationMethod<
   DeleteDevicePoolRequest,
   DeleteDevicePoolResult,
   DeleteDevicePoolError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteDevicePoolRequest,
   output: DeleteDevicePoolResult,
   errors: [
@@ -4201,7 +4188,11 @@ export const deleteDevicePool: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteDevicePool",
 }));
+
 export type DeleteInstanceProfileError =
   | ArgumentException
   | LimitExceededException
@@ -4215,8 +4206,8 @@ export const deleteInstanceProfile: API.OperationMethod<
   DeleteInstanceProfileRequest,
   DeleteInstanceProfileResult,
   DeleteInstanceProfileError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteInstanceProfileRequest,
   output: DeleteInstanceProfileResult,
   errors: [
@@ -4225,7 +4216,11 @@ export const deleteInstanceProfile: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteInstanceProfile",
 }));
+
 export type DeleteNetworkProfileError =
   | ArgumentException
   | LimitExceededException
@@ -4239,8 +4234,8 @@ export const deleteNetworkProfile: API.OperationMethod<
   DeleteNetworkProfileRequest,
   DeleteNetworkProfileResult,
   DeleteNetworkProfileError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteNetworkProfileRequest,
   output: DeleteNetworkProfileResult,
   errors: [
@@ -4249,7 +4244,11 @@ export const deleteNetworkProfile: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteNetworkProfile",
 }));
+
 export type DeleteProjectError =
   | ArgumentException
   | LimitExceededException
@@ -4265,8 +4264,8 @@ export const deleteProject: API.OperationMethod<
   DeleteProjectRequest,
   DeleteProjectResult,
   DeleteProjectError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteProjectRequest,
   output: DeleteProjectResult,
   errors: [
@@ -4275,7 +4274,11 @@ export const deleteProject: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteProject",
 }));
+
 export type DeleteRemoteAccessSessionError =
   | ArgumentException
   | LimitExceededException
@@ -4291,8 +4294,8 @@ export const deleteRemoteAccessSession: API.OperationMethod<
   DeleteRemoteAccessSessionRequest,
   DeleteRemoteAccessSessionResult,
   DeleteRemoteAccessSessionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteRemoteAccessSessionRequest,
   output: DeleteRemoteAccessSessionResult,
   errors: [
@@ -4301,7 +4304,11 @@ export const deleteRemoteAccessSession: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteRemoteAccessSession",
 }));
+
 export type DeleteRunError =
   | ArgumentException
   | LimitExceededException
@@ -4317,8 +4324,8 @@ export const deleteRun: API.OperationMethod<
   DeleteRunRequest,
   DeleteRunResult,
   DeleteRunError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteRunRequest,
   output: DeleteRunResult,
   errors: [
@@ -4327,7 +4334,11 @@ export const deleteRun: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteRun",
 }));
+
 export type DeleteTestGridProjectError =
   | ArgumentException
   | CannotDeleteException
@@ -4343,8 +4354,8 @@ export const deleteTestGridProject: API.OperationMethod<
   DeleteTestGridProjectRequest,
   DeleteTestGridProjectResult,
   DeleteTestGridProjectError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteTestGridProjectRequest,
   output: DeleteTestGridProjectResult,
   errors: [
@@ -4353,7 +4364,11 @@ export const deleteTestGridProject: API.OperationMethod<
     InternalServiceException,
     NotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteTestGridProject",
 }));
+
 export type DeleteUploadError =
   | ArgumentException
   | LimitExceededException
@@ -4367,8 +4382,8 @@ export const deleteUpload: API.OperationMethod<
   DeleteUploadRequest,
   DeleteUploadResult,
   DeleteUploadError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteUploadRequest,
   output: DeleteUploadResult,
   errors: [
@@ -4377,7 +4392,11 @@ export const deleteUpload: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteUpload",
 }));
+
 export type DeleteVPCEConfigurationError =
   | ArgumentException
   | InvalidOperationException
@@ -4391,8 +4410,8 @@ export const deleteVPCEConfiguration: API.OperationMethod<
   DeleteVPCEConfigurationRequest,
   DeleteVPCEConfigurationResult,
   DeleteVPCEConfigurationError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteVPCEConfigurationRequest,
   output: DeleteVPCEConfigurationResult,
   errors: [
@@ -4401,7 +4420,11 @@ export const deleteVPCEConfiguration: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteVPCEConfiguration",
 }));
+
 export type GetAccountSettingsError =
   | ArgumentException
   | LimitExceededException
@@ -4416,8 +4439,8 @@ export const getAccountSettings: API.OperationMethod<
   GetAccountSettingsRequest,
   GetAccountSettingsResult,
   GetAccountSettingsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetAccountSettingsRequest,
   output: GetAccountSettingsResult,
   errors: [
@@ -4426,7 +4449,11 @@ export const getAccountSettings: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetAccountSettings",
 }));
+
 export type GetDeviceError =
   | ArgumentException
   | LimitExceededException
@@ -4440,8 +4467,8 @@ export const getDevice: API.OperationMethod<
   GetDeviceRequest,
   GetDeviceResult,
   GetDeviceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetDeviceRequest,
   output: GetDeviceResult,
   errors: [
@@ -4450,7 +4477,11 @@ export const getDevice: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetDevice",
 }));
+
 export type GetDeviceInstanceError =
   | ArgumentException
   | LimitExceededException
@@ -4464,8 +4495,8 @@ export const getDeviceInstance: API.OperationMethod<
   GetDeviceInstanceRequest,
   GetDeviceInstanceResult,
   GetDeviceInstanceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetDeviceInstanceRequest,
   output: GetDeviceInstanceResult,
   errors: [
@@ -4474,7 +4505,11 @@ export const getDeviceInstance: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetDeviceInstance",
 }));
+
 export type GetDevicePoolError =
   | ArgumentException
   | LimitExceededException
@@ -4488,8 +4523,8 @@ export const getDevicePool: API.OperationMethod<
   GetDevicePoolRequest,
   GetDevicePoolResult,
   GetDevicePoolError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetDevicePoolRequest,
   output: GetDevicePoolResult,
   errors: [
@@ -4498,7 +4533,11 @@ export const getDevicePool: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetDevicePool",
 }));
+
 export type GetDevicePoolCompatibilityError =
   | ArgumentException
   | LimitExceededException
@@ -4512,8 +4551,8 @@ export const getDevicePoolCompatibility: API.OperationMethod<
   GetDevicePoolCompatibilityRequest,
   GetDevicePoolCompatibilityResult,
   GetDevicePoolCompatibilityError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetDevicePoolCompatibilityRequest,
   output: GetDevicePoolCompatibilityResult,
   errors: [
@@ -4522,7 +4561,11 @@ export const getDevicePoolCompatibility: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetDevicePoolCompatibility",
 }));
+
 export type GetInstanceProfileError =
   | ArgumentException
   | LimitExceededException
@@ -4536,8 +4579,8 @@ export const getInstanceProfile: API.OperationMethod<
   GetInstanceProfileRequest,
   GetInstanceProfileResult,
   GetInstanceProfileError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetInstanceProfileRequest,
   output: GetInstanceProfileResult,
   errors: [
@@ -4546,7 +4589,11 @@ export const getInstanceProfile: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetInstanceProfile",
 }));
+
 export type GetJobError =
   | ArgumentException
   | LimitExceededException
@@ -4560,8 +4607,8 @@ export const getJob: API.OperationMethod<
   GetJobRequest,
   GetJobResult,
   GetJobError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetJobRequest,
   output: GetJobResult,
   errors: [
@@ -4570,7 +4617,11 @@ export const getJob: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetJob",
 }));
+
 export type GetNetworkProfileError =
   | ArgumentException
   | LimitExceededException
@@ -4584,8 +4635,8 @@ export const getNetworkProfile: API.OperationMethod<
   GetNetworkProfileRequest,
   GetNetworkProfileResult,
   GetNetworkProfileError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetNetworkProfileRequest,
   output: GetNetworkProfileResult,
   errors: [
@@ -4594,7 +4645,11 @@ export const getNetworkProfile: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetNetworkProfile",
 }));
+
 export type GetOfferingStatusError =
   | ArgumentException
   | LimitExceededException
@@ -4608,27 +4663,13 @@ export type GetOfferingStatusError =
  * period. The API returns a `NotEligible` error if the user is not permitted to invoke the
  * operation. If you must be able to invoke this operation, contact aws-devicefarm-support@amazon.com.
  */
-export const getOfferingStatus: API.OperationMethod<
+export const getOfferingStatus: API.PaginatedOperationMethod<
   GetOfferingStatusRequest,
   GetOfferingStatusResult,
   GetOfferingStatusError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: GetOfferingStatusRequest,
-  ) => stream.Stream<
-    GetOfferingStatusResult,
-    GetOfferingStatusError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: GetOfferingStatusRequest,
-  ) => stream.Stream<
-    unknown,
-    GetOfferingStatusError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: GetOfferingStatusRequest,
   output: GetOfferingStatusResult,
   errors: [
@@ -4638,8 +4679,12 @@ export const getOfferingStatus: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetOfferingStatus",
   pagination: { inputToken: "nextToken", outputToken: "nextToken" } as const,
-}));
+})) as any;
+
 export type GetProjectError =
   | ArgumentException
   | LimitExceededException
@@ -4653,8 +4698,8 @@ export const getProject: API.OperationMethod<
   GetProjectRequest,
   GetProjectResult,
   GetProjectError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetProjectRequest,
   output: GetProjectResult,
   errors: [
@@ -4663,7 +4708,11 @@ export const getProject: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetProject",
 }));
+
 export type GetRemoteAccessSessionError =
   | ArgumentException
   | LimitExceededException
@@ -4677,8 +4726,8 @@ export const getRemoteAccessSession: API.OperationMethod<
   GetRemoteAccessSessionRequest,
   GetRemoteAccessSessionResult,
   GetRemoteAccessSessionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetRemoteAccessSessionRequest,
   output: GetRemoteAccessSessionResult,
   errors: [
@@ -4687,7 +4736,11 @@ export const getRemoteAccessSession: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetRemoteAccessSession",
 }));
+
 export type GetRunError =
   | ArgumentException
   | LimitExceededException
@@ -4701,8 +4754,8 @@ export const getRun: API.OperationMethod<
   GetRunRequest,
   GetRunResult,
   GetRunError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetRunRequest,
   output: GetRunResult,
   errors: [
@@ -4711,7 +4764,11 @@ export const getRun: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetRun",
 }));
+
 export type GetSuiteError =
   | ArgumentException
   | LimitExceededException
@@ -4725,8 +4782,8 @@ export const getSuite: API.OperationMethod<
   GetSuiteRequest,
   GetSuiteResult,
   GetSuiteError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetSuiteRequest,
   output: GetSuiteResult,
   errors: [
@@ -4735,7 +4792,11 @@ export const getSuite: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetSuite",
 }));
+
 export type GetTestError =
   | ArgumentException
   | LimitExceededException
@@ -4749,8 +4810,8 @@ export const getTest: API.OperationMethod<
   GetTestRequest,
   GetTestResult,
   GetTestError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetTestRequest,
   output: GetTestResult,
   errors: [
@@ -4759,7 +4820,11 @@ export const getTest: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetTest",
 }));
+
 export type GetTestGridProjectError =
   | ArgumentException
   | InternalServiceException
@@ -4772,12 +4837,16 @@ export const getTestGridProject: API.OperationMethod<
   GetTestGridProjectRequest,
   GetTestGridProjectResult,
   GetTestGridProjectError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetTestGridProjectRequest,
   output: GetTestGridProjectResult,
   errors: [ArgumentException, InternalServiceException, NotFoundException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetTestGridProject",
 }));
+
 export type GetTestGridSessionError =
   | ArgumentException
   | InternalServiceException
@@ -4794,12 +4863,16 @@ export const getTestGridSession: API.OperationMethod<
   GetTestGridSessionRequest,
   GetTestGridSessionResult,
   GetTestGridSessionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetTestGridSessionRequest,
   output: GetTestGridSessionResult,
   errors: [ArgumentException, InternalServiceException, NotFoundException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetTestGridSession",
 }));
+
 export type GetUploadError =
   | ArgumentException
   | LimitExceededException
@@ -4813,8 +4886,8 @@ export const getUpload: API.OperationMethod<
   GetUploadRequest,
   GetUploadResult,
   GetUploadError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetUploadRequest,
   output: GetUploadResult,
   errors: [
@@ -4823,7 +4896,11 @@ export const getUpload: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetUpload",
 }));
+
 export type GetVPCEConfigurationError =
   | ArgumentException
   | NotFoundException
@@ -4837,12 +4914,16 @@ export const getVPCEConfiguration: API.OperationMethod<
   GetVPCEConfigurationRequest,
   GetVPCEConfigurationResult,
   GetVPCEConfigurationError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetVPCEConfigurationRequest,
   output: GetVPCEConfigurationResult,
   errors: [ArgumentException, NotFoundException, ServiceAccountException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetVPCEConfiguration",
 }));
+
 export type InstallToRemoteAccessSessionError =
   | ArgumentException
   | LimitExceededException
@@ -4858,8 +4939,8 @@ export const installToRemoteAccessSession: API.OperationMethod<
   InstallToRemoteAccessSessionRequest,
   InstallToRemoteAccessSessionResult,
   InstallToRemoteAccessSessionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: InstallToRemoteAccessSessionRequest,
   output: InstallToRemoteAccessSessionResult,
   errors: [
@@ -4868,7 +4949,11 @@ export const installToRemoteAccessSession: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "InstallToRemoteAccessSession",
 }));
+
 export type ListArtifactsError =
   | ArgumentException
   | LimitExceededException
@@ -4878,27 +4963,13 @@ export type ListArtifactsError =
 /**
  * Gets information about artifacts.
  */
-export const listArtifacts: API.OperationMethod<
+export const listArtifacts: API.PaginatedOperationMethod<
   ListArtifactsRequest,
   ListArtifactsResult,
   ListArtifactsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListArtifactsRequest,
-  ) => stream.Stream<
-    ListArtifactsResult,
-    ListArtifactsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListArtifactsRequest,
-  ) => stream.Stream<
-    Artifact,
-    ListArtifactsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Artifact
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListArtifactsRequest,
   output: ListArtifactsResult,
   errors: [
@@ -4907,12 +4978,16 @@ export const listArtifacts: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListArtifacts",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "artifacts",
   } as const,
-}));
+})) as any;
+
 export type ListDeviceInstancesError =
   | ArgumentException
   | LimitExceededException
@@ -4927,8 +5002,8 @@ export const listDeviceInstances: API.OperationMethod<
   ListDeviceInstancesRequest,
   ListDeviceInstancesResult,
   ListDeviceInstancesError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListDeviceInstancesRequest,
   output: ListDeviceInstancesResult,
   errors: [
@@ -4937,7 +5012,11 @@ export const listDeviceInstances: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListDeviceInstances",
 }));
+
 export type ListDevicePoolsError =
   | ArgumentException
   | LimitExceededException
@@ -4947,27 +5026,13 @@ export type ListDevicePoolsError =
 /**
  * Gets information about device pools.
  */
-export const listDevicePools: API.OperationMethod<
+export const listDevicePools: API.PaginatedOperationMethod<
   ListDevicePoolsRequest,
   ListDevicePoolsResult,
   ListDevicePoolsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListDevicePoolsRequest,
-  ) => stream.Stream<
-    ListDevicePoolsResult,
-    ListDevicePoolsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListDevicePoolsRequest,
-  ) => stream.Stream<
-    DevicePool,
-    ListDevicePoolsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  DevicePool
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListDevicePoolsRequest,
   output: ListDevicePoolsResult,
   errors: [
@@ -4976,12 +5041,16 @@ export const listDevicePools: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListDevicePools",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "devicePools",
   } as const,
-}));
+})) as any;
+
 export type ListDevicesError =
   | ArgumentException
   | LimitExceededException
@@ -4991,27 +5060,13 @@ export type ListDevicesError =
 /**
  * Gets information about unique device types.
  */
-export const listDevices: API.OperationMethod<
+export const listDevices: API.PaginatedOperationMethod<
   ListDevicesRequest,
   ListDevicesResult,
   ListDevicesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListDevicesRequest,
-  ) => stream.Stream<
-    ListDevicesResult,
-    ListDevicesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListDevicesRequest,
-  ) => stream.Stream<
-    Device,
-    ListDevicesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Device
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListDevicesRequest,
   output: ListDevicesResult,
   errors: [
@@ -5020,12 +5075,16 @@ export const listDevices: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListDevices",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "devices",
   } as const,
-}));
+})) as any;
+
 export type ListInstanceProfilesError =
   | ArgumentException
   | LimitExceededException
@@ -5039,8 +5098,8 @@ export const listInstanceProfiles: API.OperationMethod<
   ListInstanceProfilesRequest,
   ListInstanceProfilesResult,
   ListInstanceProfilesError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListInstanceProfilesRequest,
   output: ListInstanceProfilesResult,
   errors: [
@@ -5049,7 +5108,11 @@ export const listInstanceProfiles: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListInstanceProfiles",
 }));
+
 export type ListJobsError =
   | ArgumentException
   | LimitExceededException
@@ -5059,27 +5122,13 @@ export type ListJobsError =
 /**
  * Gets information about jobs for a given test run.
  */
-export const listJobs: API.OperationMethod<
+export const listJobs: API.PaginatedOperationMethod<
   ListJobsRequest,
   ListJobsResult,
   ListJobsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListJobsRequest,
-  ) => stream.Stream<
-    ListJobsResult,
-    ListJobsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListJobsRequest,
-  ) => stream.Stream<
-    Job,
-    ListJobsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Job
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListJobsRequest,
   output: ListJobsResult,
   errors: [
@@ -5088,12 +5137,16 @@ export const listJobs: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListJobs",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "jobs",
   } as const,
-}));
+})) as any;
+
 export type ListNetworkProfilesError =
   | ArgumentException
   | LimitExceededException
@@ -5107,8 +5160,8 @@ export const listNetworkProfiles: API.OperationMethod<
   ListNetworkProfilesRequest,
   ListNetworkProfilesResult,
   ListNetworkProfilesError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListNetworkProfilesRequest,
   output: ListNetworkProfilesResult,
   errors: [
@@ -5117,7 +5170,11 @@ export const listNetworkProfiles: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListNetworkProfiles",
 }));
+
 export type ListOfferingPromotionsError =
   | ArgumentException
   | LimitExceededException
@@ -5134,8 +5191,8 @@ export const listOfferingPromotions: API.OperationMethod<
   ListOfferingPromotionsRequest,
   ListOfferingPromotionsResult,
   ListOfferingPromotionsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListOfferingPromotionsRequest,
   output: ListOfferingPromotionsResult,
   errors: [
@@ -5145,7 +5202,11 @@ export const listOfferingPromotions: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListOfferingPromotions",
 }));
+
 export type ListOfferingsError =
   | ArgumentException
   | LimitExceededException
@@ -5159,27 +5220,13 @@ export type ListOfferingsError =
  * `NotEligible` error if the user is not permitted to invoke the operation. If you must be
  * able to invoke this operation, contact aws-devicefarm-support@amazon.com.
  */
-export const listOfferings: API.OperationMethod<
+export const listOfferings: API.PaginatedOperationMethod<
   ListOfferingsRequest,
   ListOfferingsResult,
   ListOfferingsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListOfferingsRequest,
-  ) => stream.Stream<
-    ListOfferingsResult,
-    ListOfferingsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListOfferingsRequest,
-  ) => stream.Stream<
-    Offering,
-    ListOfferingsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Offering
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListOfferingsRequest,
   output: ListOfferingsResult,
   errors: [
@@ -5189,12 +5236,16 @@ export const listOfferings: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListOfferings",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "offerings",
   } as const,
-}));
+})) as any;
+
 export type ListOfferingTransactionsError =
   | ArgumentException
   | LimitExceededException
@@ -5208,27 +5259,13 @@ export type ListOfferingTransactionsError =
  * The API returns a `NotEligible` error if the user is not permitted to invoke the operation. If
  * you must be able to invoke this operation, contact aws-devicefarm-support@amazon.com.
  */
-export const listOfferingTransactions: API.OperationMethod<
+export const listOfferingTransactions: API.PaginatedOperationMethod<
   ListOfferingTransactionsRequest,
   ListOfferingTransactionsResult,
   ListOfferingTransactionsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListOfferingTransactionsRequest,
-  ) => stream.Stream<
-    ListOfferingTransactionsResult,
-    ListOfferingTransactionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListOfferingTransactionsRequest,
-  ) => stream.Stream<
-    OfferingTransaction,
-    ListOfferingTransactionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  OfferingTransaction
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListOfferingTransactionsRequest,
   output: ListOfferingTransactionsResult,
   errors: [
@@ -5238,12 +5275,16 @@ export const listOfferingTransactions: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListOfferingTransactions",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "offeringTransactions",
   } as const,
-}));
+})) as any;
+
 export type ListProjectsError =
   | ArgumentException
   | LimitExceededException
@@ -5253,27 +5294,13 @@ export type ListProjectsError =
 /**
  * Gets information about projects.
  */
-export const listProjects: API.OperationMethod<
+export const listProjects: API.PaginatedOperationMethod<
   ListProjectsRequest,
   ListProjectsResult,
   ListProjectsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListProjectsRequest,
-  ) => stream.Stream<
-    ListProjectsResult,
-    ListProjectsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListProjectsRequest,
-  ) => stream.Stream<
-    Project,
-    ListProjectsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Project
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListProjectsRequest,
   output: ListProjectsResult,
   errors: [
@@ -5282,12 +5309,16 @@ export const listProjects: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListProjects",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "projects",
   } as const,
-}));
+})) as any;
+
 export type ListRemoteAccessSessionsError =
   | ArgumentException
   | LimitExceededException
@@ -5301,8 +5332,8 @@ export const listRemoteAccessSessions: API.OperationMethod<
   ListRemoteAccessSessionsRequest,
   ListRemoteAccessSessionsResult,
   ListRemoteAccessSessionsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListRemoteAccessSessionsRequest,
   output: ListRemoteAccessSessionsResult,
   errors: [
@@ -5311,7 +5342,11 @@ export const listRemoteAccessSessions: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListRemoteAccessSessions",
 }));
+
 export type ListRunsError =
   | ArgumentException
   | LimitExceededException
@@ -5321,27 +5356,13 @@ export type ListRunsError =
 /**
  * Gets information about runs, given an AWS Device Farm project ARN.
  */
-export const listRuns: API.OperationMethod<
+export const listRuns: API.PaginatedOperationMethod<
   ListRunsRequest,
   ListRunsResult,
   ListRunsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListRunsRequest,
-  ) => stream.Stream<
-    ListRunsResult,
-    ListRunsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListRunsRequest,
-  ) => stream.Stream<
-    Run,
-    ListRunsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Run
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListRunsRequest,
   output: ListRunsResult,
   errors: [
@@ -5350,12 +5371,16 @@ export const listRuns: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListRuns",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "runs",
   } as const,
-}));
+})) as any;
+
 export type ListSamplesError =
   | ArgumentException
   | LimitExceededException
@@ -5365,27 +5390,13 @@ export type ListSamplesError =
 /**
  * Gets information about samples, given an AWS Device Farm job ARN.
  */
-export const listSamples: API.OperationMethod<
+export const listSamples: API.PaginatedOperationMethod<
   ListSamplesRequest,
   ListSamplesResult,
   ListSamplesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListSamplesRequest,
-  ) => stream.Stream<
-    ListSamplesResult,
-    ListSamplesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListSamplesRequest,
-  ) => stream.Stream<
-    Sample,
-    ListSamplesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Sample
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListSamplesRequest,
   output: ListSamplesResult,
   errors: [
@@ -5394,12 +5405,16 @@ export const listSamples: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListSamples",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "samples",
   } as const,
-}));
+})) as any;
+
 export type ListSuitesError =
   | ArgumentException
   | LimitExceededException
@@ -5409,27 +5424,13 @@ export type ListSuitesError =
 /**
  * Gets information about test suites for a given job.
  */
-export const listSuites: API.OperationMethod<
+export const listSuites: API.PaginatedOperationMethod<
   ListSuitesRequest,
   ListSuitesResult,
   ListSuitesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListSuitesRequest,
-  ) => stream.Stream<
-    ListSuitesResult,
-    ListSuitesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListSuitesRequest,
-  ) => stream.Stream<
-    Suite,
-    ListSuitesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Suite
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListSuitesRequest,
   output: ListSuitesResult,
   errors: [
@@ -5438,12 +5439,16 @@ export const listSuites: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListSuites",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "suites",
   } as const,
-}));
+})) as any;
+
 export type ListTagsForResourceError =
   | ArgumentException
   | NotFoundException
@@ -5456,12 +5461,16 @@ export const listTagsForResource: API.OperationMethod<
   ListTagsForResourceRequest,
   ListTagsForResourceResponse,
   ListTagsForResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListTagsForResourceRequest,
   output: ListTagsForResourceResponse,
   errors: [ArgumentException, NotFoundException, TagOperationException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTagsForResource",
 }));
+
 export type ListTestGridProjectsError =
   | ArgumentException
   | InternalServiceException
@@ -5469,36 +5478,26 @@ export type ListTestGridProjectsError =
 /**
  * Gets a list of all Selenium testing projects in your account.
  */
-export const listTestGridProjects: API.OperationMethod<
+export const listTestGridProjects: API.PaginatedOperationMethod<
   ListTestGridProjectsRequest,
   ListTestGridProjectsResult,
   ListTestGridProjectsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListTestGridProjectsRequest,
-  ) => stream.Stream<
-    ListTestGridProjectsResult,
-    ListTestGridProjectsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListTestGridProjectsRequest,
-  ) => stream.Stream<
-    unknown,
-    ListTestGridProjectsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListTestGridProjectsRequest,
   output: ListTestGridProjectsResult,
   errors: [ArgumentException, InternalServiceException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTestGridProjects",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxResult",
   } as const,
-}));
+})) as any;
+
 export type ListTestGridSessionActionsError =
   | ArgumentException
   | InternalServiceException
@@ -5507,36 +5506,26 @@ export type ListTestGridSessionActionsError =
 /**
  * Returns a list of the actions taken in a TestGridSession.
  */
-export const listTestGridSessionActions: API.OperationMethod<
+export const listTestGridSessionActions: API.PaginatedOperationMethod<
   ListTestGridSessionActionsRequest,
   ListTestGridSessionActionsResult,
   ListTestGridSessionActionsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListTestGridSessionActionsRequest,
-  ) => stream.Stream<
-    ListTestGridSessionActionsResult,
-    ListTestGridSessionActionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListTestGridSessionActionsRequest,
-  ) => stream.Stream<
-    unknown,
-    ListTestGridSessionActionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListTestGridSessionActionsRequest,
   output: ListTestGridSessionActionsResult,
   errors: [ArgumentException, InternalServiceException, NotFoundException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTestGridSessionActions",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxResult",
   } as const,
-}));
+})) as any;
+
 export type ListTestGridSessionArtifactsError =
   | ArgumentException
   | InternalServiceException
@@ -5545,36 +5534,26 @@ export type ListTestGridSessionArtifactsError =
 /**
  * Retrieves a list of artifacts created during the session.
  */
-export const listTestGridSessionArtifacts: API.OperationMethod<
+export const listTestGridSessionArtifacts: API.PaginatedOperationMethod<
   ListTestGridSessionArtifactsRequest,
   ListTestGridSessionArtifactsResult,
   ListTestGridSessionArtifactsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListTestGridSessionArtifactsRequest,
-  ) => stream.Stream<
-    ListTestGridSessionArtifactsResult,
-    ListTestGridSessionArtifactsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListTestGridSessionArtifactsRequest,
-  ) => stream.Stream<
-    unknown,
-    ListTestGridSessionArtifactsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListTestGridSessionArtifactsRequest,
   output: ListTestGridSessionArtifactsResult,
   errors: [ArgumentException, InternalServiceException, NotFoundException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTestGridSessionArtifacts",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxResult",
   } as const,
-}));
+})) as any;
+
 export type ListTestGridSessionsError =
   | ArgumentException
   | InternalServiceException
@@ -5583,36 +5562,26 @@ export type ListTestGridSessionsError =
 /**
  * Retrieves a list of sessions for a TestGridProject.
  */
-export const listTestGridSessions: API.OperationMethod<
+export const listTestGridSessions: API.PaginatedOperationMethod<
   ListTestGridSessionsRequest,
   ListTestGridSessionsResult,
   ListTestGridSessionsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListTestGridSessionsRequest,
-  ) => stream.Stream<
-    ListTestGridSessionsResult,
-    ListTestGridSessionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListTestGridSessionsRequest,
-  ) => stream.Stream<
-    unknown,
-    ListTestGridSessionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListTestGridSessionsRequest,
   output: ListTestGridSessionsResult,
   errors: [ArgumentException, InternalServiceException, NotFoundException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTestGridSessions",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxResult",
   } as const,
-}));
+})) as any;
+
 export type ListTestsError =
   | ArgumentException
   | LimitExceededException
@@ -5622,27 +5591,13 @@ export type ListTestsError =
 /**
  * Gets information about tests in a given test suite.
  */
-export const listTests: API.OperationMethod<
+export const listTests: API.PaginatedOperationMethod<
   ListTestsRequest,
   ListTestsResult,
   ListTestsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListTestsRequest,
-  ) => stream.Stream<
-    ListTestsResult,
-    ListTestsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListTestsRequest,
-  ) => stream.Stream<
-    Test,
-    ListTestsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Test
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListTestsRequest,
   output: ListTestsResult,
   errors: [
@@ -5651,12 +5606,16 @@ export const listTests: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTests",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "tests",
   } as const,
-}));
+})) as any;
+
 export type ListUniqueProblemsError =
   | ArgumentException
   | LimitExceededException
@@ -5671,27 +5630,13 @@ export type ListUniqueProblemsError =
  * MyActivity.java:386), `ListUniqueProblems` returns a single entry instead of many
  * individual entries for that exception.
  */
-export const listUniqueProblems: API.OperationMethod<
+export const listUniqueProblems: API.PaginatedOperationMethod<
   ListUniqueProblemsRequest,
   ListUniqueProblemsResult,
   ListUniqueProblemsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListUniqueProblemsRequest,
-  ) => stream.Stream<
-    ListUniqueProblemsResult,
-    ListUniqueProblemsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListUniqueProblemsRequest,
-  ) => stream.Stream<
-    unknown,
-    ListUniqueProblemsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListUniqueProblemsRequest,
   output: ListUniqueProblemsResult,
   errors: [
@@ -5700,12 +5645,16 @@ export const listUniqueProblems: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListUniqueProblems",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "uniqueProblems",
   } as const,
-}));
+})) as any;
+
 export type ListUploadsError =
   | ArgumentException
   | LimitExceededException
@@ -5715,27 +5664,13 @@ export type ListUploadsError =
 /**
  * Gets information about uploads, given an AWS Device Farm project ARN.
  */
-export const listUploads: API.OperationMethod<
+export const listUploads: API.PaginatedOperationMethod<
   ListUploadsRequest,
   ListUploadsResult,
   ListUploadsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListUploadsRequest,
-  ) => stream.Stream<
-    ListUploadsResult,
-    ListUploadsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListUploadsRequest,
-  ) => stream.Stream<
-    Upload,
-    ListUploadsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Upload
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListUploadsRequest,
   output: ListUploadsResult,
   errors: [
@@ -5744,12 +5679,16 @@ export const listUploads: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListUploads",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "uploads",
   } as const,
-}));
+})) as any;
+
 export type ListVPCEConfigurationsError =
   | ArgumentException
   | ServiceAccountException
@@ -5762,12 +5701,16 @@ export const listVPCEConfigurations: API.OperationMethod<
   ListVPCEConfigurationsRequest,
   ListVPCEConfigurationsResult,
   ListVPCEConfigurationsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListVPCEConfigurationsRequest,
   output: ListVPCEConfigurationsResult,
   errors: [ArgumentException, ServiceAccountException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListVPCEConfigurations",
 }));
+
 export type PurchaseOfferingError =
   | ArgumentException
   | LimitExceededException
@@ -5785,8 +5728,8 @@ export const purchaseOffering: API.OperationMethod<
   PurchaseOfferingRequest,
   PurchaseOfferingResult,
   PurchaseOfferingError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PurchaseOfferingRequest,
   output: PurchaseOfferingResult,
   errors: [
@@ -5796,7 +5739,11 @@ export const purchaseOffering: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PurchaseOffering",
 }));
+
 export type RenewOfferingError =
   | ArgumentException
   | LimitExceededException
@@ -5813,8 +5760,8 @@ export const renewOffering: API.OperationMethod<
   RenewOfferingRequest,
   RenewOfferingResult,
   RenewOfferingError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: RenewOfferingRequest,
   output: RenewOfferingResult,
   errors: [
@@ -5824,7 +5771,11 @@ export const renewOffering: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "RenewOffering",
 }));
+
 export type ScheduleRunError =
   | ArgumentException
   | IdempotencyException
@@ -5839,8 +5790,8 @@ export const scheduleRun: API.OperationMethod<
   ScheduleRunRequest,
   ScheduleRunResult,
   ScheduleRunError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ScheduleRunRequest,
   output: ScheduleRunResult,
   errors: [
@@ -5850,7 +5801,11 @@ export const scheduleRun: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ScheduleRun",
 }));
+
 export type StopJobError =
   | ArgumentException
   | LimitExceededException
@@ -5867,8 +5822,8 @@ export const stopJob: API.OperationMethod<
   StopJobRequest,
   StopJobResult,
   StopJobError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: StopJobRequest,
   output: StopJobResult,
   errors: [
@@ -5877,7 +5832,11 @@ export const stopJob: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "StopJob",
 }));
+
 export type StopRemoteAccessSessionError =
   | ArgumentException
   | LimitExceededException
@@ -5891,8 +5850,8 @@ export const stopRemoteAccessSession: API.OperationMethod<
   StopRemoteAccessSessionRequest,
   StopRemoteAccessSessionResult,
   StopRemoteAccessSessionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: StopRemoteAccessSessionRequest,
   output: StopRemoteAccessSessionResult,
   errors: [
@@ -5901,7 +5860,11 @@ export const stopRemoteAccessSession: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "StopRemoteAccessSession",
 }));
+
 export type StopRunError =
   | ArgumentException
   | LimitExceededException
@@ -5918,8 +5881,8 @@ export const stopRun: API.OperationMethod<
   StopRunRequest,
   StopRunResult,
   StopRunError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: StopRunRequest,
   output: StopRunResult,
   errors: [
@@ -5928,7 +5891,11 @@ export const stopRun: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "StopRun",
 }));
+
 export type TagResourceError =
   | ArgumentException
   | NotFoundException
@@ -5945,8 +5912,8 @@ export const tagResource: API.OperationMethod<
   TagResourceRequest,
   TagResourceResponse,
   TagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TagResourceRequest,
   output: TagResourceResponse,
   errors: [
@@ -5956,7 +5923,11 @@ export const tagResource: API.OperationMethod<
     TagPolicyException,
     TooManyTagsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TagResource",
 }));
+
 export type UntagResourceError =
   | ArgumentException
   | NotFoundException
@@ -5969,12 +5940,16 @@ export const untagResource: API.OperationMethod<
   UntagResourceRequest,
   UntagResourceResponse,
   UntagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UntagResourceRequest,
   output: UntagResourceResponse,
   errors: [ArgumentException, NotFoundException, TagOperationException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UntagResource",
 }));
+
 export type UpdateDeviceInstanceError =
   | ArgumentException
   | LimitExceededException
@@ -5988,8 +5963,8 @@ export const updateDeviceInstance: API.OperationMethod<
   UpdateDeviceInstanceRequest,
   UpdateDeviceInstanceResult,
   UpdateDeviceInstanceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateDeviceInstanceRequest,
   output: UpdateDeviceInstanceResult,
   errors: [
@@ -5998,7 +5973,11 @@ export const updateDeviceInstance: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateDeviceInstance",
 }));
+
 export type UpdateDevicePoolError =
   | ArgumentException
   | LimitExceededException
@@ -6014,8 +5993,8 @@ export const updateDevicePool: API.OperationMethod<
   UpdateDevicePoolRequest,
   UpdateDevicePoolResult,
   UpdateDevicePoolError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateDevicePoolRequest,
   output: UpdateDevicePoolResult,
   errors: [
@@ -6024,7 +6003,11 @@ export const updateDevicePool: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateDevicePool",
 }));
+
 export type UpdateInstanceProfileError =
   | ArgumentException
   | LimitExceededException
@@ -6038,8 +6021,8 @@ export const updateInstanceProfile: API.OperationMethod<
   UpdateInstanceProfileRequest,
   UpdateInstanceProfileResult,
   UpdateInstanceProfileError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateInstanceProfileRequest,
   output: UpdateInstanceProfileResult,
   errors: [
@@ -6048,7 +6031,11 @@ export const updateInstanceProfile: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateInstanceProfile",
 }));
+
 export type UpdateNetworkProfileError =
   | ArgumentException
   | LimitExceededException
@@ -6062,8 +6049,8 @@ export const updateNetworkProfile: API.OperationMethod<
   UpdateNetworkProfileRequest,
   UpdateNetworkProfileResult,
   UpdateNetworkProfileError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateNetworkProfileRequest,
   output: UpdateNetworkProfileResult,
   errors: [
@@ -6072,7 +6059,11 @@ export const updateNetworkProfile: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateNetworkProfile",
 }));
+
 export type UpdateProjectError =
   | ArgumentException
   | LimitExceededException
@@ -6087,8 +6078,8 @@ export const updateProject: API.OperationMethod<
   UpdateProjectRequest,
   UpdateProjectResult,
   UpdateProjectError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateProjectRequest,
   output: UpdateProjectResult,
   errors: [
@@ -6097,7 +6088,11 @@ export const updateProject: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateProject",
 }));
+
 export type UpdateTestGridProjectError =
   | ArgumentException
   | InternalServiceException
@@ -6111,8 +6106,8 @@ export const updateTestGridProject: API.OperationMethod<
   UpdateTestGridProjectRequest,
   UpdateTestGridProjectResult,
   UpdateTestGridProjectError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateTestGridProjectRequest,
   output: UpdateTestGridProjectResult,
   errors: [
@@ -6121,7 +6116,11 @@ export const updateTestGridProject: API.OperationMethod<
     LimitExceededException,
     NotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateTestGridProject",
 }));
+
 export type UpdateUploadError =
   | ArgumentException
   | LimitExceededException
@@ -6135,8 +6134,8 @@ export const updateUpload: API.OperationMethod<
   UpdateUploadRequest,
   UpdateUploadResult,
   UpdateUploadError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateUploadRequest,
   output: UpdateUploadResult,
   errors: [
@@ -6145,7 +6144,11 @@ export const updateUpload: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateUpload",
 }));
+
 export type UpdateVPCEConfigurationError =
   | ArgumentException
   | InvalidOperationException
@@ -6159,8 +6162,8 @@ export const updateVPCEConfiguration: API.OperationMethod<
   UpdateVPCEConfigurationRequest,
   UpdateVPCEConfigurationResult,
   UpdateVPCEConfigurationError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateVPCEConfigurationRequest,
   output: UpdateVPCEConfigurationResult,
   errors: [
@@ -6169,4 +6172,7 @@ export const updateVPCEConfiguration: API.OperationMethod<
     NotFoundException,
     ServiceAccountException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateVPCEConfiguration",
 }));

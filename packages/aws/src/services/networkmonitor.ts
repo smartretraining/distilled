@@ -1,12 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "NetworkMonitor",
   serviceShapeName: "NetworkMonitor",
@@ -83,112 +83,63 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
-export type Arn = string;
-export type TagKey = string;
-export type TagValue = string;
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class ConflictException
+  extends /*@__PURE__*/ S.TaggedError<ConflictException>()(
+    "ConflictException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class InternalServerException
+  extends /*@__PURE__*/ S.TaggedError<InternalServerException>()(
+    "InternalServerException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(T.HttpError(500), T.Retryable()),
+  ).pipe(C.withServerError, C.withRetryableError) {}
+export class ResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotFoundException>()(
+    "ResourceNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class ServiceQuotaExceededException
+  extends /*@__PURE__*/ S.TaggedError<ServiceQuotaExceededException>()(
+    "ServiceQuotaExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(402),
+  ).pipe(C.withQuotaError) {}
+export class ThrottlingException
+  extends /*@__PURE__*/ S.TaggedError<ThrottlingException>()(
+    "ThrottlingException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(T.HttpError(429), T.Retryable({ throttling: true })),
+  ).pipe(C.withThrottlingError, C.withRetryableError) {}
+export class ValidationException
+  extends /*@__PURE__*/ S.TaggedError<ValidationException>()(
+    "ValidationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
 export type ResourceName = string;
+export type Arn = string;
 export type Destination = string;
 export type Port = number;
-export type PacketSize = number;
-export type AggregationPeriod = number;
-export type MonitorArn = string;
-export type ProbeId = string;
-export type VpcId = string;
-export type Iso8601Timestamp = Date;
-export type PaginationToken = string;
-export type MaxResults = number;
+export type Protocol = "TCP" | "ICMP" | (string & {});
+export const Protocol = /*@__PURE__*/ S.String;
 
-//# Schemas
-export interface ListTagsForResourceInput {
-  resourceArn: string;
-}
-export const ListTagsForResourceInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ resourceArn: S.String.pipe(T.HttpLabel("resourceArn")) }).pipe(
-      T.all(
-        T.Http({ method: "GET", uri: "/tags/{resourceArn}" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
-    ),
-).annotate({
-  identifier: "ListTagsForResourceInput",
-}) as any as S.Schema<ListTagsForResourceInput>;
+export type PacketSize = number;
+export type TagKey = string;
+export type TagValue = string;
 export type TagMap = { [key: string]: string | undefined };
-export const TagMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const TagMap = /*@__PURE__*/ S.Record(
   S.String,
   S.String.pipe(S.optional),
 );
-export interface ListTagsForResourceOutput {
-  tags?: { [key: string]: string | undefined };
-}
-export const ListTagsForResourceOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ tags: S.optional(TagMap) }),
-).annotate({
-  identifier: "ListTagsForResourceOutput",
-}) as any as S.Schema<ListTagsForResourceOutput>;
-export interface TagResourceInput {
-  resourceArn: string;
-  tags: { [key: string]: string | undefined };
-}
-export const TagResourceInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({
-    resourceArn: S.String.pipe(T.HttpLabel("resourceArn")),
-    tags: TagMap,
-  }).pipe(
-    T.all(
-      T.Http({ method: "POST", uri: "/tags/{resourceArn}" }),
-      svc,
-      auth,
-      proto,
-      ver,
-      rules,
-    ),
-  ),
-).annotate({
-  identifier: "TagResourceInput",
-}) as any as S.Schema<TagResourceInput>;
-export interface TagResourceOutput {}
-export const TagResourceOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({}),
-).annotate({
-  identifier: "TagResourceOutput",
-}) as any as S.Schema<TagResourceOutput>;
-export type TagKeyList = string[];
-export const TagKeyList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
-export interface UntagResourceInput {
-  resourceArn: string;
-  tagKeys: string[];
-}
-export const UntagResourceInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({
-    resourceArn: S.String.pipe(T.HttpLabel("resourceArn")),
-    tagKeys: TagKeyList.pipe(T.HttpQuery("tagKeys")),
-  }).pipe(
-    T.all(
-      T.Http({ method: "DELETE", uri: "/tags/{resourceArn}" }),
-      svc,
-      auth,
-      proto,
-      ver,
-      rules,
-    ),
-  ),
-).annotate({
-  identifier: "UntagResourceInput",
-}) as any as S.Schema<UntagResourceInput>;
-export interface UntagResourceOutput {}
-export const UntagResourceOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({}),
-).annotate({
-  identifier: "UntagResourceOutput",
-}) as any as S.Schema<UntagResourceOutput>;
-export type Protocol = "TCP" | "ICMP" | (string & {});
-export const Protocol = /*@__PURE__*/ /*#__PURE__*/ S.String;
 export interface CreateMonitorProbeInput {
   sourceArn: string;
   destination: string;
@@ -197,23 +148,23 @@ export interface CreateMonitorProbeInput {
   packetSize?: number;
   probeTags?: { [key: string]: string | undefined };
 }
-export const CreateMonitorProbeInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      sourceArn: S.String,
-      destination: S.String,
-      destinationPort: S.optional(S.Number),
-      protocol: Protocol,
-      packetSize: S.optional(S.Number),
-      probeTags: S.optional(TagMap),
-    }),
+export const CreateMonitorProbeInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    sourceArn: S.String,
+    destination: S.String,
+    destinationPort: S.optional(S.Number),
+    protocol: Protocol,
+    packetSize: S.optional(S.Number),
+    probeTags: S.optional(TagMap),
+  }),
 ).annotate({
   identifier: "CreateMonitorProbeInput",
 }) as any as S.Schema<CreateMonitorProbeInput>;
 export type CreateMonitorProbeInputList = CreateMonitorProbeInput[];
-export const CreateMonitorProbeInputList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const CreateMonitorProbeInputList = /*@__PURE__*/ S.Array(
   CreateMonitorProbeInput,
 );
+export type AggregationPeriod = number;
 export interface CreateMonitorInput {
   monitorName: string;
   probes?: CreateMonitorProbeInput[];
@@ -221,7 +172,7 @@ export interface CreateMonitorInput {
   clientToken?: string;
   tags?: { [key: string]: string | undefined };
 }
-export const CreateMonitorInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateMonitorInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     monitorName: S.String,
     probes: S.optional(CreateMonitorProbeInputList),
@@ -241,6 +192,7 @@ export const CreateMonitorInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "CreateMonitorInput",
 }) as any as S.Schema<CreateMonitorInput>;
+export type MonitorArn = string;
 export type MonitorState =
   | "PENDING"
   | "ACTIVE"
@@ -248,7 +200,8 @@ export type MonitorState =
   | "ERROR"
   | "DELETING"
   | (string & {});
-export const MonitorState = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const MonitorState = /*@__PURE__*/ S.String;
+
 export interface CreateMonitorOutput {
   monitorArn: string;
   monitorName: string;
@@ -256,7 +209,7 @@ export interface CreateMonitorOutput {
   aggregationPeriod?: number;
   tags?: { [key: string]: string | undefined };
 }
-export const CreateMonitorOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateMonitorOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     monitorArn: S.String,
     monitorName: S.String,
@@ -267,204 +220,6 @@ export const CreateMonitorOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "CreateMonitorOutput",
 }) as any as S.Schema<CreateMonitorOutput>;
-export interface GetMonitorInput {
-  monitorName: string;
-}
-export const GetMonitorInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ monitorName: S.String.pipe(T.HttpLabel("monitorName")) }).pipe(
-    T.all(
-      T.Http({ method: "GET", uri: "/monitors/{monitorName}" }),
-      svc,
-      auth,
-      proto,
-      ver,
-      rules,
-    ),
-  ),
-).annotate({
-  identifier: "GetMonitorInput",
-}) as any as S.Schema<GetMonitorInput>;
-export type AddressFamily = "IPV4" | "IPV6" | (string & {});
-export const AddressFamily = /*@__PURE__*/ /*#__PURE__*/ S.String;
-export type ProbeState =
-  | "PENDING"
-  | "ACTIVE"
-  | "INACTIVE"
-  | "ERROR"
-  | "DELETING"
-  | "DELETED"
-  | (string & {});
-export const ProbeState = /*@__PURE__*/ /*#__PURE__*/ S.String;
-export interface Probe {
-  probeId?: string;
-  probeArn?: string;
-  sourceArn: string;
-  destination: string;
-  destinationPort?: number;
-  protocol: Protocol;
-  packetSize?: number;
-  addressFamily?: AddressFamily;
-  vpcId?: string;
-  state?: ProbeState;
-  createdAt?: Date;
-  modifiedAt?: Date;
-  tags?: { [key: string]: string | undefined };
-}
-export const Probe = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({
-    probeId: S.optional(S.String),
-    probeArn: S.optional(S.String),
-    sourceArn: S.String,
-    destination: S.String,
-    destinationPort: S.optional(S.Number),
-    protocol: Protocol,
-    packetSize: S.optional(S.Number),
-    addressFamily: S.optional(AddressFamily),
-    vpcId: S.optional(S.String),
-    state: S.optional(ProbeState),
-    createdAt: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
-    modifiedAt: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
-    tags: S.optional(TagMap),
-  }),
-).annotate({ identifier: "Probe" }) as any as S.Schema<Probe>;
-export type ProbeList = Probe[];
-export const ProbeList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Probe);
-export interface GetMonitorOutput {
-  monitorArn: string;
-  monitorName: string;
-  state: MonitorState;
-  aggregationPeriod: number;
-  tags?: { [key: string]: string | undefined };
-  probes?: Probe[];
-  createdAt: Date;
-  modifiedAt: Date;
-}
-export const GetMonitorOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({
-    monitorArn: S.String,
-    monitorName: S.String,
-    state: MonitorState,
-    aggregationPeriod: S.Number,
-    tags: S.optional(TagMap),
-    probes: S.optional(ProbeList),
-    createdAt: S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-    modifiedAt: S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-  }),
-).annotate({
-  identifier: "GetMonitorOutput",
-}) as any as S.Schema<GetMonitorOutput>;
-export interface UpdateMonitorInput {
-  monitorName: string;
-  aggregationPeriod: number;
-}
-export const UpdateMonitorInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({
-    monitorName: S.String.pipe(T.HttpLabel("monitorName")),
-    aggregationPeriod: S.Number,
-  }).pipe(
-    T.all(
-      T.Http({ method: "PATCH", uri: "/monitors/{monitorName}" }),
-      svc,
-      auth,
-      proto,
-      ver,
-      rules,
-    ),
-  ),
-).annotate({
-  identifier: "UpdateMonitorInput",
-}) as any as S.Schema<UpdateMonitorInput>;
-export interface UpdateMonitorOutput {
-  monitorArn: string;
-  monitorName: string;
-  state: MonitorState;
-  aggregationPeriod?: number;
-  tags?: { [key: string]: string | undefined };
-}
-export const UpdateMonitorOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({
-    monitorArn: S.String,
-    monitorName: S.String,
-    state: MonitorState,
-    aggregationPeriod: S.optional(S.Number),
-    tags: S.optional(TagMap),
-  }),
-).annotate({
-  identifier: "UpdateMonitorOutput",
-}) as any as S.Schema<UpdateMonitorOutput>;
-export interface DeleteMonitorInput {
-  monitorName: string;
-}
-export const DeleteMonitorInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ monitorName: S.String.pipe(T.HttpLabel("monitorName")) }).pipe(
-    T.all(
-      T.Http({ method: "DELETE", uri: "/monitors/{monitorName}" }),
-      svc,
-      auth,
-      proto,
-      ver,
-      rules,
-    ),
-  ),
-).annotate({
-  identifier: "DeleteMonitorInput",
-}) as any as S.Schema<DeleteMonitorInput>;
-export interface DeleteMonitorOutput {}
-export const DeleteMonitorOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({}),
-).annotate({
-  identifier: "DeleteMonitorOutput",
-}) as any as S.Schema<DeleteMonitorOutput>;
-export interface ListMonitorsInput {
-  nextToken?: string;
-  maxResults?: number;
-  state?: string;
-}
-export const ListMonitorsInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({
-    nextToken: S.optional(S.String).pipe(T.HttpQuery("nextToken")),
-    maxResults: S.optional(S.Number).pipe(T.HttpQuery("maxResults")),
-    state: S.optional(S.String).pipe(T.HttpQuery("state")),
-  }).pipe(
-    T.all(
-      T.Http({ method: "GET", uri: "/monitors" }),
-      svc,
-      auth,
-      proto,
-      ver,
-      rules,
-    ),
-  ),
-).annotate({
-  identifier: "ListMonitorsInput",
-}) as any as S.Schema<ListMonitorsInput>;
-export interface MonitorSummary {
-  monitorArn: string;
-  monitorName: string;
-  state: MonitorState;
-  aggregationPeriod?: number;
-  tags?: { [key: string]: string | undefined };
-}
-export const MonitorSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({
-    monitorArn: S.String,
-    monitorName: S.String,
-    state: MonitorState,
-    aggregationPeriod: S.optional(S.Number),
-    tags: S.optional(TagMap),
-  }),
-).annotate({ identifier: "MonitorSummary" }) as any as S.Schema<MonitorSummary>;
-export type MonitorList = MonitorSummary[];
-export const MonitorList = /*@__PURE__*/ /*#__PURE__*/ S.Array(MonitorSummary);
-export interface ListMonitorsOutput {
-  monitors: MonitorSummary[];
-  nextToken?: string;
-}
-export const ListMonitorsOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ monitors: MonitorList, nextToken: S.optional(S.String) }),
-).annotate({
-  identifier: "ListMonitorsOutput",
-}) as any as S.Schema<ListMonitorsOutput>;
 export interface ProbeInput {
   sourceArn: string;
   destination: string;
@@ -473,7 +228,7 @@ export interface ProbeInput {
   packetSize?: number;
   tags?: { [key: string]: string | undefined };
 }
-export const ProbeInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ProbeInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     sourceArn: S.String,
     destination: S.String,
@@ -489,7 +244,7 @@ export interface CreateProbeInput {
   clientToken?: string;
   tags?: { [key: string]: string | undefined };
 }
-export const CreateProbeInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateProbeInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     monitorName: S.String.pipe(T.HttpLabel("monitorName")),
     probe: ProbeInput,
@@ -508,6 +263,22 @@ export const CreateProbeInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "CreateProbeInput",
 }) as any as S.Schema<CreateProbeInput>;
+export type ProbeId = string;
+export type AddressFamily = "IPV4" | "IPV6" | (string & {});
+export const AddressFamily = /*@__PURE__*/ S.String;
+
+export type VpcId = string;
+export type ProbeState =
+  | "PENDING"
+  | "ACTIVE"
+  | "INACTIVE"
+  | "ERROR"
+  | "DELETING"
+  | "DELETED"
+  | (string & {});
+export const ProbeState = /*@__PURE__*/ S.String;
+
+export type Iso8601Timestamp = Date;
 export interface CreateProbeOutput {
   probeId?: string;
   probeArn?: string;
@@ -523,7 +294,7 @@ export interface CreateProbeOutput {
   modifiedAt?: Date;
   tags?: { [key: string]: string | undefined };
 }
-export const CreateProbeOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateProbeOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     probeId: S.optional(S.String),
     probeArn: S.optional(S.String),
@@ -542,11 +313,139 @@ export const CreateProbeOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "CreateProbeOutput",
 }) as any as S.Schema<CreateProbeOutput>;
+export interface DeleteMonitorInput {
+  monitorName: string;
+}
+export const DeleteMonitorInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ monitorName: S.String.pipe(T.HttpLabel("monitorName")) }).pipe(
+    T.all(
+      T.Http({ method: "DELETE", uri: "/monitors/{monitorName}" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "DeleteMonitorInput",
+}) as any as S.Schema<DeleteMonitorInput>;
+export interface DeleteMonitorOutput {}
+export const DeleteMonitorOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
+).annotate({
+  identifier: "DeleteMonitorOutput",
+}) as any as S.Schema<DeleteMonitorOutput>;
+export interface DeleteProbeInput {
+  monitorName: string;
+  probeId: string;
+}
+export const DeleteProbeInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    monitorName: S.String.pipe(T.HttpLabel("monitorName")),
+    probeId: S.String.pipe(T.HttpLabel("probeId")),
+  }).pipe(
+    T.all(
+      T.Http({
+        method: "DELETE",
+        uri: "/monitors/{monitorName}/probes/{probeId}",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "DeleteProbeInput",
+}) as any as S.Schema<DeleteProbeInput>;
+export interface DeleteProbeOutput {}
+export const DeleteProbeOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
+).annotate({
+  identifier: "DeleteProbeOutput",
+}) as any as S.Schema<DeleteProbeOutput>;
+export interface GetMonitorInput {
+  monitorName: string;
+}
+export const GetMonitorInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ monitorName: S.String.pipe(T.HttpLabel("monitorName")) }).pipe(
+    T.all(
+      T.Http({ method: "GET", uri: "/monitors/{monitorName}" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "GetMonitorInput",
+}) as any as S.Schema<GetMonitorInput>;
+export interface Probe {
+  probeId?: string;
+  probeArn?: string;
+  sourceArn: string;
+  destination: string;
+  destinationPort?: number;
+  protocol: Protocol;
+  packetSize?: number;
+  addressFamily?: AddressFamily;
+  vpcId?: string;
+  state?: ProbeState;
+  createdAt?: Date;
+  modifiedAt?: Date;
+  tags?: { [key: string]: string | undefined };
+}
+export const Probe = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    probeId: S.optional(S.String),
+    probeArn: S.optional(S.String),
+    sourceArn: S.String,
+    destination: S.String,
+    destinationPort: S.optional(S.Number),
+    protocol: Protocol,
+    packetSize: S.optional(S.Number),
+    addressFamily: S.optional(AddressFamily),
+    vpcId: S.optional(S.String),
+    state: S.optional(ProbeState),
+    createdAt: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
+    modifiedAt: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
+    tags: S.optional(TagMap),
+  }),
+).annotate({ identifier: "Probe" }) as any as S.Schema<Probe>;
+export type ProbeList = Probe[];
+export const ProbeList = /*@__PURE__*/ S.Array(Probe);
+export interface GetMonitorOutput {
+  monitorArn: string;
+  monitorName: string;
+  state: MonitorState;
+  aggregationPeriod: number;
+  tags?: { [key: string]: string | undefined };
+  probes?: Probe[];
+  createdAt: Date;
+  modifiedAt: Date;
+}
+export const GetMonitorOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    monitorArn: S.String,
+    monitorName: S.String,
+    state: MonitorState,
+    aggregationPeriod: S.Number,
+    tags: S.optional(TagMap),
+    probes: S.optional(ProbeList),
+    createdAt: S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    modifiedAt: S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+  }),
+).annotate({
+  identifier: "GetMonitorOutput",
+}) as any as S.Schema<GetMonitorOutput>;
 export interface GetProbeInput {
   monitorName: string;
   probeId: string;
 }
-export const GetProbeInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetProbeInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     monitorName: S.String.pipe(T.HttpLabel("monitorName")),
     probeId: S.String.pipe(T.HttpLabel("probeId")),
@@ -579,7 +478,7 @@ export interface GetProbeOutput {
   modifiedAt?: Date;
   tags?: { [key: string]: string | undefined };
 }
-export const GetProbeOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetProbeOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     probeId: S.optional(S.String),
     probeArn: S.optional(S.String),
@@ -596,6 +495,178 @@ export const GetProbeOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
     tags: S.optional(TagMap),
   }),
 ).annotate({ identifier: "GetProbeOutput" }) as any as S.Schema<GetProbeOutput>;
+export type PaginationToken = string;
+export type MaxResults = number;
+export interface ListMonitorsInput {
+  nextToken?: string;
+  maxResults?: number;
+  state?: string;
+}
+export const ListMonitorsInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    nextToken: S.optional(S.String).pipe(T.HttpQuery("nextToken")),
+    maxResults: S.optional(S.Number).pipe(T.HttpQuery("maxResults")),
+    state: S.optional(S.String).pipe(T.HttpQuery("state")),
+  }).pipe(
+    T.all(
+      T.Http({ method: "GET", uri: "/monitors" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "ListMonitorsInput",
+}) as any as S.Schema<ListMonitorsInput>;
+export interface MonitorSummary {
+  monitorArn: string;
+  monitorName: string;
+  state: MonitorState;
+  aggregationPeriod?: number;
+  tags?: { [key: string]: string | undefined };
+}
+export const MonitorSummary = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    monitorArn: S.String,
+    monitorName: S.String,
+    state: MonitorState,
+    aggregationPeriod: S.optional(S.Number),
+    tags: S.optional(TagMap),
+  }),
+).annotate({ identifier: "MonitorSummary" }) as any as S.Schema<MonitorSummary>;
+export type MonitorList = MonitorSummary[];
+export const MonitorList = /*@__PURE__*/ S.Array(MonitorSummary);
+export interface ListMonitorsOutput {
+  monitors: MonitorSummary[];
+  nextToken?: string;
+}
+export const ListMonitorsOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ monitors: MonitorList, nextToken: S.optional(S.String) }),
+).annotate({
+  identifier: "ListMonitorsOutput",
+}) as any as S.Schema<ListMonitorsOutput>;
+export interface ListTagsForResourceInput {
+  resourceArn: string;
+}
+export const ListTagsForResourceInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ resourceArn: S.String.pipe(T.HttpLabel("resourceArn")) }).pipe(
+    T.all(
+      T.Http({ method: "GET", uri: "/tags/{resourceArn}" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "ListTagsForResourceInput",
+}) as any as S.Schema<ListTagsForResourceInput>;
+export interface ListTagsForResourceOutput {
+  tags?: { [key: string]: string | undefined };
+}
+export const ListTagsForResourceOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ tags: S.optional(TagMap) }),
+).annotate({
+  identifier: "ListTagsForResourceOutput",
+}) as any as S.Schema<ListTagsForResourceOutput>;
+export interface TagResourceInput {
+  resourceArn: string;
+  tags: { [key: string]: string | undefined };
+}
+export const TagResourceInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    resourceArn: S.String.pipe(T.HttpLabel("resourceArn")),
+    tags: TagMap,
+  }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/tags/{resourceArn}" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "TagResourceInput",
+}) as any as S.Schema<TagResourceInput>;
+export interface TagResourceOutput {}
+export const TagResourceOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
+).annotate({
+  identifier: "TagResourceOutput",
+}) as any as S.Schema<TagResourceOutput>;
+export type TagKeyList = string[];
+export const TagKeyList = /*@__PURE__*/ S.Array(S.String);
+export interface UntagResourceInput {
+  resourceArn: string;
+  tagKeys: string[];
+}
+export const UntagResourceInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    resourceArn: S.String.pipe(T.HttpLabel("resourceArn")),
+    tagKeys: TagKeyList.pipe(T.HttpQuery("tagKeys")),
+  }).pipe(
+    T.all(
+      T.Http({ method: "DELETE", uri: "/tags/{resourceArn}" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "UntagResourceInput",
+}) as any as S.Schema<UntagResourceInput>;
+export interface UntagResourceOutput {}
+export const UntagResourceOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
+).annotate({
+  identifier: "UntagResourceOutput",
+}) as any as S.Schema<UntagResourceOutput>;
+export interface UpdateMonitorInput {
+  monitorName: string;
+  aggregationPeriod: number;
+}
+export const UpdateMonitorInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    monitorName: S.String.pipe(T.HttpLabel("monitorName")),
+    aggregationPeriod: S.Number,
+  }).pipe(
+    T.all(
+      T.Http({ method: "PATCH", uri: "/monitors/{monitorName}" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "UpdateMonitorInput",
+}) as any as S.Schema<UpdateMonitorInput>;
+export interface UpdateMonitorOutput {
+  monitorArn: string;
+  monitorName: string;
+  state: MonitorState;
+  aggregationPeriod?: number;
+  tags?: { [key: string]: string | undefined };
+}
+export const UpdateMonitorOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    monitorArn: S.String,
+    monitorName: S.String,
+    state: MonitorState,
+    aggregationPeriod: S.optional(S.Number),
+    tags: S.optional(TagMap),
+  }),
+).annotate({
+  identifier: "UpdateMonitorOutput",
+}) as any as S.Schema<UpdateMonitorOutput>;
 export interface UpdateProbeInput {
   monitorName: string;
   probeId: string;
@@ -605,7 +676,7 @@ export interface UpdateProbeInput {
   protocol?: Protocol;
   packetSize?: number;
 }
-export const UpdateProbeInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateProbeInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     monitorName: S.String.pipe(T.HttpLabel("monitorName")),
     probeId: S.String.pipe(T.HttpLabel("probeId")),
@@ -645,7 +716,7 @@ export interface UpdateProbeOutput {
   modifiedAt?: Date;
   tags?: { [key: string]: string | undefined };
 }
-export const UpdateProbeOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateProbeOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     probeId: S.optional(S.String),
     probeArn: S.optional(S.String),
@@ -664,154 +735,6 @@ export const UpdateProbeOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "UpdateProbeOutput",
 }) as any as S.Schema<UpdateProbeOutput>;
-export interface DeleteProbeInput {
-  monitorName: string;
-  probeId: string;
-}
-export const DeleteProbeInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({
-    monitorName: S.String.pipe(T.HttpLabel("monitorName")),
-    probeId: S.String.pipe(T.HttpLabel("probeId")),
-  }).pipe(
-    T.all(
-      T.Http({
-        method: "DELETE",
-        uri: "/monitors/{monitorName}/probes/{probeId}",
-      }),
-      svc,
-      auth,
-      proto,
-      ver,
-      rules,
-    ),
-  ),
-).annotate({
-  identifier: "DeleteProbeInput",
-}) as any as S.Schema<DeleteProbeInput>;
-export interface DeleteProbeOutput {}
-export const DeleteProbeOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({}),
-).annotate({
-  identifier: "DeleteProbeOutput",
-}) as any as S.Schema<DeleteProbeOutput>;
-
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class ConflictException extends S.TaggedErrorClass<ConflictException>()(
-  "ConflictException",
-  { message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class InternalServerException extends S.TaggedErrorClass<InternalServerException>()(
-  "InternalServerException",
-  { message: S.optional(S.String) },
-  T.Retryable(),
-).pipe(C.withServerError, C.withRetryableError) {}
-export class ResourceNotFoundException extends S.TaggedErrorClass<ResourceNotFoundException>()(
-  "ResourceNotFoundException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ThrottlingException extends S.TaggedErrorClass<ThrottlingException>()(
-  "ThrottlingException",
-  { message: S.optional(S.String) },
-  T.Retryable({ throttling: true }),
-).pipe(C.withThrottlingError, C.withRetryableError) {}
-export class ValidationException extends S.TaggedErrorClass<ValidationException>()(
-  "ValidationException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ServiceQuotaExceededException extends S.TaggedErrorClass<ServiceQuotaExceededException>()(
-  "ServiceQuotaExceededException",
-  { message: S.optional(S.String) },
-).pipe(C.withQuotaError) {}
-
-//# Operations
-export type ListTagsForResourceError =
-  | AccessDeniedException
-  | ConflictException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Lists the tags assigned to this resource.
- */
-export const listTagsForResource: API.OperationMethod<
-  ListTagsForResourceInput,
-  ListTagsForResourceOutput,
-  ListTagsForResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: ListTagsForResourceInput,
-  output: ListTagsForResourceOutput,
-  errors: [
-    AccessDeniedException,
-    ConflictException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type TagResourceError =
-  | AccessDeniedException
-  | ConflictException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Adds key-value pairs to a monitor or probe.
- */
-export const tagResource: API.OperationMethod<
-  TagResourceInput,
-  TagResourceOutput,
-  TagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: TagResourceInput,
-  output: TagResourceOutput,
-  errors: [
-    AccessDeniedException,
-    ConflictException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type UntagResourceError =
-  | AccessDeniedException
-  | ConflictException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Removes a key-value pair from a monitor or probe.
- */
-export const untagResource: API.OperationMethod<
-  UntagResourceInput,
-  UntagResourceOutput,
-  UntagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: UntagResourceInput,
-  output: UntagResourceOutput,
-  errors: [
-    AccessDeniedException,
-    ConflictException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
 export type CreateMonitorError =
   | AccessDeniedException
   | ConflictException
@@ -847,8 +770,8 @@ export const createMonitor: API.OperationMethod<
   CreateMonitorInput,
   CreateMonitorOutput,
   CreateMonitorError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateMonitorInput,
   output: CreateMonitorOutput,
   errors: [
@@ -859,141 +782,11 @@ export const createMonitor: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateMonitor",
 }));
-export type GetMonitorError =
-  | AccessDeniedException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Returns details about a specific monitor.
- *
- * This action requires the `monitorName` parameter. Run
- * `ListMonitors` to get a list of monitor names.
- */
-export const getMonitor: API.OperationMethod<
-  GetMonitorInput,
-  GetMonitorOutput,
-  GetMonitorError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: GetMonitorInput,
-  output: GetMonitorOutput,
-  errors: [
-    AccessDeniedException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type UpdateMonitorError =
-  | AccessDeniedException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceQuotaExceededException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Updates the `aggregationPeriod` for a monitor. Monitors support an
- * `aggregationPeriod` of either `30` or `60` seconds.
- * This action requires the `monitorName` and `probeId` parameter.
- * Run `ListMonitors` to get a list of monitor names.
- */
-export const updateMonitor: API.OperationMethod<
-  UpdateMonitorInput,
-  UpdateMonitorOutput,
-  UpdateMonitorError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: UpdateMonitorInput,
-  output: UpdateMonitorOutput,
-  errors: [
-    AccessDeniedException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceQuotaExceededException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type DeleteMonitorError =
-  | AccessDeniedException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Deletes a specified monitor.
- *
- * This action requires the `monitorName` parameter. Run
- * `ListMonitors` to get a list of monitor names.
- */
-export const deleteMonitor: API.OperationMethod<
-  DeleteMonitorInput,
-  DeleteMonitorOutput,
-  DeleteMonitorError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: DeleteMonitorInput,
-  output: DeleteMonitorOutput,
-  errors: [
-    AccessDeniedException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type ListMonitorsError =
-  | AccessDeniedException
-  | InternalServerException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Returns a list of all of your monitors.
- */
-export const listMonitors: API.OperationMethod<
-  ListMonitorsInput,
-  ListMonitorsOutput,
-  ListMonitorsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListMonitorsInput,
-  ) => stream.Stream<
-    ListMonitorsOutput,
-    ListMonitorsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListMonitorsInput,
-  ) => stream.Stream<
-    MonitorSummary,
-    ListMonitorsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
-  input: ListMonitorsInput,
-  output: ListMonitorsOutput,
-  errors: [
-    AccessDeniedException,
-    InternalServerException,
-    ThrottlingException,
-    ValidationException,
-  ],
-  pagination: {
-    inputToken: "nextToken",
-    outputToken: "nextToken",
-    items: "monitors",
-    pageSize: "maxResults",
-  } as const,
-}));
+
 export type CreateProbeError =
   | AccessDeniedException
   | InternalServerException
@@ -1013,8 +806,8 @@ export const createProbe: API.OperationMethod<
   CreateProbeInput,
   CreateProbeOutput,
   CreateProbeError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateProbeInput,
   output: CreateProbeOutput,
   errors: [
@@ -1025,7 +818,115 @@ export const createProbe: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateProbe",
 }));
+
+export type DeleteMonitorError =
+  | AccessDeniedException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Deletes a specified monitor.
+ *
+ * This action requires the `monitorName` parameter. Run
+ * `ListMonitors` to get a list of monitor names.
+ */
+export const deleteMonitor: API.OperationMethod<
+  DeleteMonitorInput,
+  DeleteMonitorOutput,
+  DeleteMonitorError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: DeleteMonitorInput,
+  output: DeleteMonitorOutput,
+  errors: [
+    AccessDeniedException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteMonitor",
+}));
+
+export type DeleteProbeError =
+  | AccessDeniedException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceQuotaExceededException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Deletes the specified probe. Once a probe is deleted you'll no longer incur any billing
+ * fees for that probe.
+ *
+ * This action requires both the `monitorName` and `probeId`
+ * parameters. Run `ListMonitors` to get a list of monitor names. Run
+ * `GetMonitor` to get a list of probes and probe IDs. You can only delete a
+ * single probe at a time using this action.
+ */
+export const deleteProbe: API.OperationMethod<
+  DeleteProbeInput,
+  DeleteProbeOutput,
+  DeleteProbeError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: DeleteProbeInput,
+  output: DeleteProbeOutput,
+  errors: [
+    AccessDeniedException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceQuotaExceededException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteProbe",
+}));
+
+export type GetMonitorError =
+  | AccessDeniedException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Returns details about a specific monitor.
+ *
+ * This action requires the `monitorName` parameter. Run
+ * `ListMonitors` to get a list of monitor names.
+ */
+export const getMonitor: API.OperationMethod<
+  GetMonitorInput,
+  GetMonitorOutput,
+  GetMonitorError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: GetMonitorInput,
+  output: GetMonitorOutput,
+  errors: [
+    AccessDeniedException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetMonitor",
+}));
+
 export type GetProbeError =
   | AccessDeniedException
   | InternalServerException
@@ -1043,8 +944,8 @@ export const getProbe: API.OperationMethod<
   GetProbeInput,
   GetProbeOutput,
   GetProbeError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetProbeInput,
   output: GetProbeOutput,
   errors: [
@@ -1054,7 +955,177 @@ export const getProbe: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetProbe",
 }));
+
+export type ListMonitorsError =
+  | AccessDeniedException
+  | InternalServerException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Returns a list of all of your monitors.
+ */
+export const listMonitors: API.PaginatedOperationMethod<
+  ListMonitorsInput,
+  ListMonitorsOutput,
+  ListMonitorsError,
+  Credentials | HttpClient.HttpClient,
+  MonitorSummary
+> = /*@__PURE__*/ API.makePaginated(() => ({
+  input: ListMonitorsInput,
+  output: ListMonitorsOutput,
+  errors: [
+    AccessDeniedException,
+    InternalServerException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListMonitors",
+  pagination: {
+    inputToken: "nextToken",
+    outputToken: "nextToken",
+    items: "monitors",
+    pageSize: "maxResults",
+  } as const,
+})) as any;
+
+export type ListTagsForResourceError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Lists the tags assigned to this resource.
+ */
+export const listTagsForResource: API.OperationMethod<
+  ListTagsForResourceInput,
+  ListTagsForResourceOutput,
+  ListTagsForResourceError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: ListTagsForResourceInput,
+  output: ListTagsForResourceOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTagsForResource",
+}));
+
+export type TagResourceError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Adds key-value pairs to a monitor or probe.
+ */
+export const tagResource: API.OperationMethod<
+  TagResourceInput,
+  TagResourceOutput,
+  TagResourceError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: TagResourceInput,
+  output: TagResourceOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TagResource",
+}));
+
+export type UntagResourceError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Removes a key-value pair from a monitor or probe.
+ */
+export const untagResource: API.OperationMethod<
+  UntagResourceInput,
+  UntagResourceOutput,
+  UntagResourceError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: UntagResourceInput,
+  output: UntagResourceOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UntagResource",
+}));
+
+export type UpdateMonitorError =
+  | AccessDeniedException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceQuotaExceededException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Updates the `aggregationPeriod` for a monitor. Monitors support an
+ * `aggregationPeriod` of either `30` or `60` seconds.
+ * This action requires the `monitorName` and `probeId` parameter.
+ * Run `ListMonitors` to get a list of monitor names.
+ */
+export const updateMonitor: API.OperationMethod<
+  UpdateMonitorInput,
+  UpdateMonitorOutput,
+  UpdateMonitorError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: UpdateMonitorInput,
+  output: UpdateMonitorOutput,
+  errors: [
+    AccessDeniedException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceQuotaExceededException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateMonitor",
+}));
+
 export type UpdateProbeError =
   | AccessDeniedException
   | InternalServerException
@@ -1090,8 +1161,8 @@ export const updateProbe: API.OperationMethod<
   UpdateProbeInput,
   UpdateProbeOutput,
   UpdateProbeError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateProbeInput,
   output: UpdateProbeOutput,
   errors: [
@@ -1102,38 +1173,7 @@ export const updateProbe: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
-}));
-export type DeleteProbeError =
-  | AccessDeniedException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceQuotaExceededException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Deletes the specified probe. Once a probe is deleted you'll no longer incur any billing
- * fees for that probe.
- *
- * This action requires both the `monitorName` and `probeId`
- * parameters. Run `ListMonitors` to get a list of monitor names. Run
- * `GetMonitor` to get a list of probes and probe IDs. You can only delete a
- * single probe at a time using this action.
- */
-export const deleteProbe: API.OperationMethod<
-  DeleteProbeInput,
-  DeleteProbeOutput,
-  DeleteProbeError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: DeleteProbeInput,
-  output: DeleteProbeOutput,
-  errors: [
-    AccessDeniedException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceQuotaExceededException,
-    ThrottlingException,
-    ValidationException,
-  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateProbe",
 }));

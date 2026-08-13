@@ -28,6 +28,7 @@ import { ParseError } from "../errors.ts";
 import { parseEventStreamToUnion } from "../eventstream/parser.ts";
 import {
   getAwsApiService,
+  getEventSchema,
   isOutputEventStream,
   isStreamingType,
 } from "../traits.ts";
@@ -60,23 +61,34 @@ function createAwsJsonProtocol(version: "1.0" | "1.1"): Protocol {
     // Pre-compute encoder (done once at init)
     const encodeInput = Schema.encodeEffect(inputSchema);
 
-    // Extract operation target from the input schema's identifier
+    // Prefer the explicit operation name emitted by the generator; fall back
+    // to extracting it from the input schema's identifier by removing the
+    // "Request", "Input", or "Message" suffix. RDS-family query services
+    // (RDS, ElastiCache, Redshift, …) name their input shapes "XxxMessage"
+    // rather than "XxxRequest".
     const identifier = getIdentifier(inputAst) ?? "";
-    // Remove "Request" or "Input" suffix to get operation name
-    const operationName = identifier.replace(/(?:Request|Input)$/, "");
+    const operationName =
+      operation.operationName ??
+      identifier.replace(/(?:Request|Input|Message)$/, "");
 
     // Build X-Amz-Target from the identifier structure
     const targetHeader = buildXAmzTarget(inputAst, operationName);
 
     // Check for streaming output member (event stream)
     let streamingOutputProp:
-      | { name: string; isEventStream: boolean }
+      | {
+          name: string;
+          isEventStream: boolean;
+          eventSchema?: Schema.Schema<unknown>;
+        }
       | undefined;
     for (const prop of getEncodedPropertySignatures(outputAst)) {
       if (isStreamingType(prop.type)) {
+        const isEventStream = isOutputEventStream(prop.type);
         streamingOutputProp = {
           name: String(prop.name),
-          isEventStream: isOutputEventStream(prop.type),
+          isEventStream,
+          eventSchema: isEventStream ? getEventSchema(prop.type) : undefined,
         };
         break;
       }
@@ -108,10 +120,13 @@ function createAwsJsonProtocol(version: "1.0" | "1.1"): Protocol {
         // Handle streaming output (event stream)
         if (streamingOutputProp && response.body) {
           if (streamingOutputProp.isEventStream) {
-            // Parse event stream to typed union events
+            // Parse event stream to typed union events, decoded through the
+            // event schema so blob/timestamp members match the generated types
             return {
               [streamingOutputProp.name]: parseEventStreamToUnion(
                 response.body as ReadableStream<Uint8Array>,
+                undefined,
+                streamingOutputProp.eventSchema,
               ),
             };
           }

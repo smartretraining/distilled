@@ -1,13 +1,13 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as redacted from "effect/Redacted";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 import { SensitiveString } from "../sensitive.ts";
 const svc = T.AwsApiService({
   sdkId: "Billing",
@@ -118,100 +118,158 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({ code: "BillingAccessDenied", httpResponseCode: 403 }),
+      T.HttpError(403),
+    ),
+  ).pipe(C.withAuthError) {}
+export class BillingViewHealthStatusException
+  extends /*@__PURE__*/ S.TaggedError<BillingViewHealthStatusException>()(
+    "BillingViewHealthStatusException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class ConflictException
+  extends /*@__PURE__*/ S.TaggedError<ConflictException>()(
+    "ConflictException",
+    {
+      message: S.String.pipe(T.ErrorMessage()),
+      resourceId: S.String,
+      resourceType: S.String,
+    },
+    T.all(
+      T.AwsQueryError({ code: "BillingConflict", httpResponseCode: 409 }),
+      T.HttpError(409),
+    ),
+  ).pipe(C.withConflictError) {}
+export class InternalServerException
+  extends /*@__PURE__*/ S.TaggedError<InternalServerException>()(
+    "InternalServerException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({ code: "BillingInternalServer", httpResponseCode: 500 }),
+      T.HttpError(500),
+    ),
+  ).pipe(C.withServerError) {}
+export class ResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotFoundException>()(
+    "ResourceNotFoundException",
+    {
+      message: S.String.pipe(T.ErrorMessage()),
+      resourceId: S.String,
+      resourceType: S.String,
+    },
+    T.all(
+      T.AwsQueryError({
+        code: "BillingResourceNotFound",
+        httpResponseCode: 404,
+      }),
+      T.HttpError(404),
+    ),
+  ).pipe(C.withBadRequestError) {}
+export class ServiceQuotaExceededException
+  extends /*@__PURE__*/ S.TaggedError<ServiceQuotaExceededException>()(
+    "ServiceQuotaExceededException",
+    {
+      message: S.String.pipe(T.ErrorMessage()),
+      resourceId: S.String,
+      resourceType: S.String,
+      serviceCode: S.String,
+      quotaCode: S.String,
+    },
+    T.all(
+      T.AwsQueryError({
+        code: "BillingServiceQuotaExceeded",
+        httpResponseCode: 402,
+      }),
+      T.HttpError(402),
+    ),
+  ).pipe(C.withQuotaError) {}
+export class ThrottlingException
+  extends /*@__PURE__*/ S.TaggedError<ThrottlingException>()(
+    "ThrottlingException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({ code: "BillingThrottling", httpResponseCode: 429 }),
+      T.HttpError(429),
+    ),
+  ).pipe(C.withThrottlingError) {}
+export class ValidationException
+  extends /*@__PURE__*/ S.TaggedError<ValidationException>()(
+    "ValidationException",
+    {
+      message: S.String.pipe(T.ErrorMessage()),
+      reason: S.suspend(() => ValidationExceptionReason).annotate({
+        identifier: "ValidationExceptionReason",
+      }),
+      fieldList: S.optional(
+        S.suspend(() => ValidationExceptionFieldList).annotate({
+          identifier: "ValidationExceptionFieldList",
+        }),
+      ),
+    },
+    T.all(
+      T.AwsQueryError({ code: "BillingValidation", httpResponseCode: 400 }),
+      T.HttpError(400),
+    ),
+  ).pipe(C.withBadRequestError) {}
 export type BillingViewArn = string;
-export type ErrorMessage = string;
-export type ResourceId = string;
-export type ResourceType = string;
-export type ServiceCode = string;
-export type QuotaCode = string;
-export type FieldName = string;
-export type BillingViewName = string | redacted.Redacted<string>;
-export type BillingViewDescription = string | redacted.Redacted<string>;
-export type Value = string;
-export type TagKey = string;
-export type CostCategoryName = string;
-export type ClientToken = string;
-export type ResourceTagKey = string;
-export type ResourceTagValue = string;
-export type AccountId = string;
-export type ResourceArn = string;
-export type PolicyDocument = string;
-export type SearchValue = string;
-export type BillingViewsMaxResults = number;
-export type PageToken = string;
-
-//# Schemas
 export type BillingViewSourceViewsList = string[];
-export const BillingViewSourceViewsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const BillingViewSourceViewsList = /*@__PURE__*/ S.Array(S.String);
 export interface AssociateSourceViewsRequest {
   arn: string;
   sourceViews: string[];
 }
-export const AssociateSourceViewsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ arn: S.String, sourceViews: BillingViewSourceViewsList }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "AssociateSourceViewsRequest",
-  }) as any as S.Schema<AssociateSourceViewsRequest>;
+export const AssociateSourceViewsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String, sourceViews: BillingViewSourceViewsList }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "AssociateSourceViewsRequest",
+}) as any as S.Schema<AssociateSourceViewsRequest>;
 export interface AssociateSourceViewsResponse {
   arn: string;
 }
-export const AssociateSourceViewsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ arn: S.String }),
-  ).annotate({
-    identifier: "AssociateSourceViewsResponse",
-  }) as any as S.Schema<AssociateSourceViewsResponse>;
-export type ValidationExceptionReason =
-  | "unknownOperation"
-  | "cannotParse"
-  | "fieldValidationFailed"
-  | "other"
-  | (string & {});
-export const ValidationExceptionReason = /*@__PURE__*/ /*#__PURE__*/ S.String;
-export interface ValidationExceptionField {
-  name: string;
-  message: string;
-}
-export const ValidationExceptionField = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ name: S.String, message: S.String }),
+export const AssociateSourceViewsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }),
 ).annotate({
-  identifier: "ValidationExceptionField",
-}) as any as S.Schema<ValidationExceptionField>;
-export type ValidationExceptionFieldList = ValidationExceptionField[];
-export const ValidationExceptionFieldList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  ValidationExceptionField,
-);
+  identifier: "AssociateSourceViewsResponse",
+}) as any as S.Schema<AssociateSourceViewsResponse>;
+export type BillingViewName = string | redacted.Redacted<string>;
+export type BillingViewDescription = string | redacted.Redacted<string>;
 export type Dimension = "LINKED_ACCOUNT" | (string & {});
-export const Dimension = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const Dimension = /*@__PURE__*/ S.String;
+
+export type Value = string;
 export type Values = string[];
-export const Values = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const Values = /*@__PURE__*/ S.Array(S.String);
 export interface DimensionValues {
   key: Dimension;
   values: string[];
 }
-export const DimensionValues = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DimensionValues = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ key: Dimension, values: Values }),
 ).annotate({
   identifier: "DimensionValues",
 }) as any as S.Schema<DimensionValues>;
+export type TagKey = string;
 export interface TagValues {
   key: string;
   values: string[];
 }
-export const TagValues = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagValues = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ key: S.String, values: Values }),
 ).annotate({ identifier: "TagValues" }) as any as S.Schema<TagValues>;
+export type CostCategoryName = string;
 export interface CostCategoryValues {
   key: string;
   values: string[];
 }
-export const CostCategoryValues = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CostCategoryValues = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ key: S.String, values: Values }),
 ).annotate({
   identifier: "CostCategoryValues",
@@ -220,7 +278,7 @@ export interface TimeRange {
   beginDateInclusive?: Date;
   endDateInclusive?: Date;
 }
-export const TimeRange = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TimeRange = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     beginDateInclusive: S.optional(
       S.Date.pipe(T.TimestampFormat("epoch-seconds")),
@@ -236,7 +294,7 @@ export interface Expression {
   costCategories?: CostCategoryValues;
   timeRange?: TimeRange;
 }
-export const Expression = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Expression = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     dimensions: S.optional(DimensionValues),
     tags: S.optional(TagValues),
@@ -244,15 +302,18 @@ export const Expression = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
     timeRange: S.optional(TimeRange),
   }),
 ).annotate({ identifier: "Expression" }) as any as S.Schema<Expression>;
+export type ClientToken = string;
+export type ResourceTagKey = string;
+export type ResourceTagValue = string;
 export interface ResourceTag {
   key: string;
   value?: string;
 }
-export const ResourceTag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResourceTag = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ key: S.String, value: S.optional(S.String) }),
 ).annotate({ identifier: "ResourceTag" }) as any as S.Schema<ResourceTag>;
 export type ResourceTagList = ResourceTag[];
-export const ResourceTagList = /*@__PURE__*/ /*#__PURE__*/ S.Array(ResourceTag);
+export const ResourceTagList = /*@__PURE__*/ S.Array(ResourceTag);
 export interface CreateBillingViewRequest {
   name: string | redacted.Redacted<string>;
   description?: string | redacted.Redacted<string>;
@@ -261,21 +322,20 @@ export interface CreateBillingViewRequest {
   clientToken?: string;
   resourceTags?: ResourceTag[];
 }
-export const CreateBillingViewRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      name: SensitiveString,
-      description: S.optional(SensitiveString),
-      sourceViews: BillingViewSourceViewsList,
-      dataFilterExpression: S.optional(Expression),
-      clientToken: S.optional(S.String).pipe(
-        T.HttpHeader("X-Amzn-Client-Token"),
-        T.IdempotencyToken(),
-      ),
-      resourceTags: S.optional(ResourceTagList),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+export const CreateBillingViewRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    name: SensitiveString,
+    description: S.optional(SensitiveString),
+    sourceViews: BillingViewSourceViewsList,
+    dataFilterExpression: S.optional(Expression),
+    clientToken: S.optional(S.String).pipe(
+      T.HttpHeader("X-Amzn-Client-Token"),
+      T.IdempotencyToken(),
     ),
+    resourceTags: S.optional(ResourceTagList),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "CreateBillingViewRequest",
 }) as any as S.Schema<CreateBillingViewRequest>;
@@ -283,12 +343,11 @@ export interface CreateBillingViewResponse {
   arn: string;
   createdAt?: Date;
 }
-export const CreateBillingViewResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      arn: S.String,
-      createdAt: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
-    }),
+export const CreateBillingViewResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    arn: S.String,
+    createdAt: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
+  }),
 ).annotate({
   identifier: "CreateBillingViewResponse",
 }) as any as S.Schema<CreateBillingViewResponse>;
@@ -296,19 +355,18 @@ export interface DeleteBillingViewRequest {
   arn: string;
   force?: boolean;
 }
-export const DeleteBillingViewRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ arn: S.String, force: S.optional(S.Boolean) }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const DeleteBillingViewRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String, force: S.optional(S.Boolean) }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "DeleteBillingViewRequest",
 }) as any as S.Schema<DeleteBillingViewRequest>;
 export interface DeleteBillingViewResponse {
   arn: string;
 }
-export const DeleteBillingViewResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ arn: S.String }),
+export const DeleteBillingViewResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }),
 ).annotate({
   identifier: "DeleteBillingViewResponse",
 }) as any as S.Schema<DeleteBillingViewResponse>;
@@ -316,27 +374,25 @@ export interface DisassociateSourceViewsRequest {
   arn: string;
   sourceViews: string[];
 }
-export const DisassociateSourceViewsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ arn: S.String, sourceViews: BillingViewSourceViewsList }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "DisassociateSourceViewsRequest",
-  }) as any as S.Schema<DisassociateSourceViewsRequest>;
+export const DisassociateSourceViewsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String, sourceViews: BillingViewSourceViewsList }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "DisassociateSourceViewsRequest",
+}) as any as S.Schema<DisassociateSourceViewsRequest>;
 export interface DisassociateSourceViewsResponse {
   arn: string;
 }
-export const DisassociateSourceViewsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ arn: S.String }),
-  ).annotate({
-    identifier: "DisassociateSourceViewsResponse",
-  }) as any as S.Schema<DisassociateSourceViewsResponse>;
+export const DisassociateSourceViewsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ arn: S.String }),
+).annotate({
+  identifier: "DisassociateSourceViewsResponse",
+}) as any as S.Schema<DisassociateSourceViewsResponse>;
 export interface GetBillingViewRequest {
   arn: string;
 }
-export const GetBillingViewRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetBillingViewRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.String }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -350,14 +406,17 @@ export type BillingViewType =
   | "BILLING_TRANSFER"
   | "BILLING_TRANSFER_SHOWBACK"
   | (string & {});
-export const BillingViewType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const BillingViewType = /*@__PURE__*/ S.String;
+
+export type AccountId = string;
 export type BillingViewStatus =
   | "HEALTHY"
   | "UNHEALTHY"
   | "CREATING"
   | "UPDATING"
   | (string & {});
-export const BillingViewStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const BillingViewStatus = /*@__PURE__*/ S.String;
+
 export type BillingViewStatusReason =
   | "SOURCE_VIEW_UNHEALTHY"
   | "SOURCE_VIEW_UPDATING"
@@ -368,21 +427,21 @@ export type BillingViewStatusReason =
   | "AGGREGATE_SOURCE"
   | "VIEW_OWNER_NOT_MANAGEMENT_ACCOUNT"
   | (string & {});
-export const BillingViewStatusReason = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const BillingViewStatusReason = /*@__PURE__*/ S.String;
+
 export type BillingViewStatusReasons = BillingViewStatusReason[];
-export const BillingViewStatusReasons = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const BillingViewStatusReasons = /*@__PURE__*/ S.Array(
   BillingViewStatusReason,
 );
 export interface BillingViewHealthStatus {
   statusCode?: BillingViewStatus;
   statusReasons?: BillingViewStatusReason[];
 }
-export const BillingViewHealthStatus = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      statusCode: S.optional(BillingViewStatus),
-      statusReasons: S.optional(BillingViewStatusReasons),
-    }),
+export const BillingViewHealthStatus = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    statusCode: S.optional(BillingViewStatus),
+    statusReasons: S.optional(BillingViewStatusReasons),
+  }),
 ).annotate({
   identifier: "BillingViewHealthStatus",
 }) as any as S.Schema<BillingViewHealthStatus>;
@@ -401,7 +460,7 @@ export interface BillingViewElement {
   viewDefinitionLastUpdatedAt?: Date;
   healthStatus?: BillingViewHealthStatus;
 }
-export const BillingViewElement = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const BillingViewElement = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     name: S.optional(SensitiveString),
@@ -425,28 +484,29 @@ export const BillingViewElement = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetBillingViewResponse {
   billingView: BillingViewElement;
 }
-export const GetBillingViewResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ billingView: BillingViewElement }),
+export const GetBillingViewResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ billingView: BillingViewElement }),
 ).annotate({
   identifier: "GetBillingViewResponse",
 }) as any as S.Schema<GetBillingViewResponse>;
+export type ResourceArn = string;
 export interface GetResourcePolicyRequest {
   resourceArn: string;
 }
-export const GetResourcePolicyRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ resourceArn: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const GetResourcePolicyRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ resourceArn: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "GetResourcePolicyRequest",
 }) as any as S.Schema<GetResourcePolicyRequest>;
+export type PolicyDocument = string;
 export interface GetResourcePolicyResponse {
   resourceArn: string;
   policy?: string;
 }
-export const GetResourcePolicyResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ resourceArn: S.String, policy: S.optional(S.String) }),
+export const GetResourcePolicyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ resourceArn: S.String, policy: S.optional(S.String) }),
 ).annotate({
   identifier: "GetResourcePolicyResponse",
 }) as any as S.Schema<GetResourcePolicyResponse>;
@@ -454,7 +514,7 @@ export interface ActiveTimeRange {
   activeAfterInclusive: Date;
   activeBeforeInclusive: Date;
 }
-export const ActiveTimeRange = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ActiveTimeRange = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     activeAfterInclusive: S.Date.pipe(T.TimestampFormat("epoch-seconds")),
     activeBeforeInclusive: S.Date.pipe(T.TimestampFormat("epoch-seconds")),
@@ -463,21 +523,24 @@ export const ActiveTimeRange = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ActiveTimeRange",
 }) as any as S.Schema<ActiveTimeRange>;
 export type BillingViewArnList = string[];
-export const BillingViewArnList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const BillingViewArnList = /*@__PURE__*/ S.Array(S.String);
 export type BillingViewTypeList = BillingViewType[];
-export const BillingViewTypeList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(BillingViewType);
+export const BillingViewTypeList = /*@__PURE__*/ S.Array(BillingViewType);
 export type SearchOption = "STARTS_WITH" | (string & {});
-export const SearchOption = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SearchOption = /*@__PURE__*/ S.String;
+
+export type SearchValue = string;
 export interface StringSearch {
   searchOption: SearchOption;
   searchValue: string;
 }
-export const StringSearch = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StringSearch = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ searchOption: SearchOption, searchValue: S.String }),
 ).annotate({ identifier: "StringSearch" }) as any as S.Schema<StringSearch>;
 export type StringSearches = StringSearch[];
-export const StringSearches = /*@__PURE__*/ /*#__PURE__*/ S.Array(StringSearch);
+export const StringSearches = /*@__PURE__*/ S.Array(StringSearch);
+export type BillingViewsMaxResults = number;
+export type PageToken = string;
 export interface ListBillingViewsRequest {
   activeTimeRange?: ActiveTimeRange;
   arns?: string[];
@@ -488,20 +551,19 @@ export interface ListBillingViewsRequest {
   maxResults?: number;
   nextToken?: string;
 }
-export const ListBillingViewsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      activeTimeRange: S.optional(ActiveTimeRange),
-      arns: S.optional(BillingViewArnList),
-      billingViewTypes: S.optional(BillingViewTypeList),
-      names: S.optional(StringSearches),
-      ownerAccountId: S.optional(S.String),
-      sourceAccountId: S.optional(S.String),
-      maxResults: S.optional(S.Number),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const ListBillingViewsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    activeTimeRange: S.optional(ActiveTimeRange),
+    arns: S.optional(BillingViewArnList),
+    billingViewTypes: S.optional(BillingViewTypeList),
+    names: S.optional(StringSearches),
+    ownerAccountId: S.optional(S.String),
+    sourceAccountId: S.optional(S.String),
+    maxResults: S.optional(S.Number),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "ListBillingViewsRequest",
 }) as any as S.Schema<ListBillingViewsRequest>;
@@ -514,34 +576,27 @@ export interface BillingViewListElement {
   billingViewType?: BillingViewType;
   healthStatus?: BillingViewHealthStatus;
 }
-export const BillingViewListElement = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      arn: S.optional(S.String),
-      name: S.optional(SensitiveString),
-      description: S.optional(SensitiveString),
-      ownerAccountId: S.optional(S.String),
-      sourceAccountId: S.optional(S.String),
-      billingViewType: S.optional(BillingViewType),
-      healthStatus: S.optional(BillingViewHealthStatus),
-    }),
+export const BillingViewListElement = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    arn: S.optional(S.String),
+    name: S.optional(SensitiveString),
+    description: S.optional(SensitiveString),
+    ownerAccountId: S.optional(S.String),
+    sourceAccountId: S.optional(S.String),
+    billingViewType: S.optional(BillingViewType),
+    healthStatus: S.optional(BillingViewHealthStatus),
+  }),
 ).annotate({
   identifier: "BillingViewListElement",
 }) as any as S.Schema<BillingViewListElement>;
 export type BillingViewList = BillingViewListElement[];
-export const BillingViewList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  BillingViewListElement,
-);
+export const BillingViewList = /*@__PURE__*/ S.Array(BillingViewListElement);
 export interface ListBillingViewsResponse {
   billingViews: BillingViewListElement[];
   nextToken?: string;
 }
-export const ListBillingViewsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      billingViews: BillingViewList,
-      nextToken: S.optional(S.String),
-    }),
+export const ListBillingViewsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ billingViews: BillingViewList, nextToken: S.optional(S.String) }),
 ).annotate({
   identifier: "ListBillingViewsResponse",
 }) as any as S.Schema<ListBillingViewsResponse>;
@@ -550,8 +605,8 @@ export interface ListSourceViewsForBillingViewRequest {
   maxResults?: number;
   nextToken?: string;
 }
-export const ListSourceViewsForBillingViewRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListSourceViewsForBillingViewRequest = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       arn: S.String,
       maxResults: S.optional(S.Number),
@@ -559,47 +614,45 @@ export const ListSourceViewsForBillingViewRequest =
     }).pipe(
       T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
     ),
-  ).annotate({
-    identifier: "ListSourceViewsForBillingViewRequest",
-  }) as any as S.Schema<ListSourceViewsForBillingViewRequest>;
+).annotate({
+  identifier: "ListSourceViewsForBillingViewRequest",
+}) as any as S.Schema<ListSourceViewsForBillingViewRequest>;
 export interface ListSourceViewsForBillingViewResponse {
   sourceViews: string[];
   nextToken?: string;
 }
-export const ListSourceViewsForBillingViewResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListSourceViewsForBillingViewResponse = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       sourceViews: BillingViewSourceViewsList,
       nextToken: S.optional(S.String),
     }),
-  ).annotate({
-    identifier: "ListSourceViewsForBillingViewResponse",
-  }) as any as S.Schema<ListSourceViewsForBillingViewResponse>;
+).annotate({
+  identifier: "ListSourceViewsForBillingViewResponse",
+}) as any as S.Schema<ListSourceViewsForBillingViewResponse>;
 export interface ListTagsForResourceRequest {
   resourceArn: string;
 }
-export const ListTagsForResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ resourceArn: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const ListTagsForResourceRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ resourceArn: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "ListTagsForResourceRequest",
 }) as any as S.Schema<ListTagsForResourceRequest>;
 export interface ListTagsForResourceResponse {
   resourceTags?: ResourceTag[];
 }
-export const ListTagsForResourceResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ resourceTags: S.optional(ResourceTagList) }),
-  ).annotate({
-    identifier: "ListTagsForResourceResponse",
-  }) as any as S.Schema<ListTagsForResourceResponse>;
+export const ListTagsForResourceResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ resourceTags: S.optional(ResourceTagList) }),
+).annotate({
+  identifier: "ListTagsForResourceResponse",
+}) as any as S.Schema<ListTagsForResourceResponse>;
 export interface TagResourceRequest {
   resourceArn: string;
   resourceTags: ResourceTag[];
 }
-export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ resourceArn: S.String, resourceTags: ResourceTagList }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -607,18 +660,18 @@ export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "TagResourceRequest",
 }) as any as S.Schema<TagResourceRequest>;
 export interface TagResourceResponse {}
-export const TagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "TagResourceResponse",
 }) as any as S.Schema<TagResourceResponse>;
 export type ResourceTagKeyList = string[];
-export const ResourceTagKeyList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ResourceTagKeyList = /*@__PURE__*/ S.Array(S.String);
 export interface UntagResourceRequest {
   resourceArn: string;
   resourceTagKeys: string[];
 }
-export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ resourceArn: S.String, resourceTagKeys: ResourceTagKeyList }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -626,7 +679,7 @@ export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "UntagResourceRequest",
 }) as any as S.Schema<UntagResourceRequest>;
 export interface UntagResourceResponse {}
-export const UntagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "UntagResourceResponse",
@@ -637,16 +690,15 @@ export interface UpdateBillingViewRequest {
   description?: string | redacted.Redacted<string>;
   dataFilterExpression?: Expression;
 }
-export const UpdateBillingViewRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      arn: S.String,
-      name: S.optional(SensitiveString),
-      description: S.optional(SensitiveString),
-      dataFilterExpression: S.optional(Expression),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const UpdateBillingViewRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    arn: S.String,
+    name: S.optional(SensitiveString),
+    description: S.optional(SensitiveString),
+    dataFilterExpression: S.optional(Expression),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "UpdateBillingViewRequest",
 }) as any as S.Schema<UpdateBillingViewRequest>;
@@ -654,71 +706,41 @@ export interface UpdateBillingViewResponse {
   arn: string;
   updatedAt?: Date;
 }
-export const UpdateBillingViewResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      arn: S.String,
-      updatedAt: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
-    }),
+export const UpdateBillingViewResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    arn: S.String,
+    updatedAt: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
+  }),
 ).annotate({
   identifier: "UpdateBillingViewResponse",
 }) as any as S.Schema<UpdateBillingViewResponse>;
+export type ErrorMessage = string;
+export type ResourceId = string;
+export type ResourceType = string;
+export type ServiceCode = string;
+export type QuotaCode = string;
+export type ValidationExceptionReason =
+  | "unknownOperation"
+  | "cannotParse"
+  | "fieldValidationFailed"
+  | "other"
+  | (string & {});
+export const ValidationExceptionReason = /*@__PURE__*/ S.String;
 
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { message: S.String },
-  T.AwsQueryError({ code: "BillingAccessDenied", httpResponseCode: 403 }),
-).pipe(C.withAuthError) {}
-export class BillingViewHealthStatusException extends S.TaggedErrorClass<BillingViewHealthStatusException>()(
-  "BillingViewHealthStatusException",
-  { message: S.String },
-).pipe(C.withBadRequestError) {}
-export class ConflictException extends S.TaggedErrorClass<ConflictException>()(
-  "ConflictException",
-  { message: S.String, resourceId: S.String, resourceType: S.String },
-  T.AwsQueryError({ code: "BillingConflict", httpResponseCode: 409 }),
-).pipe(C.withConflictError) {}
-export class InternalServerException extends S.TaggedErrorClass<InternalServerException>()(
-  "InternalServerException",
-  { message: S.String },
-  T.AwsQueryError({ code: "BillingInternalServer", httpResponseCode: 500 }),
-).pipe(C.withServerError) {}
-export class ResourceNotFoundException extends S.TaggedErrorClass<ResourceNotFoundException>()(
-  "ResourceNotFoundException",
-  { message: S.String, resourceId: S.String, resourceType: S.String },
-  T.AwsQueryError({ code: "BillingResourceNotFound", httpResponseCode: 404 }),
-).pipe(C.withBadRequestError) {}
-export class ServiceQuotaExceededException extends S.TaggedErrorClass<ServiceQuotaExceededException>()(
-  "ServiceQuotaExceededException",
-  {
-    message: S.String,
-    resourceId: S.String,
-    resourceType: S.String,
-    serviceCode: S.String,
-    quotaCode: S.String,
-  },
-  T.AwsQueryError({
-    code: "BillingServiceQuotaExceeded",
-    httpResponseCode: 402,
-  }),
-).pipe(C.withQuotaError) {}
-export class ThrottlingException extends S.TaggedErrorClass<ThrottlingException>()(
-  "ThrottlingException",
-  { message: S.String },
-  T.AwsQueryError({ code: "BillingThrottling", httpResponseCode: 429 }),
-).pipe(C.withThrottlingError) {}
-export class ValidationException extends S.TaggedErrorClass<ValidationException>()(
-  "ValidationException",
-  {
-    message: S.String,
-    reason: ValidationExceptionReason,
-    fieldList: S.optional(ValidationExceptionFieldList),
-  },
-  T.AwsQueryError({ code: "BillingValidation", httpResponseCode: 400 }),
-).pipe(C.withBadRequestError) {}
-
-//# Operations
+export type FieldName = string;
+export interface ValidationExceptionField {
+  name: string;
+  message: string;
+}
+export const ValidationExceptionField = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ name: S.String, message: S.String }),
+).annotate({
+  identifier: "ValidationExceptionField",
+}) as any as S.Schema<ValidationExceptionField>;
+export type ValidationExceptionFieldList = ValidationExceptionField[];
+export const ValidationExceptionFieldList = /*@__PURE__*/ S.Array(
+  ValidationExceptionField,
+);
 export type AssociateSourceViewsError =
   | AccessDeniedException
   | BillingViewHealthStatusException
@@ -736,8 +758,8 @@ export const associateSourceViews: API.OperationMethod<
   AssociateSourceViewsRequest,
   AssociateSourceViewsResponse,
   AssociateSourceViewsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: AssociateSourceViewsRequest,
   output: AssociateSourceViewsResponse,
   errors: [
@@ -750,7 +772,11 @@ export const associateSourceViews: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "AssociateSourceViews",
 }));
+
 export type CreateBillingViewError =
   | AccessDeniedException
   | BillingViewHealthStatusException
@@ -768,8 +794,8 @@ export const createBillingView: API.OperationMethod<
   CreateBillingViewRequest,
   CreateBillingViewResponse,
   CreateBillingViewError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateBillingViewRequest,
   output: CreateBillingViewResponse,
   errors: [
@@ -782,7 +808,11 @@ export const createBillingView: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateBillingView",
 }));
+
 export type DeleteBillingViewError =
   | AccessDeniedException
   | ConflictException
@@ -797,8 +827,8 @@ export const deleteBillingView: API.OperationMethod<
   DeleteBillingViewRequest,
   DeleteBillingViewResponse,
   DeleteBillingViewError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteBillingViewRequest,
   output: DeleteBillingViewResponse,
   errors: [
@@ -808,7 +838,11 @@ export const deleteBillingView: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteBillingView",
 }));
+
 export type DisassociateSourceViewsError =
   | AccessDeniedException
   | BillingViewHealthStatusException
@@ -825,8 +859,8 @@ export const disassociateSourceViews: API.OperationMethod<
   DisassociateSourceViewsRequest,
   DisassociateSourceViewsResponse,
   DisassociateSourceViewsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DisassociateSourceViewsRequest,
   output: DisassociateSourceViewsResponse,
   errors: [
@@ -838,7 +872,11 @@ export const disassociateSourceViews: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DisassociateSourceViews",
 }));
+
 export type GetBillingViewError =
   | AccessDeniedException
   | InternalServerException
@@ -853,8 +891,8 @@ export const getBillingView: API.OperationMethod<
   GetBillingViewRequest,
   GetBillingViewResponse,
   GetBillingViewError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetBillingViewRequest,
   output: GetBillingViewResponse,
   errors: [
@@ -864,7 +902,11 @@ export const getBillingView: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetBillingView",
 }));
+
 export type GetResourcePolicyError =
   | AccessDeniedException
   | InternalServerException
@@ -879,8 +921,8 @@ export const getResourcePolicy: API.OperationMethod<
   GetResourcePolicyRequest,
   GetResourcePolicyResponse,
   GetResourcePolicyError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetResourcePolicyRequest,
   output: GetResourcePolicyResponse,
   errors: [
@@ -890,7 +932,11 @@ export const getResourcePolicy: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetResourcePolicy",
 }));
+
 export type ListBillingViewsError =
   | AccessDeniedException
   | InternalServerException
@@ -902,27 +948,13 @@ export type ListBillingViewsError =
  *
  * Every Amazon Web Services account has a unique `PRIMARY` billing view that represents the billing data available by default. Accounts that use Billing Conductor also have `BILLING_GROUP` billing views representing pro forma costs associated with each created billing group.
  */
-export const listBillingViews: API.OperationMethod<
+export const listBillingViews: API.PaginatedOperationMethod<
   ListBillingViewsRequest,
   ListBillingViewsResponse,
   ListBillingViewsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListBillingViewsRequest,
-  ) => stream.Stream<
-    ListBillingViewsResponse,
-    ListBillingViewsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListBillingViewsRequest,
-  ) => stream.Stream<
-    BillingViewListElement,
-    ListBillingViewsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  BillingViewListElement
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListBillingViewsRequest,
   output: ListBillingViewsResponse,
   errors: [
@@ -931,13 +963,17 @@ export const listBillingViews: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListBillingViews",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "billingViews",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type ListSourceViewsForBillingViewError =
   | AccessDeniedException
   | InternalServerException
@@ -948,27 +984,13 @@ export type ListSourceViewsForBillingViewError =
 /**
  * Lists the source views (managed Amazon Web Services billing views) associated with the billing view.
  */
-export const listSourceViewsForBillingView: API.OperationMethod<
+export const listSourceViewsForBillingView: API.PaginatedOperationMethod<
   ListSourceViewsForBillingViewRequest,
   ListSourceViewsForBillingViewResponse,
   ListSourceViewsForBillingViewError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListSourceViewsForBillingViewRequest,
-  ) => stream.Stream<
-    ListSourceViewsForBillingViewResponse,
-    ListSourceViewsForBillingViewError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListSourceViewsForBillingViewRequest,
-  ) => stream.Stream<
-    BillingViewArn,
-    ListSourceViewsForBillingViewError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  BillingViewArn
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListSourceViewsForBillingViewRequest,
   output: ListSourceViewsForBillingViewResponse,
   errors: [
@@ -978,13 +1000,17 @@ export const listSourceViewsForBillingView: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListSourceViewsForBillingView",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "sourceViews",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type ListTagsForResourceError =
   | AccessDeniedException
   | InternalServerException
@@ -999,8 +1025,8 @@ export const listTagsForResource: API.OperationMethod<
   ListTagsForResourceRequest,
   ListTagsForResourceResponse,
   ListTagsForResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListTagsForResourceRequest,
   output: ListTagsForResourceResponse,
   errors: [
@@ -1010,7 +1036,11 @@ export const listTagsForResource: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTagsForResource",
 }));
+
 export type TagResourceError =
   | AccessDeniedException
   | InternalServerException
@@ -1025,8 +1055,8 @@ export const tagResource: API.OperationMethod<
   TagResourceRequest,
   TagResourceResponse,
   TagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TagResourceRequest,
   output: TagResourceResponse,
   errors: [
@@ -1036,7 +1066,11 @@ export const tagResource: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TagResource",
 }));
+
 export type UntagResourceError =
   | AccessDeniedException
   | InternalServerException
@@ -1051,8 +1085,8 @@ export const untagResource: API.OperationMethod<
   UntagResourceRequest,
   UntagResourceResponse,
   UntagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UntagResourceRequest,
   output: UntagResourceResponse,
   errors: [
@@ -1062,7 +1096,11 @@ export const untagResource: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UntagResource",
 }));
+
 export type UpdateBillingViewError =
   | AccessDeniedException
   | BillingViewHealthStatusException
@@ -1080,8 +1118,8 @@ export const updateBillingView: API.OperationMethod<
   UpdateBillingViewRequest,
   UpdateBillingViewResponse,
   UpdateBillingViewError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateBillingViewRequest,
   output: UpdateBillingViewResponse,
   errors: [
@@ -1094,4 +1132,7 @@ export const updateBillingView: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateBillingView",
 }));

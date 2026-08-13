@@ -1,11 +1,11 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region as Rgn } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "Health",
   serviceShapeName: "AWSHealth_20160804",
@@ -138,40 +138,31 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class ConcurrentModificationException
+  extends /*@__PURE__*/ S.TaggedError<ConcurrentModificationException>()(
+    "ConcurrentModificationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidPaginationToken
+  extends /*@__PURE__*/ S.TaggedError<InvalidPaginationToken>()(
+    "InvalidPaginationToken",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class UnsupportedLocale
+  extends /*@__PURE__*/ S.TaggedError<UnsupportedLocale>()(
+    "UnsupportedLocale",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
 export type EventArn = string;
 export type NextToken = string;
 export type MaxResults = number;
-export type AccountId = string;
-export type EntityArn = string;
-export type EntityValue = string;
-export type TagKey = string;
-export type TagValue = string;
-export type Locale = string;
-export type MaxResultsLowerRange = number;
-export type EntityUrl = string;
-export type EntityMetadataKey = string;
-export type EntityMetadataValue = string;
-export type Count = number;
-export type EventType2 = string;
-export type Service = string;
-export type Region = string;
-export type AvailabilityZone = string;
-export type AggregateValue = string;
-export type EventTypeCode = string;
-export type EventDescription2 = string;
-export type MetadataKey = string;
-export type MetadataValue = string;
-export type HealthServiceAccessStatusForOrganization = string;
-
-//# Schemas
 export interface DescribeAffectedAccountsForOrganizationRequest {
   eventArn: string;
   nextToken?: string;
   maxResults?: number;
 }
 export const DescribeAffectedAccountsForOrganizationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       eventArn: S.String,
       nextToken: S.optional(S.String),
@@ -182,23 +173,23 @@ export const DescribeAffectedAccountsForOrganizationRequest =
   ).annotate({
     identifier: "DescribeAffectedAccountsForOrganizationRequest",
   }) as any as S.Schema<DescribeAffectedAccountsForOrganizationRequest>;
+export type AccountId = string;
 export type AffectedAccountsList = string[];
-export const AffectedAccountsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const AffectedAccountsList = /*@__PURE__*/ S.Array(S.String);
 export type EventScopeCode =
   | "PUBLIC"
   | "ACCOUNT_SPECIFIC"
   | "NONE"
   | (string & {});
-export const EventScopeCode = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const EventScopeCode = /*@__PURE__*/ S.String;
+
 export interface DescribeAffectedAccountsForOrganizationResponse {
   affectedAccounts?: string[];
   eventScopeCode?: EventScopeCode;
   nextToken?: string;
 }
 export const DescribeAffectedAccountsForOrganizationResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       affectedAccounts: S.optional(AffectedAccountsList),
       eventScopeCode: S.optional(EventScopeCode),
@@ -208,31 +199,34 @@ export const DescribeAffectedAccountsForOrganizationResponse =
     identifier: "DescribeAffectedAccountsForOrganizationResponse",
   }) as any as S.Schema<DescribeAffectedAccountsForOrganizationResponse>;
 export type EventArnList = string[];
-export const EventArnList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const EventArnList = /*@__PURE__*/ S.Array(S.String);
+export type EntityArn = string;
 export type EntityArnList = string[];
-export const EntityArnList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const EntityArnList = /*@__PURE__*/ S.Array(S.String);
+export type EntityValue = string;
 export type EntityValueList = string[];
-export const EntityValueList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const EntityValueList = /*@__PURE__*/ S.Array(S.String);
 export interface DateTimeRange {
   from?: Date;
   to?: Date;
 }
-export const DateTimeRange = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DateTimeRange = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     from: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
     to: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
   }),
 ).annotate({ identifier: "DateTimeRange" }) as any as S.Schema<DateTimeRange>;
 export type DateTimeRangeList = DateTimeRange[];
-export const DateTimeRangeList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(DateTimeRange);
+export const DateTimeRangeList = /*@__PURE__*/ S.Array(DateTimeRange);
+export type TagKey = string;
+export type TagValue = string;
 export type TagSet = { [key: string]: string | undefined };
-export const TagSet = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const TagSet = /*@__PURE__*/ S.Record(
   S.String,
   S.String.pipe(S.optional),
 );
 export type TagFilter = { [key: string]: string | undefined }[];
-export const TagFilter = /*@__PURE__*/ /*#__PURE__*/ S.Array(TagSet);
+export const TagFilter = /*@__PURE__*/ S.Array(TagSet);
 export type EntityStatusCode =
   | "IMPAIRED"
   | "UNIMPAIRED"
@@ -240,10 +234,10 @@ export type EntityStatusCode =
   | "PENDING"
   | "RESOLVED"
   | (string & {});
-export const EntityStatusCode = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const EntityStatusCode = /*@__PURE__*/ S.String;
+
 export type EntityStatusCodeList = EntityStatusCode[];
-export const EntityStatusCodeList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EntityStatusCode);
+export const EntityStatusCodeList = /*@__PURE__*/ S.Array(EntityStatusCode);
 export interface EntityFilter {
   eventArns: string[];
   entityArns?: string[];
@@ -252,7 +246,7 @@ export interface EntityFilter {
   tags?: { [key: string]: string | undefined }[];
   statusCodes?: EntityStatusCode[];
 }
-export const EntityFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EntityFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     eventArns: EventArnList,
     entityArns: S.optional(EntityArnList),
@@ -262,27 +256,31 @@ export const EntityFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
     statusCodes: S.optional(EntityStatusCodeList),
   }),
 ).annotate({ identifier: "EntityFilter" }) as any as S.Schema<EntityFilter>;
+export type Locale = string;
+export type MaxResultsLowerRange = number;
 export interface DescribeAffectedEntitiesRequest {
   filter: EntityFilter;
   locale?: string;
   nextToken?: string;
   maxResults?: number;
 }
-export const DescribeAffectedEntitiesRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      filter: EntityFilter,
-      locale: S.optional(S.String),
-      nextToken: S.optional(S.String),
-      maxResults: S.optional(S.Number),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "DescribeAffectedEntitiesRequest",
-  }) as any as S.Schema<DescribeAffectedEntitiesRequest>;
+export const DescribeAffectedEntitiesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    filter: EntityFilter,
+    locale: S.optional(S.String),
+    nextToken: S.optional(S.String),
+    maxResults: S.optional(S.Number),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "DescribeAffectedEntitiesRequest",
+}) as any as S.Schema<DescribeAffectedEntitiesRequest>;
+export type EntityUrl = string;
+export type EntityMetadataKey = string;
+export type EntityMetadataValue = string;
 export type EntityMetadata = { [key: string]: string | undefined };
-export const EntityMetadata = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const EntityMetadata = /*@__PURE__*/ S.Record(
   S.String,
   S.String.pipe(S.optional),
 );
@@ -297,7 +295,7 @@ export interface AffectedEntity {
   tags?: { [key: string]: string | undefined };
   entityMetadata?: { [key: string]: string | undefined };
 }
-export const AffectedEntity = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AffectedEntity = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     entityArn: S.optional(S.String),
     eventArn: S.optional(S.String),
@@ -313,38 +311,37 @@ export const AffectedEntity = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "AffectedEntity" }) as any as S.Schema<AffectedEntity>;
 export type EntityList = AffectedEntity[];
-export const EntityList = /*@__PURE__*/ /*#__PURE__*/ S.Array(AffectedEntity);
+export const EntityList = /*@__PURE__*/ S.Array(AffectedEntity);
 export interface DescribeAffectedEntitiesResponse {
   entities?: AffectedEntity[];
   nextToken?: string;
 }
-export const DescribeAffectedEntitiesResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      entities: S.optional(EntityList),
-      nextToken: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "DescribeAffectedEntitiesResponse",
-  }) as any as S.Schema<DescribeAffectedEntitiesResponse>;
+export const DescribeAffectedEntitiesResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    entities: S.optional(EntityList),
+    nextToken: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "DescribeAffectedEntitiesResponse",
+}) as any as S.Schema<DescribeAffectedEntitiesResponse>;
 export interface EventAccountFilter {
   eventArn: string;
   awsAccountId?: string;
 }
-export const EventAccountFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EventAccountFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ eventArn: S.String, awsAccountId: S.optional(S.String) }),
 ).annotate({
   identifier: "EventAccountFilter",
 }) as any as S.Schema<EventAccountFilter>;
 export type OrganizationEntityFiltersList = EventAccountFilter[];
 export const OrganizationEntityFiltersList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EventAccountFilter);
+  /*@__PURE__*/ S.Array(EventAccountFilter);
 export interface EntityAccountFilter {
   eventArn: string;
   awsAccountId?: string;
   statusCodes?: EntityStatusCode[];
 }
-export const EntityAccountFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EntityAccountFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     eventArn: S.String,
     awsAccountId: S.optional(S.String),
@@ -355,7 +352,7 @@ export const EntityAccountFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<EntityAccountFilter>;
 export type OrganizationEntityAccountFiltersList = EntityAccountFilter[];
 export const OrganizationEntityAccountFiltersList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EntityAccountFilter);
+  /*@__PURE__*/ S.Array(EntityAccountFilter);
 export interface DescribeAffectedEntitiesForOrganizationRequest {
   organizationEntityFilters?: EventAccountFilter[];
   locale?: string;
@@ -364,7 +361,7 @@ export interface DescribeAffectedEntitiesForOrganizationRequest {
   organizationEntityAccountFilters?: EntityAccountFilter[];
 }
 export const DescribeAffectedEntitiesForOrganizationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       organizationEntityFilters: S.optional(OrganizationEntityFiltersList),
       locale: S.optional(S.String),
@@ -385,28 +382,28 @@ export interface OrganizationAffectedEntitiesErrorItem {
   errorName?: string;
   errorMessage?: string;
 }
-export const OrganizationAffectedEntitiesErrorItem =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OrganizationAffectedEntitiesErrorItem = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       awsAccountId: S.optional(S.String),
       eventArn: S.optional(S.String),
       errorName: S.optional(S.String),
       errorMessage: S.optional(S.String),
     }),
-  ).annotate({
-    identifier: "OrganizationAffectedEntitiesErrorItem",
-  }) as any as S.Schema<OrganizationAffectedEntitiesErrorItem>;
+).annotate({
+  identifier: "OrganizationAffectedEntitiesErrorItem",
+}) as any as S.Schema<OrganizationAffectedEntitiesErrorItem>;
 export type DescribeAffectedEntitiesForOrganizationFailedSet =
   OrganizationAffectedEntitiesErrorItem[];
 export const DescribeAffectedEntitiesForOrganizationFailedSet =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(OrganizationAffectedEntitiesErrorItem);
+  /*@__PURE__*/ S.Array(OrganizationAffectedEntitiesErrorItem);
 export interface DescribeAffectedEntitiesForOrganizationResponse {
   entities?: AffectedEntity[];
   failedSet?: OrganizationAffectedEntitiesErrorItem[];
   nextToken?: string;
 }
 export const DescribeAffectedEntitiesForOrganizationResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       entities: S.optional(EntityList),
       failedSet: S.optional(DescribeAffectedEntitiesForOrganizationFailedSet),
@@ -416,20 +413,20 @@ export const DescribeAffectedEntitiesForOrganizationResponse =
     identifier: "DescribeAffectedEntitiesForOrganizationResponse",
   }) as any as S.Schema<DescribeAffectedEntitiesForOrganizationResponse>;
 export type EventArnsList = string[];
-export const EventArnsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const EventArnsList = /*@__PURE__*/ S.Array(S.String);
 export interface DescribeEntityAggregatesRequest {
   eventArns?: string[];
 }
-export const DescribeEntityAggregatesRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ eventArns: S.optional(EventArnsList) }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "DescribeEntityAggregatesRequest",
-  }) as any as S.Schema<DescribeEntityAggregatesRequest>;
+export const DescribeEntityAggregatesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ eventArns: S.optional(EventArnsList) }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "DescribeEntityAggregatesRequest",
+}) as any as S.Schema<DescribeEntityAggregatesRequest>;
+export type Count = number;
 export type EntityStatuses = { [key in EntityStatusCode]?: number };
-export const EntityStatuses = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const EntityStatuses = /*@__PURE__*/ S.Record(
   EntityStatusCode,
   S.Number.pipe(S.optional),
 );
@@ -438,7 +435,7 @@ export interface EntityAggregate {
   count?: number;
   statuses?: { [key: string]: number | undefined };
 }
-export const EntityAggregate = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EntityAggregate = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     eventArn: S.optional(S.String),
     count: S.optional(S.Number),
@@ -448,31 +445,25 @@ export const EntityAggregate = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "EntityAggregate",
 }) as any as S.Schema<EntityAggregate>;
 export type EntityAggregateList = EntityAggregate[];
-export const EntityAggregateList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EntityAggregate);
+export const EntityAggregateList = /*@__PURE__*/ S.Array(EntityAggregate);
 export interface DescribeEntityAggregatesResponse {
   entityAggregates?: EntityAggregate[];
 }
-export const DescribeEntityAggregatesResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ entityAggregates: S.optional(EntityAggregateList) }),
-  ).annotate({
-    identifier: "DescribeEntityAggregatesResponse",
-  }) as any as S.Schema<DescribeEntityAggregatesResponse>;
+export const DescribeEntityAggregatesResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ entityAggregates: S.optional(EntityAggregateList) }),
+).annotate({
+  identifier: "DescribeEntityAggregatesResponse",
+}) as any as S.Schema<DescribeEntityAggregatesResponse>;
 export type OrganizationEventArnsList = string[];
-export const OrganizationEventArnsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const OrganizationEventArnsList = /*@__PURE__*/ S.Array(S.String);
 export type OrganizationAccountIdsList = string[];
-export const OrganizationAccountIdsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const OrganizationAccountIdsList = /*@__PURE__*/ S.Array(S.String);
 export interface DescribeEntityAggregatesForOrganizationRequest {
   eventArns: string[];
   awsAccountIds?: string[];
 }
 export const DescribeEntityAggregatesForOrganizationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       eventArns: OrganizationEventArnsList,
       awsAccountIds: S.optional(OrganizationAccountIdsList),
@@ -487,18 +478,17 @@ export interface AccountEntityAggregate {
   count?: number;
   statuses?: { [key: string]: number | undefined };
 }
-export const AccountEntityAggregate = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      accountId: S.optional(S.String),
-      count: S.optional(S.Number),
-      statuses: S.optional(EntityStatuses),
-    }),
+export const AccountEntityAggregate = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    accountId: S.optional(S.String),
+    count: S.optional(S.Number),
+    statuses: S.optional(EntityStatuses),
+  }),
 ).annotate({
   identifier: "AccountEntityAggregate",
 }) as any as S.Schema<AccountEntityAggregate>;
 export type AccountEntityAggregatesList = AccountEntityAggregate[];
-export const AccountEntityAggregatesList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const AccountEntityAggregatesList = /*@__PURE__*/ S.Array(
   AccountEntityAggregate,
 );
 export interface OrganizationEntityAggregate {
@@ -507,25 +497,25 @@ export interface OrganizationEntityAggregate {
   statuses?: { [key: string]: number | undefined };
   accounts?: AccountEntityAggregate[];
 }
-export const OrganizationEntityAggregate =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      eventArn: S.optional(S.String),
-      count: S.optional(S.Number),
-      statuses: S.optional(EntityStatuses),
-      accounts: S.optional(AccountEntityAggregatesList),
-    }),
-  ).annotate({
-    identifier: "OrganizationEntityAggregate",
-  }) as any as S.Schema<OrganizationEntityAggregate>;
+export const OrganizationEntityAggregate = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    eventArn: S.optional(S.String),
+    count: S.optional(S.Number),
+    statuses: S.optional(EntityStatuses),
+    accounts: S.optional(AccountEntityAggregatesList),
+  }),
+).annotate({
+  identifier: "OrganizationEntityAggregate",
+}) as any as S.Schema<OrganizationEntityAggregate>;
 export type OrganizationEntityAggregatesList = OrganizationEntityAggregate[];
-export const OrganizationEntityAggregatesList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(OrganizationEntityAggregate);
+export const OrganizationEntityAggregatesList = /*@__PURE__*/ S.Array(
+  OrganizationEntityAggregate,
+);
 export interface DescribeEntityAggregatesForOrganizationResponse {
   organizationEntityAggregates?: OrganizationEntityAggregate[];
 }
 export const DescribeEntityAggregatesForOrganizationResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       organizationEntityAggregates: S.optional(
         OrganizationEntityAggregatesList,
@@ -539,42 +529,46 @@ export type EventActionability =
   | "ACTION_MAY_BE_REQUIRED"
   | "INFORMATIONAL"
   | (string & {});
-export const EventActionability = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const EventActionability = /*@__PURE__*/ S.String;
+
 export type EventActionabilityList = EventActionability[];
-export const EventActionabilityList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EventActionability);
+export const EventActionabilityList = /*@__PURE__*/ S.Array(EventActionability);
+export type EventType2 = string;
 export type EventTypeList2 = string[];
-export const EventTypeList2 = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const EventTypeList2 = /*@__PURE__*/ S.Array(S.String);
+export type Service = string;
 export type ServiceList = string[];
-export const ServiceList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ServiceList = /*@__PURE__*/ S.Array(S.String);
+export type Region = string;
 export type RegionList = string[];
-export const RegionList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const RegionList = /*@__PURE__*/ S.Array(S.String);
+export type AvailabilityZone = string;
 export type AvailabilityZones = string[];
-export const AvailabilityZones = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const AvailabilityZones = /*@__PURE__*/ S.Array(S.String);
 export type EventTypeCategory =
   | "issue"
   | "accountNotification"
   | "scheduledChange"
   | "investigation"
   | (string & {});
-export const EventTypeCategory = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const EventTypeCategory = /*@__PURE__*/ S.String;
+
 export type EventTypeCategoryList2 = EventTypeCategory[];
-export const EventTypeCategoryList2 =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EventTypeCategory);
+export const EventTypeCategoryList2 = /*@__PURE__*/ S.Array(EventTypeCategory);
 export type EventStatusCode = "open" | "closed" | "upcoming" | (string & {});
-export const EventStatusCode = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const EventStatusCode = /*@__PURE__*/ S.String;
+
 export type EventStatusCodeList = EventStatusCode[];
-export const EventStatusCodeList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EventStatusCode);
+export const EventStatusCodeList = /*@__PURE__*/ S.Array(EventStatusCode);
 export type EventPersona =
   | "OPERATIONS"
   | "SECURITY"
   | "BILLING"
   | (string & {});
-export const EventPersona = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const EventPersona = /*@__PURE__*/ S.String;
+
 export type EventPersonaList = EventPersona[];
-export const EventPersonaList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EventPersona);
+export const EventPersonaList = /*@__PURE__*/ S.Array(EventPersona);
 export interface EventFilter {
   actionabilities?: EventActionability[];
   eventArns?: string[];
@@ -592,7 +586,7 @@ export interface EventFilter {
   eventStatusCodes?: EventStatusCode[];
   personas?: EventPersona[];
 }
-export const EventFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EventFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     actionabilities: S.optional(EventActionabilityList),
     eventArns: S.optional(EventArnList),
@@ -612,64 +606,63 @@ export const EventFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "EventFilter" }) as any as S.Schema<EventFilter>;
 export type EventAggregateField = "eventTypeCategory" | (string & {});
-export const EventAggregateField = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const EventAggregateField = /*@__PURE__*/ S.String;
+
 export interface DescribeEventAggregatesRequest {
   filter?: EventFilter;
   aggregateField: EventAggregateField;
   maxResults?: number;
   nextToken?: string;
 }
-export const DescribeEventAggregatesRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      filter: S.optional(EventFilter),
-      aggregateField: EventAggregateField,
-      maxResults: S.optional(S.Number),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "DescribeEventAggregatesRequest",
-  }) as any as S.Schema<DescribeEventAggregatesRequest>;
+export const DescribeEventAggregatesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    filter: S.optional(EventFilter),
+    aggregateField: EventAggregateField,
+    maxResults: S.optional(S.Number),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "DescribeEventAggregatesRequest",
+}) as any as S.Schema<DescribeEventAggregatesRequest>;
+export type AggregateValue = string;
 export interface EventAggregate {
   aggregateValue?: string;
   count?: number;
 }
-export const EventAggregate = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EventAggregate = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     aggregateValue: S.optional(S.String),
     count: S.optional(S.Number),
   }),
 ).annotate({ identifier: "EventAggregate" }) as any as S.Schema<EventAggregate>;
 export type EventAggregateList = EventAggregate[];
-export const EventAggregateList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EventAggregate);
+export const EventAggregateList = /*@__PURE__*/ S.Array(EventAggregate);
 export interface DescribeEventAggregatesResponse {
   eventAggregates?: EventAggregate[];
   nextToken?: string;
 }
-export const DescribeEventAggregatesResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      eventAggregates: S.optional(EventAggregateList),
-      nextToken: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "DescribeEventAggregatesResponse",
-  }) as any as S.Schema<DescribeEventAggregatesResponse>;
+export const DescribeEventAggregatesResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    eventAggregates: S.optional(EventAggregateList),
+    nextToken: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "DescribeEventAggregatesResponse",
+}) as any as S.Schema<DescribeEventAggregatesResponse>;
 export interface DescribeEventDetailsRequest {
   eventArns: string[];
   locale?: string;
 }
-export const DescribeEventDetailsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ eventArns: EventArnList, locale: S.optional(S.String) }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "DescribeEventDetailsRequest",
-  }) as any as S.Schema<DescribeEventDetailsRequest>;
+export const DescribeEventDetailsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ eventArns: EventArnList, locale: S.optional(S.String) }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "DescribeEventDetailsRequest",
+}) as any as S.Schema<DescribeEventDetailsRequest>;
+export type EventTypeCode = string;
 export interface Event {
   arn?: string;
   service?: string;
@@ -685,7 +678,7 @@ export interface Event {
   actionability?: EventActionability;
   personas?: EventPersona[];
 }
-export const Event = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Event = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     service: S.optional(S.String),
@@ -704,16 +697,19 @@ export const Event = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
     personas: S.optional(EventPersonaList),
   }),
 ).annotate({ identifier: "Event" }) as any as S.Schema<Event>;
+export type EventDescription2 = string;
 export interface EventDescription {
   latestDescription?: string;
 }
-export const EventDescription = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EventDescription = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ latestDescription: S.optional(S.String) }),
 ).annotate({
   identifier: "EventDescription",
 }) as any as S.Schema<EventDescription>;
+export type MetadataKey = string;
+export type MetadataValue = string;
 export type EventMetadata = { [key: string]: string | undefined };
-export const EventMetadata = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const EventMetadata = /*@__PURE__*/ S.Record(
   S.String,
   S.String.pipe(S.optional),
 );
@@ -722,7 +718,7 @@ export interface EventDetails {
   eventDescription?: EventDescription;
   eventMetadata?: { [key: string]: string | undefined };
 }
-export const EventDetails = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EventDetails = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     event: S.optional(Event),
     eventDescription: S.optional(EventDescription),
@@ -731,13 +727,13 @@ export const EventDetails = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({ identifier: "EventDetails" }) as any as S.Schema<EventDetails>;
 export type DescribeEventDetailsSuccessfulSet = EventDetails[];
 export const DescribeEventDetailsSuccessfulSet =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EventDetails);
+  /*@__PURE__*/ S.Array(EventDetails);
 export interface EventDetailsErrorItem {
   eventArn?: string;
   errorName?: string;
   errorMessage?: string;
 }
-export const EventDetailsErrorItem = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EventDetailsErrorItem = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     eventArn: S.optional(S.String),
     errorName: S.optional(S.String),
@@ -747,30 +743,30 @@ export const EventDetailsErrorItem = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "EventDetailsErrorItem",
 }) as any as S.Schema<EventDetailsErrorItem>;
 export type DescribeEventDetailsFailedSet = EventDetailsErrorItem[];
-export const DescribeEventDetailsFailedSet =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EventDetailsErrorItem);
+export const DescribeEventDetailsFailedSet = /*@__PURE__*/ S.Array(
+  EventDetailsErrorItem,
+);
 export interface DescribeEventDetailsResponse {
   successfulSet?: EventDetails[];
   failedSet?: EventDetailsErrorItem[];
 }
-export const DescribeEventDetailsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      successfulSet: S.optional(DescribeEventDetailsSuccessfulSet),
-      failedSet: S.optional(DescribeEventDetailsFailedSet),
-    }),
-  ).annotate({
-    identifier: "DescribeEventDetailsResponse",
-  }) as any as S.Schema<DescribeEventDetailsResponse>;
+export const DescribeEventDetailsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    successfulSet: S.optional(DescribeEventDetailsSuccessfulSet),
+    failedSet: S.optional(DescribeEventDetailsFailedSet),
+  }),
+).annotate({
+  identifier: "DescribeEventDetailsResponse",
+}) as any as S.Schema<DescribeEventDetailsResponse>;
 export type OrganizationEventDetailFiltersList = EventAccountFilter[];
 export const OrganizationEventDetailFiltersList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EventAccountFilter);
+  /*@__PURE__*/ S.Array(EventAccountFilter);
 export interface DescribeEventDetailsForOrganizationRequest {
   organizationEventDetailFilters: EventAccountFilter[];
   locale?: string;
 }
 export const DescribeEventDetailsForOrganizationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       organizationEventDetailFilters: OrganizationEventDetailFiltersList,
       locale: S.optional(S.String),
@@ -786,48 +782,46 @@ export interface OrganizationEventDetails {
   eventDescription?: EventDescription;
   eventMetadata?: { [key: string]: string | undefined };
 }
-export const OrganizationEventDetails = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      awsAccountId: S.optional(S.String),
-      event: S.optional(Event),
-      eventDescription: S.optional(EventDescription),
-      eventMetadata: S.optional(EventMetadata),
-    }),
+export const OrganizationEventDetails = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    awsAccountId: S.optional(S.String),
+    event: S.optional(Event),
+    eventDescription: S.optional(EventDescription),
+    eventMetadata: S.optional(EventMetadata),
+  }),
 ).annotate({
   identifier: "OrganizationEventDetails",
 }) as any as S.Schema<OrganizationEventDetails>;
 export type DescribeEventDetailsForOrganizationSuccessfulSet =
   OrganizationEventDetails[];
 export const DescribeEventDetailsForOrganizationSuccessfulSet =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(OrganizationEventDetails);
+  /*@__PURE__*/ S.Array(OrganizationEventDetails);
 export interface OrganizationEventDetailsErrorItem {
   awsAccountId?: string;
   eventArn?: string;
   errorName?: string;
   errorMessage?: string;
 }
-export const OrganizationEventDetailsErrorItem =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      awsAccountId: S.optional(S.String),
-      eventArn: S.optional(S.String),
-      errorName: S.optional(S.String),
-      errorMessage: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "OrganizationEventDetailsErrorItem",
-  }) as any as S.Schema<OrganizationEventDetailsErrorItem>;
+export const OrganizationEventDetailsErrorItem = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    awsAccountId: S.optional(S.String),
+    eventArn: S.optional(S.String),
+    errorName: S.optional(S.String),
+    errorMessage: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "OrganizationEventDetailsErrorItem",
+}) as any as S.Schema<OrganizationEventDetailsErrorItem>;
 export type DescribeEventDetailsForOrganizationFailedSet =
   OrganizationEventDetailsErrorItem[];
 export const DescribeEventDetailsForOrganizationFailedSet =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(OrganizationEventDetailsErrorItem);
+  /*@__PURE__*/ S.Array(OrganizationEventDetailsErrorItem);
 export interface DescribeEventDetailsForOrganizationResponse {
   successfulSet?: OrganizationEventDetails[];
   failedSet?: OrganizationEventDetailsErrorItem[];
 }
 export const DescribeEventDetailsForOrganizationResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       successfulSet: S.optional(
         DescribeEventDetailsForOrganizationSuccessfulSet,
@@ -843,7 +837,7 @@ export interface DescribeEventsRequest {
   maxResults?: number;
   locale?: string;
 }
-export const DescribeEventsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeEventsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     filter: S.optional(EventFilter),
     nextToken: S.optional(S.String),
@@ -856,22 +850,18 @@ export const DescribeEventsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DescribeEventsRequest",
 }) as any as S.Schema<DescribeEventsRequest>;
 export type EventList = Event[];
-export const EventList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Event);
+export const EventList = /*@__PURE__*/ S.Array(Event);
 export interface DescribeEventsResponse {
   events?: Event[];
   nextToken?: string;
 }
-export const DescribeEventsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      events: S.optional(EventList),
-      nextToken: S.optional(S.String),
-    }),
+export const DescribeEventsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ events: S.optional(EventList), nextToken: S.optional(S.String) }),
 ).annotate({
   identifier: "DescribeEventsResponse",
 }) as any as S.Schema<DescribeEventsResponse>;
 export type AwsAccountIdsList = string[];
-export const AwsAccountIdsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const AwsAccountIdsList = /*@__PURE__*/ S.Array(S.String);
 export interface OrganizationEventFilter {
   actionabilities?: EventActionability[];
   eventTypeCodes?: string[];
@@ -887,23 +877,22 @@ export interface OrganizationEventFilter {
   eventStatusCodes?: EventStatusCode[];
   personas?: EventPersona[];
 }
-export const OrganizationEventFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      actionabilities: S.optional(EventActionabilityList),
-      eventTypeCodes: S.optional(EventTypeList2),
-      awsAccountIds: S.optional(AwsAccountIdsList),
-      services: S.optional(ServiceList),
-      regions: S.optional(RegionList),
-      startTime: S.optional(DateTimeRange),
-      endTime: S.optional(DateTimeRange),
-      lastUpdatedTime: S.optional(DateTimeRange),
-      entityArns: S.optional(EntityArnList),
-      entityValues: S.optional(EntityValueList),
-      eventTypeCategories: S.optional(EventTypeCategoryList2),
-      eventStatusCodes: S.optional(EventStatusCodeList),
-      personas: S.optional(EventPersonaList),
-    }),
+export const OrganizationEventFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    actionabilities: S.optional(EventActionabilityList),
+    eventTypeCodes: S.optional(EventTypeList2),
+    awsAccountIds: S.optional(AwsAccountIdsList),
+    services: S.optional(ServiceList),
+    regions: S.optional(RegionList),
+    startTime: S.optional(DateTimeRange),
+    endTime: S.optional(DateTimeRange),
+    lastUpdatedTime: S.optional(DateTimeRange),
+    entityArns: S.optional(EntityArnList),
+    entityValues: S.optional(EntityValueList),
+    eventTypeCategories: S.optional(EventTypeCategoryList2),
+    eventStatusCodes: S.optional(EventStatusCodeList),
+    personas: S.optional(EventPersonaList),
+  }),
 ).annotate({
   identifier: "OrganizationEventFilter",
 }) as any as S.Schema<OrganizationEventFilter>;
@@ -913,8 +902,8 @@ export interface DescribeEventsForOrganizationRequest {
   maxResults?: number;
   locale?: string;
 }
-export const DescribeEventsForOrganizationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeEventsForOrganizationRequest = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       filter: S.optional(OrganizationEventFilter),
       nextToken: S.optional(S.String),
@@ -923,9 +912,9 @@ export const DescribeEventsForOrganizationRequest =
     }).pipe(
       T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
     ),
-  ).annotate({
-    identifier: "DescribeEventsForOrganizationRequest",
-  }) as any as S.Schema<DescribeEventsForOrganizationRequest>;
+).annotate({
+  identifier: "DescribeEventsForOrganizationRequest",
+}) as any as S.Schema<DescribeEventsForOrganizationRequest>;
 export interface OrganizationEvent {
   arn?: string;
   service?: string;
@@ -940,7 +929,7 @@ export interface OrganizationEvent {
   actionability?: EventActionability;
   personas?: EventPersona[];
 }
-export const OrganizationEvent = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OrganizationEvent = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     arn: S.optional(S.String),
     service: S.optional(S.String),
@@ -961,34 +950,33 @@ export const OrganizationEvent = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "OrganizationEvent",
 }) as any as S.Schema<OrganizationEvent>;
 export type OrganizationEventList = OrganizationEvent[];
-export const OrganizationEventList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(OrganizationEvent);
+export const OrganizationEventList = /*@__PURE__*/ S.Array(OrganizationEvent);
 export interface DescribeEventsForOrganizationResponse {
   events?: OrganizationEvent[];
   nextToken?: string;
 }
-export const DescribeEventsForOrganizationResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeEventsForOrganizationResponse = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       events: S.optional(OrganizationEventList),
       nextToken: S.optional(S.String),
     }),
-  ).annotate({
-    identifier: "DescribeEventsForOrganizationResponse",
-  }) as any as S.Schema<DescribeEventsForOrganizationResponse>;
+).annotate({
+  identifier: "DescribeEventsForOrganizationResponse",
+}) as any as S.Schema<DescribeEventsForOrganizationResponse>;
 export type EventTypeCodeList = string[];
-export const EventTypeCodeList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const EventTypeCodeList = /*@__PURE__*/ S.Array(S.String);
 export type EventTypeCategoryList = EventTypeCategory[];
-export const EventTypeCategoryList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EventTypeCategory);
+export const EventTypeCategoryList = /*@__PURE__*/ S.Array(EventTypeCategory);
 export type EventTypeActionability =
   | "ACTION_REQUIRED"
   | "ACTION_MAY_BE_REQUIRED"
   | "INFORMATIONAL"
   | (string & {});
-export const EventTypeActionability = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const EventTypeActionability = /*@__PURE__*/ S.String;
+
 export type EventTypeActionabilityList = EventTypeActionability[];
-export const EventTypeActionabilityList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const EventTypeActionabilityList = /*@__PURE__*/ S.Array(
   EventTypeActionability,
 );
 export type EventTypePersona =
@@ -996,10 +984,10 @@ export type EventTypePersona =
   | "SECURITY"
   | "BILLING"
   | (string & {});
-export const EventTypePersona = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const EventTypePersona = /*@__PURE__*/ S.String;
+
 export type EventTypePersonaList = EventTypePersona[];
-export const EventTypePersonaList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EventTypePersona);
+export const EventTypePersonaList = /*@__PURE__*/ S.Array(EventTypePersona);
 export interface EventTypeFilter {
   eventTypeCodes?: string[];
   services?: string[];
@@ -1007,7 +995,7 @@ export interface EventTypeFilter {
   actionabilities?: EventTypeActionability[];
   personas?: EventTypePersona[];
 }
-export const EventTypeFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EventTypeFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     eventTypeCodes: S.optional(EventTypeCodeList),
     services: S.optional(ServiceList),
@@ -1024,16 +1012,15 @@ export interface DescribeEventTypesRequest {
   nextToken?: string;
   maxResults?: number;
 }
-export const DescribeEventTypesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      filter: S.optional(EventTypeFilter),
-      locale: S.optional(S.String),
-      nextToken: S.optional(S.String),
-      maxResults: S.optional(S.Number),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const DescribeEventTypesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    filter: S.optional(EventTypeFilter),
+    locale: S.optional(S.String),
+    nextToken: S.optional(S.String),
+    maxResults: S.optional(S.Number),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "DescribeEventTypesRequest",
 }) as any as S.Schema<DescribeEventTypesRequest>;
@@ -1044,7 +1031,7 @@ export interface EventType {
   actionability?: EventTypeActionability;
   personas?: EventTypePersona[];
 }
-export const EventType = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EventType = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     service: S.optional(S.String),
     code: S.optional(S.String),
@@ -1054,34 +1041,34 @@ export const EventType = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "EventType" }) as any as S.Schema<EventType>;
 export type EventTypeList = EventType[];
-export const EventTypeList = /*@__PURE__*/ /*#__PURE__*/ S.Array(EventType);
+export const EventTypeList = /*@__PURE__*/ S.Array(EventType);
 export interface DescribeEventTypesResponse {
   eventTypes?: EventType[];
   nextToken?: string;
 }
-export const DescribeEventTypesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      eventTypes: S.optional(EventTypeList),
-      nextToken: S.optional(S.String),
-    }),
+export const DescribeEventTypesResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    eventTypes: S.optional(EventTypeList),
+    nextToken: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "DescribeEventTypesResponse",
 }) as any as S.Schema<DescribeEventTypesResponse>;
 export interface DescribeHealthServiceStatusForOrganizationRequest {}
 export const DescribeHealthServiceStatusForOrganizationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({}).pipe(
       T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
     ),
   ).annotate({
     identifier: "DescribeHealthServiceStatusForOrganizationRequest",
   }) as any as S.Schema<DescribeHealthServiceStatusForOrganizationRequest>;
+export type HealthServiceAccessStatusForOrganization = string;
 export interface DescribeHealthServiceStatusForOrganizationResponse {
   healthServiceAccessStatusForOrganization?: string;
 }
 export const DescribeHealthServiceStatusForOrganizationResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       healthServiceAccessStatusForOrganization: S.optional(S.String),
     }),
@@ -1090,7 +1077,7 @@ export const DescribeHealthServiceStatusForOrganizationResponse =
   }) as any as S.Schema<DescribeHealthServiceStatusForOrganizationResponse>;
 export interface DisableHealthServiceAccessForOrganizationRequest {}
 export const DisableHealthServiceAccessForOrganizationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({}).pipe(
       T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
     ),
@@ -1099,12 +1086,12 @@ export const DisableHealthServiceAccessForOrganizationRequest =
   }) as any as S.Schema<DisableHealthServiceAccessForOrganizationRequest>;
 export interface DisableHealthServiceAccessForOrganizationResponse {}
 export const DisableHealthServiceAccessForOrganizationResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({})).annotate({
+  /*@__PURE__*/ S.suspend(() => S.Struct({})).annotate({
     identifier: "DisableHealthServiceAccessForOrganizationResponse",
   }) as any as S.Schema<DisableHealthServiceAccessForOrganizationResponse>;
 export interface EnableHealthServiceAccessForOrganizationRequest {}
 export const EnableHealthServiceAccessForOrganizationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({}).pipe(
       T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
     ),
@@ -1113,25 +1100,9 @@ export const EnableHealthServiceAccessForOrganizationRequest =
   }) as any as S.Schema<EnableHealthServiceAccessForOrganizationRequest>;
 export interface EnableHealthServiceAccessForOrganizationResponse {}
 export const EnableHealthServiceAccessForOrganizationResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({})).annotate({
+  /*@__PURE__*/ S.suspend(() => S.Struct({})).annotate({
     identifier: "EnableHealthServiceAccessForOrganizationResponse",
   }) as any as S.Schema<EnableHealthServiceAccessForOrganizationResponse>;
-
-//# Errors
-export class InvalidPaginationToken extends S.TaggedErrorClass<InvalidPaginationToken>()(
-  "InvalidPaginationToken",
-  { message: S.optional(S.String) },
-) {}
-export class UnsupportedLocale extends S.TaggedErrorClass<UnsupportedLocale>()(
-  "UnsupportedLocale",
-  { message: S.optional(S.String) },
-) {}
-export class ConcurrentModificationException extends S.TaggedErrorClass<ConcurrentModificationException>()(
-  "ConcurrentModificationException",
-  { message: S.optional(S.String) },
-) {}
-
-//# Operations
 export type DescribeAffectedAccountsForOrganizationError =
   | InvalidPaginationToken
   | CommonErrors;
@@ -1146,37 +1117,27 @@ export type DescribeAffectedAccountsForOrganizationError =
  *
  * This API operation uses pagination. Specify the `nextToken` parameter in the next request to return more results.
  */
-export const describeAffectedAccountsForOrganization: API.OperationMethod<
+export const describeAffectedAccountsForOrganization: API.PaginatedOperationMethod<
   DescribeAffectedAccountsForOrganizationRequest,
   DescribeAffectedAccountsForOrganizationResponse,
   DescribeAffectedAccountsForOrganizationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeAffectedAccountsForOrganizationRequest,
-  ) => stream.Stream<
-    DescribeAffectedAccountsForOrganizationResponse,
-    DescribeAffectedAccountsForOrganizationError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeAffectedAccountsForOrganizationRequest,
-  ) => stream.Stream<
-    AccountId,
-    DescribeAffectedAccountsForOrganizationError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  AccountId
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeAffectedAccountsForOrganizationRequest,
   output: DescribeAffectedAccountsForOrganizationResponse,
   errors: [InvalidPaginationToken],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeAffectedAccountsForOrganization",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "affectedAccounts",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeAffectedEntitiesError =
   | InvalidPaginationToken
   | UnsupportedLocale
@@ -1195,37 +1156,27 @@ export type DescribeAffectedEntitiesError =
  * - This operation supports resource-level permissions. You can use this operation to allow or deny access to specific Health events. For more
  * information, see Resource- and action-based conditions in the *Health User Guide*.
  */
-export const describeAffectedEntities: API.OperationMethod<
+export const describeAffectedEntities: API.PaginatedOperationMethod<
   DescribeAffectedEntitiesRequest,
   DescribeAffectedEntitiesResponse,
   DescribeAffectedEntitiesError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeAffectedEntitiesRequest,
-  ) => stream.Stream<
-    DescribeAffectedEntitiesResponse,
-    DescribeAffectedEntitiesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeAffectedEntitiesRequest,
-  ) => stream.Stream<
-    AffectedEntity,
-    DescribeAffectedEntitiesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  AffectedEntity
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeAffectedEntitiesRequest,
   output: DescribeAffectedEntitiesResponse,
   errors: [InvalidPaginationToken, UnsupportedLocale],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeAffectedEntities",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "entities",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeAffectedEntitiesForOrganizationError =
   | InvalidPaginationToken
   | UnsupportedLocale
@@ -1247,37 +1198,27 @@ export type DescribeAffectedEntitiesForOrganizationError =
  * - This operation doesn't support resource-level permissions. You can't use this operation to allow or deny access to specific Health events. For more
  * information, see Resource- and action-based conditions in the *Health User Guide*.
  */
-export const describeAffectedEntitiesForOrganization: API.OperationMethod<
+export const describeAffectedEntitiesForOrganization: API.PaginatedOperationMethod<
   DescribeAffectedEntitiesForOrganizationRequest,
   DescribeAffectedEntitiesForOrganizationResponse,
   DescribeAffectedEntitiesForOrganizationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeAffectedEntitiesForOrganizationRequest,
-  ) => stream.Stream<
-    DescribeAffectedEntitiesForOrganizationResponse,
-    DescribeAffectedEntitiesForOrganizationError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeAffectedEntitiesForOrganizationRequest,
-  ) => stream.Stream<
-    AffectedEntity,
-    DescribeAffectedEntitiesForOrganizationError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  AffectedEntity
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeAffectedEntitiesForOrganizationRequest,
   output: DescribeAffectedEntitiesForOrganizationResponse,
   errors: [InvalidPaginationToken, UnsupportedLocale],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeAffectedEntitiesForOrganization",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "entities",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeEntityAggregatesError = CommonErrors;
 /**
  * Returns the number of entities that are affected by each of the specified events.
@@ -1286,12 +1227,16 @@ export const describeEntityAggregates: API.OperationMethod<
   DescribeEntityAggregatesRequest,
   DescribeEntityAggregatesResponse,
   DescribeEntityAggregatesError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeEntityAggregatesRequest,
   output: DescribeEntityAggregatesResponse,
   errors: [],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeEntityAggregates",
 }));
+
 export type DescribeEntityAggregatesForOrganizationError = CommonErrors;
 /**
  * Returns a list of entity aggregates for your Organizations that are affected by each of the specified events.
@@ -1300,12 +1245,16 @@ export const describeEntityAggregatesForOrganization: API.OperationMethod<
   DescribeEntityAggregatesForOrganizationRequest,
   DescribeEntityAggregatesForOrganizationResponse,
   DescribeEntityAggregatesForOrganizationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeEntityAggregatesForOrganizationRequest,
   output: DescribeEntityAggregatesForOrganizationResponse,
   errors: [],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeEntityAggregatesForOrganization",
 }));
+
 export type DescribeEventAggregatesError =
   | InvalidPaginationToken
   | CommonErrors;
@@ -1316,37 +1265,27 @@ export type DescribeEventAggregatesError =
  *
  * This API operation uses pagination. Specify the `nextToken` parameter in the next request to return more results.
  */
-export const describeEventAggregates: API.OperationMethod<
+export const describeEventAggregates: API.PaginatedOperationMethod<
   DescribeEventAggregatesRequest,
   DescribeEventAggregatesResponse,
   DescribeEventAggregatesError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeEventAggregatesRequest,
-  ) => stream.Stream<
-    DescribeEventAggregatesResponse,
-    DescribeEventAggregatesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeEventAggregatesRequest,
-  ) => stream.Stream<
-    EventAggregate,
-    DescribeEventAggregatesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  EventAggregate
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeEventAggregatesRequest,
   output: DescribeEventAggregatesResponse,
   errors: [InvalidPaginationToken],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeEventAggregates",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "eventAggregates",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeEventDetailsError = UnsupportedLocale | CommonErrors;
 /**
  * Returns detailed information about one or more specified events. Information includes
@@ -1364,12 +1303,16 @@ export const describeEventDetails: API.OperationMethod<
   DescribeEventDetailsRequest,
   DescribeEventDetailsResponse,
   DescribeEventDetailsError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeEventDetailsRequest,
   output: DescribeEventDetailsResponse,
   errors: [UnsupportedLocale],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeEventDetails",
 }));
+
 export type DescribeEventDetailsForOrganizationError =
   | UnsupportedLocale
   | CommonErrors;
@@ -1407,12 +1350,16 @@ export const describeEventDetailsForOrganization: API.OperationMethod<
   DescribeEventDetailsForOrganizationRequest,
   DescribeEventDetailsForOrganizationResponse,
   DescribeEventDetailsForOrganizationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeEventDetailsForOrganizationRequest,
   output: DescribeEventDetailsForOrganizationResponse,
   errors: [UnsupportedLocale],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeEventDetailsForOrganization",
 }));
+
 export type DescribeEventsError =
   | InvalidPaginationToken
   | UnsupportedLocale
@@ -1437,37 +1384,27 @@ export type DescribeEventsError =
  *
  * - This API operation uses pagination. Specify the `nextToken` parameter in the next request to return more results.
  */
-export const describeEvents: API.OperationMethod<
+export const describeEvents: API.PaginatedOperationMethod<
   DescribeEventsRequest,
   DescribeEventsResponse,
   DescribeEventsError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeEventsRequest,
-  ) => stream.Stream<
-    DescribeEventsResponse,
-    DescribeEventsError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeEventsRequest,
-  ) => stream.Stream<
-    Event,
-    DescribeEventsError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Event
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeEventsRequest,
   output: DescribeEventsResponse,
   errors: [InvalidPaginationToken, UnsupportedLocale],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeEvents",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "events",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeEventsForOrganizationError =
   | InvalidPaginationToken
   | UnsupportedLocale
@@ -1497,37 +1434,27 @@ export type DescribeEventsForOrganizationError =
  *
  * This API operation uses pagination. Specify the `nextToken` parameter in the next request to return more results.
  */
-export const describeEventsForOrganization: API.OperationMethod<
+export const describeEventsForOrganization: API.PaginatedOperationMethod<
   DescribeEventsForOrganizationRequest,
   DescribeEventsForOrganizationResponse,
   DescribeEventsForOrganizationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeEventsForOrganizationRequest,
-  ) => stream.Stream<
-    DescribeEventsForOrganizationResponse,
-    DescribeEventsForOrganizationError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeEventsForOrganizationRequest,
-  ) => stream.Stream<
-    OrganizationEvent,
-    DescribeEventsForOrganizationError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  OrganizationEvent
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeEventsForOrganizationRequest,
   output: DescribeEventsForOrganizationResponse,
   errors: [InvalidPaginationToken, UnsupportedLocale],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeEventsForOrganization",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "events",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeEventTypesError =
   | InvalidPaginationToken
   | UnsupportedLocale
@@ -1541,37 +1468,27 @@ export type DescribeEventTypesError =
  *
  * This API operation uses pagination. Specify the `nextToken` parameter in the next request to return more results.
  */
-export const describeEventTypes: API.OperationMethod<
+export const describeEventTypes: API.PaginatedOperationMethod<
   DescribeEventTypesRequest,
   DescribeEventTypesResponse,
   DescribeEventTypesError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeEventTypesRequest,
-  ) => stream.Stream<
-    DescribeEventTypesResponse,
-    DescribeEventTypesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeEventTypesRequest,
-  ) => stream.Stream<
-    EventType,
-    DescribeEventTypesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  EventType
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeEventTypesRequest,
   output: DescribeEventTypesResponse,
   errors: [InvalidPaginationToken, UnsupportedLocale],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeEventTypes",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "eventTypes",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeHealthServiceStatusForOrganizationError = CommonErrors;
 /**
  * This operation provides status information on enabling or disabling Health to work
@@ -1582,12 +1499,16 @@ export const describeHealthServiceStatusForOrganization: API.OperationMethod<
   DescribeHealthServiceStatusForOrganizationRequest,
   DescribeHealthServiceStatusForOrganizationResponse,
   DescribeHealthServiceStatusForOrganizationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeHealthServiceStatusForOrganizationRequest,
   output: DescribeHealthServiceStatusForOrganizationResponse,
   errors: [],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeHealthServiceStatusForOrganization",
 }));
+
 export type DisableHealthServiceAccessForOrganizationError =
   | ConcurrentModificationException
   | CommonErrors;
@@ -1611,12 +1532,16 @@ export const disableHealthServiceAccessForOrganization: API.OperationMethod<
   DisableHealthServiceAccessForOrganizationRequest,
   DisableHealthServiceAccessForOrganizationResponse,
   DisableHealthServiceAccessForOrganizationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DisableHealthServiceAccessForOrganizationRequest,
   output: DisableHealthServiceAccessForOrganizationResponse,
   errors: [ConcurrentModificationException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DisableHealthServiceAccessForOrganization",
 }));
+
 export type EnableHealthServiceAccessForOrganizationError =
   | ConcurrentModificationException
   | CommonErrors;
@@ -1646,9 +1571,12 @@ export const enableHealthServiceAccessForOrganization: API.OperationMethod<
   EnableHealthServiceAccessForOrganizationRequest,
   EnableHealthServiceAccessForOrganizationResponse,
   EnableHealthServiceAccessForOrganizationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: EnableHealthServiceAccessForOrganizationRequest,
   output: EnableHealthServiceAccessForOrganizationResponse,
   errors: [ConcurrentModificationException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "EnableHealthServiceAccessForOrganization",
 }));

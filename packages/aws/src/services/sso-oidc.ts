@@ -1,12 +1,13 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as redacted from "effect/Redacted";
-import * as S from "effect/Schema";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region as Rgn } from "../region.ts";
 import { SensitiveString } from "../sensitive.ts";
 const svc = T.AwsApiService({
   sdkId: "SSO OIDC",
@@ -87,7 +88,158 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    {
+      error: S.optional(S.String),
+      reason: S.optional(
+        S.suspend(() => AccessDeniedExceptionReason).annotate({
+          identifier: "AccessDeniedExceptionReason",
+        }),
+      ),
+      error_description: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError, C.withAuthError) {}
+export class AuthorizationPendingException
+  extends /*@__PURE__*/ S.TaggedError<AuthorizationPendingException>()(
+    "AuthorizationPendingException",
+    {
+      error: S.optional(S.String),
+      error_description: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class ExpiredTokenException
+  extends /*@__PURE__*/ S.TaggedError<ExpiredTokenException>()(
+    "ExpiredTokenException",
+    {
+      error: S.optional(S.String),
+      error_description: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InternalServerException
+  extends /*@__PURE__*/ S.TaggedError<InternalServerException>()(
+    "InternalServerException",
+    {
+      error: S.optional(S.String),
+      error_description: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class InvalidClientException
+  extends /*@__PURE__*/ S.TaggedError<InvalidClientException>()(
+    "InvalidClientException",
+    {
+      error: S.optional(S.String),
+      error_description: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(401),
+  ).pipe(C.withAuthError) {}
+export class InvalidClientMetadataException
+  extends /*@__PURE__*/ S.TaggedError<InvalidClientMetadataException>()(
+    "InvalidClientMetadataException",
+    {
+      error: S.optional(S.String),
+      error_description: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidGrantException
+  extends /*@__PURE__*/ S.TaggedError<InvalidGrantException>()(
+    "InvalidGrantException",
+    {
+      error: S.optional(S.String),
+      error_description: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidRedirectUriException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRedirectUriException>()(
+    "InvalidRedirectUriException",
+    {
+      error: S.optional(S.String),
+      error_description: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidRequestException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRequestException>()(
+    "InvalidRequestException",
+    {
+      error: S.optional(S.String),
+      reason: S.optional(
+        S.suspend(() => InvalidRequestExceptionReason).annotate({
+          identifier: "InvalidRequestExceptionReason",
+        }),
+      ),
+      error_description: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidRequestRegionException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRequestRegionException>()(
+    "InvalidRequestRegionException",
+    {
+      error: S.optional(S.String),
+      error_description: S.optional(S.String),
+      endpoint: S.optional(S.String),
+      region: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidScopeException
+  extends /*@__PURE__*/ S.TaggedError<InvalidScopeException>()(
+    "InvalidScopeException",
+    {
+      error: S.optional(S.String),
+      error_description: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class SlowDownException
+  extends /*@__PURE__*/ S.TaggedError<SlowDownException>()(
+    "SlowDownException",
+    {
+      error: S.optional(S.String),
+      error_description: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class UnauthorizedClientException
+  extends /*@__PURE__*/ S.TaggedError<UnauthorizedClientException>()(
+    "UnauthorizedClientException",
+    {
+      error: S.optional(S.String),
+      error_description: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError, C.withAuthError) {}
+export class UnsupportedGrantTypeException
+  extends /*@__PURE__*/ S.TaggedError<UnsupportedGrantTypeException>()(
+    "UnsupportedGrantTypeException",
+    {
+      error: S.optional(S.String),
+      error_description: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
 export type ClientId = string;
 export type ClientSecret = string | redacted.Redacted<string>;
 export type GrantType = string;
@@ -95,29 +247,10 @@ export type DeviceCode = string;
 export type AuthCode = string;
 export type RefreshToken = string | redacted.Redacted<string>;
 export type Scope = string;
+export type Scopes = string[];
+export const Scopes = /*@__PURE__*/ S.Array(S.String);
 export type URI = string;
 export type CodeVerifier = string | redacted.Redacted<string>;
-export type AccessToken = string | redacted.Redacted<string>;
-export type TokenType = string;
-export type ExpirationInSeconds = number;
-export type IdToken = string | redacted.Redacted<string>;
-export type ErrorDescription = string;
-export type Assertion = string | redacted.Redacted<string>;
-export type SubjectToken = string | redacted.Redacted<string>;
-export type TokenTypeURI = string;
-export type IdentityContext = string;
-export type Location = string;
-export type Region = string;
-export type ClientName = string;
-export type ClientType = string;
-export type ArnType = string;
-export type LongTimeStampType = number;
-export type UserCode = string;
-export type IntervalInSeconds = number;
-
-//# Schemas
-export type Scopes = string[];
-export const Scopes = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
 export interface CreateTokenRequest {
   clientId: string;
   clientSecret: string | redacted.Redacted<string>;
@@ -129,7 +262,7 @@ export interface CreateTokenRequest {
   redirectUri?: string;
   codeVerifier?: string | redacted.Redacted<string>;
 }
-export const CreateTokenRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateTokenRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     clientId: S.String,
     clientSecret: SensitiveString,
@@ -153,6 +286,10 @@ export const CreateTokenRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "CreateTokenRequest",
 }) as any as S.Schema<CreateTokenRequest>;
+export type AccessToken = string | redacted.Redacted<string>;
+export type TokenType = string;
+export type ExpirationInSeconds = number;
+export type IdToken = string | redacted.Redacted<string>;
 export interface CreateTokenResponse {
   accessToken?: string | redacted.Redacted<string>;
   tokenType?: string;
@@ -160,7 +297,7 @@ export interface CreateTokenResponse {
   refreshToken?: string | redacted.Redacted<string>;
   idToken?: string | redacted.Redacted<string>;
 }
-export const CreateTokenResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateTokenResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     accessToken: S.optional(SensitiveString),
     tokenType: S.optional(S.String),
@@ -171,18 +308,9 @@ export const CreateTokenResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "CreateTokenResponse",
 }) as any as S.Schema<CreateTokenResponse>;
-export type AccessDeniedExceptionReason =
-  | "KMS_AccessDeniedException"
-  | (string & {});
-export const AccessDeniedExceptionReason = /*@__PURE__*/ /*#__PURE__*/ S.String;
-export type InvalidRequestExceptionReason =
-  | "KMS_NotFoundException"
-  | "KMS_InvalidKeyUsageException"
-  | "KMS_InvalidStateException"
-  | "KMS_DisabledException"
-  | (string & {});
-export const InvalidRequestExceptionReason =
-  /*@__PURE__*/ /*#__PURE__*/ S.String;
+export type Assertion = string | redacted.Redacted<string>;
+export type SubjectToken = string | redacted.Redacted<string>;
+export type TokenTypeURI = string;
 export interface CreateTokenWithIAMRequest {
   clientId: string;
   grantType: string;
@@ -196,37 +324,37 @@ export interface CreateTokenWithIAMRequest {
   requestedTokenType?: string;
   codeVerifier?: string | redacted.Redacted<string>;
 }
-export const CreateTokenWithIAMRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      clientId: S.String,
-      grantType: S.String,
-      code: S.optional(S.String),
-      refreshToken: S.optional(SensitiveString),
-      assertion: S.optional(SensitiveString),
-      scope: S.optional(Scopes),
-      redirectUri: S.optional(S.String),
-      subjectToken: S.optional(SensitiveString),
-      subjectTokenType: S.optional(S.String),
-      requestedTokenType: S.optional(S.String),
-      codeVerifier: S.optional(SensitiveString),
-    }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/token?aws_iam=t" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreateTokenWithIAMRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    clientId: S.String,
+    grantType: S.String,
+    code: S.optional(S.String),
+    refreshToken: S.optional(SensitiveString),
+    assertion: S.optional(SensitiveString),
+    scope: S.optional(Scopes),
+    redirectUri: S.optional(S.String),
+    subjectToken: S.optional(SensitiveString),
+    subjectTokenType: S.optional(S.String),
+    requestedTokenType: S.optional(S.String),
+    codeVerifier: S.optional(SensitiveString),
+  }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/token?aws_iam=t" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "CreateTokenWithIAMRequest",
 }) as any as S.Schema<CreateTokenWithIAMRequest>;
+export type IdentityContext = string;
 export interface AwsAdditionalDetails {
   identityContext?: string;
 }
-export const AwsAdditionalDetails = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AwsAdditionalDetails = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ identityContext: S.optional(S.String) }),
 ).annotate({
   identifier: "AwsAdditionalDetails",
@@ -241,25 +369,27 @@ export interface CreateTokenWithIAMResponse {
   scope?: string[];
   awsAdditionalDetails?: AwsAdditionalDetails;
 }
-export const CreateTokenWithIAMResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      accessToken: S.optional(SensitiveString),
-      tokenType: S.optional(S.String),
-      expiresIn: S.optional(S.Number),
-      refreshToken: S.optional(SensitiveString),
-      idToken: S.optional(SensitiveString),
-      issuedTokenType: S.optional(S.String),
-      scope: S.optional(Scopes),
-      awsAdditionalDetails: S.optional(AwsAdditionalDetails),
-    }),
+export const CreateTokenWithIAMResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    accessToken: S.optional(SensitiveString),
+    tokenType: S.optional(S.String),
+    expiresIn: S.optional(S.Number),
+    refreshToken: S.optional(SensitiveString),
+    idToken: S.optional(SensitiveString),
+    issuedTokenType: S.optional(S.String),
+    scope: S.optional(Scopes),
+    awsAdditionalDetails: S.optional(AwsAdditionalDetails),
+  }),
 ).annotate({
   identifier: "CreateTokenWithIAMResponse",
 }) as any as S.Schema<CreateTokenWithIAMResponse>;
+export type ClientName = string;
+export type ClientType = string;
 export type RedirectUris = string[];
-export const RedirectUris = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const RedirectUris = /*@__PURE__*/ S.Array(S.String);
 export type GrantTypes = string[];
-export const GrantTypes = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const GrantTypes = /*@__PURE__*/ S.Array(S.String);
+export type ArnType = string;
 export interface RegisterClientRequest {
   clientName: string;
   clientType: string;
@@ -269,7 +399,7 @@ export interface RegisterClientRequest {
   issuerUrl?: string;
   entitledApplicationArn?: string;
 }
-export const RegisterClientRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RegisterClientRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     clientName: S.String,
     clientType: S.String,
@@ -291,6 +421,7 @@ export const RegisterClientRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "RegisterClientRequest",
 }) as any as S.Schema<RegisterClientRequest>;
+export type LongTimeStampType = number;
 export interface RegisterClientResponse {
   clientId?: string;
   clientSecret?: string | redacted.Redacted<string>;
@@ -299,16 +430,15 @@ export interface RegisterClientResponse {
   authorizationEndpoint?: string;
   tokenEndpoint?: string;
 }
-export const RegisterClientResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      clientId: S.optional(S.String),
-      clientSecret: S.optional(SensitiveString),
-      clientIdIssuedAt: S.optional(S.Number),
-      clientSecretExpiresAt: S.optional(S.Number),
-      authorizationEndpoint: S.optional(S.String),
-      tokenEndpoint: S.optional(S.String),
-    }),
+export const RegisterClientResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    clientId: S.optional(S.String),
+    clientSecret: S.optional(SensitiveString),
+    clientIdIssuedAt: S.optional(S.Number),
+    clientSecretExpiresAt: S.optional(S.Number),
+    authorizationEndpoint: S.optional(S.String),
+    tokenEndpoint: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "RegisterClientResponse",
 }) as any as S.Schema<RegisterClientResponse>;
@@ -317,25 +447,26 @@ export interface StartDeviceAuthorizationRequest {
   clientSecret: string | redacted.Redacted<string>;
   startUrl: string;
 }
-export const StartDeviceAuthorizationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      clientId: S.String,
-      clientSecret: SensitiveString,
-      startUrl: S.String,
-    }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/device_authorization" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const StartDeviceAuthorizationRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    clientId: S.String,
+    clientSecret: SensitiveString,
+    startUrl: S.String,
+  }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/device_authorization" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "StartDeviceAuthorizationRequest",
-  }) as any as S.Schema<StartDeviceAuthorizationRequest>;
+  ),
+).annotate({
+  identifier: "StartDeviceAuthorizationRequest",
+}) as any as S.Schema<StartDeviceAuthorizationRequest>;
+export type UserCode = string;
+export type IntervalInSeconds = number;
 export interface StartDeviceAuthorizationResponse {
   deviceCode?: string;
   userCode?: string;
@@ -344,92 +475,34 @@ export interface StartDeviceAuthorizationResponse {
   expiresIn?: number;
   interval?: number;
 }
-export const StartDeviceAuthorizationResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      deviceCode: S.optional(S.String),
-      userCode: S.optional(S.String),
-      verificationUri: S.optional(S.String),
-      verificationUriComplete: S.optional(S.String),
-      expiresIn: S.optional(S.Number),
-      interval: S.optional(S.Number),
-    }),
-  ).annotate({
-    identifier: "StartDeviceAuthorizationResponse",
-  }) as any as S.Schema<StartDeviceAuthorizationResponse>;
+export const StartDeviceAuthorizationResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    deviceCode: S.optional(S.String),
+    userCode: S.optional(S.String),
+    verificationUri: S.optional(S.String),
+    verificationUriComplete: S.optional(S.String),
+    expiresIn: S.optional(S.Number),
+    interval: S.optional(S.Number),
+  }),
+).annotate({
+  identifier: "StartDeviceAuthorizationResponse",
+}) as any as S.Schema<StartDeviceAuthorizationResponse>;
+export type AccessDeniedExceptionReason =
+  | "KMS_AccessDeniedException"
+  | (string & {});
+export const AccessDeniedExceptionReason = /*@__PURE__*/ S.String;
 
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  {
-    error: S.optional(S.String),
-    reason: S.optional(AccessDeniedExceptionReason),
-    error_description: S.optional(S.String),
-  },
-).pipe(C.withBadRequestError, C.withAuthError) {}
-export class AuthorizationPendingException extends S.TaggedErrorClass<AuthorizationPendingException>()(
-  "AuthorizationPendingException",
-  { error: S.optional(S.String), error_description: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ExpiredTokenException extends S.TaggedErrorClass<ExpiredTokenException>()(
-  "ExpiredTokenException",
-  { error: S.optional(S.String), error_description: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InternalServerException extends S.TaggedErrorClass<InternalServerException>()(
-  "InternalServerException",
-  { error: S.optional(S.String), error_description: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class InvalidClientException extends S.TaggedErrorClass<InvalidClientException>()(
-  "InvalidClientException",
-  { error: S.optional(S.String), error_description: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class InvalidGrantException extends S.TaggedErrorClass<InvalidGrantException>()(
-  "InvalidGrantException",
-  { error: S.optional(S.String), error_description: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InvalidRequestException extends S.TaggedErrorClass<InvalidRequestException>()(
-  "InvalidRequestException",
-  {
-    error: S.optional(S.String),
-    reason: S.optional(InvalidRequestExceptionReason),
-    error_description: S.optional(S.String),
-  },
-).pipe(C.withBadRequestError) {}
-export class InvalidScopeException extends S.TaggedErrorClass<InvalidScopeException>()(
-  "InvalidScopeException",
-  { error: S.optional(S.String), error_description: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class SlowDownException extends S.TaggedErrorClass<SlowDownException>()(
-  "SlowDownException",
-  { error: S.optional(S.String), error_description: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class UnauthorizedClientException extends S.TaggedErrorClass<UnauthorizedClientException>()(
-  "UnauthorizedClientException",
-  { error: S.optional(S.String), error_description: S.optional(S.String) },
-).pipe(C.withBadRequestError, C.withAuthError) {}
-export class UnsupportedGrantTypeException extends S.TaggedErrorClass<UnsupportedGrantTypeException>()(
-  "UnsupportedGrantTypeException",
-  { error: S.optional(S.String), error_description: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InvalidRequestRegionException extends S.TaggedErrorClass<InvalidRequestRegionException>()(
-  "InvalidRequestRegionException",
-  {
-    error: S.optional(S.String),
-    error_description: S.optional(S.String),
-    endpoint: S.optional(S.String),
-    region: S.optional(S.String),
-  },
-).pipe(C.withBadRequestError) {}
-export class InvalidClientMetadataException extends S.TaggedErrorClass<InvalidClientMetadataException>()(
-  "InvalidClientMetadataException",
-  { error: S.optional(S.String), error_description: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InvalidRedirectUriException extends S.TaggedErrorClass<InvalidRedirectUriException>()(
-  "InvalidRedirectUriException",
-  { error: S.optional(S.String), error_description: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
+export type ErrorDescription = string;
+export type InvalidRequestExceptionReason =
+  | "KMS_NotFoundException"
+  | "KMS_InvalidKeyUsageException"
+  | "KMS_InvalidStateException"
+  | "KMS_DisabledException"
+  | (string & {});
+export const InvalidRequestExceptionReason = /*@__PURE__*/ S.String;
 
-//# Operations
+export type Location = string;
+export type Region = string;
 export type CreateTokenError =
   | AccessDeniedException
   | AuthorizationPendingException
@@ -452,8 +525,8 @@ export const createToken: API.OperationMethod<
   CreateTokenRequest,
   CreateTokenResponse,
   CreateTokenError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateTokenRequest,
   output: CreateTokenResponse,
   errors: [
@@ -469,7 +542,11 @@ export const createToken: API.OperationMethod<
     UnauthorizedClientException,
     UnsupportedGrantTypeException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateToken",
 }));
+
 export type CreateTokenWithIAMError =
   | AccessDeniedException
   | AuthorizationPendingException
@@ -497,8 +574,8 @@ export const createTokenWithIAM: API.OperationMethod<
   CreateTokenWithIAMRequest,
   CreateTokenWithIAMResponse,
   CreateTokenWithIAMError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateTokenWithIAMRequest,
   output: CreateTokenWithIAMResponse,
   errors: [
@@ -515,7 +592,11 @@ export const createTokenWithIAM: API.OperationMethod<
     UnauthorizedClientException,
     UnsupportedGrantTypeException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateTokenWithIAM",
 }));
+
 export type RegisterClientError =
   | InternalServerException
   | InvalidClientMetadataException
@@ -534,8 +615,8 @@ export const registerClient: API.OperationMethod<
   RegisterClientRequest,
   RegisterClientResponse,
   RegisterClientError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: RegisterClientRequest,
   output: RegisterClientResponse,
   errors: [
@@ -547,7 +628,11 @@ export const registerClient: API.OperationMethod<
     SlowDownException,
     UnsupportedGrantTypeException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "RegisterClient",
 }));
+
 export type StartDeviceAuthorizationError =
   | InternalServerException
   | InvalidClientException
@@ -563,8 +648,8 @@ export const startDeviceAuthorization: API.OperationMethod<
   StartDeviceAuthorizationRequest,
   StartDeviceAuthorizationResponse,
   StartDeviceAuthorizationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: StartDeviceAuthorizationRequest,
   output: StartDeviceAuthorizationResponse,
   errors: [
@@ -574,4 +659,7 @@ export const startDeviceAuthorization: API.OperationMethod<
     SlowDownException,
     UnauthorizedClientException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "StartDeviceAuthorization",
 }));

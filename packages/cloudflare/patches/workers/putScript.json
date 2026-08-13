@@ -1,198 +1,87 @@
 {
-  "errors": {
-    "InvalidRoute": [{ "code": 7003 }],
-    "InvalidWorkerScript": [{ "code": 10068 }],
-    "InternalServerError": [
-      {
-        "code": 10002,
-        "message": { "includes": "An unknown error has occurred" }
-      }
-    ],
-    "DurableObjectMustBeSqlite": [
-      {
-        "code": 10074,
-        "message": { "includes": "not a SQLite Durable Object" }
-      }
-    ],
-    "DuplicateMigrationTarget": [
-      {
-        "code": 10074,
-        "message": {
-          "includes": "cannot be the target of more than one migration"
+  "description": "Align workers#ScriptsUpdate with distilled cloudflare/workers putScript",
+  "patches": [
+    {
+      "op": "move",
+      "from": "/shapes/com.cloudflare.workers#ScriptsUpdate",
+      "path": "/shapes/com.cloudflare.workers#PutScript"
+    },
+    {
+      "op": "move",
+      "from": "/shapes/com.cloudflare.workers#ScriptsUpdateRequest",
+      "path": "/shapes/com.cloudflare.workers#PutScriptRequest"
+    },
+    {
+      "op": "replace",
+      "path": "/shapes/com.cloudflare.workers#PutScript/input/target",
+      "value": "com.cloudflare.workers#PutScriptRequest"
+    },
+    {
+      "op": "move",
+      "from": "/shapes/com.cloudflare.workers#ScriptsUpdateResponse",
+      "path": "/shapes/com.cloudflare.workers#PutScriptResponse"
+    },
+    {
+      "op": "replace",
+      "path": "/shapes/com.cloudflare.workers#PutScript/output/target",
+      "value": "com.cloudflare.workers#PutScriptResponse"
+    },
+    {
+      "op": "add",
+      "path": "/shapes/com.cloudflare.workers#PutScript/errors",
+      "value": [
+        {
+          "target": "com.cloudflare.workers#InvalidRoute"
+        },
+        {
+          "target": "com.cloudflare.workers#InvalidWorkerScript"
+        },
+        {
+          "target": "com.cloudflare.workers#DurableObjectMustBeSqlite"
+        },
+        {
+          "target": "com.cloudflare.workers#DuplicateMigrationTarget"
+        },
+        {
+          "target": "com.cloudflare.workers#ScriptStartupError"
+        },
+        {
+          "target": "com.cloudflare.workers#ScriptModuleNotFound"
+        },
+        {
+          "target": "com.cloudflare.workers#SecretsStoreBindingNotFound"
+        },
+        {
+          "target": "com.cloudflare.workers#KVNamespaceNotFound"
+        },
+        {
+          "target": "com.cloudflare.workers#R2BucketNotFound"
+        },
+        {
+          "target": "com.cloudflare.workers#D1DatabaseNotFound"
+        },
+        {
+          "target": "com.cloudflare.workers#QueueNotFound"
+        },
+        {
+          "target": "com.cloudflare.workers#ServiceBindingNotFound"
+        },
+        {
+          "target": "com.cloudflare.workers#DurableObjectClassNotFound"
+        },
+        {
+          "target": "com.cloudflare.workers#HyperdriveConfigNotFound"
+        },
+        {
+          "target": "com.cloudflare.workers#VectorizeIndexNotFound"
+        },
+        {
+          "target": "com.cloudflare.workers#DispatchNamespaceNotFound"
+        },
+        {
+          "target": "com.cloudflare.workers#MtlsCertificateNotFound"
         }
-      }
-    ],
-    "ScriptStartupError": [{ "code": 10021 }],
-    "ScriptModuleNotFound": [
-      {
-        "code": 10021,
-        "message": { "includes": "No such module" }
-      }
-    ]
-  },
-  "request": {
-    "properties": {
-      "metadata.bindings[].json": { "type": "unknown" },
-      "metadata.bindings[]": {
-        "appendUnion": [
-          {
-            "kind": "object",
-            "properties": [
-              {
-                "name": "name",
-                "required": true,
-                "type": { "kind": "primitive", "value": "string" }
-              },
-              {
-                "name": "type",
-                "required": true,
-                "type": { "kind": "literal", "value": "worker_loader" }
-              }
-            ]
-          },
-          {
-            "kind": "object",
-            "properties": [
-              {
-                "name": "name",
-                "required": true,
-                "type": { "kind": "primitive", "value": "string" }
-              },
-              {
-                "name": "type",
-                "required": true,
-                "type": { "kind": "literal", "value": "artifacts" }
-              },
-              {
-                "name": "namespace",
-                "required": true,
-                "type": { "kind": "primitive", "value": "string" }
-              }
-            ]
-          },
-          {
-            "kind": "object",
-            "properties": [
-              {
-                "name": "name",
-                "required": true,
-                "type": { "kind": "primitive", "value": "string" }
-              },
-              {
-                "name": "type",
-                "required": true,
-                "type": { "kind": "literal", "value": "ratelimit" }
-              },
-              {
-                "name": "namespace_id",
-                "required": true,
-                "type": { "kind": "primitive", "value": "string" }
-              },
-              {
-                "name": "simple",
-                "required": true,
-                "type": {
-                  "kind": "object",
-                  "properties": [
-                    {
-                      "name": "limit",
-                      "required": true,
-                      "type": { "kind": "primitive", "value": "number" }
-                    },
-                    {
-                      "name": "period",
-                      "required": true,
-                      "type": { "kind": "primitive", "value": "number" }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "metadata.containers": {
-        "optional": true,
-        "definition": {
-          "kind": "array",
-          "elementType": {
-            "kind": "object",
-            "properties": [
-              {
-                "name": "class_name",
-                "type": { "kind": "primitive", "value": "string" },
-                "required": true
-              }
-            ]
-          }
-        }
-      },
-      "metadata.observability.traces": {
-        "optional": true,
-        "definition": {
-          "kind": "object",
-          "properties": [
-            {
-              "name": "enabled",
-              "required": true,
-              "type": { "kind": "primitive", "value": "boolean" }
-            },
-            {
-              "name": "head_sampling_rate",
-              "required": false,
-              "type": { "kind": "primitive", "value": "number" }
-            },
-            {
-              "name": "destinations",
-              "required": false,
-              "type": {
-                "kind": "array",
-                "elementType": { "kind": "primitive", "value": "string" }
-              }
-            },
-            {
-              "name": "persist",
-              "required": false,
-              "type": { "kind": "primitive", "value": "boolean" }
-            }
-          ]
-        }
-      }
+      ]
     }
-  },
-  "response": {
-    "properties": {
-      "observability.traces": {
-        "optional": true,
-        "definition": {
-          "kind": "object",
-          "properties": [
-            {
-              "name": "enabled",
-              "required": true,
-              "type": { "kind": "primitive", "value": "boolean" }
-            },
-            {
-              "name": "head_sampling_rate",
-              "required": false,
-              "type": { "kind": "primitive", "value": "number" }
-            },
-            {
-              "name": "destinations",
-              "required": false,
-              "type": {
-                "kind": "array",
-                "elementType": { "kind": "primitive", "value": "string" }
-              }
-            },
-            {
-              "name": "persist",
-              "required": false,
-              "type": { "kind": "primitive", "value": "boolean" }
-            }
-          ]
-        }
-      }
-    }
-  }
+  ]
 }

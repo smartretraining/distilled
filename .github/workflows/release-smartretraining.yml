@@ -1,0 +1,205 @@
+name: release-smartretraining
+
+# Publishes the @smartretraining/* packages and cuts one GitHub Release.
+#
+# VERSIONING — the one-version pattern, matching how alchemy-run/actions
+# releases the upstream packages: every @smartretraining package shares a
+# single version line and ships together. Tags and GitHub Releases are
+# per-package (`smartretraining/rex-effect@0.4.0`) so each has its own
+# release history and so nothing collides with the 113 `v*` tags this fork
+# inherited from upstream.
+#
+# The version lives in each package.json and is bumped in a normal reviewed
+# commit, so a release is always something a human approved. The workflow
+# refuses to run if the packages disagree, or if the version is already on
+# npm.
+#
+# This does NOT call `alchemy-run/actions/.github/workflows/release.yml`
+# (which `release.yml` uses for the @distilled.cloud packages). That
+# workflow authenticates its version-bump commit with a GitHub App via
+# `ALCHEMY_VERSION_BOT_ID` / `ALCHEMY_VERSION_BOT_PRIVATE_KEY`, secrets
+# belonging to the alchemy-run org with no GITHUB_TOKEN fallback. Rather
+# than stand up an equivalent app here, the bump is a committed change and
+# this workflow only publishes.
+#
+# PUBLISHING uses npm TRUSTED PUBLISHING (OIDC), so there is no npm token
+# anywhere — not in a repository secret, not on a developer's machine.
+# GitHub mints a short-lived, cryptographically-signed token scoped to this
+# workflow and npm verifies it. Provenance attestations are generated
+# automatically, tying each tarball to the commit and run that built it.
+#
+# ⚠️ THE FILENAME OF THIS WORKFLOW IS PART OF THE TRUST CONFIGURATION.
+# npm matches releases against `release-smartretraining.yml` by name.
+# Renaming or moving this file silently breaks publishing until the trusted
+# publisher entry is updated on npmjs.com to match.
+#
+# One-time setup per package, on npmjs.com → package → Settings → Trusted
+# Publisher: provider GitHub Actions, org `smartretraining`, repository
+# `distilled`, workflow `release-smartretraining.yml`. A package must exist
+# on the registry before it can be configured, so a brand-new package needs
+# its first version published another way (see the README section on
+# releasing).
+#
+# Requires npm >= 11.5.1 and Node >= 22.14.0; both are pinned below.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: >-
+          Build, typecheck and pack, but do not publish, tag or release.
+          Use this to rehearse a release.
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: release-smartretraining
+  cancel-in-progress: false
+
+env:
+  PACKAGES: packages/rex packages/reapit
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # push the tag and create the GitHub Release
+      id-token: write # mint the OIDC token npm trusted publishing verifies
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          # Full history so release notes can be generated against the
+          # previous tag.
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: latest
+
+      # npm (not bun) does the publishing: trusted publishing is an npm CLI
+      # feature. Node 22 ships npm 10.x, which predates it, so the CLI is
+      # upgraded explicitly.
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22.14"
+          registry-url: https://registry.npmjs.org
+
+      - name: Upgrade npm for trusted publishing
+        run: |
+          npm install -g npm@^11.5.1
+          npm --version
+
+      - run: bun install --frozen-lockfile
+
+      - name: Resolve and agree the version
+        id: version
+        run: |
+          version=""
+          for dir in $PACKAGES; do
+            v=$(node -p "require('./$dir/package.json').version")
+            name=$(node -p "require('./$dir/package.json').name")
+            echo "  $name -> $v"
+            if [ -z "$version" ]; then
+              version="$v"
+            elif [ "$v" != "$version" ]; then
+              echo "::error::Packages disagree on the version ($v vs $version). The @smartretraining packages share one version line; bump them together."
+              exit 1
+            fi
+          done
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Refuse to republish an existing version
+        run: |
+          for dir in $PACKAGES; do
+            name=$(node -p "require('./$dir/package.json').name")
+            if npm view "$name@${{ steps.version.outputs.version }}" version >/dev/null 2>&1; then
+              echo "::error::$name@${{ steps.version.outputs.version }} is already on npm. Bump the version first."
+              exit 1
+            fi
+          done
+
+      # `noCheck: true` in tsconfig.base.json means day-to-day builds only
+      # emit. Nothing ships without being properly checked first.
+      - name: Typecheck (strict)
+        run: |
+          for dir in $PACKAGES; do
+            echo "== $dir"
+            bunx tsc -p "$dir/tsconfig.json" --noEmit --noCheck false
+          done
+
+      # `--force` matters: `tsc -b` is incremental and trusts .tsbuildinfo, so
+      # if a stale one is ever present it reports success while emitting
+      # nothing — and `files` ships `lib/`, so that publishes an empty
+      # package. A fresh checkout has no .tsbuildinfo today; this makes the
+      # guarantee independent of that.
+      - name: Build
+        run: |
+          for dir in $PACKAGES; do bunx tsc -b "$dir" --force; done
+
+      - name: Verify build output exists
+        run: |
+          for dir in $PACKAGES; do
+            if [ ! -f "$dir/lib/index.js" ] || [ ! -f "$dir/lib/index.d.ts" ]; then
+              echo "::error::$dir/lib is missing build output — refusing to publish an empty package."
+              exit 1
+            fi
+            echo "  $dir/lib: $(ls "$dir/lib" | wc -l | tr -d ' ') files"
+          done
+
+      - name: Pack
+        run: |
+          for dir in $PACKAGES; do (cd "$dir" && npm pack --dry-run); done
+
+      # No NODE_AUTH_TOKEN: authentication is the OIDC token minted from the
+      # `id-token: write` permission above, and provenance is generated
+      # automatically under trusted publishing.
+      - name: Publish to npm
+        if: ${{ !inputs.dry-run }}
+        run: |
+          for dir in $PACKAGES; do
+            echo "== publishing $dir"
+            (cd "$dir" && npm publish --access public)
+          done
+
+      # One tag and one Release PER PACKAGE, e.g.
+      # `smartretraining/rex-effect@0.4.0`.
+      #
+      # A bare `v<version>` tag is not usable here: this repo is a fork of
+      # alchemy-run/distilled and inherited 113 upstream `v*` tags, so
+      # `v0.4.0`, `v0.5.0`, `v0.6.0` and friends already point at unrelated
+      # upstream releases. Namespacing by package avoids that collision
+      # entirely, and gives each package its own release history — someone
+      # watching reapit-effect is not shown rex's notes.
+      - name: Tag and create a GitHub Release per package
+        if: ${{ !inputs.dry-run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${{ steps.version.outputs.version }}"
+
+          for dir in $PACKAGES; do
+            name=$(node -p "require('./$dir/package.json').name")
+            # @smartretraining/rex-effect -> smartretraining/rex-effect
+            slug="${name#@}"
+            tag="$slug@$version"
+
+            if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+              echo "::error::Tag $tag already exists."
+              exit 1
+            fi
+
+            git tag "$tag"
+            git push origin "$tag"
+
+            # Notes run from this package's previous tag, so each release
+            # lists only its own changes.
+            previous=$(git tag --list "$slug@*" --sort=-v:refname | sed -n '2p')
+            args=(--title "$name $version" --generate-notes)
+            [ -n "$previous" ] && args+=(--notes-start-tag "$previous")
+
+            gh release create "$tag" "${args[@]}" \
+              --notes "Published to npm with trusted publishing (OIDC) — the tarball carries a provenance attestation linking it to this commit and workflow run.
+
+          https://www.npmjs.com/package/$name/v/$version"
+          done

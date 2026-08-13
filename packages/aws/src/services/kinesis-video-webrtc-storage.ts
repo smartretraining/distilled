@@ -1,11 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "Kinesis Video WebRTC Storage",
   serviceShapeName: "AWSAcuityRoutingServiceLambda",
@@ -82,79 +83,79 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class ClientLimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<ClientLimitExceededException>()(
+    "ClientLimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidArgumentException
+  extends /*@__PURE__*/ S.TaggedError<InvalidArgumentException>()(
+    "InvalidArgumentException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class ResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotFoundException>()(
+    "ResourceNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
 export type ChannelArn = string;
-export type ClientId = string;
-
-//# Schemas
 export interface JoinStorageSessionInput {
   channelArn: string;
 }
-export const JoinStorageSessionInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ channelArn: S.String }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/joinStorageSession" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const JoinStorageSessionInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ channelArn: S.String }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/joinStorageSession" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "JoinStorageSessionInput",
 }) as any as S.Schema<JoinStorageSessionInput>;
 export interface JoinStorageSessionResponse {}
-export const JoinStorageSessionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const JoinStorageSessionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "JoinStorageSessionResponse",
 }) as any as S.Schema<JoinStorageSessionResponse>;
+export type ClientId = string;
 export interface JoinStorageSessionAsViewerInput {
   channelArn: string;
   clientId: string;
 }
-export const JoinStorageSessionAsViewerInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ channelArn: S.String, clientId: S.String }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/joinStorageSessionAsViewer" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const JoinStorageSessionAsViewerInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ channelArn: S.String, clientId: S.String }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/joinStorageSessionAsViewer" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "JoinStorageSessionAsViewerInput",
-  }) as any as S.Schema<JoinStorageSessionAsViewerInput>;
+  ),
+).annotate({
+  identifier: "JoinStorageSessionAsViewerInput",
+}) as any as S.Schema<JoinStorageSessionAsViewerInput>;
 export interface JoinStorageSessionAsViewerResponse {}
-export const JoinStorageSessionAsViewerResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({})).annotate({
-    identifier: "JoinStorageSessionAsViewerResponse",
-  }) as any as S.Schema<JoinStorageSessionAsViewerResponse>;
-
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class ClientLimitExceededException extends S.TaggedErrorClass<ClientLimitExceededException>()(
-  "ClientLimitExceededException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InvalidArgumentException extends S.TaggedErrorClass<InvalidArgumentException>()(
-  "InvalidArgumentException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ResourceNotFoundException extends S.TaggedErrorClass<ResourceNotFoundException>()(
-  "ResourceNotFoundException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-
-//# Operations
+export const JoinStorageSessionAsViewerResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
+).annotate({
+  identifier: "JoinStorageSessionAsViewerResponse",
+}) as any as S.Schema<JoinStorageSessionAsViewerResponse>;
 export type JoinStorageSessionError =
   | AccessDeniedException
   | ClientLimitExceededException
@@ -210,8 +211,8 @@ export const joinStorageSession: API.OperationMethod<
   JoinStorageSessionInput,
   JoinStorageSessionResponse,
   JoinStorageSessionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: JoinStorageSessionInput,
   output: JoinStorageSessionResponse,
   errors: [
@@ -220,7 +221,11 @@ export const joinStorageSession: API.OperationMethod<
     InvalidArgumentException,
     ResourceNotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "JoinStorageSession",
 }));
+
 export type JoinStorageSessionAsViewerError =
   | AccessDeniedException
   | ClientLimitExceededException
@@ -250,8 +255,8 @@ export const joinStorageSessionAsViewer: API.OperationMethod<
   JoinStorageSessionAsViewerInput,
   JoinStorageSessionAsViewerResponse,
   JoinStorageSessionAsViewerError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: JoinStorageSessionAsViewerInput,
   output: JoinStorageSessionAsViewerResponse,
   errors: [
@@ -260,4 +265,7 @@ export const joinStorageSessionAsViewer: API.OperationMethod<
     InvalidArgumentException,
     ResourceNotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "JoinStorageSessionAsViewer",
 }));

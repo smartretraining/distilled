@@ -1,10 +1,11 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "CloudTrail Data",
   serviceShapeName: "CloudTrailDataService",
@@ -81,20 +82,42 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class ChannelInsufficientPermission
+  extends /*@__PURE__*/ S.TaggedError<ChannelInsufficientPermission>()(
+    "ChannelInsufficientPermission",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ChannelNotFound
+  extends /*@__PURE__*/ S.TaggedError<ChannelNotFound>()("ChannelNotFound", {
+    message: S.optional(S.String).pipe(T.ErrorMessage()),
+  }) {}
+export class ChannelUnsupportedSchema
+  extends /*@__PURE__*/ S.TaggedError<ChannelUnsupportedSchema>()(
+    "ChannelUnsupportedSchema",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class DuplicatedAuditEventId
+  extends /*@__PURE__*/ S.TaggedError<DuplicatedAuditEventId>()(
+    "DuplicatedAuditEventId",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidChannelARN
+  extends /*@__PURE__*/ S.TaggedError<InvalidChannelARN>()(
+    "InvalidChannelARN",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class UnsupportedOperationException
+  extends /*@__PURE__*/ S.TaggedError<UnsupportedOperationException>()(
+    "UnsupportedOperationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
 export type Uuid = string;
-export type ChannelArn = string;
-export type ExternalId = string;
-export type ErrorCode = string;
-export type ErrorMessage = string;
-
-//# Schemas
 export interface AuditEvent {
   id: string;
   eventData: string;
   eventDataChecksum?: string;
 }
-export const AuditEvent = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AuditEvent = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     id: S.String,
     eventData: S.String,
@@ -102,13 +125,15 @@ export const AuditEvent = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "AuditEvent" }) as any as S.Schema<AuditEvent>;
 export type AuditEvents = AuditEvent[];
-export const AuditEvents = /*@__PURE__*/ /*#__PURE__*/ S.Array(AuditEvent);
+export const AuditEvents = /*@__PURE__*/ S.Array(AuditEvent);
+export type ChannelArn = string;
+export type ExternalId = string;
 export interface PutAuditEventsRequest {
   auditEvents: AuditEvent[];
   channelArn: string;
   externalId?: string;
 }
-export const PutAuditEventsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PutAuditEventsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     auditEvents: AuditEvents,
     channelArn: S.String.pipe(T.HttpQuery("channelArn")),
@@ -130,69 +155,38 @@ export interface AuditEventResultEntry {
   id: string;
   eventID: string;
 }
-export const AuditEventResultEntry = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AuditEventResultEntry = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ id: S.String, eventID: S.String }),
 ).annotate({
   identifier: "AuditEventResultEntry",
 }) as any as S.Schema<AuditEventResultEntry>;
 export type AuditEventResultEntries = AuditEventResultEntry[];
-export const AuditEventResultEntries = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const AuditEventResultEntries = /*@__PURE__*/ S.Array(
   AuditEventResultEntry,
 );
+export type ErrorCode = string;
+export type ErrorMessage = string;
 export interface ResultErrorEntry {
   id: string;
   errorCode: string;
   errorMessage: string;
 }
-export const ResultErrorEntry = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResultErrorEntry = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ id: S.String, errorCode: S.String, errorMessage: S.String }),
 ).annotate({
   identifier: "ResultErrorEntry",
 }) as any as S.Schema<ResultErrorEntry>;
 export type ResultErrorEntries = ResultErrorEntry[];
-export const ResultErrorEntries =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ResultErrorEntry);
+export const ResultErrorEntries = /*@__PURE__*/ S.Array(ResultErrorEntry);
 export interface PutAuditEventsResponse {
   successful: AuditEventResultEntry[];
   failed: ResultErrorEntry[];
 }
-export const PutAuditEventsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      successful: AuditEventResultEntries,
-      failed: ResultErrorEntries,
-    }),
+export const PutAuditEventsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ successful: AuditEventResultEntries, failed: ResultErrorEntries }),
 ).annotate({
   identifier: "PutAuditEventsResponse",
 }) as any as S.Schema<PutAuditEventsResponse>;
-
-//# Errors
-export class ChannelInsufficientPermission extends S.TaggedErrorClass<ChannelInsufficientPermission>()(
-  "ChannelInsufficientPermission",
-  { message: S.optional(S.String) },
-) {}
-export class ChannelNotFound extends S.TaggedErrorClass<ChannelNotFound>()(
-  "ChannelNotFound",
-  { message: S.optional(S.String) },
-) {}
-export class ChannelUnsupportedSchema extends S.TaggedErrorClass<ChannelUnsupportedSchema>()(
-  "ChannelUnsupportedSchema",
-  { message: S.optional(S.String) },
-) {}
-export class DuplicatedAuditEventId extends S.TaggedErrorClass<DuplicatedAuditEventId>()(
-  "DuplicatedAuditEventId",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidChannelARN extends S.TaggedErrorClass<InvalidChannelARN>()(
-  "InvalidChannelARN",
-  { message: S.optional(S.String) },
-) {}
-export class UnsupportedOperationException extends S.TaggedErrorClass<UnsupportedOperationException>()(
-  "UnsupportedOperationException",
-  { message: S.optional(S.String) },
-) {}
-
-//# Operations
 export type PutAuditEventsError =
   | ChannelInsufficientPermission
   | ChannelNotFound
@@ -212,8 +206,8 @@ export const putAuditEvents: API.OperationMethod<
   PutAuditEventsRequest,
   PutAuditEventsResponse,
   PutAuditEventsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PutAuditEventsRequest,
   output: PutAuditEventsResponse,
   errors: [
@@ -224,4 +218,7 @@ export const putAuditEvents: API.OperationMethod<
     InvalidChannelARN,
     UnsupportedOperationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PutAuditEvents",
 }));

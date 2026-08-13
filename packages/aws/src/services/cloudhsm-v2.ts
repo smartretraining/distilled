@@ -1,12 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region as Rgn } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "CloudHSM V2",
   serviceShapeName: "BaldrApiService",
@@ -89,70 +89,78 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class CloudHsmAccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<CloudHsmAccessDeniedException>()(
+    "CloudHsmAccessDeniedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ).pipe(C.withAuthError) {}
+export class CloudHsmInternalFailureException
+  extends /*@__PURE__*/ S.TaggedError<CloudHsmInternalFailureException>()(
+    "CloudHsmInternalFailureException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CloudHsmInvalidRequestException
+  extends /*@__PURE__*/ S.TaggedError<CloudHsmInvalidRequestException>()(
+    "CloudHsmInvalidRequestException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CloudHsmResourceLimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<CloudHsmResourceLimitExceededException>()(
+    "CloudHsmResourceLimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CloudHsmResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<CloudHsmResourceNotFoundException>()(
+    "CloudHsmResourceNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CloudHsmServiceException
+  extends /*@__PURE__*/ S.TaggedError<CloudHsmServiceException>()(
+    "CloudHsmServiceException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CloudHsmTagException
+  extends /*@__PURE__*/ S.TaggedError<CloudHsmTagException>()(
+    "CloudHsmTagException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
 export type Region = string;
 export type BackupId = string;
 export type TagKey = string;
 export type TagValue = string;
-export type ClusterId = string;
-export type ErrorMessage = string;
-export type BackupRetentionValue = string;
-export type HsmType = string;
-export type BackupArn = string;
-export type SubnetId = string;
-export type ExternalAz = string;
-export type EniId = string;
-export type IpAddress = string;
-export type IpV6Address = string;
-export type HsmId = string;
-export type PreCoPassword = string;
-export type SecurityGroup = string;
-export type StateMessage = string;
-export type VpcId = string;
-export type Cert = string;
-export type CloudHsmArn = string;
-export type ResourcePolicy = string;
-export type NextToken = string;
-export type BackupsMaxSize = number;
-export type Field = string;
-export type ClustersMaxSize = number;
-export type ResourceId = string;
-export type MaxSize = number;
-
-//# Schemas
 export interface Tag {
   Key: string;
   Value: string;
 }
-export const Tag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Tag = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: S.String, Value: S.String }),
 ).annotate({ identifier: "Tag" }) as any as S.Schema<Tag>;
 export type TagList = Tag[];
-export const TagList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Tag);
+export const TagList = /*@__PURE__*/ S.Array(Tag);
 export interface CopyBackupToRegionRequest {
   DestinationRegion: string;
   BackupId: string;
   TagList?: Tag[];
 }
-export const CopyBackupToRegionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      DestinationRegion: S.String,
-      BackupId: S.String,
-      TagList: S.optional(TagList),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const CopyBackupToRegionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    DestinationRegion: S.String,
+    BackupId: S.String,
+    TagList: S.optional(TagList),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "CopyBackupToRegionRequest",
 }) as any as S.Schema<CopyBackupToRegionRequest>;
+export type ClusterId = string;
 export interface DestinationBackup {
   CreateTimestamp?: Date;
   SourceRegion?: string;
   SourceBackup?: string;
   SourceCluster?: string;
 }
-export const DestinationBackup = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DestinationBackup = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     CreateTimestamp: S.optional(
       S.Date.pipe(T.TimestampFormat("epoch-seconds")),
@@ -167,18 +175,20 @@ export const DestinationBackup = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CopyBackupToRegionResponse {
   DestinationBackup?: DestinationBackup;
 }
-export const CopyBackupToRegionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ DestinationBackup: S.optional(DestinationBackup) }),
+export const CopyBackupToRegionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ DestinationBackup: S.optional(DestinationBackup) }),
 ).annotate({
   identifier: "CopyBackupToRegionResponse",
 }) as any as S.Schema<CopyBackupToRegionResponse>;
 export type BackupRetentionType = "DAYS" | (string & {});
-export const BackupRetentionType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const BackupRetentionType = /*@__PURE__*/ S.String;
+
+export type BackupRetentionValue = string;
 export interface BackupRetentionPolicy {
   Type?: BackupRetentionType;
   Value?: string;
 }
-export const BackupRetentionPolicy = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const BackupRetentionPolicy = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Type: S.optional(BackupRetentionType),
     Value: S.optional(S.String),
@@ -186,12 +196,17 @@ export const BackupRetentionPolicy = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "BackupRetentionPolicy",
 }) as any as S.Schema<BackupRetentionPolicy>;
+export type HsmType = string;
+export type BackupArn = string;
+export type SubnetId = string;
 export type SubnetIds = string[];
-export const SubnetIds = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const SubnetIds = /*@__PURE__*/ S.Array(S.String);
 export type NetworkType = "IPV4" | "DUALSTACK" | (string & {});
-export const NetworkType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const NetworkType = /*@__PURE__*/ S.String;
+
 export type ClusterMode = "FIPS" | "NON_FIPS" | (string & {});
-export const ClusterMode = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ClusterMode = /*@__PURE__*/ S.String;
+
 export interface CreateClusterRequest {
   BackupRetentionPolicy?: BackupRetentionPolicy;
   HsmType: string;
@@ -201,7 +216,7 @@ export interface CreateClusterRequest {
   TagList?: Tag[];
   Mode?: ClusterMode;
 }
-export const CreateClusterRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateClusterRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     BackupRetentionPolicy: S.optional(BackupRetentionPolicy),
     HsmType: S.String,
@@ -217,7 +232,13 @@ export const CreateClusterRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "CreateClusterRequest",
 }) as any as S.Schema<CreateClusterRequest>;
 export type BackupPolicy = "DEFAULT" | (string & {});
-export const BackupPolicy = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const BackupPolicy = /*@__PURE__*/ S.String;
+
+export type ExternalAz = string;
+export type EniId = string;
+export type IpAddress = string;
+export type IpV6Address = string;
+export type HsmId = string;
 export type HsmState =
   | "CREATE_IN_PROGRESS"
   | "ACTIVE"
@@ -225,7 +246,8 @@ export type HsmState =
   | "DELETE_IN_PROGRESS"
   | "DELETED"
   | (string & {});
-export const HsmState = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const HsmState = /*@__PURE__*/ S.String;
+
 export interface Hsm {
   AvailabilityZone?: string;
   ClusterId?: string;
@@ -238,7 +260,7 @@ export interface Hsm {
   State?: HsmState;
   StateMessage?: string;
 }
-export const Hsm = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Hsm = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AvailabilityZone: S.optional(S.String),
     ClusterId: S.optional(S.String),
@@ -253,7 +275,9 @@ export const Hsm = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Hsm" }) as any as S.Schema<Hsm>;
 export type Hsms = Hsm[];
-export const Hsms = /*@__PURE__*/ /*#__PURE__*/ S.Array(Hsm);
+export const Hsms = /*@__PURE__*/ S.Array(Hsm);
+export type PreCoPassword = string;
+export type SecurityGroup = string;
 export type ClusterState =
   | "CREATE_IN_PROGRESS"
   | "UNINITIALIZED"
@@ -267,12 +291,16 @@ export type ClusterState =
   | "DELETED"
   | "DEGRADED"
   | (string & {});
-export const ClusterState = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ClusterState = /*@__PURE__*/ S.String;
+
+export type StateMessage = string;
 export type ExternalSubnetMapping = { [key: string]: string | undefined };
-export const ExternalSubnetMapping = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const ExternalSubnetMapping = /*@__PURE__*/ S.Record(
   S.String,
   S.String.pipe(S.optional),
 );
+export type VpcId = string;
+export type Cert = string;
 export interface Certificates {
   ClusterCsr?: string;
   HsmCertificate?: string;
@@ -280,7 +308,7 @@ export interface Certificates {
   ManufacturerHardwareCertificate?: string;
   ClusterCertificate?: string;
 }
-export const Certificates = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Certificates = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ClusterCsr: S.optional(S.String),
     HsmCertificate: S.optional(S.String),
@@ -309,7 +337,7 @@ export interface Cluster {
   TagList?: Tag[];
   Mode?: ClusterMode;
 }
-export const Cluster = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Cluster = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     BackupPolicy: S.optional(BackupPolicy),
     BackupRetentionPolicy: S.optional(BackupRetentionPolicy),
@@ -338,7 +366,7 @@ export const Cluster = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateClusterResponse {
   Cluster?: Cluster;
 }
-export const CreateClusterResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateClusterResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Cluster: S.optional(Cluster) }),
 ).annotate({
   identifier: "CreateClusterResponse",
@@ -348,7 +376,7 @@ export interface CreateHsmRequest {
   AvailabilityZone: string;
   IpAddress?: string;
 }
-export const CreateHsmRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateHsmRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ClusterId: S.String,
     AvailabilityZone: S.String,
@@ -362,7 +390,7 @@ export const CreateHsmRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateHsmResponse {
   Hsm?: Hsm;
 }
-export const CreateHsmResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateHsmResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Hsm: S.optional(Hsm) }),
 ).annotate({
   identifier: "CreateHsmResponse",
@@ -370,7 +398,7 @@ export const CreateHsmResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DeleteBackupRequest {
   BackupId: string;
 }
-export const DeleteBackupRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteBackupRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ BackupId: S.String }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -383,7 +411,8 @@ export type BackupState =
   | "DELETED"
   | "PENDING_DELETION"
   | (string & {});
-export const BackupState = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const BackupState = /*@__PURE__*/ S.String;
+
 export interface Backup {
   BackupId: string;
   BackupArn?: string;
@@ -400,7 +429,7 @@ export interface Backup {
   HsmType?: string;
   Mode?: ClusterMode;
 }
-export const Backup = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Backup = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     BackupId: S.String,
     BackupArn: S.optional(S.String),
@@ -425,7 +454,7 @@ export const Backup = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DeleteBackupResponse {
   Backup?: Backup;
 }
-export const DeleteBackupResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteBackupResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Backup: S.optional(Backup) }),
 ).annotate({
   identifier: "DeleteBackupResponse",
@@ -433,7 +462,7 @@ export const DeleteBackupResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DeleteClusterRequest {
   ClusterId: string;
 }
-export const DeleteClusterRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteClusterRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ClusterId: S.String }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -443,7 +472,7 @@ export const DeleteClusterRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DeleteClusterResponse {
   Cluster?: Cluster;
 }
-export const DeleteClusterResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteClusterResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Cluster: S.optional(Cluster) }),
 ).annotate({
   identifier: "DeleteClusterResponse",
@@ -454,7 +483,7 @@ export interface DeleteHsmRequest {
   EniId?: string;
   EniIp?: string;
 }
-export const DeleteHsmRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteHsmRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ClusterId: S.String,
     HsmId: S.optional(S.String),
@@ -469,39 +498,39 @@ export const DeleteHsmRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DeleteHsmResponse {
   HsmId?: string;
 }
-export const DeleteHsmResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteHsmResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ HsmId: S.optional(S.String) }),
 ).annotate({
   identifier: "DeleteHsmResponse",
 }) as any as S.Schema<DeleteHsmResponse>;
+export type CloudHsmArn = string;
 export interface DeleteResourcePolicyRequest {
   ResourceArn?: string;
 }
-export const DeleteResourcePolicyRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ ResourceArn: S.optional(S.String) }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "DeleteResourcePolicyRequest",
-  }) as any as S.Schema<DeleteResourcePolicyRequest>;
+export const DeleteResourcePolicyRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.optional(S.String) }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "DeleteResourcePolicyRequest",
+}) as any as S.Schema<DeleteResourcePolicyRequest>;
+export type ResourcePolicy = string;
 export interface DeleteResourcePolicyResponse {
   ResourceArn?: string;
   Policy?: string;
 }
-export const DeleteResourcePolicyResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      ResourceArn: S.optional(S.String),
-      Policy: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "DeleteResourcePolicyResponse",
-  }) as any as S.Schema<DeleteResourcePolicyResponse>;
+export const DeleteResourcePolicyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.optional(S.String), Policy: S.optional(S.String) }),
+).annotate({
+  identifier: "DeleteResourcePolicyResponse",
+}) as any as S.Schema<DeleteResourcePolicyResponse>;
+export type NextToken = string;
+export type BackupsMaxSize = number;
+export type Field = string;
 export type Strings = string[];
-export const Strings = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const Strings = /*@__PURE__*/ S.Array(S.String);
 export type Filters = { [key: string]: string[] | undefined };
-export const Filters = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const Filters = /*@__PURE__*/ S.Record(
   S.String,
   Strings.pipe(S.optional),
 );
@@ -512,80 +541,73 @@ export interface DescribeBackupsRequest {
   Shared?: boolean;
   SortAscending?: boolean;
 }
-export const DescribeBackupsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      NextToken: S.optional(S.String),
-      MaxResults: S.optional(S.Number),
-      Filters: S.optional(Filters),
-      Shared: S.optional(S.Boolean),
-      SortAscending: S.optional(S.Boolean),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const DescribeBackupsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    NextToken: S.optional(S.String),
+    MaxResults: S.optional(S.Number),
+    Filters: S.optional(Filters),
+    Shared: S.optional(S.Boolean),
+    SortAscending: S.optional(S.Boolean),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "DescribeBackupsRequest",
 }) as any as S.Schema<DescribeBackupsRequest>;
 export type Backups = Backup[];
-export const Backups = /*@__PURE__*/ /*#__PURE__*/ S.Array(Backup);
+export const Backups = /*@__PURE__*/ S.Array(Backup);
 export interface DescribeBackupsResponse {
   Backups?: Backup[];
   NextToken?: string;
 }
-export const DescribeBackupsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ Backups: S.optional(Backups), NextToken: S.optional(S.String) }),
+export const DescribeBackupsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Backups: S.optional(Backups), NextToken: S.optional(S.String) }),
 ).annotate({
   identifier: "DescribeBackupsResponse",
 }) as any as S.Schema<DescribeBackupsResponse>;
+export type ClustersMaxSize = number;
 export interface DescribeClustersRequest {
   Filters?: { [key: string]: string[] | undefined };
   NextToken?: string;
   MaxResults?: number;
 }
-export const DescribeClustersRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Filters: S.optional(Filters),
-      NextToken: S.optional(S.String),
-      MaxResults: S.optional(S.Number),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const DescribeClustersRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Filters: S.optional(Filters),
+    NextToken: S.optional(S.String),
+    MaxResults: S.optional(S.Number),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "DescribeClustersRequest",
 }) as any as S.Schema<DescribeClustersRequest>;
 export type Clusters = Cluster[];
-export const Clusters = /*@__PURE__*/ /*#__PURE__*/ S.Array(Cluster);
+export const Clusters = /*@__PURE__*/ S.Array(Cluster);
 export interface DescribeClustersResponse {
   Clusters?: Cluster[];
   NextToken?: string;
 }
-export const DescribeClustersResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Clusters: S.optional(Clusters),
-      NextToken: S.optional(S.String),
-    }),
+export const DescribeClustersResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Clusters: S.optional(Clusters), NextToken: S.optional(S.String) }),
 ).annotate({
   identifier: "DescribeClustersResponse",
 }) as any as S.Schema<DescribeClustersResponse>;
 export interface GetResourcePolicyRequest {
   ResourceArn?: string;
 }
-export const GetResourcePolicyRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ ResourceArn: S.optional(S.String) }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const GetResourcePolicyRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.optional(S.String) }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "GetResourcePolicyRequest",
 }) as any as S.Schema<GetResourcePolicyRequest>;
 export interface GetResourcePolicyResponse {
   Policy?: string;
 }
-export const GetResourcePolicyResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ Policy: S.optional(S.String) }),
+export const GetResourcePolicyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Policy: S.optional(S.String) }),
 ).annotate({
   identifier: "GetResourcePolicyResponse",
 }) as any as S.Schema<GetResourcePolicyResponse>;
@@ -594,15 +616,14 @@ export interface InitializeClusterRequest {
   SignedCert: string;
   TrustAnchor: string;
 }
-export const InitializeClusterRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ClusterId: S.String,
-      SignedCert: S.String,
-      TrustAnchor: S.String,
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const InitializeClusterRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ClusterId: S.String,
+    SignedCert: S.String,
+    TrustAnchor: S.String,
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "InitializeClusterRequest",
 }) as any as S.Schema<InitializeClusterRequest>;
@@ -610,21 +631,22 @@ export interface InitializeClusterResponse {
   State?: ClusterState;
   StateMessage?: string;
 }
-export const InitializeClusterResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      State: S.optional(ClusterState),
-      StateMessage: S.optional(S.String),
-    }),
+export const InitializeClusterResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    State: S.optional(ClusterState),
+    StateMessage: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "InitializeClusterResponse",
 }) as any as S.Schema<InitializeClusterResponse>;
+export type ResourceId = string;
+export type MaxSize = number;
 export interface ListTagsRequest {
   ResourceId: string;
   NextToken?: string;
   MaxResults?: number;
 }
-export const ListTagsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListTagsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ResourceId: S.String,
     NextToken: S.optional(S.String),
@@ -639,7 +661,7 @@ export interface ListTagsResponse {
   TagList: Tag[];
   NextToken?: string;
 }
-export const ListTagsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListTagsResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ TagList: TagList, NextToken: S.optional(S.String) }),
 ).annotate({
   identifier: "ListTagsResponse",
@@ -648,29 +670,27 @@ export interface ModifyBackupAttributesRequest {
   BackupId: string;
   NeverExpires: boolean;
 }
-export const ModifyBackupAttributesRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ BackupId: S.String, NeverExpires: S.Boolean }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "ModifyBackupAttributesRequest",
-  }) as any as S.Schema<ModifyBackupAttributesRequest>;
+export const ModifyBackupAttributesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ BackupId: S.String, NeverExpires: S.Boolean }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "ModifyBackupAttributesRequest",
+}) as any as S.Schema<ModifyBackupAttributesRequest>;
 export interface ModifyBackupAttributesResponse {
   Backup?: Backup;
 }
-export const ModifyBackupAttributesResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ Backup: S.optional(Backup) }),
-  ).annotate({
-    identifier: "ModifyBackupAttributesResponse",
-  }) as any as S.Schema<ModifyBackupAttributesResponse>;
+export const ModifyBackupAttributesResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Backup: S.optional(Backup) }),
+).annotate({
+  identifier: "ModifyBackupAttributesResponse",
+}) as any as S.Schema<ModifyBackupAttributesResponse>;
 export interface ModifyClusterRequest {
   HsmType?: string;
   BackupRetentionPolicy?: BackupRetentionPolicy;
   ClusterId: string;
 }
-export const ModifyClusterRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ModifyClusterRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     HsmType: S.optional(S.String),
     BackupRetentionPolicy: S.optional(BackupRetentionPolicy),
@@ -684,7 +704,7 @@ export const ModifyClusterRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface ModifyClusterResponse {
   Cluster?: Cluster;
 }
-export const ModifyClusterResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ModifyClusterResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Cluster: S.optional(Cluster) }),
 ).annotate({
   identifier: "ModifyClusterResponse",
@@ -693,14 +713,13 @@ export interface PutResourcePolicyRequest {
   ResourceArn?: string;
   Policy?: string;
 }
-export const PutResourcePolicyRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ResourceArn: S.optional(S.String),
-      Policy: S.optional(S.String),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const PutResourcePolicyRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ResourceArn: S.optional(S.String),
+    Policy: S.optional(S.String),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "PutResourcePolicyRequest",
 }) as any as S.Schema<PutResourcePolicyRequest>;
@@ -708,19 +727,15 @@ export interface PutResourcePolicyResponse {
   ResourceArn?: string;
   Policy?: string;
 }
-export const PutResourcePolicyResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ResourceArn: S.optional(S.String),
-      Policy: S.optional(S.String),
-    }),
+export const PutResourcePolicyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.optional(S.String), Policy: S.optional(S.String) }),
 ).annotate({
   identifier: "PutResourcePolicyResponse",
 }) as any as S.Schema<PutResourcePolicyResponse>;
 export interface RestoreBackupRequest {
   BackupId: string;
 }
-export const RestoreBackupRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RestoreBackupRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ BackupId: S.String }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -730,7 +745,7 @@ export const RestoreBackupRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface RestoreBackupResponse {
   Backup?: Backup;
 }
-export const RestoreBackupResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RestoreBackupResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Backup: S.optional(Backup) }),
 ).annotate({
   identifier: "RestoreBackupResponse",
@@ -739,7 +754,7 @@ export interface TagResourceRequest {
   ResourceId: string;
   TagList: Tag[];
 }
-export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ResourceId: S.String, TagList: TagList }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -747,18 +762,18 @@ export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "TagResourceRequest",
 }) as any as S.Schema<TagResourceRequest>;
 export interface TagResourceResponse {}
-export const TagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "TagResourceResponse",
 }) as any as S.Schema<TagResourceResponse>;
 export type TagKeyList = string[];
-export const TagKeyList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TagKeyList = /*@__PURE__*/ S.Array(S.String);
 export interface UntagResourceRequest {
   ResourceId: string;
   TagKeyList: string[];
 }
-export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ResourceId: S.String, TagKeyList: TagKeyList }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -766,43 +781,12 @@ export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "UntagResourceRequest",
 }) as any as S.Schema<UntagResourceRequest>;
 export interface UntagResourceResponse {}
-export const UntagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "UntagResourceResponse",
 }) as any as S.Schema<UntagResourceResponse>;
-
-//# Errors
-export class CloudHsmAccessDeniedException extends S.TaggedErrorClass<CloudHsmAccessDeniedException>()(
-  "CloudHsmAccessDeniedException",
-  { Message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class CloudHsmInternalFailureException extends S.TaggedErrorClass<CloudHsmInternalFailureException>()(
-  "CloudHsmInternalFailureException",
-  { Message: S.optional(S.String) },
-) {}
-export class CloudHsmInvalidRequestException extends S.TaggedErrorClass<CloudHsmInvalidRequestException>()(
-  "CloudHsmInvalidRequestException",
-  { Message: S.optional(S.String) },
-) {}
-export class CloudHsmResourceNotFoundException extends S.TaggedErrorClass<CloudHsmResourceNotFoundException>()(
-  "CloudHsmResourceNotFoundException",
-  { Message: S.optional(S.String) },
-) {}
-export class CloudHsmServiceException extends S.TaggedErrorClass<CloudHsmServiceException>()(
-  "CloudHsmServiceException",
-  { Message: S.optional(S.String) },
-) {}
-export class CloudHsmTagException extends S.TaggedErrorClass<CloudHsmTagException>()(
-  "CloudHsmTagException",
-  { Message: S.optional(S.String) },
-) {}
-export class CloudHsmResourceLimitExceededException extends S.TaggedErrorClass<CloudHsmResourceLimitExceededException>()(
-  "CloudHsmResourceLimitExceededException",
-  { Message: S.optional(S.String) },
-) {}
-
-//# Operations
+export type ErrorMessage = string;
 export type CopyBackupToRegionError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -820,8 +804,8 @@ export const copyBackupToRegion: API.OperationMethod<
   CopyBackupToRegionRequest,
   CopyBackupToRegionResponse,
   CopyBackupToRegionError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CopyBackupToRegionRequest,
   output: CopyBackupToRegionResponse,
   errors: [
@@ -832,7 +816,11 @@ export const copyBackupToRegion: API.OperationMethod<
     CloudHsmServiceException,
     CloudHsmTagException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CopyBackupToRegion",
 }));
+
 export type CreateClusterError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -851,8 +839,8 @@ export const createCluster: API.OperationMethod<
   CreateClusterRequest,
   CreateClusterResponse,
   CreateClusterError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateClusterRequest,
   output: CreateClusterResponse,
   errors: [
@@ -863,7 +851,11 @@ export const createCluster: API.OperationMethod<
     CloudHsmServiceException,
     CloudHsmTagException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateCluster",
 }));
+
 export type CreateHsmError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -881,8 +873,8 @@ export const createHsm: API.OperationMethod<
   CreateHsmRequest,
   CreateHsmResponse,
   CreateHsmError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateHsmRequest,
   output: CreateHsmResponse,
   errors: [
@@ -892,7 +884,11 @@ export const createHsm: API.OperationMethod<
     CloudHsmResourceNotFoundException,
     CloudHsmServiceException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateHsm",
 }));
+
 export type DeleteBackupError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -911,8 +907,8 @@ export const deleteBackup: API.OperationMethod<
   DeleteBackupRequest,
   DeleteBackupResponse,
   DeleteBackupError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteBackupRequest,
   output: DeleteBackupResponse,
   errors: [
@@ -922,7 +918,11 @@ export const deleteBackup: API.OperationMethod<
     CloudHsmResourceNotFoundException,
     CloudHsmServiceException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteBackup",
 }));
+
 export type DeleteClusterError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -941,8 +941,8 @@ export const deleteCluster: API.OperationMethod<
   DeleteClusterRequest,
   DeleteClusterResponse,
   DeleteClusterError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteClusterRequest,
   output: DeleteClusterResponse,
   errors: [
@@ -953,7 +953,11 @@ export const deleteCluster: API.OperationMethod<
     CloudHsmServiceException,
     CloudHsmTagException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteCluster",
 }));
+
 export type DeleteHsmError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -972,8 +976,8 @@ export const deleteHsm: API.OperationMethod<
   DeleteHsmRequest,
   DeleteHsmResponse,
   DeleteHsmError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteHsmRequest,
   output: DeleteHsmResponse,
   errors: [
@@ -983,7 +987,11 @@ export const deleteHsm: API.OperationMethod<
     CloudHsmResourceNotFoundException,
     CloudHsmServiceException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteHsm",
 }));
+
 export type DeleteResourcePolicyError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -1002,8 +1010,8 @@ export const deleteResourcePolicy: API.OperationMethod<
   DeleteResourcePolicyRequest,
   DeleteResourcePolicyResponse,
   DeleteResourcePolicyError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteResourcePolicyRequest,
   output: DeleteResourcePolicyResponse,
   errors: [
@@ -1013,7 +1021,11 @@ export const deleteResourcePolicy: API.OperationMethod<
     CloudHsmResourceNotFoundException,
     CloudHsmServiceException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteResourcePolicy",
 }));
+
 export type DescribeBackupsError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -1033,27 +1045,13 @@ export type DescribeBackupsError =
  *
  * **Cross-account use:** Yes. Customers can describe backups in other Amazon Web Services accounts that are shared with them.
  */
-export const describeBackups: API.OperationMethod<
+export const describeBackups: API.PaginatedOperationMethod<
   DescribeBackupsRequest,
   DescribeBackupsResponse,
   DescribeBackupsError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeBackupsRequest,
-  ) => stream.Stream<
-    DescribeBackupsResponse,
-    DescribeBackupsError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeBackupsRequest,
-  ) => stream.Stream<
-    unknown,
-    DescribeBackupsError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeBackupsRequest,
   output: DescribeBackupsResponse,
   errors: [
@@ -1064,12 +1062,16 @@ export const describeBackups: API.OperationMethod<
     CloudHsmServiceException,
     CloudHsmTagException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeBackups",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeClustersError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -1088,27 +1090,13 @@ export type DescribeClustersError =
  *
  * **Cross-account use:** No. You cannot perform this operation on CloudHSM clusters in a different Amazon Web Services account.
  */
-export const describeClusters: API.OperationMethod<
+export const describeClusters: API.PaginatedOperationMethod<
   DescribeClustersRequest,
   DescribeClustersResponse,
   DescribeClustersError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeClustersRequest,
-  ) => stream.Stream<
-    DescribeClustersResponse,
-    DescribeClustersError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeClustersRequest,
-  ) => stream.Stream<
-    unknown,
-    DescribeClustersError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeClustersRequest,
   output: DescribeClustersResponse,
   errors: [
@@ -1118,12 +1106,16 @@ export const describeClusters: API.OperationMethod<
     CloudHsmServiceException,
     CloudHsmTagException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeClusters",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type GetResourcePolicyError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -1140,8 +1132,8 @@ export const getResourcePolicy: API.OperationMethod<
   GetResourcePolicyRequest,
   GetResourcePolicyResponse,
   GetResourcePolicyError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetResourcePolicyRequest,
   output: GetResourcePolicyResponse,
   errors: [
@@ -1151,7 +1143,11 @@ export const getResourcePolicy: API.OperationMethod<
     CloudHsmResourceNotFoundException,
     CloudHsmServiceException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetResourcePolicy",
 }));
+
 export type InitializeClusterError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -1171,8 +1167,8 @@ export const initializeCluster: API.OperationMethod<
   InitializeClusterRequest,
   InitializeClusterResponse,
   InitializeClusterError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: InitializeClusterRequest,
   output: InitializeClusterResponse,
   errors: [
@@ -1182,7 +1178,11 @@ export const initializeCluster: API.OperationMethod<
     CloudHsmResourceNotFoundException,
     CloudHsmServiceException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "InitializeCluster",
 }));
+
 export type ListTagsError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -1202,27 +1202,13 @@ export type ListTagsError =
  *
  * **Cross-account use:** No. You cannot perform this operation on an CloudHSM resource in a different Amazon Web Services account.
  */
-export const listTags: API.OperationMethod<
+export const listTags: API.PaginatedOperationMethod<
   ListTagsRequest,
   ListTagsResponse,
   ListTagsError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListTagsRequest,
-  ) => stream.Stream<
-    ListTagsResponse,
-    ListTagsError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListTagsRequest,
-  ) => stream.Stream<
-    unknown,
-    ListTagsError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListTagsRequest,
   output: ListTagsResponse,
   errors: [
@@ -1233,12 +1219,16 @@ export const listTags: API.OperationMethod<
     CloudHsmServiceException,
     CloudHsmTagException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTags",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ModifyBackupAttributesError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -1255,8 +1245,8 @@ export const modifyBackupAttributes: API.OperationMethod<
   ModifyBackupAttributesRequest,
   ModifyBackupAttributesResponse,
   ModifyBackupAttributesError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ModifyBackupAttributesRequest,
   output: ModifyBackupAttributesResponse,
   errors: [
@@ -1266,7 +1256,11 @@ export const modifyBackupAttributes: API.OperationMethod<
     CloudHsmResourceNotFoundException,
     CloudHsmServiceException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ModifyBackupAttributes",
 }));
+
 export type ModifyClusterError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -1283,8 +1277,8 @@ export const modifyCluster: API.OperationMethod<
   ModifyClusterRequest,
   ModifyClusterResponse,
   ModifyClusterError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ModifyClusterRequest,
   output: ModifyClusterResponse,
   errors: [
@@ -1294,7 +1288,11 @@ export const modifyCluster: API.OperationMethod<
     CloudHsmResourceNotFoundException,
     CloudHsmServiceException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ModifyCluster",
 }));
+
 export type PutResourcePolicyError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -1325,8 +1323,8 @@ export const putResourcePolicy: API.OperationMethod<
   PutResourcePolicyRequest,
   PutResourcePolicyResponse,
   PutResourcePolicyError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PutResourcePolicyRequest,
   output: PutResourcePolicyResponse,
   errors: [
@@ -1336,7 +1334,11 @@ export const putResourcePolicy: API.OperationMethod<
     CloudHsmResourceNotFoundException,
     CloudHsmServiceException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PutResourcePolicy",
 }));
+
 export type RestoreBackupError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -1355,8 +1357,8 @@ export const restoreBackup: API.OperationMethod<
   RestoreBackupRequest,
   RestoreBackupResponse,
   RestoreBackupError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: RestoreBackupRequest,
   output: RestoreBackupResponse,
   errors: [
@@ -1366,7 +1368,11 @@ export const restoreBackup: API.OperationMethod<
     CloudHsmResourceNotFoundException,
     CloudHsmServiceException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "RestoreBackup",
 }));
+
 export type TagResourceError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -1385,8 +1391,8 @@ export const tagResource: API.OperationMethod<
   TagResourceRequest,
   TagResourceResponse,
   TagResourceError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TagResourceRequest,
   output: TagResourceResponse,
   errors: [
@@ -1398,7 +1404,11 @@ export const tagResource: API.OperationMethod<
     CloudHsmServiceException,
     CloudHsmTagException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TagResource",
 }));
+
 export type UntagResourceError =
   | CloudHsmAccessDeniedException
   | CloudHsmInternalFailureException
@@ -1416,8 +1426,8 @@ export const untagResource: API.OperationMethod<
   UntagResourceRequest,
   UntagResourceResponse,
   UntagResourceError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UntagResourceRequest,
   output: UntagResourceResponse,
   errors: [
@@ -1428,4 +1438,7 @@ export const untagResource: API.OperationMethod<
     CloudHsmServiceException,
     CloudHsmTagException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UntagResource",
 }));

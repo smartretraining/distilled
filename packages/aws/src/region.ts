@@ -1,18 +1,46 @@
+/**
+ * The region an operation is dispatched to.
+ *
+ * Every credentials layer resolves a region as part of authenticating — the
+ * environment variables, the profile, the SSO session all carry one — so
+ * {@link ResolvedCredentials.region} is where the region normally comes from
+ * and it is never absent.
+ *
+ * {@link Region} is the OVERRIDE on top of that: an optional service that
+ * generated operations do NOT list in their requirements. The protocol reads
+ * it with `Effect.serviceOption` and uses the credentials' region when
+ * nothing provides it, so a caller who already said "authenticate with the
+ * `dev` profile" doesn't have to repeat which region `dev` uses, but a caller
+ * who wants one call in another region can still say so.
+ */
 import * as Config from "effect/Config";
-import * as Layer from "effect/Layer";
 import * as Context from "effect/Context";
+import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
 
-export class Region extends Context.Service<Region, RegionName>()(
-  "AWS::Region",
-) {}
+export class Region extends Context.Service<
+  Region,
+  Effect.Effect<RegionName>
+>()("AWS::Region") {}
 
+/**
+ * `AWS_REGION`, then `AWS_DEFAULT_REGION` — the variables every AWS tool
+ * reads. Credentials providers use this as their region source; it fails
+ * (rather than dying) so a provider can turn it into a typed
+ * `MissingRegion` alongside its other credential-resolution failures.
+ */
+export const fromEnvironment = Config.string("AWS_REGION").pipe(
+  Config.orElse(() => Config.string("AWS_DEFAULT_REGION")),
+  Effect.map((region) => region as RegionName),
+);
+
+/** Override the region with whatever the environment names. */
 export const fromEnv = () =>
-  Layer.effect(
-    Region,
-    Config.string("AWS_REGION").pipe(
-      Config.orElse(() => Config.string("AWS_DEFAULT_REGION")),
-    ),
-  );
+  Layer.succeed(Region, fromEnvironment.pipe(Effect.orDie));
+
+/** Override the region for a scope, e.g. `Region.of("us-west-2")`. */
+export const of = (region: RegionName) =>
+  Layer.succeed(Region, Effect.succeed(region));
 
 export type RegionName =
   | "us-east-1"

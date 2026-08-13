@@ -1,12 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "S3Outposts",
   serviceShapeName: "S3Outposts",
@@ -83,30 +83,55 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class ConflictException
+  extends /*@__PURE__*/ S.TaggedError<ConflictException>()(
+    "ConflictException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class InternalServerException
+  extends /*@__PURE__*/ S.TaggedError<InternalServerException>()(
+    "InternalServerException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class OutpostOfflineException
+  extends /*@__PURE__*/ S.TaggedError<OutpostOfflineException>()(
+    "OutpostOfflineException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class ResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotFoundException>()(
+    "ResourceNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class ThrottlingException
+  extends /*@__PURE__*/ S.TaggedError<ThrottlingException>()(
+    "ThrottlingException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(429),
+  ).pipe(C.withThrottlingError) {}
+export class ValidationException
+  extends /*@__PURE__*/ S.TaggedError<ValidationException>()(
+    "ValidationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
 export type OutpostId = string;
 export type SubnetId = string;
 export type SecurityGroupId = string;
-export type CustomerOwnedIpv4Pool = string;
-export type EndpointArn = string;
-export type ErrorMessage = string;
-export type EndpointId = string;
-export type NextToken = string;
-export type MaxResults = number;
-export type CidrBlock = string;
-export type CreationTime = Date;
-export type NetworkInterfaceId = string;
-export type VpcId = string;
-export type ErrorCode = string;
-export type Message = string;
-export type OutpostArn = string;
-export type S3OutpostArn = string;
-export type AwsAccountId = string;
-export type CapacityInBytes = number;
-
-//# Schemas
 export type EndpointAccessType = "Private" | "CustomerOwnedIp" | (string & {});
-export const EndpointAccessType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const EndpointAccessType = /*@__PURE__*/ S.String;
+
+export type CustomerOwnedIpv4Pool = string;
 export interface CreateEndpointRequest {
   OutpostId: string;
   SubnetId: string;
@@ -114,7 +139,7 @@ export interface CreateEndpointRequest {
   AccessType?: EndpointAccessType;
   CustomerOwnedIpv4Pool?: string;
 }
-export const CreateEndpointRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateEndpointRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     OutpostId: S.String,
     SubnetId: S.String,
@@ -134,19 +159,21 @@ export const CreateEndpointRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "CreateEndpointRequest",
 }) as any as S.Schema<CreateEndpointRequest>;
+export type EndpointArn = string;
 export interface CreateEndpointResult {
   EndpointArn?: string;
 }
-export const CreateEndpointResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateEndpointResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ EndpointArn: S.optional(S.String) }),
 ).annotate({
   identifier: "CreateEndpointResult",
 }) as any as S.Schema<CreateEndpointResult>;
+export type EndpointId = string;
 export interface DeleteEndpointRequest {
   EndpointId: string;
   OutpostId: string;
 }
-export const DeleteEndpointRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteEndpointRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     EndpointId: S.String.pipe(T.HttpQuery("endpointId")),
     OutpostId: S.String.pipe(T.HttpQuery("outpostId")),
@@ -164,16 +191,18 @@ export const DeleteEndpointRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeleteEndpointRequest",
 }) as any as S.Schema<DeleteEndpointRequest>;
 export interface DeleteEndpointResponse {}
-export const DeleteEndpointResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const DeleteEndpointResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "DeleteEndpointResponse",
 }) as any as S.Schema<DeleteEndpointResponse>;
+export type NextToken = string;
+export type MaxResults = number;
 export interface ListEndpointsRequest {
   NextToken?: string;
   MaxResults?: number;
 }
-export const ListEndpointsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListEndpointsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     NextToken: S.optional(S.String).pipe(T.HttpQuery("nextToken")),
     MaxResults: S.optional(S.Number).pipe(T.HttpQuery("maxResults")),
@@ -190,6 +219,7 @@ export const ListEndpointsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ListEndpointsRequest",
 }) as any as S.Schema<ListEndpointsRequest>;
+export type CidrBlock = string;
 export type EndpointStatus =
   | "Pending"
   | "Available"
@@ -197,23 +227,28 @@ export type EndpointStatus =
   | "Create_Failed"
   | "Delete_Failed"
   | (string & {});
-export const EndpointStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const EndpointStatus = /*@__PURE__*/ S.String;
+
+export type CreationTime = Date;
+export type NetworkInterfaceId = string;
 export interface NetworkInterface {
   NetworkInterfaceId?: string;
 }
-export const NetworkInterface = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const NetworkInterface = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ NetworkInterfaceId: S.optional(S.String) }),
 ).annotate({
   identifier: "NetworkInterface",
 }) as any as S.Schema<NetworkInterface>;
 export type NetworkInterfaces = NetworkInterface[];
-export const NetworkInterfaces =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(NetworkInterface);
+export const NetworkInterfaces = /*@__PURE__*/ S.Array(NetworkInterface);
+export type VpcId = string;
+export type ErrorCode = string;
+export type Message = string;
 export interface FailedReason {
   ErrorCode?: string;
   Message?: string;
 }
-export const FailedReason = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const FailedReason = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ErrorCode: S.optional(S.String), Message: S.optional(S.String) }),
 ).annotate({ identifier: "FailedReason" }) as any as S.Schema<FailedReason>;
 export interface Endpoint {
@@ -230,7 +265,7 @@ export interface Endpoint {
   CustomerOwnedIpv4Pool?: string;
   FailedReason?: FailedReason;
 }
-export const Endpoint = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Endpoint = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     EndpointArn: S.optional(S.String),
     OutpostsId: S.optional(S.String),
@@ -247,12 +282,12 @@ export const Endpoint = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Endpoint" }) as any as S.Schema<Endpoint>;
 export type Endpoints = Endpoint[];
-export const Endpoints = /*@__PURE__*/ /*#__PURE__*/ S.Array(Endpoint);
+export const Endpoints = /*@__PURE__*/ S.Array(Endpoint);
 export interface ListEndpointsResult {
   Endpoints?: Endpoint[];
   NextToken?: string;
 }
-export const ListEndpointsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListEndpointsResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Endpoints: S.optional(Endpoints),
     NextToken: S.optional(S.String),
@@ -264,24 +299,27 @@ export interface ListOutpostsWithS3Request {
   NextToken?: string;
   MaxResults?: number;
 }
-export const ListOutpostsWithS3Request = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      NextToken: S.optional(S.String).pipe(T.HttpQuery("nextToken")),
-      MaxResults: S.optional(S.Number).pipe(T.HttpQuery("maxResults")),
-    }).pipe(
-      T.all(
-        T.Http({ method: "GET", uri: "/S3Outposts/ListOutpostsWithS3" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListOutpostsWithS3Request = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    NextToken: S.optional(S.String).pipe(T.HttpQuery("nextToken")),
+    MaxResults: S.optional(S.Number).pipe(T.HttpQuery("maxResults")),
+  }).pipe(
+    T.all(
+      T.Http({ method: "GET", uri: "/S3Outposts/ListOutpostsWithS3" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "ListOutpostsWithS3Request",
 }) as any as S.Schema<ListOutpostsWithS3Request>;
+export type OutpostArn = string;
+export type S3OutpostArn = string;
+export type AwsAccountId = string;
+export type CapacityInBytes = number;
 export interface Outpost {
   OutpostArn?: string;
   S3OutpostArn?: string;
@@ -289,7 +327,7 @@ export interface Outpost {
   OwnerId?: string;
   CapacityInBytes?: number;
 }
-export const Outpost = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Outpost = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     OutpostArn: S.optional(S.String),
     S3OutpostArn: S.optional(S.String),
@@ -299,17 +337,13 @@ export const Outpost = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Outpost" }) as any as S.Schema<Outpost>;
 export type Outposts = Outpost[];
-export const Outposts = /*@__PURE__*/ /*#__PURE__*/ S.Array(Outpost);
+export const Outposts = /*@__PURE__*/ S.Array(Outpost);
 export interface ListOutpostsWithS3Result {
   Outposts?: Outpost[];
   NextToken?: string;
 }
-export const ListOutpostsWithS3Result = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Outposts: S.optional(Outposts),
-      NextToken: S.optional(S.String),
-    }),
+export const ListOutpostsWithS3Result = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Outposts: S.optional(Outposts), NextToken: S.optional(S.String) }),
 ).annotate({
   identifier: "ListOutpostsWithS3Result",
 }) as any as S.Schema<ListOutpostsWithS3Result>;
@@ -318,22 +352,21 @@ export interface ListSharedEndpointsRequest {
   MaxResults?: number;
   OutpostId: string;
 }
-export const ListSharedEndpointsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      NextToken: S.optional(S.String).pipe(T.HttpQuery("nextToken")),
-      MaxResults: S.optional(S.Number).pipe(T.HttpQuery("maxResults")),
-      OutpostId: S.String.pipe(T.HttpQuery("outpostId")),
-    }).pipe(
-      T.all(
-        T.Http({ method: "GET", uri: "/S3Outposts/ListSharedEndpoints" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListSharedEndpointsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    NextToken: S.optional(S.String).pipe(T.HttpQuery("nextToken")),
+    MaxResults: S.optional(S.Number).pipe(T.HttpQuery("maxResults")),
+    OutpostId: S.String.pipe(T.HttpQuery("outpostId")),
+  }).pipe(
+    T.all(
+      T.Http({ method: "GET", uri: "/S3Outposts/ListSharedEndpoints" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "ListSharedEndpointsRequest",
 }) as any as S.Schema<ListSharedEndpointsRequest>;
@@ -341,47 +374,15 @@ export interface ListSharedEndpointsResult {
   Endpoints?: Endpoint[];
   NextToken?: string;
 }
-export const ListSharedEndpointsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Endpoints: S.optional(Endpoints),
-      NextToken: S.optional(S.String),
-    }),
+export const ListSharedEndpointsResult = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Endpoints: S.optional(Endpoints),
+    NextToken: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "ListSharedEndpointsResult",
 }) as any as S.Schema<ListSharedEndpointsResult>;
-
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { Message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class ConflictException extends S.TaggedErrorClass<ConflictException>()(
-  "ConflictException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class InternalServerException extends S.TaggedErrorClass<InternalServerException>()(
-  "InternalServerException",
-  { Message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class OutpostOfflineException extends S.TaggedErrorClass<OutpostOfflineException>()(
-  "OutpostOfflineException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ResourceNotFoundException extends S.TaggedErrorClass<ResourceNotFoundException>()(
-  "ResourceNotFoundException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ThrottlingException extends S.TaggedErrorClass<ThrottlingException>()(
-  "ThrottlingException",
-  { Message: S.optional(S.String) },
-).pipe(C.withThrottlingError) {}
-export class ValidationException extends S.TaggedErrorClass<ValidationException>()(
-  "ValidationException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-
-//# Operations
+export type ErrorMessage = string;
 export type CreateEndpointError =
   | AccessDeniedException
   | ConflictException
@@ -406,8 +407,8 @@ export const createEndpoint: API.OperationMethod<
   CreateEndpointRequest,
   CreateEndpointResult,
   CreateEndpointError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateEndpointRequest,
   output: CreateEndpointResult,
   errors: [
@@ -419,7 +420,11 @@ export const createEndpoint: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateEndpoint",
 }));
+
 export type DeleteEndpointError =
   | AccessDeniedException
   | InternalServerException
@@ -443,8 +448,8 @@ export const deleteEndpoint: API.OperationMethod<
   DeleteEndpointRequest,
   DeleteEndpointResponse,
   DeleteEndpointError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteEndpointRequest,
   output: DeleteEndpointResponse,
   errors: [
@@ -455,7 +460,11 @@ export const deleteEndpoint: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteEndpoint",
 }));
+
 export type ListEndpointsError =
   | AccessDeniedException
   | InternalServerException
@@ -472,27 +481,13 @@ export type ListEndpointsError =
  *
  * - DeleteEndpoint
  */
-export const listEndpoints: API.OperationMethod<
+export const listEndpoints: API.PaginatedOperationMethod<
   ListEndpointsRequest,
   ListEndpointsResult,
   ListEndpointsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListEndpointsRequest,
-  ) => stream.Stream<
-    ListEndpointsResult,
-    ListEndpointsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListEndpointsRequest,
-  ) => stream.Stream<
-    Endpoint,
-    ListEndpointsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Endpoint
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListEndpointsRequest,
   output: ListEndpointsResult,
   errors: [
@@ -502,13 +497,17 @@ export const listEndpoints: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListEndpoints",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "Endpoints",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ListOutpostsWithS3Error =
   | AccessDeniedException
   | InternalServerException
@@ -520,27 +519,13 @@ export type ListOutpostsWithS3Error =
  * Includes S3 on Outposts that you have access to as the Outposts owner, or as a shared user
  * from Resource Access Manager (RAM).
  */
-export const listOutpostsWithS3: API.OperationMethod<
+export const listOutpostsWithS3: API.PaginatedOperationMethod<
   ListOutpostsWithS3Request,
   ListOutpostsWithS3Result,
   ListOutpostsWithS3Error,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListOutpostsWithS3Request,
-  ) => stream.Stream<
-    ListOutpostsWithS3Result,
-    ListOutpostsWithS3Error,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListOutpostsWithS3Request,
-  ) => stream.Stream<
-    Outpost,
-    ListOutpostsWithS3Error,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Outpost
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListOutpostsWithS3Request,
   output: ListOutpostsWithS3Result,
   errors: [
@@ -549,13 +534,17 @@ export const listOutpostsWithS3: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListOutpostsWithS3",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "Outposts",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ListSharedEndpointsError =
   | AccessDeniedException
   | InternalServerException
@@ -572,27 +561,13 @@ export type ListSharedEndpointsError =
  *
  * - DeleteEndpoint
  */
-export const listSharedEndpoints: API.OperationMethod<
+export const listSharedEndpoints: API.PaginatedOperationMethod<
   ListSharedEndpointsRequest,
   ListSharedEndpointsResult,
   ListSharedEndpointsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListSharedEndpointsRequest,
-  ) => stream.Stream<
-    ListSharedEndpointsResult,
-    ListSharedEndpointsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListSharedEndpointsRequest,
-  ) => stream.Stream<
-    Endpoint,
-    ListSharedEndpointsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Endpoint
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListSharedEndpointsRequest,
   output: ListSharedEndpointsResult,
   errors: [
@@ -602,10 +577,13 @@ export const listSharedEndpoints: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListSharedEndpoints",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "Endpoints",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;

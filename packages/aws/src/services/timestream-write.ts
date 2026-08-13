@@ -1,13 +1,13 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as redacted from "effect/Redacted";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 import { SensitiveString } from "../sensitive.ts";
 const svc = T.AwsApiService({
   sdkId: "Timestream Write",
@@ -100,43 +100,94 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class ConflictException
+  extends /*@__PURE__*/ S.TaggedError<ConflictException>()(
+    "ConflictException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class InternalServerException
+  extends /*@__PURE__*/ S.TaggedError<InternalServerException>()(
+    "InternalServerException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class InvalidEndpointException
+  extends /*@__PURE__*/ S.TaggedError<InvalidEndpointException>()(
+    "InvalidEndpointException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(421),
+  ) {}
+export class RejectedRecordsException
+  extends /*@__PURE__*/ S.TaggedError<RejectedRecordsException>()(
+    "RejectedRecordsException",
+    {
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+      RejectedRecords: S.optional(
+        S.suspend(() => RejectedRecords).annotate({
+          identifier: "RejectedRecords",
+        }),
+      ),
+    },
+    T.HttpError(419),
+  ) {}
+export class ResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotFoundException>()(
+    "ResourceNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class ServiceQuotaExceededException
+  extends /*@__PURE__*/ S.TaggedError<ServiceQuotaExceededException>()(
+    "ServiceQuotaExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(402),
+  ).pipe(C.withQuotaError) {}
+export class ThrottlingException
+  extends /*@__PURE__*/ S.TaggedError<ThrottlingException>()(
+    "ThrottlingException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.HttpError(429),
+  ).pipe(C.withThrottlingError) {}
+export class TimestreamNotOnboarded
+  extends /*@__PURE__*/ S.TaggedError<TimestreamNotOnboarded>()(
+    "TimestreamNotOnboarded",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.SyntheticError({
+      from: "AccessDeniedException",
+      message: {
+        includes: "Only existing Timestream for LiveAnalytics customers",
+      },
+    }),
+  ).pipe(C.withAuthError) {}
+export class ValidationException
+  extends /*@__PURE__*/ S.TaggedError<ValidationException>()(
+    "ValidationException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
 export type ClientRequestToken = string | redacted.Redacted<string>;
 export type StringValue256 = string;
-export type SchemaName = string;
-export type S3BucketName = string;
-export type S3ObjectKey = string;
-export type StringValue1 = string;
-export type S3ObjectKeyPrefix = string;
-export type StringValue2048 = string;
-export type ResourceCreateAPIName = string;
-export type RecordVersion = number;
-export type BatchLoadTaskId = string;
-export type ErrorMessage = string;
-export type TagKey = string;
-export type TagValue = string;
-export type ResourceName = string;
-export type MemoryStoreRetentionPeriodInHours = number;
-export type MagneticStoreRetentionPeriodInDays = number;
-export type PageLimit = number;
-export type PaginationLimit = number;
-export type AmazonResourceName = string;
-export type SchemaValue = string;
-export type RecordIndex = number;
-
-//# Schemas
 export type TimeUnit =
   | "MILLISECONDS"
   | "SECONDS"
   | "MICROSECONDS"
   | "NANOSECONDS"
   | (string & {});
-export const TimeUnit = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const TimeUnit = /*@__PURE__*/ S.String;
+
+export type SchemaName = string;
 export interface DimensionMapping {
   SourceColumn?: string;
   DestinationColumn?: string;
 }
-export const DimensionMapping = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DimensionMapping = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     SourceColumn: S.optional(S.String),
     DestinationColumn: S.optional(S.String),
@@ -145,8 +196,7 @@ export const DimensionMapping = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DimensionMapping",
 }) as any as S.Schema<DimensionMapping>;
 export type DimensionMappings = DimensionMapping[];
-export const DimensionMappings =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(DimensionMapping);
+export const DimensionMappings = /*@__PURE__*/ S.Array(DimensionMapping);
 export type ScalarMeasureValueType =
   | "DOUBLE"
   | "BIGINT"
@@ -154,30 +204,31 @@ export type ScalarMeasureValueType =
   | "VARCHAR"
   | "TIMESTAMP"
   | (string & {});
-export const ScalarMeasureValueType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ScalarMeasureValueType = /*@__PURE__*/ S.String;
+
 export interface MultiMeasureAttributeMapping {
   SourceColumn: string;
   TargetMultiMeasureAttributeName?: string;
   MeasureValueType?: ScalarMeasureValueType;
 }
-export const MultiMeasureAttributeMapping =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      SourceColumn: S.String,
-      TargetMultiMeasureAttributeName: S.optional(S.String),
-      MeasureValueType: S.optional(ScalarMeasureValueType),
-    }),
-  ).annotate({
-    identifier: "MultiMeasureAttributeMapping",
-  }) as any as S.Schema<MultiMeasureAttributeMapping>;
+export const MultiMeasureAttributeMapping = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    SourceColumn: S.String,
+    TargetMultiMeasureAttributeName: S.optional(S.String),
+    MeasureValueType: S.optional(ScalarMeasureValueType),
+  }),
+).annotate({
+  identifier: "MultiMeasureAttributeMapping",
+}) as any as S.Schema<MultiMeasureAttributeMapping>;
 export type MultiMeasureAttributeMappingList = MultiMeasureAttributeMapping[];
-export const MultiMeasureAttributeMappingList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(MultiMeasureAttributeMapping);
+export const MultiMeasureAttributeMappingList = /*@__PURE__*/ S.Array(
+  MultiMeasureAttributeMapping,
+);
 export interface MultiMeasureMappings {
   TargetMultiMeasureName?: string;
   MultiMeasureAttributeMappings: MultiMeasureAttributeMapping[];
 }
-export const MultiMeasureMappings = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const MultiMeasureMappings = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     TargetMultiMeasureName: S.optional(S.String),
     MultiMeasureAttributeMappings: MultiMeasureAttributeMappingList,
@@ -193,7 +244,8 @@ export type MeasureValueType =
   | "TIMESTAMP"
   | "MULTI"
   | (string & {});
-export const MeasureValueType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const MeasureValueType = /*@__PURE__*/ S.String;
+
 export interface MixedMeasureMapping {
   MeasureName?: string;
   SourceColumn?: string;
@@ -201,7 +253,7 @@ export interface MixedMeasureMapping {
   MeasureValueType: MeasureValueType;
   MultiMeasureAttributeMappings?: MultiMeasureAttributeMapping[];
 }
-export const MixedMeasureMapping = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const MixedMeasureMapping = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     MeasureName: S.optional(S.String),
     SourceColumn: S.optional(S.String),
@@ -214,7 +266,7 @@ export const MixedMeasureMapping = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<MixedMeasureMapping>;
 export type MixedMeasureMappingList = MixedMeasureMapping[];
 export const MixedMeasureMappingList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(MixedMeasureMapping);
+  /*@__PURE__*/ S.Array(MixedMeasureMapping);
 export interface DataModel {
   TimeColumn?: string;
   TimeUnit?: TimeUnit;
@@ -223,7 +275,7 @@ export interface DataModel {
   MixedMeasureMappings?: MixedMeasureMapping[];
   MeasureNameColumn?: string;
 }
-export const DataModel = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DataModel = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     TimeColumn: S.optional(S.String),
     TimeUnit: S.optional(TimeUnit),
@@ -233,16 +285,17 @@ export const DataModel = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
     MeasureNameColumn: S.optional(S.String),
   }),
 ).annotate({ identifier: "DataModel" }) as any as S.Schema<DataModel>;
+export type S3BucketName = string;
+export type S3ObjectKey = string;
 export interface DataModelS3Configuration {
   BucketName?: string;
   ObjectKey?: string;
 }
-export const DataModelS3Configuration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      BucketName: S.optional(S.String),
-      ObjectKey: S.optional(S.String),
-    }),
+export const DataModelS3Configuration = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    BucketName: S.optional(S.String),
+    ObjectKey: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "DataModelS3Configuration",
 }) as any as S.Schema<DataModelS3Configuration>;
@@ -250,12 +303,11 @@ export interface DataModelConfiguration {
   DataModel?: DataModel;
   DataModelS3Configuration?: DataModelS3Configuration;
 }
-export const DataModelConfiguration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      DataModel: S.optional(DataModel),
-      DataModelS3Configuration: S.optional(DataModelS3Configuration),
-    }),
+export const DataModelConfiguration = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    DataModel: S.optional(DataModel),
+    DataModelS3Configuration: S.optional(DataModelS3Configuration),
+  }),
 ).annotate({
   identifier: "DataModelConfiguration",
 }) as any as S.Schema<DataModelConfiguration>;
@@ -263,12 +315,12 @@ export interface DataSourceS3Configuration {
   BucketName: string;
   ObjectKeyPrefix?: string;
 }
-export const DataSourceS3Configuration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ BucketName: S.String, ObjectKeyPrefix: S.optional(S.String) }),
+export const DataSourceS3Configuration = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ BucketName: S.String, ObjectKeyPrefix: S.optional(S.String) }),
 ).annotate({
   identifier: "DataSourceS3Configuration",
 }) as any as S.Schema<DataSourceS3Configuration>;
+export type StringValue1 = string;
 export interface CsvConfiguration {
   ColumnSeparator?: string;
   EscapeChar?: string;
@@ -276,7 +328,7 @@ export interface CsvConfiguration {
   NullValue?: string;
   TrimWhiteSpace?: boolean;
 }
-export const CsvConfiguration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CsvConfiguration = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ColumnSeparator: S.optional(S.String),
     EscapeChar: S.optional(S.String),
@@ -288,31 +340,34 @@ export const CsvConfiguration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "CsvConfiguration",
 }) as any as S.Schema<CsvConfiguration>;
 export type BatchLoadDataFormat = "CSV" | (string & {});
-export const BatchLoadDataFormat = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const BatchLoadDataFormat = /*@__PURE__*/ S.String;
+
 export interface DataSourceConfiguration {
   DataSourceS3Configuration: DataSourceS3Configuration;
   CsvConfiguration?: CsvConfiguration;
   DataFormat: BatchLoadDataFormat;
 }
-export const DataSourceConfiguration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      DataSourceS3Configuration: DataSourceS3Configuration,
-      CsvConfiguration: S.optional(CsvConfiguration),
-      DataFormat: BatchLoadDataFormat,
-    }),
+export const DataSourceConfiguration = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    DataSourceS3Configuration: DataSourceS3Configuration,
+    CsvConfiguration: S.optional(CsvConfiguration),
+    DataFormat: BatchLoadDataFormat,
+  }),
 ).annotate({
   identifier: "DataSourceConfiguration",
 }) as any as S.Schema<DataSourceConfiguration>;
+export type S3ObjectKeyPrefix = string;
 export type S3EncryptionOption = "SSE_S3" | "SSE_KMS" | (string & {});
-export const S3EncryptionOption = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const S3EncryptionOption = /*@__PURE__*/ S.String;
+
+export type StringValue2048 = string;
 export interface ReportS3Configuration {
   BucketName: string;
   ObjectKeyPrefix?: string;
   EncryptionOption?: S3EncryptionOption;
   KmsKeyId?: string;
 }
-export const ReportS3Configuration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ReportS3Configuration = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     BucketName: S.String,
     ObjectKeyPrefix: S.optional(S.String),
@@ -325,11 +380,13 @@ export const ReportS3Configuration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface ReportConfiguration {
   ReportS3Configuration?: ReportS3Configuration;
 }
-export const ReportConfiguration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ReportConfiguration = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ReportS3Configuration: S.optional(ReportS3Configuration) }),
 ).annotate({
   identifier: "ReportConfiguration",
 }) as any as S.Schema<ReportConfiguration>;
+export type ResourceCreateAPIName = string;
+export type RecordVersion = number;
 export interface CreateBatchLoadTaskRequest {
   ClientToken?: string | redacted.Redacted<string>;
   DataModelConfiguration?: DataModelConfiguration;
@@ -339,46 +396,47 @@ export interface CreateBatchLoadTaskRequest {
   TargetTableName: string;
   RecordVersion?: number;
 }
-export const CreateBatchLoadTaskRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ClientToken: S.optional(SensitiveString).pipe(T.IdempotencyToken()),
-      DataModelConfiguration: S.optional(DataModelConfiguration),
-      DataSourceConfiguration: DataSourceConfiguration,
-      ReportConfiguration: ReportConfiguration,
-      TargetDatabaseName: S.String,
-      TargetTableName: S.String,
-      RecordVersion: S.optional(S.Number),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const CreateBatchLoadTaskRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ClientToken: S.optional(SensitiveString).pipe(T.IdempotencyToken()),
+    DataModelConfiguration: S.optional(DataModelConfiguration),
+    DataSourceConfiguration: DataSourceConfiguration,
+    ReportConfiguration: ReportConfiguration,
+    TargetDatabaseName: S.String,
+    TargetTableName: S.String,
+    RecordVersion: S.optional(S.Number),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "CreateBatchLoadTaskRequest",
 }) as any as S.Schema<CreateBatchLoadTaskRequest>;
+export type BatchLoadTaskId = string;
 export interface CreateBatchLoadTaskResponse {
   TaskId: string;
 }
-export const CreateBatchLoadTaskResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ TaskId: S.String }),
-  ).annotate({
-    identifier: "CreateBatchLoadTaskResponse",
-  }) as any as S.Schema<CreateBatchLoadTaskResponse>;
+export const CreateBatchLoadTaskResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ TaskId: S.String }),
+).annotate({
+  identifier: "CreateBatchLoadTaskResponse",
+}) as any as S.Schema<CreateBatchLoadTaskResponse>;
+export type TagKey = string;
+export type TagValue = string;
 export interface Tag {
   Key: string;
   Value: string;
 }
-export const Tag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Tag = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: S.String, Value: S.String }),
 ).annotate({ identifier: "Tag" }) as any as S.Schema<Tag>;
 export type TagList = Tag[];
-export const TagList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Tag);
+export const TagList = /*@__PURE__*/ S.Array(Tag);
 export interface CreateDatabaseRequest {
   DatabaseName: string;
   KmsKeyId?: string;
   Tags?: Tag[];
 }
-export const CreateDatabaseRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateDatabaseRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     DatabaseName: S.String,
     KmsKeyId: S.optional(S.String),
@@ -389,6 +447,7 @@ export const CreateDatabaseRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "CreateDatabaseRequest",
 }) as any as S.Schema<CreateDatabaseRequest>;
+export type ResourceName = string;
 export interface Database {
   Arn?: string;
   DatabaseName?: string;
@@ -397,7 +456,7 @@ export interface Database {
   CreationTime?: Date;
   LastUpdatedTime?: Date;
 }
-export const Database = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Database = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Arn: S.optional(S.String),
     DatabaseName: S.optional(S.String),
@@ -412,16 +471,18 @@ export const Database = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateDatabaseResponse {
   Database?: Database;
 }
-export const CreateDatabaseResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ Database: S.optional(Database) }),
+export const CreateDatabaseResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Database: S.optional(Database) }),
 ).annotate({
   identifier: "CreateDatabaseResponse",
 }) as any as S.Schema<CreateDatabaseResponse>;
+export type MemoryStoreRetentionPeriodInHours = number;
+export type MagneticStoreRetentionPeriodInDays = number;
 export interface RetentionProperties {
   MemoryStoreRetentionPeriodInHours: number;
   MagneticStoreRetentionPeriodInDays: number;
 }
-export const RetentionProperties = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RetentionProperties = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     MemoryStoreRetentionPeriodInHours: S.Number,
     MagneticStoreRetentionPeriodInDays: S.Number,
@@ -435,7 +496,7 @@ export interface S3Configuration {
   EncryptionOption?: S3EncryptionOption;
   KmsKeyId?: string;
 }
-export const S3Configuration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const S3Configuration = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     BucketName: S.optional(S.String),
     ObjectKeyPrefix: S.optional(S.String),
@@ -448,41 +509,40 @@ export const S3Configuration = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface MagneticStoreRejectedDataLocation {
   S3Configuration?: S3Configuration;
 }
-export const MagneticStoreRejectedDataLocation =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ S3Configuration: S.optional(S3Configuration) }),
-  ).annotate({
-    identifier: "MagneticStoreRejectedDataLocation",
-  }) as any as S.Schema<MagneticStoreRejectedDataLocation>;
+export const MagneticStoreRejectedDataLocation = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ S3Configuration: S.optional(S3Configuration) }),
+).annotate({
+  identifier: "MagneticStoreRejectedDataLocation",
+}) as any as S.Schema<MagneticStoreRejectedDataLocation>;
 export interface MagneticStoreWriteProperties {
   EnableMagneticStoreWrites: boolean;
   MagneticStoreRejectedDataLocation?: MagneticStoreRejectedDataLocation;
 }
-export const MagneticStoreWriteProperties =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      EnableMagneticStoreWrites: S.Boolean,
-      MagneticStoreRejectedDataLocation: S.optional(
-        MagneticStoreRejectedDataLocation,
-      ),
-    }),
-  ).annotate({
-    identifier: "MagneticStoreWriteProperties",
-  }) as any as S.Schema<MagneticStoreWriteProperties>;
+export const MagneticStoreWriteProperties = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    EnableMagneticStoreWrites: S.Boolean,
+    MagneticStoreRejectedDataLocation: S.optional(
+      MagneticStoreRejectedDataLocation,
+    ),
+  }),
+).annotate({
+  identifier: "MagneticStoreWriteProperties",
+}) as any as S.Schema<MagneticStoreWriteProperties>;
 export type PartitionKeyType = "DIMENSION" | "MEASURE" | (string & {});
-export const PartitionKeyType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const PartitionKeyType = /*@__PURE__*/ S.String;
+
 export type PartitionKeyEnforcementLevel =
   | "REQUIRED"
   | "OPTIONAL"
   | (string & {});
-export const PartitionKeyEnforcementLevel =
-  /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const PartitionKeyEnforcementLevel = /*@__PURE__*/ S.String;
+
 export interface PartitionKey {
   Type: PartitionKeyType;
   Name?: string;
   EnforcementInRecord?: PartitionKeyEnforcementLevel;
 }
-export const PartitionKey = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PartitionKey = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Type: PartitionKeyType,
     Name: S.optional(S.String),
@@ -490,12 +550,11 @@ export const PartitionKey = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "PartitionKey" }) as any as S.Schema<PartitionKey>;
 export type PartitionKeyList = PartitionKey[];
-export const PartitionKeyList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(PartitionKey);
+export const PartitionKeyList = /*@__PURE__*/ S.Array(PartitionKey);
 export interface Schema {
   CompositePartitionKey?: PartitionKey[];
 }
-export const Schema = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Schema = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ CompositePartitionKey: S.optional(PartitionKeyList) }),
 ).annotate({ identifier: "Schema" }) as any as S.Schema<Schema>;
 export interface CreateTableRequest {
@@ -506,7 +565,7 @@ export interface CreateTableRequest {
   MagneticStoreWriteProperties?: MagneticStoreWriteProperties;
   Schema?: Schema;
 }
-export const CreateTableRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateTableRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     DatabaseName: S.String,
     TableName: S.String,
@@ -521,7 +580,8 @@ export const CreateTableRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "CreateTableRequest",
 }) as any as S.Schema<CreateTableRequest>;
 export type TableStatus = "ACTIVE" | "DELETING" | "RESTORING" | (string & {});
-export const TableStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const TableStatus = /*@__PURE__*/ S.String;
+
 export interface Table {
   Arn?: string;
   TableName?: string;
@@ -533,7 +593,7 @@ export interface Table {
   MagneticStoreWriteProperties?: MagneticStoreWriteProperties;
   Schema?: Schema;
 }
-export const Table = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Table = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Arn: S.optional(S.String),
     TableName: S.optional(S.String),
@@ -551,7 +611,7 @@ export const Table = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateTableResponse {
   Table?: Table;
 }
-export const CreateTableResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateTableResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Table: S.optional(Table) }),
 ).annotate({
   identifier: "CreateTableResponse",
@@ -559,7 +619,7 @@ export const CreateTableResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DeleteDatabaseRequest {
   DatabaseName: string;
 }
-export const DeleteDatabaseRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteDatabaseRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ DatabaseName: S.String }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -567,8 +627,8 @@ export const DeleteDatabaseRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeleteDatabaseRequest",
 }) as any as S.Schema<DeleteDatabaseRequest>;
 export interface DeleteDatabaseResponse {}
-export const DeleteDatabaseResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const DeleteDatabaseResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "DeleteDatabaseResponse",
 }) as any as S.Schema<DeleteDatabaseResponse>;
@@ -576,7 +636,7 @@ export interface DeleteTableRequest {
   DatabaseName: string;
   TableName: string;
 }
-export const DeleteTableRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteTableRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ DatabaseName: S.String, TableName: S.String }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -584,7 +644,7 @@ export const DeleteTableRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeleteTableRequest",
 }) as any as S.Schema<DeleteTableRequest>;
 export interface DeleteTableResponse {}
-export const DeleteTableResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteTableResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "DeleteTableResponse",
@@ -592,14 +652,13 @@ export const DeleteTableResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DescribeBatchLoadTaskRequest {
   TaskId: string;
 }
-export const DescribeBatchLoadTaskRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ TaskId: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "DescribeBatchLoadTaskRequest",
-  }) as any as S.Schema<DescribeBatchLoadTaskRequest>;
+export const DescribeBatchLoadTaskRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ TaskId: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "DescribeBatchLoadTaskRequest",
+}) as any as S.Schema<DescribeBatchLoadTaskRequest>;
 export interface BatchLoadProgressReport {
   RecordsProcessed?: number;
   RecordsIngested?: number;
@@ -608,16 +667,15 @@ export interface BatchLoadProgressReport {
   FileFailures?: number;
   BytesMetered?: number;
 }
-export const BatchLoadProgressReport = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      RecordsProcessed: S.optional(S.Number),
-      RecordsIngested: S.optional(S.Number),
-      ParseFailures: S.optional(S.Number),
-      RecordIngestionFailures: S.optional(S.Number),
-      FileFailures: S.optional(S.Number),
-      BytesMetered: S.optional(S.Number),
-    }),
+export const BatchLoadProgressReport = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    RecordsProcessed: S.optional(S.Number),
+    RecordsIngested: S.optional(S.Number),
+    ParseFailures: S.optional(S.Number),
+    RecordIngestionFailures: S.optional(S.Number),
+    FileFailures: S.optional(S.Number),
+    BytesMetered: S.optional(S.Number),
+  }),
 ).annotate({
   identifier: "BatchLoadProgressReport",
 }) as any as S.Schema<BatchLoadProgressReport>;
@@ -629,7 +687,8 @@ export type BatchLoadStatus =
   | "PROGRESS_STOPPED"
   | "PENDING_RESUME"
   | (string & {});
-export const BatchLoadStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const BatchLoadStatus = /*@__PURE__*/ S.String;
+
 export interface BatchLoadTaskDescription {
   TaskId?: string;
   ErrorMessage?: string;
@@ -645,64 +704,58 @@ export interface BatchLoadTaskDescription {
   LastUpdatedTime?: Date;
   ResumableUntil?: Date;
 }
-export const BatchLoadTaskDescription = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      TaskId: S.optional(S.String),
-      ErrorMessage: S.optional(S.String),
-      DataSourceConfiguration: S.optional(DataSourceConfiguration),
-      ProgressReport: S.optional(BatchLoadProgressReport),
-      ReportConfiguration: S.optional(ReportConfiguration),
-      DataModelConfiguration: S.optional(DataModelConfiguration),
-      TargetDatabaseName: S.optional(S.String),
-      TargetTableName: S.optional(S.String),
-      TaskStatus: S.optional(BatchLoadStatus),
-      RecordVersion: S.optional(S.Number),
-      CreationTime: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
-      LastUpdatedTime: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-      ResumableUntil: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-    }),
+export const BatchLoadTaskDescription = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    TaskId: S.optional(S.String),
+    ErrorMessage: S.optional(S.String),
+    DataSourceConfiguration: S.optional(DataSourceConfiguration),
+    ProgressReport: S.optional(BatchLoadProgressReport),
+    ReportConfiguration: S.optional(ReportConfiguration),
+    DataModelConfiguration: S.optional(DataModelConfiguration),
+    TargetDatabaseName: S.optional(S.String),
+    TargetTableName: S.optional(S.String),
+    TaskStatus: S.optional(BatchLoadStatus),
+    RecordVersion: S.optional(S.Number),
+    CreationTime: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
+    LastUpdatedTime: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+    ResumableUntil: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
+  }),
 ).annotate({
   identifier: "BatchLoadTaskDescription",
 }) as any as S.Schema<BatchLoadTaskDescription>;
 export interface DescribeBatchLoadTaskResponse {
   BatchLoadTaskDescription: BatchLoadTaskDescription;
 }
-export const DescribeBatchLoadTaskResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ BatchLoadTaskDescription: BatchLoadTaskDescription }),
-  ).annotate({
-    identifier: "DescribeBatchLoadTaskResponse",
-  }) as any as S.Schema<DescribeBatchLoadTaskResponse>;
+export const DescribeBatchLoadTaskResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ BatchLoadTaskDescription: BatchLoadTaskDescription }),
+).annotate({
+  identifier: "DescribeBatchLoadTaskResponse",
+}) as any as S.Schema<DescribeBatchLoadTaskResponse>;
 export interface DescribeDatabaseRequest {
   DatabaseName: string;
 }
-export const DescribeDatabaseRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ DatabaseName: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const DescribeDatabaseRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ DatabaseName: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "DescribeDatabaseRequest",
 }) as any as S.Schema<DescribeDatabaseRequest>;
 export interface DescribeDatabaseResponse {
   Database?: Database;
 }
-export const DescribeDatabaseResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ Database: S.optional(Database) }),
+export const DescribeDatabaseResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Database: S.optional(Database) }),
 ).annotate({
   identifier: "DescribeDatabaseResponse",
 }) as any as S.Schema<DescribeDatabaseResponse>;
 export interface DescribeEndpointsRequest {}
-export const DescribeEndpointsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({}).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const DescribeEndpointsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "DescribeEndpointsRequest",
 }) as any as S.Schema<DescribeEndpointsRequest>;
@@ -710,16 +763,16 @@ export interface Endpoint {
   Address: string;
   CachePeriodInMinutes: number;
 }
-export const Endpoint = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Endpoint = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Address: S.String, CachePeriodInMinutes: S.Number }),
 ).annotate({ identifier: "Endpoint" }) as any as S.Schema<Endpoint>;
 export type Endpoints = Endpoint[];
-export const Endpoints = /*@__PURE__*/ /*#__PURE__*/ S.Array(Endpoint);
+export const Endpoints = /*@__PURE__*/ S.Array(Endpoint);
 export interface DescribeEndpointsResponse {
   Endpoints: Endpoint[];
 }
-export const DescribeEndpointsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ Endpoints: Endpoints }),
+export const DescribeEndpointsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Endpoints: Endpoints }),
 ).annotate({
   identifier: "DescribeEndpointsResponse",
 }) as any as S.Schema<DescribeEndpointsResponse>;
@@ -727,7 +780,7 @@ export interface DescribeTableRequest {
   DatabaseName: string;
   TableName: string;
 }
-export const DescribeTableRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeTableRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ DatabaseName: S.String, TableName: S.String }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -737,25 +790,25 @@ export const DescribeTableRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DescribeTableResponse {
   Table?: Table;
 }
-export const DescribeTableResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeTableResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Table: S.optional(Table) }),
 ).annotate({
   identifier: "DescribeTableResponse",
 }) as any as S.Schema<DescribeTableResponse>;
+export type PageLimit = number;
 export interface ListBatchLoadTasksRequest {
   NextToken?: string;
   MaxResults?: number;
   TaskStatus?: BatchLoadStatus;
 }
-export const ListBatchLoadTasksRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      NextToken: S.optional(S.String),
-      MaxResults: S.optional(S.Number),
-      TaskStatus: S.optional(BatchLoadStatus),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const ListBatchLoadTasksRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    NextToken: S.optional(S.String),
+    MaxResults: S.optional(S.Number),
+    TaskStatus: S.optional(BatchLoadStatus),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "ListBatchLoadTasksRequest",
 }) as any as S.Schema<ListBatchLoadTasksRequest>;
@@ -768,7 +821,7 @@ export interface BatchLoadTask {
   LastUpdatedTime?: Date;
   ResumableUntil?: Date;
 }
-export const BatchLoadTask = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const BatchLoadTask = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     TaskId: S.optional(S.String),
     TaskStatus: S.optional(BatchLoadStatus),
@@ -782,26 +835,25 @@ export const BatchLoadTask = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "BatchLoadTask" }) as any as S.Schema<BatchLoadTask>;
 export type BatchLoadTaskList = BatchLoadTask[];
-export const BatchLoadTaskList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(BatchLoadTask);
+export const BatchLoadTaskList = /*@__PURE__*/ S.Array(BatchLoadTask);
 export interface ListBatchLoadTasksResponse {
   NextToken?: string;
   BatchLoadTasks?: BatchLoadTask[];
 }
-export const ListBatchLoadTasksResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      NextToken: S.optional(S.String),
-      BatchLoadTasks: S.optional(BatchLoadTaskList),
-    }),
+export const ListBatchLoadTasksResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    NextToken: S.optional(S.String),
+    BatchLoadTasks: S.optional(BatchLoadTaskList),
+  }),
 ).annotate({
   identifier: "ListBatchLoadTasksResponse",
 }) as any as S.Schema<ListBatchLoadTasksResponse>;
+export type PaginationLimit = number;
 export interface ListDatabasesRequest {
   NextToken?: string;
   MaxResults?: number;
 }
-export const ListDatabasesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListDatabasesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     NextToken: S.optional(S.String),
     MaxResults: S.optional(S.Number),
@@ -812,12 +864,12 @@ export const ListDatabasesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListDatabasesRequest",
 }) as any as S.Schema<ListDatabasesRequest>;
 export type DatabaseList = Database[];
-export const DatabaseList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Database);
+export const DatabaseList = /*@__PURE__*/ S.Array(Database);
 export interface ListDatabasesResponse {
   Databases?: Database[];
   NextToken?: string;
 }
-export const ListDatabasesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListDatabasesResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Databases: S.optional(DatabaseList),
     NextToken: S.optional(S.String),
@@ -830,7 +882,7 @@ export interface ListTablesRequest {
   NextToken?: string;
   MaxResults?: number;
 }
-export const ListTablesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListTablesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     DatabaseName: S.optional(S.String),
     NextToken: S.optional(S.String),
@@ -842,57 +894,56 @@ export const ListTablesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListTablesRequest",
 }) as any as S.Schema<ListTablesRequest>;
 export type TableList = Table[];
-export const TableList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Table);
+export const TableList = /*@__PURE__*/ S.Array(Table);
 export interface ListTablesResponse {
   Tables?: Table[];
   NextToken?: string;
 }
-export const ListTablesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListTablesResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Tables: S.optional(TableList), NextToken: S.optional(S.String) }),
 ).annotate({
   identifier: "ListTablesResponse",
 }) as any as S.Schema<ListTablesResponse>;
+export type AmazonResourceName = string;
 export interface ListTagsForResourceRequest {
   ResourceARN: string;
 }
-export const ListTagsForResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ ResourceARN: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const ListTagsForResourceRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceARN: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "ListTagsForResourceRequest",
 }) as any as S.Schema<ListTagsForResourceRequest>;
 export interface ListTagsForResourceResponse {
   Tags?: Tag[];
 }
-export const ListTagsForResourceResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ Tags: S.optional(TagList) }),
-  ).annotate({
-    identifier: "ListTagsForResourceResponse",
-  }) as any as S.Schema<ListTagsForResourceResponse>;
+export const ListTagsForResourceResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Tags: S.optional(TagList) }),
+).annotate({
+  identifier: "ListTagsForResourceResponse",
+}) as any as S.Schema<ListTagsForResourceResponse>;
 export interface ResumeBatchLoadTaskRequest {
   TaskId: string;
 }
-export const ResumeBatchLoadTaskRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ TaskId: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const ResumeBatchLoadTaskRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ TaskId: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "ResumeBatchLoadTaskRequest",
 }) as any as S.Schema<ResumeBatchLoadTaskRequest>;
 export interface ResumeBatchLoadTaskResponse {}
-export const ResumeBatchLoadTaskResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({})).annotate({
-    identifier: "ResumeBatchLoadTaskResponse",
-  }) as any as S.Schema<ResumeBatchLoadTaskResponse>;
+export const ResumeBatchLoadTaskResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
+).annotate({
+  identifier: "ResumeBatchLoadTaskResponse",
+}) as any as S.Schema<ResumeBatchLoadTaskResponse>;
 export interface TagResourceRequest {
   ResourceARN: string;
   Tags: Tag[];
 }
-export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ResourceARN: S.String, Tags: TagList }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -900,18 +951,18 @@ export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "TagResourceRequest",
 }) as any as S.Schema<TagResourceRequest>;
 export interface TagResourceResponse {}
-export const TagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "TagResourceResponse",
 }) as any as S.Schema<TagResourceResponse>;
 export type TagKeyList = string[];
-export const TagKeyList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TagKeyList = /*@__PURE__*/ S.Array(S.String);
 export interface UntagResourceRequest {
   ResourceARN: string;
   TagKeys: string[];
 }
-export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ResourceARN: S.String, TagKeys: TagKeyList }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -919,7 +970,7 @@ export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "UntagResourceRequest",
 }) as any as S.Schema<UntagResourceRequest>;
 export interface UntagResourceResponse {}
-export const UntagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "UntagResourceResponse",
@@ -928,7 +979,7 @@ export interface UpdateDatabaseRequest {
   DatabaseName: string;
   KmsKeyId: string;
 }
-export const UpdateDatabaseRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateDatabaseRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ DatabaseName: S.String, KmsKeyId: S.String }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -938,8 +989,8 @@ export const UpdateDatabaseRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface UpdateDatabaseResponse {
   Database?: Database;
 }
-export const UpdateDatabaseResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ Database: S.optional(Database) }),
+export const UpdateDatabaseResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Database: S.optional(Database) }),
 ).annotate({
   identifier: "UpdateDatabaseResponse",
 }) as any as S.Schema<UpdateDatabaseResponse>;
@@ -950,7 +1001,7 @@ export interface UpdateTableRequest {
   MagneticStoreWriteProperties?: MagneticStoreWriteProperties;
   Schema?: Schema;
 }
-export const UpdateTableRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateTableRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     DatabaseName: S.String,
     TableName: S.String,
@@ -966,19 +1017,21 @@ export const UpdateTableRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface UpdateTableResponse {
   Table?: Table;
 }
-export const UpdateTableResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateTableResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Table: S.optional(Table) }),
 ).annotate({
   identifier: "UpdateTableResponse",
 }) as any as S.Schema<UpdateTableResponse>;
+export type SchemaValue = string;
 export type DimensionValueType = "VARCHAR" | (string & {});
-export const DimensionValueType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DimensionValueType = /*@__PURE__*/ S.String;
+
 export interface Dimension {
   Name: string;
   Value: string;
   DimensionValueType?: DimensionValueType;
 }
-export const Dimension = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Dimension = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Name: S.String,
     Value: S.String,
@@ -986,17 +1039,17 @@ export const Dimension = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Dimension" }) as any as S.Schema<Dimension>;
 export type Dimensions = Dimension[];
-export const Dimensions = /*@__PURE__*/ /*#__PURE__*/ S.Array(Dimension);
+export const Dimensions = /*@__PURE__*/ S.Array(Dimension);
 export interface MeasureValue {
   Name: string;
   Value: string;
   Type: MeasureValueType;
 }
-export const MeasureValue = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const MeasureValue = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Name: S.String, Value: S.String, Type: MeasureValueType }),
 ).annotate({ identifier: "MeasureValue" }) as any as S.Schema<MeasureValue>;
 export type MeasureValues = MeasureValue[];
-export const MeasureValues = /*@__PURE__*/ /*#__PURE__*/ S.Array(MeasureValue);
+export const MeasureValues = /*@__PURE__*/ S.Array(MeasureValue);
 export interface Record {
   Dimensions?: Dimension[];
   MeasureName?: string;
@@ -1007,7 +1060,7 @@ export interface Record {
   Version?: number;
   MeasureValues?: MeasureValue[];
 }
-export const Record = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Record = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Dimensions: S.optional(Dimensions),
     MeasureName: S.optional(S.String),
@@ -1020,14 +1073,14 @@ export const Record = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Record" }) as any as S.Schema<Record>;
 export type Records = Record[];
-export const Records = /*@__PURE__*/ /*#__PURE__*/ S.Array(Record);
+export const Records = /*@__PURE__*/ S.Array(Record);
 export interface WriteRecordsRequest {
   DatabaseName: string;
   TableName: string;
   CommonAttributes?: Record;
   Records: Record[];
 }
-export const WriteRecordsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const WriteRecordsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     DatabaseName: S.String,
     TableName: S.String,
@@ -1044,7 +1097,7 @@ export interface RecordsIngested {
   MemoryStore?: number;
   MagneticStore?: number;
 }
-export const RecordsIngested = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RecordsIngested = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Total: S.optional(S.Number),
     MemoryStore: S.optional(S.Number),
@@ -1056,17 +1109,19 @@ export const RecordsIngested = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface WriteRecordsResponse {
   RecordsIngested?: RecordsIngested;
 }
-export const WriteRecordsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const WriteRecordsResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ RecordsIngested: S.optional(RecordsIngested) }),
 ).annotate({
   identifier: "WriteRecordsResponse",
 }) as any as S.Schema<WriteRecordsResponse>;
+export type ErrorMessage = string;
+export type RecordIndex = number;
 export interface RejectedRecord {
   RecordIndex?: number;
   Reason?: string;
   ExistingVersion?: number;
 }
-export const RejectedRecord = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RejectedRecord = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     RecordIndex: S.optional(S.Number),
     Reason: S.optional(S.String),
@@ -1074,51 +1129,7 @@ export const RejectedRecord = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "RejectedRecord" }) as any as S.Schema<RejectedRecord>;
 export type RejectedRecords = RejectedRecord[];
-export const RejectedRecords =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(RejectedRecord);
-
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { Message: S.String },
-).pipe(C.withAuthError) {}
-export class ConflictException extends S.TaggedErrorClass<ConflictException>()(
-  "ConflictException",
-  { Message: S.String },
-).pipe(C.withConflictError) {}
-export class InternalServerException extends S.TaggedErrorClass<InternalServerException>()(
-  "InternalServerException",
-  { Message: S.String },
-).pipe(C.withServerError) {}
-export class InvalidEndpointException extends S.TaggedErrorClass<InvalidEndpointException>()(
-  "InvalidEndpointException",
-  { Message: S.optional(S.String) },
-) {}
-export class ResourceNotFoundException extends S.TaggedErrorClass<ResourceNotFoundException>()(
-  "ResourceNotFoundException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ServiceQuotaExceededException extends S.TaggedErrorClass<ServiceQuotaExceededException>()(
-  "ServiceQuotaExceededException",
-  { Message: S.optional(S.String) },
-).pipe(C.withQuotaError) {}
-export class ThrottlingException extends S.TaggedErrorClass<ThrottlingException>()(
-  "ThrottlingException",
-  { Message: S.String },
-).pipe(C.withThrottlingError) {}
-export class ValidationException extends S.TaggedErrorClass<ValidationException>()(
-  "ValidationException",
-  { Message: S.String },
-).pipe(C.withBadRequestError) {}
-export class RejectedRecordsException extends S.TaggedErrorClass<RejectedRecordsException>()(
-  "RejectedRecordsException",
-  {
-    Message: S.optional(S.String),
-    RejectedRecords: S.optional(RejectedRecords),
-  },
-) {}
-
-//# Operations
+export const RejectedRecords = /*@__PURE__*/ S.Array(RejectedRecord);
 export type CreateBatchLoadTaskError =
   | AccessDeniedException
   | ConflictException
@@ -1144,8 +1155,8 @@ export const createBatchLoadTask: API.OperationMethod<
   CreateBatchLoadTaskRequest,
   CreateBatchLoadTaskResponse,
   CreateBatchLoadTaskError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateBatchLoadTaskRequest,
   output: CreateBatchLoadTaskResponse,
   errors: [
@@ -1158,7 +1169,11 @@ export const createBatchLoadTask: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateBatchLoadTask",
 }));
+
 export type CreateDatabaseError =
   | AccessDeniedException
   | ConflictException
@@ -1167,6 +1182,7 @@ export type CreateDatabaseError =
   | ServiceQuotaExceededException
   | ThrottlingException
   | ValidationException
+  | TimestreamNotOnboarded
   | CommonErrors;
 /**
  * Creates a new Timestream database. If the KMS key is not
@@ -1177,8 +1193,8 @@ export const createDatabase: API.OperationMethod<
   CreateDatabaseRequest,
   CreateDatabaseResponse,
   CreateDatabaseError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateDatabaseRequest,
   output: CreateDatabaseResponse,
   errors: [
@@ -1189,8 +1205,13 @@ export const createDatabase: API.OperationMethod<
     ServiceQuotaExceededException,
     ThrottlingException,
     ValidationException,
+    TimestreamNotOnboarded,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateDatabase",
 }));
+
 export type CreateTableError =
   | AccessDeniedException
   | ConflictException
@@ -1213,8 +1234,8 @@ export const createTable: API.OperationMethod<
   CreateTableRequest,
   CreateTableResponse,
   CreateTableError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateTableRequest,
   output: CreateTableResponse,
   errors: [
@@ -1227,7 +1248,11 @@ export const createTable: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateTable",
 }));
+
 export type DeleteDatabaseError =
   | AccessDeniedException
   | InternalServerException
@@ -1254,8 +1279,8 @@ export const deleteDatabase: API.OperationMethod<
   DeleteDatabaseRequest,
   DeleteDatabaseResponse,
   DeleteDatabaseError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteDatabaseRequest,
   output: DeleteDatabaseResponse,
   errors: [
@@ -1266,7 +1291,11 @@ export const deleteDatabase: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteDatabase",
 }));
+
 export type DeleteTableError =
   | AccessDeniedException
   | InternalServerException
@@ -1290,8 +1319,8 @@ export const deleteTable: API.OperationMethod<
   DeleteTableRequest,
   DeleteTableResponse,
   DeleteTableError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteTableRequest,
   output: DeleteTableResponse,
   errors: [
@@ -1302,7 +1331,11 @@ export const deleteTable: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteTable",
 }));
+
 export type DescribeBatchLoadTaskError =
   | AccessDeniedException
   | InternalServerException
@@ -1320,8 +1353,8 @@ export const describeBatchLoadTask: API.OperationMethod<
   DescribeBatchLoadTaskRequest,
   DescribeBatchLoadTaskResponse,
   DescribeBatchLoadTaskError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeBatchLoadTaskRequest,
   output: DescribeBatchLoadTaskResponse,
   errors: [
@@ -1331,7 +1364,11 @@ export const describeBatchLoadTask: API.OperationMethod<
     ResourceNotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeBatchLoadTask",
 }));
+
 export type DescribeDatabaseError =
   | AccessDeniedException
   | InternalServerException
@@ -1350,8 +1387,8 @@ export const describeDatabase: API.OperationMethod<
   DescribeDatabaseRequest,
   DescribeDatabaseResponse,
   DescribeDatabaseError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeDatabaseRequest,
   output: DescribeDatabaseResponse,
   errors: [
@@ -1362,11 +1399,16 @@ export const describeDatabase: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeDatabase",
 }));
+
 export type DescribeEndpointsError =
   | InternalServerException
   | ThrottlingException
   | ValidationException
+  | TimestreamNotOnboarded
   | CommonErrors;
 /**
  * Returns a list of available endpoints to make Timestream API calls against.
@@ -1391,12 +1433,21 @@ export const describeEndpoints: API.OperationMethod<
   DescribeEndpointsRequest,
   DescribeEndpointsResponse,
   DescribeEndpointsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeEndpointsRequest,
   output: DescribeEndpointsResponse,
-  errors: [InternalServerException, ThrottlingException, ValidationException],
+  errors: [
+    InternalServerException,
+    ThrottlingException,
+    ValidationException,
+    TimestreamNotOnboarded,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeEndpoints",
 }));
+
 export type DescribeTableError =
   | AccessDeniedException
   | InternalServerException
@@ -1415,8 +1466,8 @@ export const describeTable: API.OperationMethod<
   DescribeTableRequest,
   DescribeTableResponse,
   DescribeTableError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeTableRequest,
   output: DescribeTableResponse,
   errors: [
@@ -1427,7 +1478,11 @@ export const describeTable: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeTable",
 }));
+
 export type ListBatchLoadTasksError =
   | AccessDeniedException
   | InternalServerException
@@ -1440,27 +1495,13 @@ export type ListBatchLoadTasksError =
  * resumable until, and other details. See code
  * sample for details.
  */
-export const listBatchLoadTasks: API.OperationMethod<
+export const listBatchLoadTasks: API.PaginatedOperationMethod<
   ListBatchLoadTasksRequest,
   ListBatchLoadTasksResponse,
   ListBatchLoadTasksError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListBatchLoadTasksRequest,
-  ) => stream.Stream<
-    ListBatchLoadTasksResponse,
-    ListBatchLoadTasksError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListBatchLoadTasksRequest,
-  ) => stream.Stream<
-    unknown,
-    ListBatchLoadTasksError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListBatchLoadTasksRequest,
   output: ListBatchLoadTasksResponse,
   errors: [
@@ -1470,12 +1511,16 @@ export const listBatchLoadTasks: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListBatchLoadTasks",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ListDatabasesError =
   | AccessDeniedException
   | InternalServerException
@@ -1488,27 +1533,13 @@ export type ListDatabasesError =
  * code sample for
  * details.
  */
-export const listDatabases: API.OperationMethod<
+export const listDatabases: API.PaginatedOperationMethod<
   ListDatabasesRequest,
   ListDatabasesResponse,
   ListDatabasesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListDatabasesRequest,
-  ) => stream.Stream<
-    ListDatabasesResponse,
-    ListDatabasesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListDatabasesRequest,
-  ) => stream.Stream<
-    unknown,
-    ListDatabasesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListDatabasesRequest,
   output: ListDatabasesResponse,
   errors: [
@@ -1518,12 +1549,16 @@ export const listDatabases: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListDatabases",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ListTablesError =
   | AccessDeniedException
   | InternalServerException
@@ -1537,27 +1572,13 @@ export type ListTablesError =
  * table. See code sample
  * for details.
  */
-export const listTables: API.OperationMethod<
+export const listTables: API.PaginatedOperationMethod<
   ListTablesRequest,
   ListTablesResponse,
   ListTablesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListTablesRequest,
-  ) => stream.Stream<
-    ListTablesResponse,
-    ListTablesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListTablesRequest,
-  ) => stream.Stream<
-    unknown,
-    ListTablesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListTablesRequest,
   output: ListTablesResponse,
   errors: [
@@ -1568,12 +1589,16 @@ export const listTables: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTables",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ListTagsForResourceError =
   | InvalidEndpointException
   | ResourceNotFoundException
@@ -1587,8 +1612,8 @@ export const listTagsForResource: API.OperationMethod<
   ListTagsForResourceRequest,
   ListTagsForResourceResponse,
   ListTagsForResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListTagsForResourceRequest,
   output: ListTagsForResourceResponse,
   errors: [
@@ -1597,7 +1622,11 @@ export const listTagsForResource: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTagsForResource",
 }));
+
 export type ResumeBatchLoadTaskError =
   | AccessDeniedException
   | InternalServerException
@@ -1613,8 +1642,8 @@ export const resumeBatchLoadTask: API.OperationMethod<
   ResumeBatchLoadTaskRequest,
   ResumeBatchLoadTaskResponse,
   ResumeBatchLoadTaskError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ResumeBatchLoadTaskRequest,
   output: ResumeBatchLoadTaskResponse,
   errors: [
@@ -1625,7 +1654,11 @@ export const resumeBatchLoadTask: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ResumeBatchLoadTask",
 }));
+
 export type TagResourceError =
   | InvalidEndpointException
   | ResourceNotFoundException
@@ -1642,8 +1675,8 @@ export const tagResource: API.OperationMethod<
   TagResourceRequest,
   TagResourceResponse,
   TagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TagResourceRequest,
   output: TagResourceResponse,
   errors: [
@@ -1653,7 +1686,11 @@ export const tagResource: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TagResource",
 }));
+
 export type UntagResourceError =
   | InvalidEndpointException
   | ResourceNotFoundException
@@ -1668,8 +1705,8 @@ export const untagResource: API.OperationMethod<
   UntagResourceRequest,
   UntagResourceResponse,
   UntagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UntagResourceRequest,
   output: UntagResourceResponse,
   errors: [
@@ -1679,7 +1716,11 @@ export const untagResource: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UntagResource",
 }));
+
 export type UpdateDatabaseError =
   | AccessDeniedException
   | InternalServerException
@@ -1701,8 +1742,8 @@ export const updateDatabase: API.OperationMethod<
   UpdateDatabaseRequest,
   UpdateDatabaseResponse,
   UpdateDatabaseError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateDatabaseRequest,
   output: UpdateDatabaseResponse,
   errors: [
@@ -1714,7 +1755,11 @@ export const updateDatabase: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateDatabase",
 }));
+
 export type UpdateTableError =
   | AccessDeniedException
   | InternalServerException
@@ -1736,8 +1781,8 @@ export const updateTable: API.OperationMethod<
   UpdateTableRequest,
   UpdateTableResponse,
   UpdateTableError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateTableRequest,
   output: UpdateTableResponse,
   errors: [
@@ -1748,7 +1793,11 @@ export const updateTable: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateTable",
 }));
+
 export type WriteRecordsError =
   | AccessDeniedException
   | InternalServerException
@@ -1807,8 +1856,8 @@ export const writeRecords: API.OperationMethod<
   WriteRecordsRequest,
   WriteRecordsResponse,
   WriteRecordsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: WriteRecordsRequest,
   output: WriteRecordsResponse,
   errors: [
@@ -1820,4 +1869,7 @@ export const writeRecords: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "WriteRecords",
 }));

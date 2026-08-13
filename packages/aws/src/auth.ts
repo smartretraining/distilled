@@ -5,9 +5,14 @@ import * as FileSystem from "effect/FileSystem";
 import * as Option from "effect/Option";
 import * as Path from "effect/Path";
 import * as Redacted from "effect/Redacted";
-import * as Context from "effect/Context";
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import { createHash } from "node:crypto";
+import {
+  Auth,
+  type AwsProfileConfig,
+  type SsoProfileConfig,
+  type SSOToken,
+} from "./auth.browser.ts";
 import {
   ConflictingSSORegion,
   ConflictingSSOStartUrl,
@@ -15,13 +20,15 @@ import {
   InvalidSSOProfile,
   InvalidSSOToken,
   ProfileNotFound,
+  regionFromEnv,
   SsoPortalError,
   SsoRegion,
   SsoStartUrl,
-  type CredentialsError,
   type ResolvedCredentials,
 } from "./credentials.ts";
 import { parseIni, parseSSOSessionData } from "./util/parse-ini.ts";
+
+export * from "./auth.browser.ts";
 
 /**
  * The time window (5 mins) that SDK will treat the SSO token expires in before the defined expiration date in token.
@@ -30,18 +37,6 @@ import { parseIni, parseSSOSessionData } from "./util/parse-ini.ts";
 const EXPIRE_WINDOW_MS = 5 * 60 * 1000;
 
 const REFRESH_MESSAGE = `To refresh this SSO session run 'aws sso login' with the corresponding profile.`;
-
-export class Auth extends Context.Service<
-  Auth,
-  {
-    loadProfile: (
-      profileName: string,
-    ) => Effect.Effect<AwsProfileConfig, CredentialsError>;
-    loadProfileCredentials: (
-      profileName: string,
-    ) => Effect.Effect<ResolvedCredentials, CredentialsError>;
-  }
->()("distilled-aws/AWS/Auth") {}
 
 export const Default = Effect.serviceOption(Auth).pipe(
   Effect.map(Option.getOrUndefined),
@@ -79,38 +74,49 @@ export const makeAuthService = () =>
       const awsDir = path.join(ini.getHomeDir(), ".aws");
       const configPath = path.join(awsDir, "config");
 
-      if (profile.sso_session) {
-        const ssoRegion = Option.getOrUndefined(
-          yield* Effect.serviceOption(SsoRegion),
-        );
-        const ssoStartUrl = Option.getOrElse(
-          yield* Effect.serviceOption(SsoStartUrl),
-          () => profile.sso_start_url,
-        );
+      // A profile is an SSO profile in one of two config formats:
+      //   - modern: `sso_session = <name>` referencing an `[sso-session <name>]`
+      //     section that holds `sso_start_url` / `sso_region`.
+      //   - legacy inline: `sso_start_url` (and `sso_region`) set directly on the
+      //     profile, with no `sso_session`.
+      // Only the modern format needs the session lookup; both then validate the
+      // required SSO fields. (Legacy inline is still emitted by older `aws configure
+      // sso` runs and remains valid, so treat it as an SSO profile rather than
+      // reporting the profile as not found.)
+      if (profile.sso_session || profile.sso_start_url) {
+        if (profile.sso_session) {
+          const ssoRegion = Option.getOrUndefined(
+            yield* Effect.serviceOption(SsoRegion),
+          );
+          const ssoStartUrl = Option.getOrElse(
+            yield* Effect.serviceOption(SsoStartUrl),
+            () => profile.sso_start_url,
+          );
 
-        const ssoSessions = yield* fs.readFileString(configPath).pipe(
-          Effect.flatMap((config) =>
-            Effect.promise(async () => parseIni(config)),
-          ),
-          Effect.map(parseSSOSessionData),
-        );
-        const session = ssoSessions[profile.sso_session];
-        if (ssoRegion && ssoRegion !== session.sso_region) {
-          return yield* new ConflictingSSORegion({
-            message: `Conflicting SSO region`,
-            ssoRegion: ssoRegion,
-            profile: profile.sso_session,
-          });
+          const ssoSessions = yield* fs.readFileString(configPath).pipe(
+            Effect.flatMap((config) =>
+              Effect.promise(async () => parseIni(config)),
+            ),
+            Effect.map(parseSSOSessionData),
+          );
+          const session = ssoSessions[profile.sso_session];
+          if (ssoRegion && ssoRegion !== session.sso_region) {
+            return yield* new ConflictingSSORegion({
+              message: `Conflicting SSO region`,
+              ssoRegion: ssoRegion,
+              profile: profile.sso_session,
+            });
+          }
+          if (ssoStartUrl && ssoStartUrl !== session.sso_start_url) {
+            return yield* new ConflictingSSOStartUrl({
+              message: `Conflicting SSO start url`,
+              ssoStartUrl: ssoStartUrl,
+              profile: profile.sso_session,
+            });
+          }
+          profile.sso_region = session.sso_region;
+          profile.sso_start_url = session.sso_start_url;
         }
-        if (ssoStartUrl && ssoStartUrl !== session.sso_start_url) {
-          return yield* new ConflictingSSOStartUrl({
-            message: `Conflicting SSO start url`,
-            ssoStartUrl: ssoStartUrl,
-            profile: profile.sso_session,
-          });
-        }
-        profile.sso_region = session.sso_region;
-        profile.sso_start_url = session.sso_start_url;
 
         const ssoFields = [
           "sso_start_url",
@@ -147,9 +153,19 @@ export const makeAuthService = () =>
 
       const profile = yield* loadProfile(profileName);
 
-      if (profile.sso_session) {
+      // The region these credentials belong to. An SSO profile always
+      // configures one (`sso_region` is required); `region` overrides it when
+      // the profile calls a different region than its SSO portal lives in.
+      // The environment is the last resort, for a profile carrying neither.
+      const region =
+        profile.region ?? profile.sso_region ?? (yield* regionFromEnv);
+
+      // Both SSO formats cache the access token under sha1 of the cache key: the
+      // `sso_session` name (modern) or the `sso_start_url` (legacy inline format).
+      const ssoCacheKey = profile.sso_session ?? profile.sso_start_url;
+      if (ssoCacheKey) {
         const hasher = createHash("sha1");
-        const cacheName = hasher.update(profile.sso_session).digest("hex");
+        const cacheName = hasher.update(ssoCacheKey).digest("hex");
         const ssoTokenFilepath = path.join(cachePath, `${cacheName}.json`);
         const cachedCredsFilePath = path.join(
           cachePath,
@@ -186,6 +202,7 @@ export const makeAuthService = () =>
             sessionToken: cachedCreds.sessionToken
               ? Redacted.make(cachedCreds.sessionToken)
               : undefined,
+            region,
             expiration: cachedCreds.expiry,
           } satisfies ResolvedCredentials;
         }
@@ -205,7 +222,7 @@ export const makeAuthService = () =>
             () =>
               new InvalidSSOToken({
                 message: `The SSO session token associated with profile=${profileName} was not found or is invalid. ${REFRESH_MESSAGE}`,
-                sso_session: profile.sso_session!,
+                sso_session: ssoCacheKey,
               }),
           ),
         );
@@ -271,6 +288,7 @@ export const makeAuthService = () =>
           accessKeyId: Redacted.make(credentials.accessKeyId),
           secretAccessKey: Redacted.make(credentials.secretAccessKey),
           sessionToken: Redacted.make(credentials.sessionToken),
+          region,
           expiration: credentials.expiration,
         } satisfies ResolvedCredentials;
       }
@@ -286,67 +304,3 @@ export const makeAuthService = () =>
       loadProfileCredentials,
     });
   });
-
-export interface AwsProfileConfig {
-  sso_session?: string;
-  sso_account_id?: string;
-  sso_role_name?: string;
-  region?: string;
-  output?: string;
-  sso_start_url?: string;
-  sso_region?: string;
-}
-export interface SsoProfileConfig extends AwsProfileConfig {
-  sso_start_url: string;
-  sso_region: string;
-  sso_account_id: string;
-  sso_role_name: string;
-}
-
-/**
- * Cached SSO token retrieved from SSO login flow.
- * @public
- */
-export interface SSOToken {
-  /**
-   * A base64 encoded string returned by the sso-oidc service.
-   */
-  accessToken: string;
-
-  /**
-   * The expiration time of the accessToken as an RFC 3339 formatted timestamp.
-   */
-  expiresAt: string;
-
-  /**
-   * The token used to obtain an access token in the event that the accessToken is invalid or expired.
-   */
-  refreshToken?: string;
-
-  /**
-   * The unique identifier string for each client. The client ID generated when performing the registration
-   * portion of the OIDC authorization flow. This is used to refresh the accessToken.
-   */
-  clientId?: string;
-
-  /**
-   * A secret string generated when performing the registration portion of the OIDC authorization flow.
-   * This is used to refresh the accessToken.
-   */
-  clientSecret?: string;
-
-  /**
-   * The expiration time of the client registration (clientId and clientSecret) as an RFC 3339 formatted timestamp.
-   */
-  registrationExpiresAt?: string;
-
-  /**
-   * The configured sso_region for the profile that credentials are being resolved for.
-   */
-  region?: string;
-
-  /**
-   * The configured sso_start_url for the profile that credentials are being resolved for.
-   */
-  startUrl?: string;
-}

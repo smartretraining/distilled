@@ -1,11 +1,11 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region as Rgn } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "Resource Groups Tagging API",
   serviceShapeName: "ResourceGroupsTaggingAPI_20170126",
@@ -82,85 +82,94 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class ConcurrentModificationException
+  extends /*@__PURE__*/ S.TaggedError<ConcurrentModificationException>()(
+    "ConcurrentModificationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ConstraintViolationException
+  extends /*@__PURE__*/ S.TaggedError<ConstraintViolationException>()(
+    "ConstraintViolationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InternalServiceException
+  extends /*@__PURE__*/ S.TaggedError<InternalServiceException>()(
+    "InternalServiceException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidParameterException
+  extends /*@__PURE__*/ S.TaggedError<InvalidParameterException>()(
+    "InvalidParameterException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class PaginationTokenExpiredException
+  extends /*@__PURE__*/ S.TaggedError<PaginationTokenExpiredException>()(
+    "PaginationTokenExpiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ThrottledException
+  extends /*@__PURE__*/ S.TaggedError<ThrottledException>()(
+    "ThrottledException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export interface DescribeReportCreationInput {}
+export const DescribeReportCreationInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/DescribeReportCreation" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "DescribeReportCreationInput",
+}) as any as S.Schema<DescribeReportCreationInput>;
 export type Status = string;
 export type S3Location = string;
 export type StartDate = string;
 export type ErrorMessage = string;
-export type ExceptionMessage = string;
-export type TargetId = string;
-export type Region = string;
-export type AmazonResourceType = string;
-export type TagKey = string;
-export type MaxResultsGetComplianceSummary = number;
-export type PaginationToken = string;
-export type LastUpdated = string;
-export type NonCompliantResources = number;
-export type TagValue = string;
-export type ResourcesPerPage = number;
-export type TagsPerPage = number;
-export type IncludeComplianceDetails = boolean;
-export type ExcludeCompliantResources = boolean;
-export type ResourceARN = string;
-export type ComplianceStatus = boolean;
-export type MaxResultsForListRequiredTags = number;
-export type ResourceType = string;
-export type CloudFormationResourceType = string;
-export type S3Bucket = string;
-export type StatusCode = number;
-
-//# Schemas
-export interface DescribeReportCreationInput {}
-export const DescribeReportCreationInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({}).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/DescribeReportCreation" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
-    ),
-  ).annotate({
-    identifier: "DescribeReportCreationInput",
-  }) as any as S.Schema<DescribeReportCreationInput>;
 export interface DescribeReportCreationOutput {
   Status?: string;
   S3Location?: string;
   StartDate?: string;
   ErrorMessage?: string;
 }
-export const DescribeReportCreationOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      Status: S.optional(S.String),
-      S3Location: S.optional(S.String),
-      StartDate: S.optional(S.String),
-      ErrorMessage: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "DescribeReportCreationOutput",
-  }) as any as S.Schema<DescribeReportCreationOutput>;
+export const DescribeReportCreationOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Status: S.optional(S.String),
+    S3Location: S.optional(S.String),
+    StartDate: S.optional(S.String),
+    ErrorMessage: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "DescribeReportCreationOutput",
+}) as any as S.Schema<DescribeReportCreationOutput>;
+export type TargetId = string;
 export type TargetIdFilterList = string[];
-export const TargetIdFilterList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TargetIdFilterList = /*@__PURE__*/ S.Array(S.String);
+export type Region = string;
 export type RegionFilterList = string[];
-export const RegionFilterList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const RegionFilterList = /*@__PURE__*/ S.Array(S.String);
+export type AmazonResourceType = string;
 export type ResourceTypeFilterList = string[];
-export const ResourceTypeFilterList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const ResourceTypeFilterList = /*@__PURE__*/ S.Array(S.String);
+export type TagKey = string;
 export type TagKeyFilterList = string[];
-export const TagKeyFilterList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TagKeyFilterList = /*@__PURE__*/ S.Array(S.String);
 export type GroupByAttribute =
   | "TARGET_ID"
   | "REGION"
   | "RESOURCE_TYPE"
   | (string & {});
-export const GroupByAttribute = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const GroupByAttribute = /*@__PURE__*/ S.String;
+
 export type GroupBy = GroupByAttribute[];
-export const GroupBy = /*@__PURE__*/ /*#__PURE__*/ S.Array(GroupByAttribute);
+export const GroupBy = /*@__PURE__*/ S.Array(GroupByAttribute);
+export type MaxResultsGetComplianceSummary = number;
+export type PaginationToken = string;
 export interface GetComplianceSummaryInput {
   TargetIdFilters?: string[];
   RegionFilters?: string[];
@@ -170,31 +179,33 @@ export interface GetComplianceSummaryInput {
   MaxResults?: number;
   PaginationToken?: string;
 }
-export const GetComplianceSummaryInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      TargetIdFilters: S.optional(TargetIdFilterList),
-      RegionFilters: S.optional(RegionFilterList),
-      ResourceTypeFilters: S.optional(ResourceTypeFilterList),
-      TagKeyFilters: S.optional(TagKeyFilterList),
-      GroupBy: S.optional(GroupBy),
-      MaxResults: S.optional(S.Number),
-      PaginationToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/GetComplianceSummary" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetComplianceSummaryInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    TargetIdFilters: S.optional(TargetIdFilterList),
+    RegionFilters: S.optional(RegionFilterList),
+    ResourceTypeFilters: S.optional(ResourceTypeFilterList),
+    TagKeyFilters: S.optional(TagKeyFilterList),
+    GroupBy: S.optional(GroupBy),
+    MaxResults: S.optional(S.Number),
+    PaginationToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/GetComplianceSummary" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetComplianceSummaryInput",
 }) as any as S.Schema<GetComplianceSummaryInput>;
+export type LastUpdated = string;
 export type TargetIdType = "ACCOUNT" | "OU" | "ROOT" | (string & {});
-export const TargetIdType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const TargetIdType = /*@__PURE__*/ S.String;
+
+export type NonCompliantResources = number;
 export interface Summary {
   LastUpdated?: string;
   TargetId?: string;
@@ -203,7 +214,7 @@ export interface Summary {
   ResourceType?: string;
   NonCompliantResources?: number;
 }
-export const Summary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Summary = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     LastUpdated: S.optional(S.String),
     TargetId: S.optional(S.String),
@@ -214,35 +225,38 @@ export const Summary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Summary" }) as any as S.Schema<Summary>;
 export type SummaryList = Summary[];
-export const SummaryList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Summary);
+export const SummaryList = /*@__PURE__*/ S.Array(Summary);
 export interface GetComplianceSummaryOutput {
   SummaryList?: Summary[];
   PaginationToken?: string;
 }
-export const GetComplianceSummaryOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      SummaryList: S.optional(SummaryList),
-      PaginationToken: S.optional(S.String),
-    }),
+export const GetComplianceSummaryOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    SummaryList: S.optional(SummaryList),
+    PaginationToken: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "GetComplianceSummaryOutput",
 }) as any as S.Schema<GetComplianceSummaryOutput>;
+export type TagValue = string;
 export type TagValueList = string[];
-export const TagValueList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TagValueList = /*@__PURE__*/ S.Array(S.String);
 export interface TagFilter {
   Key?: string;
   Values?: string[];
 }
-export const TagFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: S.optional(S.String), Values: S.optional(TagValueList) }),
 ).annotate({ identifier: "TagFilter" }) as any as S.Schema<TagFilter>;
 export type TagFilterList = TagFilter[];
-export const TagFilterList = /*@__PURE__*/ /*#__PURE__*/ S.Array(TagFilter);
+export const TagFilterList = /*@__PURE__*/ S.Array(TagFilter);
+export type ResourcesPerPage = number;
+export type TagsPerPage = number;
+export type IncludeComplianceDetails = boolean;
+export type ExcludeCompliantResources = boolean;
+export type ResourceARN = string;
 export type ResourceARNListForGet = string[];
-export const ResourceARNListForGet = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const ResourceARNListForGet = /*@__PURE__*/ S.Array(S.String);
 export interface GetResourcesInput {
   PaginationToken?: string;
   TagFilters?: TagFilter[];
@@ -253,7 +267,7 @@ export interface GetResourcesInput {
   ExcludeCompliantResources?: boolean;
   ResourceARNList?: string[];
 }
-export const GetResourcesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetResourcesInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     PaginationToken: S.optional(S.String),
     TagFilters: S.optional(TagFilterList),
@@ -280,22 +294,25 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-export const Tag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Tag = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: S.String, Value: S.String }),
 ).annotate({ identifier: "Tag" }) as any as S.Schema<Tag>;
 export type TagList = Tag[];
-export const TagList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Tag);
+export const TagList = /*@__PURE__*/ S.Array(Tag);
 export type TagKeyList = string[];
-export const TagKeyList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TagKeyList = /*@__PURE__*/ S.Array(S.String);
+export type ComplianceStatus = boolean;
 export interface ComplianceDetails {
   NoncompliantKeys?: string[];
   KeysWithNoncompliantValues?: string[];
+  MissingTagKeys?: string[];
   ComplianceStatus?: boolean;
 }
-export const ComplianceDetails = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ComplianceDetails = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     NoncompliantKeys: S.optional(TagKeyList),
     KeysWithNoncompliantValues: S.optional(TagKeyList),
+    MissingTagKeys: S.optional(TagKeyList),
     ComplianceStatus: S.optional(S.Boolean),
   }),
 ).annotate({
@@ -306,7 +323,7 @@ export interface ResourceTagMapping {
   Tags?: Tag[];
   ComplianceDetails?: ComplianceDetails;
 }
-export const ResourceTagMapping = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResourceTagMapping = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ResourceARN: S.optional(S.String),
     Tags: S.optional(TagList),
@@ -316,13 +333,12 @@ export const ResourceTagMapping = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ResourceTagMapping",
 }) as any as S.Schema<ResourceTagMapping>;
 export type ResourceTagMappingList = ResourceTagMapping[];
-export const ResourceTagMappingList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ResourceTagMapping);
+export const ResourceTagMappingList = /*@__PURE__*/ S.Array(ResourceTagMapping);
 export interface GetResourcesOutput {
   PaginationToken?: string;
   ResourceTagMappingList?: ResourceTagMapping[];
 }
-export const GetResourcesOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetResourcesOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     PaginationToken: S.optional(S.String),
     ResourceTagMappingList: S.optional(ResourceTagMappingList),
@@ -333,7 +349,7 @@ export const GetResourcesOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetTagKeysInput {
   PaginationToken?: string;
 }
-export const GetTagKeysInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetTagKeysInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ PaginationToken: S.optional(S.String) }).pipe(
     T.all(
       T.Http({ method: "POST", uri: "/GetTagKeys" }),
@@ -351,7 +367,7 @@ export interface GetTagKeysOutput {
   PaginationToken?: string;
   TagKeys?: string[];
 }
-export const GetTagKeysOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetTagKeysOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     PaginationToken: S.optional(S.String),
     TagKeys: S.optional(TagKeyList),
@@ -363,7 +379,7 @@ export interface GetTagValuesInput {
   PaginationToken?: string;
   Key: string;
 }
-export const GetTagValuesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetTagValuesInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ PaginationToken: S.optional(S.String), Key: S.String }).pipe(
     T.all(
       T.Http({ method: "POST", uri: "/GetTagValues" }),
@@ -378,14 +394,12 @@ export const GetTagValuesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "GetTagValuesInput",
 }) as any as S.Schema<GetTagValuesInput>;
 export type TagValuesOutputList = string[];
-export const TagValuesOutputList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const TagValuesOutputList = /*@__PURE__*/ S.Array(S.String);
 export interface GetTagValuesOutput {
   PaginationToken?: string;
   TagValues?: string[];
 }
-export const GetTagValuesOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetTagValuesOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     PaginationToken: S.optional(S.String),
     TagValues: S.optional(TagValuesOutputList),
@@ -393,11 +407,12 @@ export const GetTagValuesOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "GetTagValuesOutput",
 }) as any as S.Schema<GetTagValuesOutput>;
+export type MaxResultsForListRequiredTags = number;
 export interface ListRequiredTagsInput {
   NextToken?: string;
   MaxResults?: number;
 }
-export const ListRequiredTagsInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListRequiredTagsInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     NextToken: S.optional(S.String),
     MaxResults: S.optional(S.Number),
@@ -414,18 +429,18 @@ export const ListRequiredTagsInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ListRequiredTagsInput",
 }) as any as S.Schema<ListRequiredTagsInput>;
+export type ResourceType = string;
+export type CloudFormationResourceType = string;
 export type CloudFormationResourceTypes = string[];
-export const CloudFormationResourceTypes = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const CloudFormationResourceTypes = /*@__PURE__*/ S.Array(S.String);
 export type ReportingTagKeys = string[];
-export const ReportingTagKeys = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ReportingTagKeys = /*@__PURE__*/ S.Array(S.String);
 export interface RequiredTag {
   ResourceType?: string;
   CloudFormationResourceTypes?: string[];
   ReportingTagKeys?: string[];
 }
-export const RequiredTag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RequiredTag = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ResourceType: S.optional(S.String),
     CloudFormationResourceTypes: S.optional(CloudFormationResourceTypes),
@@ -434,50 +449,47 @@ export const RequiredTag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({ identifier: "RequiredTag" }) as any as S.Schema<RequiredTag>;
 export type RequiredTagsForListRequiredTags = RequiredTag[];
 export const RequiredTagsForListRequiredTags =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(RequiredTag);
+  /*@__PURE__*/ S.Array(RequiredTag);
 export interface ListRequiredTagsOutput {
   RequiredTags?: RequiredTag[];
   NextToken?: string;
 }
-export const ListRequiredTagsOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      RequiredTags: S.optional(RequiredTagsForListRequiredTags),
-      NextToken: S.optional(S.String),
-    }),
+export const ListRequiredTagsOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    RequiredTags: S.optional(RequiredTagsForListRequiredTags),
+    NextToken: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "ListRequiredTagsOutput",
 }) as any as S.Schema<ListRequiredTagsOutput>;
+export type S3Bucket = string;
 export interface StartReportCreationInput {
   S3Bucket: string;
 }
-export const StartReportCreationInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ S3Bucket: S.String }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/StartReportCreation" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const StartReportCreationInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ S3Bucket: S.String }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/StartReportCreation" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "StartReportCreationInput",
 }) as any as S.Schema<StartReportCreationInput>;
 export interface StartReportCreationOutput {}
-export const StartReportCreationOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const StartReportCreationOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "StartReportCreationOutput",
 }) as any as S.Schema<StartReportCreationOutput>;
 export type ResourceARNListForTagUntag = string[];
-export const ResourceARNListForTagUntag = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const ResourceARNListForTagUntag = /*@__PURE__*/ S.Array(S.String);
 export type TagMap = { [key: string]: string | undefined };
-export const TagMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const TagMap = /*@__PURE__*/ S.Record(
   S.String,
   S.String.pipe(S.optional),
 );
@@ -485,7 +497,7 @@ export interface TagResourcesInput {
   ResourceARNList: string[];
   Tags: { [key: string]: string | undefined };
 }
-export const TagResourcesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourcesInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ResourceARNList: ResourceARNListForTagUntag, Tags: TagMap }).pipe(
     T.all(
       T.Http({ method: "POST", uri: "/TagResources" }),
@@ -499,17 +511,19 @@ export const TagResourcesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "TagResourcesInput",
 }) as any as S.Schema<TagResourcesInput>;
+export type StatusCode = number;
 export type ErrorCode =
   | "InternalServiceException"
   | "InvalidParameterException"
   | (string & {});
-export const ErrorCode = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ErrorCode = /*@__PURE__*/ S.String;
+
 export interface FailureInfo {
   StatusCode?: number;
   ErrorCode?: ErrorCode;
   ErrorMessage?: string;
 }
-export const FailureInfo = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const FailureInfo = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     StatusCode: S.optional(S.Number),
     ErrorCode: S.optional(ErrorCode),
@@ -517,25 +531,25 @@ export const FailureInfo = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "FailureInfo" }) as any as S.Schema<FailureInfo>;
 export type FailedResourcesMap = { [key: string]: FailureInfo | undefined };
-export const FailedResourcesMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const FailedResourcesMap = /*@__PURE__*/ S.Record(
   S.String,
   FailureInfo.pipe(S.optional),
 );
 export interface TagResourcesOutput {
   FailedResourcesMap?: { [key: string]: FailureInfo | undefined };
 }
-export const TagResourcesOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourcesOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ FailedResourcesMap: S.optional(FailedResourcesMap) }),
 ).annotate({
   identifier: "TagResourcesOutput",
 }) as any as S.Schema<TagResourcesOutput>;
 export type TagKeyListForUntag = string[];
-export const TagKeyListForUntag = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TagKeyListForUntag = /*@__PURE__*/ S.Array(S.String);
 export interface UntagResourcesInput {
   ResourceARNList: string[];
   TagKeys: string[];
 }
-export const UntagResourcesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourcesInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ResourceARNList: ResourceARNListForTagUntag,
     TagKeys: TagKeyListForUntag,
@@ -555,39 +569,12 @@ export const UntagResourcesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface UntagResourcesOutput {
   FailedResourcesMap?: { [key: string]: FailureInfo | undefined };
 }
-export const UntagResourcesOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourcesOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ FailedResourcesMap: S.optional(FailedResourcesMap) }),
 ).annotate({
   identifier: "UntagResourcesOutput",
 }) as any as S.Schema<UntagResourcesOutput>;
-
-//# Errors
-export class ConstraintViolationException extends S.TaggedErrorClass<ConstraintViolationException>()(
-  "ConstraintViolationException",
-  { Message: S.optional(S.String) },
-) {}
-export class InternalServiceException extends S.TaggedErrorClass<InternalServiceException>()(
-  "InternalServiceException",
-  { Message: S.optional(S.String) },
-) {}
-export class InvalidParameterException extends S.TaggedErrorClass<InvalidParameterException>()(
-  "InvalidParameterException",
-  { Message: S.optional(S.String) },
-) {}
-export class ThrottledException extends S.TaggedErrorClass<ThrottledException>()(
-  "ThrottledException",
-  { Message: S.optional(S.String) },
-) {}
-export class PaginationTokenExpiredException extends S.TaggedErrorClass<PaginationTokenExpiredException>()(
-  "PaginationTokenExpiredException",
-  { Message: S.optional(S.String) },
-) {}
-export class ConcurrentModificationException extends S.TaggedErrorClass<ConcurrentModificationException>()(
-  "ConcurrentModificationException",
-  { Message: S.optional(S.String) },
-) {}
-
-//# Operations
+export type ExceptionMessage = string;
 export type DescribeReportCreationError =
   | ConstraintViolationException
   | InternalServiceException
@@ -604,8 +591,8 @@ export const describeReportCreation: API.OperationMethod<
   DescribeReportCreationInput,
   DescribeReportCreationOutput,
   DescribeReportCreationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeReportCreationInput,
   output: DescribeReportCreationOutput,
   errors: [
@@ -614,7 +601,11 @@ export const describeReportCreation: API.OperationMethod<
     InvalidParameterException,
     ThrottledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeReportCreation",
 }));
+
 export type GetComplianceSummaryError =
   | ConstraintViolationException
   | InternalServiceException
@@ -638,27 +629,13 @@ export type GetComplianceSummaryError =
  * recieve a `null` value. A null value for `PaginationToken` indicates that
  * there are no more results waiting to be returned.
  */
-export const getComplianceSummary: API.OperationMethod<
+export const getComplianceSummary: API.PaginatedOperationMethod<
   GetComplianceSummaryInput,
   GetComplianceSummaryOutput,
   GetComplianceSummaryError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: GetComplianceSummaryInput,
-  ) => stream.Stream<
-    GetComplianceSummaryOutput,
-    GetComplianceSummaryError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: GetComplianceSummaryInput,
-  ) => stream.Stream<
-    Summary,
-    GetComplianceSummaryError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Summary
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: GetComplianceSummaryInput,
   output: GetComplianceSummaryOutput,
   errors: [
@@ -667,13 +644,17 @@ export const getComplianceSummary: API.OperationMethod<
     InvalidParameterException,
     ThrottledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetComplianceSummary",
   pagination: {
     inputToken: "PaginationToken",
     outputToken: "PaginationToken",
     items: "SummaryList",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type GetResourcesError =
   | InternalServiceException
   | InvalidParameterException
@@ -707,27 +688,13 @@ export type GetResourcesError =
  * To find untagged resources in your account, use Amazon Web Services Resource Explorer with a
  * query that uses `tag:none`. For more information, see Search query syntax reference for Resource Explorer.
  */
-export const getResources: API.OperationMethod<
+export const getResources: API.PaginatedOperationMethod<
   GetResourcesInput,
   GetResourcesOutput,
   GetResourcesError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: GetResourcesInput,
-  ) => stream.Stream<
-    GetResourcesOutput,
-    GetResourcesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: GetResourcesInput,
-  ) => stream.Stream<
-    ResourceTagMapping,
-    GetResourcesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  ResourceTagMapping
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: GetResourcesInput,
   output: GetResourcesOutput,
   errors: [
@@ -736,13 +703,17 @@ export const getResources: API.OperationMethod<
     PaginationTokenExpiredException,
     ThrottledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetResources",
   pagination: {
     inputToken: "PaginationToken",
     outputToken: "PaginationToken",
     items: "ResourceTagMappingList",
     pageSize: "ResourcesPerPage",
   } as const,
-}));
+})) as any;
+
 export type GetTagKeysError =
   | InternalServiceException
   | InvalidParameterException
@@ -760,27 +731,13 @@ export type GetTagKeysError =
  * recieve a `null` value. A null value for `PaginationToken` indicates that
  * there are no more results waiting to be returned.
  */
-export const getTagKeys: API.OperationMethod<
+export const getTagKeys: API.PaginatedOperationMethod<
   GetTagKeysInput,
   GetTagKeysOutput,
   GetTagKeysError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: GetTagKeysInput,
-  ) => stream.Stream<
-    GetTagKeysOutput,
-    GetTagKeysError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: GetTagKeysInput,
-  ) => stream.Stream<
-    TagKey,
-    GetTagKeysError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  TagKey
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: GetTagKeysInput,
   output: GetTagKeysOutput,
   errors: [
@@ -789,12 +746,16 @@ export const getTagKeys: API.OperationMethod<
     PaginationTokenExpiredException,
     ThrottledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetTagKeys",
   pagination: {
     inputToken: "PaginationToken",
     outputToken: "PaginationToken",
     items: "TagKeys",
   } as const,
-}));
+})) as any;
+
 export type GetTagValuesError =
   | InternalServiceException
   | InvalidParameterException
@@ -812,27 +773,13 @@ export type GetTagValuesError =
  * recieve a `null` value. A null value for `PaginationToken` indicates that
  * there are no more results waiting to be returned.
  */
-export const getTagValues: API.OperationMethod<
+export const getTagValues: API.PaginatedOperationMethod<
   GetTagValuesInput,
   GetTagValuesOutput,
   GetTagValuesError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: GetTagValuesInput,
-  ) => stream.Stream<
-    GetTagValuesOutput,
-    GetTagValuesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: GetTagValuesInput,
-  ) => stream.Stream<
-    TagValue,
-    GetTagValuesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  TagValue
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: GetTagValuesInput,
   output: GetTagValuesOutput,
   errors: [
@@ -841,12 +788,16 @@ export const getTagValues: API.OperationMethod<
     PaginationTokenExpiredException,
     ThrottledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetTagValues",
   pagination: {
     inputToken: "PaginationToken",
     outputToken: "PaginationToken",
     items: "TagValues",
   } as const,
-}));
+})) as any;
+
 export type ListRequiredTagsError =
   | InternalServiceException
   | InvalidParameterException
@@ -856,27 +807,13 @@ export type ListRequiredTagsError =
 /**
  * Lists the required tags for supported resource types in an Amazon Web Services account.
  */
-export const listRequiredTags: API.OperationMethod<
+export const listRequiredTags: API.PaginatedOperationMethod<
   ListRequiredTagsInput,
   ListRequiredTagsOutput,
   ListRequiredTagsError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListRequiredTagsInput,
-  ) => stream.Stream<
-    ListRequiredTagsOutput,
-    ListRequiredTagsError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListRequiredTagsInput,
-  ) => stream.Stream<
-    RequiredTag,
-    ListRequiredTagsError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  RequiredTag
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListRequiredTagsInput,
   output: ListRequiredTagsOutput,
   errors: [
@@ -885,13 +822,17 @@ export const listRequiredTags: API.OperationMethod<
     PaginationTokenExpiredException,
     ThrottledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListRequiredTags",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "RequiredTags",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type StartReportCreationError =
   | ConcurrentModificationException
   | ConstraintViolationException
@@ -926,8 +867,8 @@ export const startReportCreation: API.OperationMethod<
   StartReportCreationInput,
   StartReportCreationOutput,
   StartReportCreationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: StartReportCreationInput,
   output: StartReportCreationOutput,
   errors: [
@@ -937,7 +878,11 @@ export const startReportCreation: API.OperationMethod<
     InvalidParameterException,
     ThrottledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "StartReportCreation",
 }));
+
 export type TagResourcesError =
   | InternalServiceException
   | InvalidParameterException
@@ -999,8 +944,8 @@ export const tagResources: API.OperationMethod<
   TagResourcesInput,
   TagResourcesOutput,
   TagResourcesError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TagResourcesInput,
   output: TagResourcesOutput,
   errors: [
@@ -1008,7 +953,11 @@ export const tagResources: API.OperationMethod<
     InvalidParameterException,
     ThrottledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TagResources",
 }));
+
 export type UntagResourcesError =
   | InternalServiceException
   | InvalidParameterException
@@ -1050,8 +999,8 @@ export const untagResources: API.OperationMethod<
   UntagResourcesInput,
   UntagResourcesOutput,
   UntagResourcesError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UntagResourcesInput,
   output: UntagResourcesOutput,
   errors: [
@@ -1059,4 +1008,7 @@ export const untagResources: API.OperationMethod<
     InvalidParameterException,
     ThrottledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UntagResources",
 }));

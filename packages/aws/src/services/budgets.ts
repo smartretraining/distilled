@@ -1,13 +1,13 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as redacted from "effect/Redacted";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region as Rgn } from "../region.ts";
 import { SensitiveString } from "../sensitive.ts";
 const svc = T.AwsApiService({
   sdkId: "Budgets",
@@ -178,54 +178,99 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class BillingViewHealthStatusException
+  extends /*@__PURE__*/ S.TaggedError<BillingViewHealthStatusException>()(
+    "BillingViewHealthStatusException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class CreationLimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<CreationLimitExceededException>()(
+    "CreationLimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(405),
+  ).pipe(C.withBadRequestError) {}
+export class DuplicateRecordException
+  extends /*@__PURE__*/ S.TaggedError<DuplicateRecordException>()(
+    "DuplicateRecordException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class ExpiredNextTokenException
+  extends /*@__PURE__*/ S.TaggedError<ExpiredNextTokenException>()(
+    "ExpiredNextTokenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InternalErrorException
+  extends /*@__PURE__*/ S.TaggedError<InternalErrorException>()(
+    "InternalErrorException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class InvalidNextTokenException
+  extends /*@__PURE__*/ S.TaggedError<InvalidNextTokenException>()(
+    "InvalidNextTokenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidParameterException
+  extends /*@__PURE__*/ S.TaggedError<InvalidParameterException>()(
+    "InvalidParameterException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class NotFoundException
+  extends /*@__PURE__*/ S.TaggedError<NotFoundException>()(
+    "NotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class ResourceLockedException
+  extends /*@__PURE__*/ S.TaggedError<ResourceLockedException>()(
+    "ResourceLockedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(423),
+  ) {}
+export class ServiceQuotaExceededException
+  extends /*@__PURE__*/ S.TaggedError<ServiceQuotaExceededException>()(
+    "ServiceQuotaExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(402),
+  ).pipe(C.withQuotaError) {}
+export class ThrottlingException
+  extends /*@__PURE__*/ S.TaggedError<ThrottlingException>()(
+    "ThrottlingException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
 export type AccountId = string;
 export type BudgetName = string;
 export type NumericValue = string;
 export type UnitValue = string;
-export type DimensionValue = string;
-export type AdjustmentPeriod = number;
-export type Value = string;
-export type TagKey = string;
-export type CostCategoryName = string;
-export type BillingViewArn = string;
-export type NotificationThreshold = number;
-export type SubscriberAddress = string | redacted.Redacted<string>;
-export type ResourceTagKey = string;
-export type ResourceTagValue = string;
-export type ErrorMessage = string;
-export type PolicyArn = string;
-export type Role = string;
-export type Group = string;
-export type User = string;
-export type PolicyId = string;
-export type TargetId = string;
-export type Region = string;
-export type InstanceId = string;
-export type RoleArn = string;
-export type ActionId = string;
-export type MaxResults = number;
-export type MaxResultsBudgetNotifications = number;
-export type MaxResultsDescribeBudgets = number;
-export type AmazonResourceName = string;
-
-//# Schemas
 export interface Spend {
   Amount: string;
   Unit: string;
 }
-export const Spend = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Spend = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Amount: S.String, Unit: S.String }),
 ).annotate({ identifier: "Spend" }) as any as S.Schema<Spend>;
 export type PlannedBudgetLimits = { [key: string]: Spend | undefined };
-export const PlannedBudgetLimits = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const PlannedBudgetLimits = /*@__PURE__*/ S.Record(
   S.String,
   Spend.pipe(S.optional),
 );
+export type DimensionValue = string;
 export type DimensionValues = string[];
-export const DimensionValues = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const DimensionValues = /*@__PURE__*/ S.Array(S.String);
 export type CostFilters = { [key: string]: string[] | undefined };
-export const CostFilters = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const CostFilters = /*@__PURE__*/ S.Record(
   S.String,
   DimensionValues.pipe(S.optional),
 );
@@ -242,7 +287,7 @@ export interface CostTypes {
   IncludeDiscount?: boolean;
   UseAmortized?: boolean;
 }
-export const CostTypes = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CostTypes = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     IncludeTax: S.optional(S.Boolean),
     IncludeSubscription: S.optional(S.Boolean),
@@ -264,12 +309,13 @@ export type TimeUnit =
   | "ANNUALLY"
   | "CUSTOM"
   | (string & {});
-export const TimeUnit = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const TimeUnit = /*@__PURE__*/ S.String;
+
 export interface TimePeriod {
   Start?: Date;
   End?: Date;
 }
-export const TimePeriod = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TimePeriod = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Start: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
     End: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
@@ -279,7 +325,7 @@ export interface CalculatedSpend {
   ActualSpend: Spend;
   ForecastedSpend?: Spend;
 }
-export const CalculatedSpend = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CalculatedSpend = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ActualSpend: Spend, ForecastedSpend: S.optional(Spend) }),
 ).annotate({
   identifier: "CalculatedSpend",
@@ -292,14 +338,17 @@ export type BudgetType =
   | "SAVINGS_PLANS_UTILIZATION"
   | "SAVINGS_PLANS_COVERAGE"
   | (string & {});
-export const BudgetType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const BudgetType = /*@__PURE__*/ S.String;
+
 export type AutoAdjustType = "HISTORICAL" | "FORECAST" | (string & {});
-export const AutoAdjustType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const AutoAdjustType = /*@__PURE__*/ S.String;
+
+export type AdjustmentPeriod = number;
 export interface HistoricalOptions {
   BudgetAdjustmentPeriod: number;
   LookBackAvailablePeriods?: number;
 }
-export const HistoricalOptions = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const HistoricalOptions = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     BudgetAdjustmentPeriod: S.Number,
     LookBackAvailablePeriods: S.optional(S.Number),
@@ -312,7 +361,7 @@ export interface AutoAdjustData {
   HistoricalOptions?: HistoricalOptions;
   LastAutoAdjustTime?: Date;
 }
-export const AutoAdjustData = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AutoAdjustData = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AutoAdjustType: AutoAdjustType,
     HistoricalOptions: S.optional(HistoricalOptions),
@@ -322,7 +371,7 @@ export const AutoAdjustData = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "AutoAdjustData" }) as any as S.Schema<AutoAdjustData>;
 export type Expressions = Expression[];
-export const Expressions = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const Expressions = /*@__PURE__*/ S.Array(
   S.suspend((): S.Schema<Expression> => Expression).annotate({
     identifier: "Expression",
   }),
@@ -362,9 +411,11 @@ export type Dimension =
   | "TAG_KEY"
   | "COST_CATEGORY_NAME"
   | (string & {});
-export const Dimension = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const Dimension = /*@__PURE__*/ S.String;
+
+export type Value = string;
 export type Values = string[];
-export const Values = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const Values = /*@__PURE__*/ S.Array(S.String);
 export type MatchOption =
   | "EQUALS"
   | "ABSENT"
@@ -375,42 +426,44 @@ export type MatchOption =
   | "CASE_SENSITIVE"
   | "CASE_INSENSITIVE"
   | (string & {});
-export const MatchOption = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const MatchOption = /*@__PURE__*/ S.String;
+
 export type MatchOptions = MatchOption[];
-export const MatchOptions = /*@__PURE__*/ /*#__PURE__*/ S.Array(MatchOption);
+export const MatchOptions = /*@__PURE__*/ S.Array(MatchOption);
 export interface ExpressionDimensionValues {
   Key: Dimension;
   Values: string[];
   MatchOptions?: MatchOption[];
 }
-export const ExpressionDimensionValues = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Key: Dimension,
-      Values: Values,
-      MatchOptions: S.optional(MatchOptions),
-    }),
+export const ExpressionDimensionValues = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Key: Dimension,
+    Values: Values,
+    MatchOptions: S.optional(MatchOptions),
+  }),
 ).annotate({
   identifier: "ExpressionDimensionValues",
 }) as any as S.Schema<ExpressionDimensionValues>;
+export type TagKey = string;
 export interface TagValues {
   Key?: string;
   Values?: string[];
   MatchOptions?: MatchOption[];
 }
-export const TagValues = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagValues = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Key: S.optional(S.String),
     Values: S.optional(Values),
     MatchOptions: S.optional(MatchOptions),
   }),
 ).annotate({ identifier: "TagValues" }) as any as S.Schema<TagValues>;
+export type CostCategoryName = string;
 export interface CostCategoryValues {
   Key?: string;
   Values?: string[];
   MatchOptions?: MatchOption[];
 }
-export const CostCategoryValues = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CostCategoryValues = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Key: S.optional(S.String),
     Values: S.optional(Values),
@@ -427,7 +480,7 @@ export interface Expression {
   Tags?: TagValues;
   CostCategories?: CostCategoryValues;
 }
-export const Expression = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Expression = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Or: S.optional(
       S.suspend(() => Expressions).annotate({ identifier: "Expressions" }),
@@ -455,24 +508,28 @@ export type Metric =
   | "NormalizedUsageAmount"
   | "Hours"
   | (string & {});
-export const Metric = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const Metric = /*@__PURE__*/ S.String;
+
 export type Metrics = Metric[];
-export const Metrics = /*@__PURE__*/ /*#__PURE__*/ S.Array(Metric);
+export const Metrics = /*@__PURE__*/ S.Array(Metric);
+export type BillingViewArn = string;
 export type HealthStatusValue = "HEALTHY" | "UNHEALTHY" | (string & {});
-export const HealthStatusValue = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const HealthStatusValue = /*@__PURE__*/ S.String;
+
 export type HealthStatusReason =
   | "BILLING_VIEW_NO_ACCESS"
   | "BILLING_VIEW_UNHEALTHY"
   | "FILTER_INVALID"
   | "MULTI_YEAR_HISTORICAL_DATA_DISABLED"
   | (string & {});
-export const HealthStatusReason = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const HealthStatusReason = /*@__PURE__*/ S.String;
+
 export interface HealthStatus {
   Status?: HealthStatusValue;
   StatusReason?: HealthStatusReason;
   LastUpdatedTime?: Date;
 }
-export const HealthStatus = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const HealthStatus = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Status: S.optional(HealthStatusValue),
     StatusReason: S.optional(HealthStatusReason),
@@ -498,7 +555,7 @@ export interface Budget {
   BillingViewArn?: string;
   HealthStatus?: HealthStatus;
 }
-export const Budget = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Budget = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     BudgetName: S.String,
     BudgetLimit: S.optional(Spend),
@@ -520,17 +577,22 @@ export const Budget = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Budget" }) as any as S.Schema<Budget>;
 export type NotificationType = "ACTUAL" | "FORECASTED" | (string & {});
-export const NotificationType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const NotificationType = /*@__PURE__*/ S.String;
+
 export type ComparisonOperator =
   | "GREATER_THAN"
   | "LESS_THAN"
   | "EQUAL_TO"
   | (string & {});
-export const ComparisonOperator = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ComparisonOperator = /*@__PURE__*/ S.String;
+
+export type NotificationThreshold = number;
 export type ThresholdType = "PERCENTAGE" | "ABSOLUTE_VALUE" | (string & {});
-export const ThresholdType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ThresholdType = /*@__PURE__*/ S.String;
+
 export type NotificationState = "OK" | "ALARM" | (string & {});
-export const NotificationState = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const NotificationState = /*@__PURE__*/ S.String;
+
 export interface Notification {
   NotificationType: NotificationType;
   ComparisonOperator: ComparisonOperator;
@@ -538,7 +600,7 @@ export interface Notification {
   ThresholdType?: ThresholdType;
   NotificationState?: NotificationState;
 }
-export const Notification = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Notification = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     NotificationType: NotificationType,
     ComparisonOperator: ComparisonOperator,
@@ -548,45 +610,49 @@ export const Notification = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Notification" }) as any as S.Schema<Notification>;
 export type SubscriptionType = "SNS" | "EMAIL" | (string & {});
-export const SubscriptionType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SubscriptionType = /*@__PURE__*/ S.String;
+
+export type SubscriberAddress = string | redacted.Redacted<string>;
 export interface Subscriber {
   SubscriptionType: SubscriptionType;
   Address: string | redacted.Redacted<string>;
 }
-export const Subscriber = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Subscriber = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ SubscriptionType: SubscriptionType, Address: SensitiveString }),
 ).annotate({ identifier: "Subscriber" }) as any as S.Schema<Subscriber>;
 export type Subscribers = Subscriber[];
-export const Subscribers = /*@__PURE__*/ /*#__PURE__*/ S.Array(Subscriber);
+export const Subscribers = /*@__PURE__*/ S.Array(Subscriber);
 export interface NotificationWithSubscribers {
   Notification: Notification;
   Subscribers: Subscriber[];
 }
-export const NotificationWithSubscribers =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ Notification: Notification, Subscribers: Subscribers }),
-  ).annotate({
-    identifier: "NotificationWithSubscribers",
-  }) as any as S.Schema<NotificationWithSubscribers>;
+export const NotificationWithSubscribers = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Notification: Notification, Subscribers: Subscribers }),
+).annotate({
+  identifier: "NotificationWithSubscribers",
+}) as any as S.Schema<NotificationWithSubscribers>;
 export type NotificationWithSubscribersList = NotificationWithSubscribers[];
-export const NotificationWithSubscribersList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(NotificationWithSubscribers);
+export const NotificationWithSubscribersList = /*@__PURE__*/ S.Array(
+  NotificationWithSubscribers,
+);
+export type ResourceTagKey = string;
+export type ResourceTagValue = string;
 export interface ResourceTag {
   Key: string;
   Value: string;
 }
-export const ResourceTag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResourceTag = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: S.String, Value: S.String }),
 ).annotate({ identifier: "ResourceTag" }) as any as S.Schema<ResourceTag>;
 export type ResourceTagList = ResourceTag[];
-export const ResourceTagList = /*@__PURE__*/ /*#__PURE__*/ S.Array(ResourceTag);
+export const ResourceTagList = /*@__PURE__*/ S.Array(ResourceTag);
 export interface CreateBudgetRequest {
   AccountId: string;
   Budget: Budget;
   NotificationsWithSubscribers?: NotificationWithSubscribers[];
   ResourceTags?: ResourceTag[];
 }
-export const CreateBudgetRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateBudgetRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AccountId: S.String,
     Budget: Budget,
@@ -599,7 +665,7 @@ export const CreateBudgetRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "CreateBudgetRequest",
 }) as any as S.Schema<CreateBudgetRequest>;
 export interface CreateBudgetResponse {}
-export const CreateBudgetResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateBudgetResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "CreateBudgetResponse",
@@ -609,12 +675,13 @@ export type ActionType =
   | "APPLY_SCP_POLICY"
   | "RUN_SSM_DOCUMENTS"
   | (string & {});
-export const ActionType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ActionType = /*@__PURE__*/ S.String;
+
 export interface ActionThreshold {
   ActionThresholdValue: number;
   ActionThresholdType: ThresholdType;
 }
-export const ActionThreshold = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ActionThreshold = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ActionThresholdValue: S.Number,
     ActionThresholdType: ThresholdType,
@@ -622,19 +689,23 @@ export const ActionThreshold = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ActionThreshold",
 }) as any as S.Schema<ActionThreshold>;
+export type PolicyArn = string;
+export type Role = string;
 export type Roles = string[];
-export const Roles = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const Roles = /*@__PURE__*/ S.Array(S.String);
+export type Group = string;
 export type Groups = string[];
-export const Groups = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const Groups = /*@__PURE__*/ S.Array(S.String);
+export type User = string;
 export type Users = string[];
-export const Users = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const Users = /*@__PURE__*/ S.Array(S.String);
 export interface IamActionDefinition {
   PolicyArn: string;
   Roles?: string[];
   Groups?: string[];
   Users?: string[];
 }
-export const IamActionDefinition = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const IamActionDefinition = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     PolicyArn: S.String,
     Roles: S.optional(Roles),
@@ -644,13 +715,15 @@ export const IamActionDefinition = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "IamActionDefinition",
 }) as any as S.Schema<IamActionDefinition>;
+export type PolicyId = string;
+export type TargetId = string;
 export type TargetIds = string[];
-export const TargetIds = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TargetIds = /*@__PURE__*/ S.Array(S.String);
 export interface ScpActionDefinition {
   PolicyId: string;
   TargetIds: string[];
 }
-export const ScpActionDefinition = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ScpActionDefinition = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ PolicyId: S.String, TargetIds: TargetIds }),
 ).annotate({
   identifier: "ScpActionDefinition",
@@ -659,15 +732,18 @@ export type ActionSubType =
   | "STOP_EC2_INSTANCES"
   | "STOP_RDS_INSTANCES"
   | (string & {});
-export const ActionSubType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ActionSubType = /*@__PURE__*/ S.String;
+
+export type Region = string;
+export type InstanceId = string;
 export type InstanceIds = string[];
-export const InstanceIds = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const InstanceIds = /*@__PURE__*/ S.Array(S.String);
 export interface SsmActionDefinition {
   ActionSubType: ActionSubType;
   Region: string;
   InstanceIds: string[];
 }
-export const SsmActionDefinition = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SsmActionDefinition = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ActionSubType: ActionSubType,
     Region: S.String,
@@ -681,15 +757,17 @@ export interface Definition {
   ScpActionDefinition?: ScpActionDefinition;
   SsmActionDefinition?: SsmActionDefinition;
 }
-export const Definition = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Definition = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     IamActionDefinition: S.optional(IamActionDefinition),
     ScpActionDefinition: S.optional(ScpActionDefinition),
     SsmActionDefinition: S.optional(SsmActionDefinition),
   }),
 ).annotate({ identifier: "Definition" }) as any as S.Schema<Definition>;
+export type RoleArn = string;
 export type ApprovalModel = "AUTOMATIC" | "MANUAL" | (string & {});
-export const ApprovalModel = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ApprovalModel = /*@__PURE__*/ S.String;
+
 export interface CreateBudgetActionRequest {
   AccountId: string;
   BudgetName: string;
@@ -702,33 +780,32 @@ export interface CreateBudgetActionRequest {
   Subscribers: Subscriber[];
   ResourceTags?: ResourceTag[];
 }
-export const CreateBudgetActionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AccountId: S.String,
-      BudgetName: S.String,
-      NotificationType: NotificationType,
-      ActionType: ActionType,
-      ActionThreshold: ActionThreshold,
-      Definition: Definition,
-      ExecutionRoleArn: S.String,
-      ApprovalModel: ApprovalModel,
-      Subscribers: Subscribers,
-      ResourceTags: S.optional(ResourceTagList),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const CreateBudgetActionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    BudgetName: S.String,
+    NotificationType: NotificationType,
+    ActionType: ActionType,
+    ActionThreshold: ActionThreshold,
+    Definition: Definition,
+    ExecutionRoleArn: S.String,
+    ApprovalModel: ApprovalModel,
+    Subscribers: Subscribers,
+    ResourceTags: S.optional(ResourceTagList),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "CreateBudgetActionRequest",
 }) as any as S.Schema<CreateBudgetActionRequest>;
+export type ActionId = string;
 export interface CreateBudgetActionResponse {
   AccountId: string;
   BudgetName: string;
   ActionId: string;
 }
-export const CreateBudgetActionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ AccountId: S.String, BudgetName: S.String, ActionId: S.String }),
+export const CreateBudgetActionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ AccountId: S.String, BudgetName: S.String, ActionId: S.String }),
 ).annotate({
   identifier: "CreateBudgetActionResponse",
 }) as any as S.Schema<CreateBudgetActionResponse>;
@@ -738,22 +815,21 @@ export interface CreateNotificationRequest {
   Notification: Notification;
   Subscribers: Subscriber[];
 }
-export const CreateNotificationRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AccountId: S.String,
-      BudgetName: S.String,
-      Notification: Notification,
-      Subscribers: Subscribers,
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const CreateNotificationRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    BudgetName: S.String,
+    Notification: Notification,
+    Subscribers: Subscribers,
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "CreateNotificationRequest",
 }) as any as S.Schema<CreateNotificationRequest>;
 export interface CreateNotificationResponse {}
-export const CreateNotificationResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const CreateNotificationResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "CreateNotificationResponse",
 }) as any as S.Schema<CreateNotificationResponse>;
@@ -763,22 +839,21 @@ export interface CreateSubscriberRequest {
   Notification: Notification;
   Subscriber: Subscriber;
 }
-export const CreateSubscriberRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AccountId: S.String,
-      BudgetName: S.String,
-      Notification: Notification,
-      Subscriber: Subscriber,
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const CreateSubscriberRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    BudgetName: S.String,
+    Notification: Notification,
+    Subscriber: Subscriber,
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "CreateSubscriberRequest",
 }) as any as S.Schema<CreateSubscriberRequest>;
 export interface CreateSubscriberResponse {}
-export const CreateSubscriberResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const CreateSubscriberResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "CreateSubscriberResponse",
 }) as any as S.Schema<CreateSubscriberResponse>;
@@ -786,7 +861,7 @@ export interface DeleteBudgetRequest {
   AccountId: string;
   BudgetName: string;
 }
-export const DeleteBudgetRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteBudgetRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ AccountId: S.String, BudgetName: S.String }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -794,7 +869,7 @@ export const DeleteBudgetRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeleteBudgetRequest",
 }) as any as S.Schema<DeleteBudgetRequest>;
 export interface DeleteBudgetResponse {}
-export const DeleteBudgetResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteBudgetResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "DeleteBudgetResponse",
@@ -804,15 +879,14 @@ export interface DeleteBudgetActionRequest {
   BudgetName: string;
   ActionId: string;
 }
-export const DeleteBudgetActionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AccountId: S.String,
-      BudgetName: S.String,
-      ActionId: S.String,
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const DeleteBudgetActionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    BudgetName: S.String,
+    ActionId: S.String,
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "DeleteBudgetActionRequest",
 }) as any as S.Schema<DeleteBudgetActionRequest>;
@@ -828,7 +902,8 @@ export type ActionStatus =
   | "RESET_IN_PROGRESS"
   | "RESET_FAILURE"
   | (string & {});
-export const ActionStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ActionStatus = /*@__PURE__*/ S.String;
+
 export interface Action {
   ActionId: string;
   BudgetName: string;
@@ -841,7 +916,7 @@ export interface Action {
   Status: ActionStatus;
   Subscribers: Subscriber[];
 }
-export const Action = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Action = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ActionId: S.String,
     BudgetName: S.String,
@@ -860,8 +935,8 @@ export interface DeleteBudgetActionResponse {
   BudgetName: string;
   Action: Action;
 }
-export const DeleteBudgetActionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ AccountId: S.String, BudgetName: S.String, Action: Action }),
+export const DeleteBudgetActionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ AccountId: S.String, BudgetName: S.String, Action: Action }),
 ).annotate({
   identifier: "DeleteBudgetActionResponse",
 }) as any as S.Schema<DeleteBudgetActionResponse>;
@@ -870,21 +945,20 @@ export interface DeleteNotificationRequest {
   BudgetName: string;
   Notification: Notification;
 }
-export const DeleteNotificationRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AccountId: S.String,
-      BudgetName: S.String,
-      Notification: Notification,
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const DeleteNotificationRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    BudgetName: S.String,
+    Notification: Notification,
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "DeleteNotificationRequest",
 }) as any as S.Schema<DeleteNotificationRequest>;
 export interface DeleteNotificationResponse {}
-export const DeleteNotificationResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const DeleteNotificationResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "DeleteNotificationResponse",
 }) as any as S.Schema<DeleteNotificationResponse>;
@@ -894,22 +968,21 @@ export interface DeleteSubscriberRequest {
   Notification: Notification;
   Subscriber: Subscriber;
 }
-export const DeleteSubscriberRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AccountId: S.String,
-      BudgetName: S.String,
-      Notification: Notification,
-      Subscriber: Subscriber,
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const DeleteSubscriberRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    BudgetName: S.String,
+    Notification: Notification,
+    Subscriber: Subscriber,
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "DeleteSubscriberRequest",
 }) as any as S.Schema<DeleteSubscriberRequest>;
 export interface DeleteSubscriberResponse {}
-export const DeleteSubscriberResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const DeleteSubscriberResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "DeleteSubscriberResponse",
 }) as any as S.Schema<DeleteSubscriberResponse>;
@@ -918,7 +991,7 @@ export interface DescribeBudgetRequest {
   BudgetName: string;
   ShowFilterExpression?: boolean;
 }
-export const DescribeBudgetRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeBudgetRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AccountId: S.String,
     BudgetName: S.String,
@@ -932,8 +1005,8 @@ export const DescribeBudgetRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DescribeBudgetResponse {
   Budget?: Budget;
 }
-export const DescribeBudgetResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ Budget: S.optional(Budget) }),
+export const DescribeBudgetResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Budget: S.optional(Budget) }),
 ).annotate({
   identifier: "DescribeBudgetResponse",
 }) as any as S.Schema<DescribeBudgetResponse>;
@@ -942,29 +1015,28 @@ export interface DescribeBudgetActionRequest {
   BudgetName: string;
   ActionId: string;
 }
-export const DescribeBudgetActionRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AccountId: S.String,
-      BudgetName: S.String,
-      ActionId: S.String,
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "DescribeBudgetActionRequest",
-  }) as any as S.Schema<DescribeBudgetActionRequest>;
+export const DescribeBudgetActionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    BudgetName: S.String,
+    ActionId: S.String,
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "DescribeBudgetActionRequest",
+}) as any as S.Schema<DescribeBudgetActionRequest>;
 export interface DescribeBudgetActionResponse {
   AccountId: string;
   BudgetName: string;
   Action: Action;
 }
-export const DescribeBudgetActionResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ AccountId: S.String, BudgetName: S.String, Action: Action }),
-  ).annotate({
-    identifier: "DescribeBudgetActionResponse",
-  }) as any as S.Schema<DescribeBudgetActionResponse>;
+export const DescribeBudgetActionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ AccountId: S.String, BudgetName: S.String, Action: Action }),
+).annotate({
+  identifier: "DescribeBudgetActionResponse",
+}) as any as S.Schema<DescribeBudgetActionResponse>;
+export type MaxResults = number;
 export interface DescribeBudgetActionHistoriesRequest {
   AccountId: string;
   BudgetName: string;
@@ -973,8 +1045,8 @@ export interface DescribeBudgetActionHistoriesRequest {
   MaxResults?: number;
   NextToken?: string;
 }
-export const DescribeBudgetActionHistoriesRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeBudgetActionHistoriesRequest = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       AccountId: S.String,
       BudgetName: S.String,
@@ -985,9 +1057,9 @@ export const DescribeBudgetActionHistoriesRequest =
     }).pipe(
       T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
     ),
-  ).annotate({
-    identifier: "DescribeBudgetActionHistoriesRequest",
-  }) as any as S.Schema<DescribeBudgetActionHistoriesRequest>;
+).annotate({
+  identifier: "DescribeBudgetActionHistoriesRequest",
+}) as any as S.Schema<DescribeBudgetActionHistoriesRequest>;
 export type EventType =
   | "SYSTEM"
   | "CREATE_ACTION"
@@ -995,12 +1067,13 @@ export type EventType =
   | "UPDATE_ACTION"
   | "EXECUTE_ACTION"
   | (string & {});
-export const EventType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const EventType = /*@__PURE__*/ S.String;
+
 export interface ActionHistoryDetails {
   Message: string;
   Action: Action;
 }
-export const ActionHistoryDetails = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ActionHistoryDetails = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Message: S.String, Action: Action }),
 ).annotate({
   identifier: "ActionHistoryDetails",
@@ -1011,7 +1084,7 @@ export interface ActionHistory {
   EventType: EventType;
   ActionHistoryDetails: ActionHistoryDetails;
 }
-export const ActionHistory = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ActionHistory = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Timestamp: S.Date.pipe(T.TimestampFormat("epoch-seconds")),
     Status: ActionStatus,
@@ -1020,28 +1093,27 @@ export const ActionHistory = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "ActionHistory" }) as any as S.Schema<ActionHistory>;
 export type ActionHistories = ActionHistory[];
-export const ActionHistories =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ActionHistory);
+export const ActionHistories = /*@__PURE__*/ S.Array(ActionHistory);
 export interface DescribeBudgetActionHistoriesResponse {
   ActionHistories: ActionHistory[];
   NextToken?: string;
 }
-export const DescribeBudgetActionHistoriesResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeBudgetActionHistoriesResponse = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       ActionHistories: ActionHistories,
       NextToken: S.optional(S.String),
     }),
-  ).annotate({
-    identifier: "DescribeBudgetActionHistoriesResponse",
-  }) as any as S.Schema<DescribeBudgetActionHistoriesResponse>;
+).annotate({
+  identifier: "DescribeBudgetActionHistoriesResponse",
+}) as any as S.Schema<DescribeBudgetActionHistoriesResponse>;
 export interface DescribeBudgetActionsForAccountRequest {
   AccountId: string;
   MaxResults?: number;
   NextToken?: string;
 }
-export const DescribeBudgetActionsForAccountRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeBudgetActionsForAccountRequest = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       AccountId: S.String,
       MaxResults: S.optional(S.Number),
@@ -1049,29 +1121,28 @@ export const DescribeBudgetActionsForAccountRequest =
     }).pipe(
       T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
     ),
-  ).annotate({
-    identifier: "DescribeBudgetActionsForAccountRequest",
-  }) as any as S.Schema<DescribeBudgetActionsForAccountRequest>;
+).annotate({
+  identifier: "DescribeBudgetActionsForAccountRequest",
+}) as any as S.Schema<DescribeBudgetActionsForAccountRequest>;
 export type Actions = Action[];
-export const Actions = /*@__PURE__*/ /*#__PURE__*/ S.Array(Action);
+export const Actions = /*@__PURE__*/ S.Array(Action);
 export interface DescribeBudgetActionsForAccountResponse {
   Actions: Action[];
   NextToken?: string;
 }
-export const DescribeBudgetActionsForAccountResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ Actions: Actions, NextToken: S.optional(S.String) }),
-  ).annotate({
-    identifier: "DescribeBudgetActionsForAccountResponse",
-  }) as any as S.Schema<DescribeBudgetActionsForAccountResponse>;
+export const DescribeBudgetActionsForAccountResponse = /*@__PURE__*/ S.suspend(
+  () => S.Struct({ Actions: Actions, NextToken: S.optional(S.String) }),
+).annotate({
+  identifier: "DescribeBudgetActionsForAccountResponse",
+}) as any as S.Schema<DescribeBudgetActionsForAccountResponse>;
 export interface DescribeBudgetActionsForBudgetRequest {
   AccountId: string;
   BudgetName: string;
   MaxResults?: number;
   NextToken?: string;
 }
-export const DescribeBudgetActionsForBudgetRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeBudgetActionsForBudgetRequest = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       AccountId: S.String,
       BudgetName: S.String,
@@ -1080,26 +1151,26 @@ export const DescribeBudgetActionsForBudgetRequest =
     }).pipe(
       T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
     ),
-  ).annotate({
-    identifier: "DescribeBudgetActionsForBudgetRequest",
-  }) as any as S.Schema<DescribeBudgetActionsForBudgetRequest>;
+).annotate({
+  identifier: "DescribeBudgetActionsForBudgetRequest",
+}) as any as S.Schema<DescribeBudgetActionsForBudgetRequest>;
 export interface DescribeBudgetActionsForBudgetResponse {
   Actions: Action[];
   NextToken?: string;
 }
-export const DescribeBudgetActionsForBudgetResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ Actions: Actions, NextToken: S.optional(S.String) }),
-  ).annotate({
-    identifier: "DescribeBudgetActionsForBudgetResponse",
-  }) as any as S.Schema<DescribeBudgetActionsForBudgetResponse>;
+export const DescribeBudgetActionsForBudgetResponse = /*@__PURE__*/ S.suspend(
+  () => S.Struct({ Actions: Actions, NextToken: S.optional(S.String) }),
+).annotate({
+  identifier: "DescribeBudgetActionsForBudgetResponse",
+}) as any as S.Schema<DescribeBudgetActionsForBudgetResponse>;
+export type MaxResultsBudgetNotifications = number;
 export interface DescribeBudgetNotificationsForAccountRequest {
   AccountId: string;
   MaxResults?: number;
   NextToken?: string;
 }
 export const DescribeBudgetNotificationsForAccountRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       AccountId: S.String,
       MaxResults: S.optional(S.Number),
@@ -1111,29 +1182,29 @@ export const DescribeBudgetNotificationsForAccountRequest =
     identifier: "DescribeBudgetNotificationsForAccountRequest",
   }) as any as S.Schema<DescribeBudgetNotificationsForAccountRequest>;
 export type Notifications = Notification[];
-export const Notifications = /*@__PURE__*/ /*#__PURE__*/ S.Array(Notification);
+export const Notifications = /*@__PURE__*/ S.Array(Notification);
 export interface BudgetNotificationsForAccount {
   Notifications?: Notification[];
   BudgetName?: string;
 }
-export const BudgetNotificationsForAccount =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      Notifications: S.optional(Notifications),
-      BudgetName: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "BudgetNotificationsForAccount",
-  }) as any as S.Schema<BudgetNotificationsForAccount>;
+export const BudgetNotificationsForAccount = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Notifications: S.optional(Notifications),
+    BudgetName: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "BudgetNotificationsForAccount",
+}) as any as S.Schema<BudgetNotificationsForAccount>;
 export type BudgetNotificationsForAccountList = BudgetNotificationsForAccount[];
-export const BudgetNotificationsForAccountList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(BudgetNotificationsForAccount);
+export const BudgetNotificationsForAccountList = /*@__PURE__*/ S.Array(
+  BudgetNotificationsForAccount,
+);
 export interface DescribeBudgetNotificationsForAccountResponse {
   BudgetNotificationsForAccount?: BudgetNotificationsForAccount[];
   NextToken?: string;
 }
 export const DescribeBudgetNotificationsForAccountResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       BudgetNotificationsForAccount: S.optional(
         BudgetNotificationsForAccountList,
@@ -1150,8 +1221,8 @@ export interface DescribeBudgetPerformanceHistoryRequest {
   MaxResults?: number;
   NextToken?: string;
 }
-export const DescribeBudgetPerformanceHistoryRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeBudgetPerformanceHistoryRequest = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       AccountId: S.String,
       BudgetName: S.String,
@@ -1161,26 +1232,25 @@ export const DescribeBudgetPerformanceHistoryRequest =
     }).pipe(
       T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
     ),
-  ).annotate({
-    identifier: "DescribeBudgetPerformanceHistoryRequest",
-  }) as any as S.Schema<DescribeBudgetPerformanceHistoryRequest>;
+).annotate({
+  identifier: "DescribeBudgetPerformanceHistoryRequest",
+}) as any as S.Schema<DescribeBudgetPerformanceHistoryRequest>;
 export interface BudgetedAndActualAmounts {
   BudgetedAmount?: Spend;
   ActualAmount?: Spend;
   TimePeriod?: TimePeriod;
 }
-export const BudgetedAndActualAmounts = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      BudgetedAmount: S.optional(Spend),
-      ActualAmount: S.optional(Spend),
-      TimePeriod: S.optional(TimePeriod),
-    }),
+export const BudgetedAndActualAmounts = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    BudgetedAmount: S.optional(Spend),
+    ActualAmount: S.optional(Spend),
+    TimePeriod: S.optional(TimePeriod),
+  }),
 ).annotate({
   identifier: "BudgetedAndActualAmounts",
 }) as any as S.Schema<BudgetedAndActualAmounts>;
 export type BudgetedAndActualAmountsList = BudgetedAndActualAmounts[];
-export const BudgetedAndActualAmountsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const BudgetedAndActualAmountsList = /*@__PURE__*/ S.Array(
   BudgetedAndActualAmounts,
 );
 export interface BudgetPerformanceHistory {
@@ -1194,19 +1264,18 @@ export interface BudgetPerformanceHistory {
   FilterExpression?: Expression;
   Metrics?: Metric[];
 }
-export const BudgetPerformanceHistory = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      BudgetName: S.optional(S.String),
-      BudgetType: S.optional(BudgetType),
-      CostFilters: S.optional(CostFilters),
-      CostTypes: S.optional(CostTypes),
-      TimeUnit: S.optional(TimeUnit),
-      BillingViewArn: S.optional(S.String),
-      BudgetedAndActualAmountsList: S.optional(BudgetedAndActualAmountsList),
-      FilterExpression: S.optional(Expression),
-      Metrics: S.optional(Metrics),
-    }),
+export const BudgetPerformanceHistory = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    BudgetName: S.optional(S.String),
+    BudgetType: S.optional(BudgetType),
+    CostFilters: S.optional(CostFilters),
+    CostTypes: S.optional(CostTypes),
+    TimeUnit: S.optional(TimeUnit),
+    BillingViewArn: S.optional(S.String),
+    BudgetedAndActualAmountsList: S.optional(BudgetedAndActualAmountsList),
+    FilterExpression: S.optional(Expression),
+    Metrics: S.optional(Metrics),
+  }),
 ).annotate({
   identifier: "BudgetPerformanceHistory",
 }) as any as S.Schema<BudgetPerformanceHistory>;
@@ -1214,43 +1283,42 @@ export interface DescribeBudgetPerformanceHistoryResponse {
   BudgetPerformanceHistory?: BudgetPerformanceHistory;
   NextToken?: string;
 }
-export const DescribeBudgetPerformanceHistoryResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeBudgetPerformanceHistoryResponse = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       BudgetPerformanceHistory: S.optional(BudgetPerformanceHistory),
       NextToken: S.optional(S.String),
     }),
-  ).annotate({
-    identifier: "DescribeBudgetPerformanceHistoryResponse",
-  }) as any as S.Schema<DescribeBudgetPerformanceHistoryResponse>;
+).annotate({
+  identifier: "DescribeBudgetPerformanceHistoryResponse",
+}) as any as S.Schema<DescribeBudgetPerformanceHistoryResponse>;
+export type MaxResultsDescribeBudgets = number;
 export interface DescribeBudgetsRequest {
   AccountId: string;
   MaxResults?: number;
   NextToken?: string;
   ShowFilterExpression?: boolean;
 }
-export const DescribeBudgetsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AccountId: S.String,
-      MaxResults: S.optional(S.Number),
-      NextToken: S.optional(S.String),
-      ShowFilterExpression: S.optional(S.Boolean),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const DescribeBudgetsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    MaxResults: S.optional(S.Number),
+    NextToken: S.optional(S.String),
+    ShowFilterExpression: S.optional(S.Boolean),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "DescribeBudgetsRequest",
 }) as any as S.Schema<DescribeBudgetsRequest>;
 export type Budgets = Budget[];
-export const Budgets = /*@__PURE__*/ /*#__PURE__*/ S.Array(Budget);
+export const Budgets = /*@__PURE__*/ S.Array(Budget);
 export interface DescribeBudgetsResponse {
   Budgets?: Budget[];
   NextToken?: string;
 }
-export const DescribeBudgetsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ Budgets: S.optional(Budgets), NextToken: S.optional(S.String) }),
+export const DescribeBudgetsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Budgets: S.optional(Budgets), NextToken: S.optional(S.String) }),
 ).annotate({
   identifier: "DescribeBudgetsResponse",
 }) as any as S.Schema<DescribeBudgetsResponse>;
@@ -1260,8 +1328,8 @@ export interface DescribeNotificationsForBudgetRequest {
   MaxResults?: number;
   NextToken?: string;
 }
-export const DescribeNotificationsForBudgetRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeNotificationsForBudgetRequest = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       AccountId: S.String,
       BudgetName: S.String,
@@ -1270,22 +1338,22 @@ export const DescribeNotificationsForBudgetRequest =
     }).pipe(
       T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
     ),
-  ).annotate({
-    identifier: "DescribeNotificationsForBudgetRequest",
-  }) as any as S.Schema<DescribeNotificationsForBudgetRequest>;
+).annotate({
+  identifier: "DescribeNotificationsForBudgetRequest",
+}) as any as S.Schema<DescribeNotificationsForBudgetRequest>;
 export interface DescribeNotificationsForBudgetResponse {
   Notifications?: Notification[];
   NextToken?: string;
 }
-export const DescribeNotificationsForBudgetResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeNotificationsForBudgetResponse = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       Notifications: S.optional(Notifications),
       NextToken: S.optional(S.String),
     }),
-  ).annotate({
-    identifier: "DescribeNotificationsForBudgetResponse",
-  }) as any as S.Schema<DescribeNotificationsForBudgetResponse>;
+).annotate({
+  identifier: "DescribeNotificationsForBudgetResponse",
+}) as any as S.Schema<DescribeNotificationsForBudgetResponse>;
 export interface DescribeSubscribersForNotificationRequest {
   AccountId: string;
   BudgetName: string;
@@ -1294,7 +1362,7 @@ export interface DescribeSubscribersForNotificationRequest {
   NextToken?: string;
 }
 export const DescribeSubscribersForNotificationRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       AccountId: S.String,
       BudgetName: S.String,
@@ -1312,7 +1380,7 @@ export interface DescribeSubscribersForNotificationResponse {
   NextToken?: string;
 }
 export const DescribeSubscribersForNotificationResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       Subscribers: S.optional(Subscribers),
       NextToken: S.optional(S.String),
@@ -1326,23 +1394,23 @@ export type ExecutionType =
   | "REVERSE_BUDGET_ACTION"
   | "RESET_BUDGET_ACTION"
   | (string & {});
-export const ExecutionType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ExecutionType = /*@__PURE__*/ S.String;
+
 export interface ExecuteBudgetActionRequest {
   AccountId: string;
   BudgetName: string;
   ActionId: string;
   ExecutionType: ExecutionType;
 }
-export const ExecuteBudgetActionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AccountId: S.String,
-      BudgetName: S.String,
-      ActionId: S.String,
-      ExecutionType: ExecutionType,
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const ExecuteBudgetActionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    BudgetName: S.String,
+    ActionId: S.String,
+    ExecutionType: ExecutionType,
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "ExecuteBudgetActionRequest",
 }) as any as S.Schema<ExecuteBudgetActionRequest>;
@@ -1352,42 +1420,40 @@ export interface ExecuteBudgetActionResponse {
   ActionId: string;
   ExecutionType: ExecutionType;
 }
-export const ExecuteBudgetActionResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AccountId: S.String,
-      BudgetName: S.String,
-      ActionId: S.String,
-      ExecutionType: ExecutionType,
-    }),
-  ).annotate({
-    identifier: "ExecuteBudgetActionResponse",
-  }) as any as S.Schema<ExecuteBudgetActionResponse>;
+export const ExecuteBudgetActionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    BudgetName: S.String,
+    ActionId: S.String,
+    ExecutionType: ExecutionType,
+  }),
+).annotate({
+  identifier: "ExecuteBudgetActionResponse",
+}) as any as S.Schema<ExecuteBudgetActionResponse>;
+export type AmazonResourceName = string;
 export interface ListTagsForResourceRequest {
   ResourceARN: string;
 }
-export const ListTagsForResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ ResourceARN: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const ListTagsForResourceRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceARN: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "ListTagsForResourceRequest",
 }) as any as S.Schema<ListTagsForResourceRequest>;
 export interface ListTagsForResourceResponse {
   ResourceTags?: ResourceTag[];
 }
-export const ListTagsForResourceResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ ResourceTags: S.optional(ResourceTagList) }),
-  ).annotate({
-    identifier: "ListTagsForResourceResponse",
-  }) as any as S.Schema<ListTagsForResourceResponse>;
+export const ListTagsForResourceResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceTags: S.optional(ResourceTagList) }),
+).annotate({
+  identifier: "ListTagsForResourceResponse",
+}) as any as S.Schema<ListTagsForResourceResponse>;
 export interface TagResourceRequest {
   ResourceARN: string;
   ResourceTags: ResourceTag[];
 }
-export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ResourceARN: S.String, ResourceTags: ResourceTagList }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -1395,18 +1461,18 @@ export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "TagResourceRequest",
 }) as any as S.Schema<TagResourceRequest>;
 export interface TagResourceResponse {}
-export const TagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "TagResourceResponse",
 }) as any as S.Schema<TagResourceResponse>;
 export type ResourceTagKeyList = string[];
-export const ResourceTagKeyList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ResourceTagKeyList = /*@__PURE__*/ S.Array(S.String);
 export interface UntagResourceRequest {
   ResourceARN: string;
   ResourceTagKeys: string[];
 }
-export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ResourceARN: S.String, ResourceTagKeys: ResourceTagKeyList }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -1414,7 +1480,7 @@ export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "UntagResourceRequest",
 }) as any as S.Schema<UntagResourceRequest>;
 export interface UntagResourceResponse {}
-export const UntagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "UntagResourceResponse",
@@ -1423,7 +1489,7 @@ export interface UpdateBudgetRequest {
   AccountId: string;
   NewBudget: Budget;
 }
-export const UpdateBudgetRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateBudgetRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ AccountId: S.String, NewBudget: Budget }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -1431,7 +1497,7 @@ export const UpdateBudgetRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "UpdateBudgetRequest",
 }) as any as S.Schema<UpdateBudgetRequest>;
 export interface UpdateBudgetResponse {}
-export const UpdateBudgetResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateBudgetResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "UpdateBudgetResponse",
@@ -1447,21 +1513,20 @@ export interface UpdateBudgetActionRequest {
   ApprovalModel?: ApprovalModel;
   Subscribers?: Subscriber[];
 }
-export const UpdateBudgetActionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AccountId: S.String,
-      BudgetName: S.String,
-      ActionId: S.String,
-      NotificationType: S.optional(NotificationType),
-      ActionThreshold: S.optional(ActionThreshold),
-      Definition: S.optional(Definition),
-      ExecutionRoleArn: S.optional(S.String),
-      ApprovalModel: S.optional(ApprovalModel),
-      Subscribers: S.optional(Subscribers),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const UpdateBudgetActionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    BudgetName: S.String,
+    ActionId: S.String,
+    NotificationType: S.optional(NotificationType),
+    ActionThreshold: S.optional(ActionThreshold),
+    Definition: S.optional(Definition),
+    ExecutionRoleArn: S.optional(S.String),
+    ApprovalModel: S.optional(ApprovalModel),
+    Subscribers: S.optional(Subscribers),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "UpdateBudgetActionRequest",
 }) as any as S.Schema<UpdateBudgetActionRequest>;
@@ -1471,14 +1536,13 @@ export interface UpdateBudgetActionResponse {
   OldAction: Action;
   NewAction: Action;
 }
-export const UpdateBudgetActionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AccountId: S.String,
-      BudgetName: S.String,
-      OldAction: Action,
-      NewAction: Action,
-    }),
+export const UpdateBudgetActionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    BudgetName: S.String,
+    OldAction: Action,
+    NewAction: Action,
+  }),
 ).annotate({
   identifier: "UpdateBudgetActionResponse",
 }) as any as S.Schema<UpdateBudgetActionResponse>;
@@ -1488,22 +1552,21 @@ export interface UpdateNotificationRequest {
   OldNotification: Notification;
   NewNotification: Notification;
 }
-export const UpdateNotificationRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AccountId: S.String,
-      BudgetName: S.String,
-      OldNotification: Notification,
-      NewNotification: Notification,
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const UpdateNotificationRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    BudgetName: S.String,
+    OldNotification: Notification,
+    NewNotification: Notification,
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "UpdateNotificationRequest",
 }) as any as S.Schema<UpdateNotificationRequest>;
 export interface UpdateNotificationResponse {}
-export const UpdateNotificationResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const UpdateNotificationResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "UpdateNotificationResponse",
 }) as any as S.Schema<UpdateNotificationResponse>;
@@ -1514,78 +1577,26 @@ export interface UpdateSubscriberRequest {
   OldSubscriber: Subscriber;
   NewSubscriber: Subscriber;
 }
-export const UpdateSubscriberRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AccountId: S.String,
-      BudgetName: S.String,
-      Notification: Notification,
-      OldSubscriber: Subscriber,
-      NewSubscriber: Subscriber,
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const UpdateSubscriberRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AccountId: S.String,
+    BudgetName: S.String,
+    Notification: Notification,
+    OldSubscriber: Subscriber,
+    NewSubscriber: Subscriber,
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "UpdateSubscriberRequest",
 }) as any as S.Schema<UpdateSubscriberRequest>;
 export interface UpdateSubscriberResponse {}
-export const UpdateSubscriberResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const UpdateSubscriberResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "UpdateSubscriberResponse",
 }) as any as S.Schema<UpdateSubscriberResponse>;
-
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { Message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class BillingViewHealthStatusException extends S.TaggedErrorClass<BillingViewHealthStatusException>()(
-  "BillingViewHealthStatusException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class CreationLimitExceededException extends S.TaggedErrorClass<CreationLimitExceededException>()(
-  "CreationLimitExceededException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class DuplicateRecordException extends S.TaggedErrorClass<DuplicateRecordException>()(
-  "DuplicateRecordException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class InternalErrorException extends S.TaggedErrorClass<InternalErrorException>()(
-  "InternalErrorException",
-  { Message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class InvalidParameterException extends S.TaggedErrorClass<InvalidParameterException>()(
-  "InvalidParameterException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class NotFoundException extends S.TaggedErrorClass<NotFoundException>()(
-  "NotFoundException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ServiceQuotaExceededException extends S.TaggedErrorClass<ServiceQuotaExceededException>()(
-  "ServiceQuotaExceededException",
-  { Message: S.optional(S.String) },
-).pipe(C.withQuotaError) {}
-export class ThrottlingException extends S.TaggedErrorClass<ThrottlingException>()(
-  "ThrottlingException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ResourceLockedException extends S.TaggedErrorClass<ResourceLockedException>()(
-  "ResourceLockedException",
-  { Message: S.optional(S.String) },
-) {}
-export class InvalidNextTokenException extends S.TaggedErrorClass<InvalidNextTokenException>()(
-  "InvalidNextTokenException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ExpiredNextTokenException extends S.TaggedErrorClass<ExpiredNextTokenException>()(
-  "ExpiredNextTokenException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-
-//# Operations
+export type ErrorMessage = string;
 export type CreateBudgetError =
   | AccessDeniedException
   | BillingViewHealthStatusException
@@ -1616,8 +1627,8 @@ export const createBudget: API.OperationMethod<
   CreateBudgetRequest,
   CreateBudgetResponse,
   CreateBudgetError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateBudgetRequest,
   output: CreateBudgetResponse,
   errors: [
@@ -1631,7 +1642,11 @@ export const createBudget: API.OperationMethod<
     ServiceQuotaExceededException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateBudget",
 }));
+
 export type CreateBudgetActionError =
   | AccessDeniedException
   | CreationLimitExceededException
@@ -1649,8 +1664,8 @@ export const createBudgetAction: API.OperationMethod<
   CreateBudgetActionRequest,
   CreateBudgetActionResponse,
   CreateBudgetActionError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateBudgetActionRequest,
   output: CreateBudgetActionResponse,
   errors: [
@@ -1663,7 +1678,11 @@ export const createBudgetAction: API.OperationMethod<
     ServiceQuotaExceededException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateBudgetAction",
 }));
+
 export type CreateNotificationError =
   | AccessDeniedException
   | CreationLimitExceededException
@@ -1680,8 +1699,8 @@ export const createNotification: API.OperationMethod<
   CreateNotificationRequest,
   CreateNotificationResponse,
   CreateNotificationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateNotificationRequest,
   output: CreateNotificationResponse,
   errors: [
@@ -1693,7 +1712,11 @@ export const createNotification: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateNotification",
 }));
+
 export type CreateSubscriberError =
   | AccessDeniedException
   | CreationLimitExceededException
@@ -1710,8 +1733,8 @@ export const createSubscriber: API.OperationMethod<
   CreateSubscriberRequest,
   CreateSubscriberResponse,
   CreateSubscriberError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateSubscriberRequest,
   output: CreateSubscriberResponse,
   errors: [
@@ -1723,7 +1746,11 @@ export const createSubscriber: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateSubscriber",
 }));
+
 export type DeleteBudgetError =
   | AccessDeniedException
   | InternalErrorException
@@ -1740,8 +1767,8 @@ export const deleteBudget: API.OperationMethod<
   DeleteBudgetRequest,
   DeleteBudgetResponse,
   DeleteBudgetError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteBudgetRequest,
   output: DeleteBudgetResponse,
   errors: [
@@ -1751,7 +1778,11 @@ export const deleteBudget: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteBudget",
 }));
+
 export type DeleteBudgetActionError =
   | AccessDeniedException
   | InternalErrorException
@@ -1767,8 +1798,8 @@ export const deleteBudgetAction: API.OperationMethod<
   DeleteBudgetActionRequest,
   DeleteBudgetActionResponse,
   DeleteBudgetActionError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteBudgetActionRequest,
   output: DeleteBudgetActionResponse,
   errors: [
@@ -1779,7 +1810,11 @@ export const deleteBudgetAction: API.OperationMethod<
     ResourceLockedException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteBudgetAction",
 }));
+
 export type DeleteNotificationError =
   | AccessDeniedException
   | InternalErrorException
@@ -1796,8 +1831,8 @@ export const deleteNotification: API.OperationMethod<
   DeleteNotificationRequest,
   DeleteNotificationResponse,
   DeleteNotificationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteNotificationRequest,
   output: DeleteNotificationResponse,
   errors: [
@@ -1807,7 +1842,11 @@ export const deleteNotification: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteNotification",
 }));
+
 export type DeleteSubscriberError =
   | AccessDeniedException
   | InternalErrorException
@@ -1824,8 +1863,8 @@ export const deleteSubscriber: API.OperationMethod<
   DeleteSubscriberRequest,
   DeleteSubscriberResponse,
   DeleteSubscriberError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteSubscriberRequest,
   output: DeleteSubscriberResponse,
   errors: [
@@ -1835,7 +1874,11 @@ export const deleteSubscriber: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteSubscriber",
 }));
+
 export type DescribeBudgetError =
   | AccessDeniedException
   | InternalErrorException
@@ -1853,8 +1896,8 @@ export const describeBudget: API.OperationMethod<
   DescribeBudgetRequest,
   DescribeBudgetResponse,
   DescribeBudgetError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeBudgetRequest,
   output: DescribeBudgetResponse,
   errors: [
@@ -1864,7 +1907,11 @@ export const describeBudget: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeBudget",
 }));
+
 export type DescribeBudgetActionError =
   | AccessDeniedException
   | InternalErrorException
@@ -1879,8 +1926,8 @@ export const describeBudgetAction: API.OperationMethod<
   DescribeBudgetActionRequest,
   DescribeBudgetActionResponse,
   DescribeBudgetActionError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeBudgetActionRequest,
   output: DescribeBudgetActionResponse,
   errors: [
@@ -1890,7 +1937,11 @@ export const describeBudgetAction: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeBudgetAction",
 }));
+
 export type DescribeBudgetActionHistoriesError =
   | AccessDeniedException
   | InternalErrorException
@@ -1902,27 +1953,13 @@ export type DescribeBudgetActionHistoriesError =
 /**
  * Describes a budget action history detail.
  */
-export const describeBudgetActionHistories: API.OperationMethod<
+export const describeBudgetActionHistories: API.PaginatedOperationMethod<
   DescribeBudgetActionHistoriesRequest,
   DescribeBudgetActionHistoriesResponse,
   DescribeBudgetActionHistoriesError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeBudgetActionHistoriesRequest,
-  ) => stream.Stream<
-    DescribeBudgetActionHistoriesResponse,
-    DescribeBudgetActionHistoriesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeBudgetActionHistoriesRequest,
-  ) => stream.Stream<
-    ActionHistory,
-    DescribeBudgetActionHistoriesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  ActionHistory
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeBudgetActionHistoriesRequest,
   output: DescribeBudgetActionHistoriesResponse,
   errors: [
@@ -1933,13 +1970,17 @@ export const describeBudgetActionHistories: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeBudgetActionHistories",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "ActionHistories",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeBudgetActionsForAccountError =
   | AccessDeniedException
   | InternalErrorException
@@ -1950,27 +1991,13 @@ export type DescribeBudgetActionsForAccountError =
 /**
  * Describes all of the budget actions for an account.
  */
-export const describeBudgetActionsForAccount: API.OperationMethod<
+export const describeBudgetActionsForAccount: API.PaginatedOperationMethod<
   DescribeBudgetActionsForAccountRequest,
   DescribeBudgetActionsForAccountResponse,
   DescribeBudgetActionsForAccountError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeBudgetActionsForAccountRequest,
-  ) => stream.Stream<
-    DescribeBudgetActionsForAccountResponse,
-    DescribeBudgetActionsForAccountError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeBudgetActionsForAccountRequest,
-  ) => stream.Stream<
-    Action,
-    DescribeBudgetActionsForAccountError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Action
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeBudgetActionsForAccountRequest,
   output: DescribeBudgetActionsForAccountResponse,
   errors: [
@@ -1980,13 +2007,17 @@ export const describeBudgetActionsForAccount: API.OperationMethod<
     InvalidParameterException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeBudgetActionsForAccount",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "Actions",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeBudgetActionsForBudgetError =
   | AccessDeniedException
   | InternalErrorException
@@ -1998,27 +2029,13 @@ export type DescribeBudgetActionsForBudgetError =
 /**
  * Describes all of the budget actions for a budget.
  */
-export const describeBudgetActionsForBudget: API.OperationMethod<
+export const describeBudgetActionsForBudget: API.PaginatedOperationMethod<
   DescribeBudgetActionsForBudgetRequest,
   DescribeBudgetActionsForBudgetResponse,
   DescribeBudgetActionsForBudgetError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeBudgetActionsForBudgetRequest,
-  ) => stream.Stream<
-    DescribeBudgetActionsForBudgetResponse,
-    DescribeBudgetActionsForBudgetError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeBudgetActionsForBudgetRequest,
-  ) => stream.Stream<
-    Action,
-    DescribeBudgetActionsForBudgetError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Action
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeBudgetActionsForBudgetRequest,
   output: DescribeBudgetActionsForBudgetResponse,
   errors: [
@@ -2029,13 +2046,17 @@ export const describeBudgetActionsForBudget: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeBudgetActionsForBudget",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "Actions",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeBudgetNotificationsForAccountError =
   | AccessDeniedException
   | ExpiredNextTokenException
@@ -2048,27 +2069,13 @@ export type DescribeBudgetNotificationsForAccountError =
 /**
  * Lists the budget names and notifications that are associated with an account.
  */
-export const describeBudgetNotificationsForAccount: API.OperationMethod<
+export const describeBudgetNotificationsForAccount: API.PaginatedOperationMethod<
   DescribeBudgetNotificationsForAccountRequest,
   DescribeBudgetNotificationsForAccountResponse,
   DescribeBudgetNotificationsForAccountError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeBudgetNotificationsForAccountRequest,
-  ) => stream.Stream<
-    DescribeBudgetNotificationsForAccountResponse,
-    DescribeBudgetNotificationsForAccountError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeBudgetNotificationsForAccountRequest,
-  ) => stream.Stream<
-    BudgetNotificationsForAccount,
-    DescribeBudgetNotificationsForAccountError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  BudgetNotificationsForAccount
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeBudgetNotificationsForAccountRequest,
   output: DescribeBudgetNotificationsForAccountResponse,
   errors: [
@@ -2080,13 +2087,17 @@ export const describeBudgetNotificationsForAccount: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeBudgetNotificationsForAccount",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "BudgetNotificationsForAccount",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeBudgetPerformanceHistoryError =
   | AccessDeniedException
   | BillingViewHealthStatusException
@@ -2100,27 +2111,13 @@ export type DescribeBudgetPerformanceHistoryError =
 /**
  * Describes the history for `DAILY`, `MONTHLY`, and `QUARTERLY` budgets. Budget history isn't available for `ANNUAL` budgets.
  */
-export const describeBudgetPerformanceHistory: API.OperationMethod<
+export const describeBudgetPerformanceHistory: API.PaginatedOperationMethod<
   DescribeBudgetPerformanceHistoryRequest,
   DescribeBudgetPerformanceHistoryResponse,
   DescribeBudgetPerformanceHistoryError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeBudgetPerformanceHistoryRequest,
-  ) => stream.Stream<
-    DescribeBudgetPerformanceHistoryResponse,
-    DescribeBudgetPerformanceHistoryError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeBudgetPerformanceHistoryRequest,
-  ) => stream.Stream<
-    unknown,
-    DescribeBudgetPerformanceHistoryError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeBudgetPerformanceHistoryRequest,
   output: DescribeBudgetPerformanceHistoryResponse,
   errors: [
@@ -2133,12 +2130,16 @@ export const describeBudgetPerformanceHistory: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeBudgetPerformanceHistory",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeBudgetsError =
   | AccessDeniedException
   | ExpiredNextTokenException
@@ -2154,27 +2155,13 @@ export type DescribeBudgetsError =
  * The Request Syntax section shows the `BudgetLimit` syntax. For
  * `PlannedBudgetLimits`, see the Examples section.
  */
-export const describeBudgets: API.OperationMethod<
+export const describeBudgets: API.PaginatedOperationMethod<
   DescribeBudgetsRequest,
   DescribeBudgetsResponse,
   DescribeBudgetsError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeBudgetsRequest,
-  ) => stream.Stream<
-    DescribeBudgetsResponse,
-    DescribeBudgetsError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeBudgetsRequest,
-  ) => stream.Stream<
-    Budget,
-    DescribeBudgetsError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Budget
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeBudgetsRequest,
   output: DescribeBudgetsResponse,
   errors: [
@@ -2186,13 +2173,17 @@ export const describeBudgets: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeBudgets",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "Budgets",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeNotificationsForBudgetError =
   | AccessDeniedException
   | ExpiredNextTokenException
@@ -2205,27 +2196,13 @@ export type DescribeNotificationsForBudgetError =
 /**
  * Lists the notifications that are associated with a budget.
  */
-export const describeNotificationsForBudget: API.OperationMethod<
+export const describeNotificationsForBudget: API.PaginatedOperationMethod<
   DescribeNotificationsForBudgetRequest,
   DescribeNotificationsForBudgetResponse,
   DescribeNotificationsForBudgetError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeNotificationsForBudgetRequest,
-  ) => stream.Stream<
-    DescribeNotificationsForBudgetResponse,
-    DescribeNotificationsForBudgetError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeNotificationsForBudgetRequest,
-  ) => stream.Stream<
-    Notification,
-    DescribeNotificationsForBudgetError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Notification
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeNotificationsForBudgetRequest,
   output: DescribeNotificationsForBudgetResponse,
   errors: [
@@ -2237,13 +2214,17 @@ export const describeNotificationsForBudget: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeNotificationsForBudget",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "Notifications",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type DescribeSubscribersForNotificationError =
   | AccessDeniedException
   | ExpiredNextTokenException
@@ -2256,27 +2237,13 @@ export type DescribeSubscribersForNotificationError =
 /**
  * Lists the subscribers that are associated with a notification.
  */
-export const describeSubscribersForNotification: API.OperationMethod<
+export const describeSubscribersForNotification: API.PaginatedOperationMethod<
   DescribeSubscribersForNotificationRequest,
   DescribeSubscribersForNotificationResponse,
   DescribeSubscribersForNotificationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeSubscribersForNotificationRequest,
-  ) => stream.Stream<
-    DescribeSubscribersForNotificationResponse,
-    DescribeSubscribersForNotificationError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeSubscribersForNotificationRequest,
-  ) => stream.Stream<
-    Subscriber,
-    DescribeSubscribersForNotificationError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Subscriber
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeSubscribersForNotificationRequest,
   output: DescribeSubscribersForNotificationResponse,
   errors: [
@@ -2288,13 +2255,17 @@ export const describeSubscribersForNotification: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeSubscribersForNotification",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "Subscribers",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ExecuteBudgetActionError =
   | AccessDeniedException
   | InternalErrorException
@@ -2310,8 +2281,8 @@ export const executeBudgetAction: API.OperationMethod<
   ExecuteBudgetActionRequest,
   ExecuteBudgetActionResponse,
   ExecuteBudgetActionError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ExecuteBudgetActionRequest,
   output: ExecuteBudgetActionResponse,
   errors: [
@@ -2322,7 +2293,11 @@ export const executeBudgetAction: API.OperationMethod<
     ResourceLockedException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ExecuteBudgetAction",
 }));
+
 export type ListTagsForResourceError =
   | AccessDeniedException
   | InternalErrorException
@@ -2337,8 +2312,8 @@ export const listTagsForResource: API.OperationMethod<
   ListTagsForResourceRequest,
   ListTagsForResourceResponse,
   ListTagsForResourceError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListTagsForResourceRequest,
   output: ListTagsForResourceResponse,
   errors: [
@@ -2348,7 +2323,11 @@ export const listTagsForResource: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTagsForResource",
 }));
+
 export type TagResourceError =
   | AccessDeniedException
   | InternalErrorException
@@ -2364,8 +2343,8 @@ export const tagResource: API.OperationMethod<
   TagResourceRequest,
   TagResourceResponse,
   TagResourceError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TagResourceRequest,
   output: TagResourceResponse,
   errors: [
@@ -2376,7 +2355,11 @@ export const tagResource: API.OperationMethod<
     ServiceQuotaExceededException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TagResource",
 }));
+
 export type UntagResourceError =
   | AccessDeniedException
   | InternalErrorException
@@ -2391,8 +2374,8 @@ export const untagResource: API.OperationMethod<
   UntagResourceRequest,
   UntagResourceResponse,
   UntagResourceError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UntagResourceRequest,
   output: UntagResourceResponse,
   errors: [
@@ -2402,7 +2385,11 @@ export const untagResource: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UntagResource",
 }));
+
 export type UpdateBudgetError =
   | AccessDeniedException
   | BillingViewHealthStatusException
@@ -2431,8 +2418,8 @@ export const updateBudget: API.OperationMethod<
   UpdateBudgetRequest,
   UpdateBudgetResponse,
   UpdateBudgetError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateBudgetRequest,
   output: UpdateBudgetResponse,
   errors: [
@@ -2444,7 +2431,11 @@ export const updateBudget: API.OperationMethod<
     ServiceQuotaExceededException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateBudget",
 }));
+
 export type UpdateBudgetActionError =
   | AccessDeniedException
   | InternalErrorException
@@ -2460,8 +2451,8 @@ export const updateBudgetAction: API.OperationMethod<
   UpdateBudgetActionRequest,
   UpdateBudgetActionResponse,
   UpdateBudgetActionError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateBudgetActionRequest,
   output: UpdateBudgetActionResponse,
   errors: [
@@ -2472,7 +2463,11 @@ export const updateBudgetAction: API.OperationMethod<
     ResourceLockedException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateBudgetAction",
 }));
+
 export type UpdateNotificationError =
   | AccessDeniedException
   | DuplicateRecordException
@@ -2488,8 +2483,8 @@ export const updateNotification: API.OperationMethod<
   UpdateNotificationRequest,
   UpdateNotificationResponse,
   UpdateNotificationError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateNotificationRequest,
   output: UpdateNotificationResponse,
   errors: [
@@ -2500,7 +2495,11 @@ export const updateNotification: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateNotification",
 }));
+
 export type UpdateSubscriberError =
   | AccessDeniedException
   | DuplicateRecordException
@@ -2516,8 +2515,8 @@ export const updateSubscriber: API.OperationMethod<
   UpdateSubscriberRequest,
   UpdateSubscriberResponse,
   UpdateSubscriberError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateSubscriberRequest,
   output: UpdateSubscriberResponse,
   errors: [
@@ -2528,4 +2527,7 @@ export const updateSubscriber: API.OperationMethod<
     NotFoundException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateSubscriber",
 }));

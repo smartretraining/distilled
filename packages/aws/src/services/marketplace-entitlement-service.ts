@@ -1,11 +1,11 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "Marketplace Entitlement Service",
   serviceShapeName: "AWSMPEntitlementService",
@@ -116,46 +116,57 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class InternalServiceErrorException
+  extends /*@__PURE__*/ S.TaggedError<InternalServiceErrorException>()(
+    "InternalServiceErrorException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidParameterException
+  extends /*@__PURE__*/ S.TaggedError<InvalidParameterException>()(
+    "InvalidParameterException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ThrottlingException
+  extends /*@__PURE__*/ S.TaggedError<ThrottlingException>()(
+    "ThrottlingException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
 export type ProductCode = string;
-export type FilterValue = string;
-export type NonEmptyString = string;
-export type PageSizeInteger = number;
-export type ErrorMessage = string;
-
-//# Schemas
 export type GetEntitlementFilterName =
   | "CUSTOMER_IDENTIFIER"
   | "DIMENSION"
   | "CUSTOMER_AWS_ACCOUNT_ID"
   | "LICENSE_ARN"
   | (string & {});
-export const GetEntitlementFilterName = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const GetEntitlementFilterName = /*@__PURE__*/ S.String;
+
+export type FilterValue = string;
 export type FilterValueList = string[];
-export const FilterValueList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const FilterValueList = /*@__PURE__*/ S.Array(S.String);
 export type GetEntitlementFilters = {
   [key in GetEntitlementFilterName]?: string[];
 };
-export const GetEntitlementFilters = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const GetEntitlementFilters = /*@__PURE__*/ S.Record(
   GetEntitlementFilterName,
   FilterValueList.pipe(S.optional),
 );
+export type NonEmptyString = string;
+export type PageSizeInteger = number;
 export interface GetEntitlementsRequest {
   ProductCode: string;
   Filter?: { [key: string]: string[] | undefined };
   NextToken?: string;
   MaxResults?: number;
 }
-export const GetEntitlementsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ProductCode: S.String,
-      Filter: S.optional(GetEntitlementFilters),
-      NextToken: S.optional(S.String),
-      MaxResults: S.optional(S.Number),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const GetEntitlementsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ProductCode: S.String,
+    Filter: S.optional(GetEntitlementFilters),
+    NextToken: S.optional(S.String),
+    MaxResults: S.optional(S.Number),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "GetEntitlementsRequest",
 }) as any as S.Schema<GetEntitlementsRequest>;
@@ -165,7 +176,7 @@ export interface EntitlementValue {
   BooleanValue?: boolean;
   StringValue?: string;
 }
-export const EntitlementValue = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EntitlementValue = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     IntegerValue: S.optional(S.Number),
     DoubleValue: S.optional(S.Number),
@@ -184,7 +195,7 @@ export interface Entitlement {
   ExpirationDate?: Date;
   LicenseArn?: string;
 }
-export const Entitlement = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Entitlement = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ProductCode: S.optional(S.String),
     Dimension: S.optional(S.String),
@@ -196,12 +207,12 @@ export const Entitlement = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Entitlement" }) as any as S.Schema<Entitlement>;
 export type EntitlementList = Entitlement[];
-export const EntitlementList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Entitlement);
+export const EntitlementList = /*@__PURE__*/ S.Array(Entitlement);
 export interface GetEntitlementsResult {
   Entitlements?: Entitlement[];
   NextToken?: string;
 }
-export const GetEntitlementsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetEntitlementsResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Entitlements: S.optional(EntitlementList),
     NextToken: S.optional(S.String),
@@ -209,22 +220,7 @@ export const GetEntitlementsResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "GetEntitlementsResult",
 }) as any as S.Schema<GetEntitlementsResult>;
-
-//# Errors
-export class InternalServiceErrorException extends S.TaggedErrorClass<InternalServiceErrorException>()(
-  "InternalServiceErrorException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidParameterException extends S.TaggedErrorClass<InvalidParameterException>()(
-  "InvalidParameterException",
-  { message: S.optional(S.String) },
-) {}
-export class ThrottlingException extends S.TaggedErrorClass<ThrottlingException>()(
-  "ThrottlingException",
-  { message: S.optional(S.String) },
-) {}
-
-//# Operations
+export type ErrorMessage = string;
 export type GetEntitlementsError =
   | InternalServiceErrorException
   | InvalidParameterException
@@ -234,27 +230,13 @@ export type GetEntitlementsError =
  * GetEntitlements retrieves entitlement values for a given product. The results can be
  * filtered based on customer identifier, AWS account ID, license ARN, or product dimensions.
  */
-export const getEntitlements: API.OperationMethod<
+export const getEntitlements: API.PaginatedOperationMethod<
   GetEntitlementsRequest,
   GetEntitlementsResult,
   GetEntitlementsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: GetEntitlementsRequest,
-  ) => stream.Stream<
-    GetEntitlementsResult,
-    GetEntitlementsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: GetEntitlementsRequest,
-  ) => stream.Stream<
-    unknown,
-    GetEntitlementsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: GetEntitlementsRequest,
   output: GetEntitlementsResult,
   errors: [
@@ -262,9 +244,12 @@ export const getEntitlements: API.OperationMethod<
     InvalidParameterException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetEntitlements",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;

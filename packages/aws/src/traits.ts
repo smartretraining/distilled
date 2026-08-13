@@ -3,6 +3,7 @@ import * as S from "effect/Schema";
 import * as AST from "effect/SchemaAST";
 import * as SchemaTransformation from "effect/SchemaTransformation";
 import * as Stream from "effect/Stream";
+import { ErrorMessage, errorMessageSymbol } from "./error-message.ts";
 import type { Protocol } from "./client/protocol.ts";
 import type { Request as ProtocolRequest } from "./client/request.ts";
 import { applyHttpChecksum } from "./middleware/checksum.ts";
@@ -16,92 +17,56 @@ import { restJson1Protocol } from "./protocols/rest-json.ts";
 import { restXmlProtocol } from "./protocols/rest-xml.ts";
 import type { RuleSetObject } from "./rules-engine/expression.ts";
 
-/**
- * Internal symbol for annotation metadata storage
- */
-const annotationMetaSymbol = "distilled-aws/annotation-meta" as const;
+import {
+  all,
+  annotationMetaSymbol,
+  headerSymbol as coreHeaderSymbol,
+  httpBodySymbol as coreHttpBodySymbol,
+  httpSymbol as coreHttpSymbol,
+  labelSymbol as coreLabelSymbol,
+  makeAnnotation,
+  querySymbol as coreQuerySymbol,
+  responseCodeSymbol as coreResponseCodeSymbol,
+  type Annotation,
+} from "@distilled.cloud/core/trait";
+
+// The annotation machinery (pipeable builders usable as S.Class annotation
+// objects, the `all` combinator) is core's; this module supplies the AWS
+// trait vocabulary on top of it.
+export { all, type Annotation };
+
+// The canonical-message trait is defined in a leaf module so `errors.ts` can
+// reach it without importing this one — see its header for the cycle.
+export { ErrorMessage, errorMessageSymbol };
 
 /**
  * Any type that has an .annotate() method returning itself.
  * This includes Schema.Schema and Schema.PropertySignature (from S.optional).
- * We use `any` for the annotations parameter because Effect Schema uses
- * specific annotation types for different schema types.
  */
 type Annotatable = {
   annotate(annotations: any): Annotatable;
 };
 
-/**
- * An Annotation is a callable that can be used with .pipe() AND
- * has symbol properties so it works directly with S.Class() second argument.
- *
- * The index signatures allow TypeScript to accept this as a valid annotations object.
- */
-export interface Annotation {
-  <A extends Annotatable>(schema: A): A;
-  readonly [annotationMetaSymbol]: Array<{ symbol: string; value: unknown }>;
-  // Index signatures for compatibility with Schema.Annotations
-  readonly [key: symbol]: unknown;
-  readonly [key: string]: unknown;
-}
-
-/**
- * Create an annotation builder for a given symbol and value
- */
-function makeAnnotation<T>(sym: string, value: T): Annotation {
-  const fn = <A extends Annotatable>(schema: A): A =>
-    schema.annotate({ [sym]: value }) as A;
-
-  (fn as any)[annotationMetaSymbol] = [{ symbol: sym, value }];
-  (fn as any)[sym] = value;
-
-  return fn as Annotation;
-}
-
-/**
- * Combine multiple annotations into one.
- * Use with S.Class when you need multiple class-level annotations:
- *
- * @example
- * class Foo extends S.Class<Foo>("Foo")({ ... }, A.all(A.XmlName("Foo"), A.OtherAnnotation())) {}
- */
-export function all(...annotations: Annotation[]): Annotation {
-  const entries: Array<{ symbol: string; value: unknown }> = [];
-  const raw: Record<string, unknown> = {};
-
-  for (const a of annotations) {
-    for (const entry of a[annotationMetaSymbol]) {
-      entries.push(entry);
-      raw[entry.symbol] = entry.value;
-    }
-  }
-
-  const fn = <A extends Annotatable>(schema: A): A => schema.annotate(raw) as A;
-
-  (fn as any)[annotationMetaSymbol] = entries;
-
-  for (const { symbol, value } of entries) {
-    (fn as any)[symbol] = value;
-  }
-
-  return fn as Annotation;
-}
-
 // =============================================================================
 // HTTP Binding Traits (smithy.api#http*)
 // =============================================================================
 
+// The generic HTTP binding traits are keyed to core's shared symbols
+// (`@distilled.cloud/core/trait`) — the same annotations the cloudflare
+// SDK stamps. The builders keep their smithy-flavored names because the
+// generator emits them; only the underlying keys are shared.
+
 /** smithy.api#httpHeader - Bind member to an HTTP header */
-export const httpHeaderSymbol = "distilled-aws/http-header" as const;
+export const httpHeaderSymbol = coreHeaderSymbol;
 export const HttpHeader = (name: string) =>
   makeAnnotation(httpHeaderSymbol, name);
 
 /** smithy.api#httpPayload - Bind member to the HTTP body */
-export const httpPayloadSymbol = "distilled-aws/http-payload" as const;
+export const httpPayloadSymbol = coreHttpBodySymbol;
 export const HttpPayload = () => makeAnnotation(httpPayloadSymbol, true);
 
 /** smithy.api#httpLabel - Bind member to a URI label (path parameter) */
-export const httpLabelSymbol = "distilled-aws/http-label" as const;
+export const httpLabelSymbol = coreLabelSymbol;
 /**
  * HttpLabel trait - binds a member to a URI label (path parameter).
  * @param labelName - Optional. The name to use in the URI template. If provided, this name
@@ -113,7 +78,7 @@ export const HttpLabel = (labelName?: string) =>
   makeAnnotation(httpLabelSymbol, labelName ?? true);
 
 /** smithy.api#httpQuery - Bind member to a query string parameter */
-export const httpQuerySymbol = "distilled-aws/http-query" as const;
+export const httpQuerySymbol = coreQuerySymbol;
 export const HttpQuery = (name: string) =>
   makeAnnotation(httpQuerySymbol, name);
 
@@ -129,8 +94,7 @@ export const HttpPrefixHeaders = (prefix: string) =>
   makeAnnotation(httpPrefixHeadersSymbol, prefix);
 
 /** smithy.api#httpResponseCode - Bind member to the HTTP response status code */
-export const httpResponseCodeSymbol =
-  "distilled-aws/http-response-code" as const;
+export const httpResponseCodeSymbol = coreResponseCodeSymbol;
 export const HttpResponseCode = () =>
   makeAnnotation(httpResponseCodeSymbol, true);
 
@@ -231,7 +195,11 @@ export const TimestampFormat = (format: TimestampFormatType) => {
               S.Date,
               SchemaTransformation.transform({
                 decode: (n) => new Date(n * 1000),
-                encode: (d) => d.getTime() / 1000,
+                // Truncate to whole seconds: some services parse
+                // epoch-seconds strictly and reject fractional values —
+                // e.g. IoT SiteWise's GetAssetPropertyAggregates fails
+                // with "The date can only be in seconds."
+                encode: (d) => Math.floor(d.getTime() / 1000),
               }),
             ),
           )
@@ -258,7 +226,7 @@ export const TimestampFormat = (format: TimestampFormatType) => {
 // =============================================================================
 
 /** smithy.api#http - HTTP binding for an operation (applied to request schema) */
-export const httpSymbol = "distilled-aws/smithy.api#http" as const;
+export const httpSymbol = coreHttpSymbol;
 export interface HttpTrait {
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
   uri: string;
@@ -290,6 +258,21 @@ export interface AwsAuthSigv4Trait {
 }
 export const AwsAuthSigv4 = (trait: AwsAuthSigv4Trait) =>
   makeAnnotation(awsAuthSigv4Symbol, trait);
+
+/**
+ * Legacy Signature Version 2 authentication. SimpleDB (2009-04-15) is the
+ * sole remaining SigV2-only service: its endpoint rejects SigV4
+ * Authorization headers outright (`AuthFailure: access credentials are
+ * missing`). SigV2 auth parameters ride in the form-encoded request body
+ * (`AWSAccessKeyId`, `SignatureVersion=2`, `SignatureMethod=HmacSHA256`,
+ * `Timestamp`, `SecurityToken`, `Signature`) rather than in headers.
+ */
+export const awsAuthSigv2Symbol = "distilled-aws/aws.auth#sigv2" as const;
+export interface AwsAuthSigv2Trait {
+  name: string;
+}
+export const AwsAuthSigv2 = (trait: AwsAuthSigv2Trait) =>
+  makeAnnotation(awsAuthSigv2Symbol, trait);
 
 // =============================================================================
 // AWS Protocol Traits (aws.protocols#*)
@@ -564,6 +547,28 @@ export interface AwsQueryErrorTrait {
 export const AwsQueryError = (trait: AwsQueryErrorTrait) =>
   makeAnnotation(awsQueryErrorSymbol, trait);
 
+/**
+ * distilled patch trait - synthesizes a NEW error class from an existing wire
+ * error plus a message predicate. Some AWS services overload a single wire
+ * error (e.g. X-Ray's InvalidRequestException) for semantically distinct
+ * failures that are only distinguishable by message text. The response parser
+ * checks synthetic matchers BEFORE the plain wire-code lookup so the
+ * synthetic tag specializes the base error.
+ */
+export const syntheticErrorSymbol = "distilled-aws/synthetic-error" as const;
+export interface SyntheticErrorTrait {
+  /** The wire error code this synthetic error derives from (e.g., "InvalidRequestException") */
+  from: string;
+  /**
+   * Message predicate: a plain string is an exact match; the object form
+   * supports substring (`includes`) and regular-expression (`matches`)
+   * predicates.
+   */
+  message: string | { includes?: string; matches?: string };
+}
+export const SyntheticError = (trait: SyntheticErrorTrait) =>
+  makeAnnotation(syntheticErrorSymbol, trait);
+
 /** aws.customizations#s3UnwrappedXmlOutput - S3 output not wrapped in operation-level XML node */
 export const s3UnwrappedXmlOutputSymbol =
   "distilled-aws/aws.customizations#s3UnwrappedXmlOutput" as const;
@@ -833,20 +838,63 @@ export const getEventPayloadMap = (
   return ast.annotations?.eventPayloadMap as Record<string, string> | undefined;
 };
 
+/**
+ * Derive the event-type → payload-member map for an OUTPUT event stream from
+ * its event union schema (`T.EventStream(S.Union([...]))`).
+ *
+ * Smithy's `eventPayload` trait means an event's wire payload IS that single
+ * member's raw bytes (e.g. Lambda `InvokeWithResponseStream`'s
+ * `PayloadChunk.Payload`), not a JSON document of the event struct — so the
+ * parser must bind the raw payload to that member instead of JSON-parsing it
+ * into struct fields. Input streams carry this map explicitly
+ * (`T.InputEventStream(..., eventPayloadMap)`); for outputs we recover it
+ * from the `T.EventPayload()` member annotations.
+ */
+export const getOutputEventPayloadMap = (
+  eventSchema: S.Schema<unknown>,
+): Record<string, string> | undefined => {
+  const unwrap = (ast: AST.AST): AST.AST => {
+    let current = ast;
+    while (current._tag === "Suspend") current = current.thunk();
+    return current;
+  };
+  const union = unwrap(eventSchema.ast);
+  if (union._tag !== "Union") return undefined;
+  const map: Record<string, string> = {};
+  for (const member of union.types) {
+    const eventStructWrapper = unwrap(member);
+    if (eventStructWrapper._tag !== "Objects") continue;
+    const wrapperProps = eventStructWrapper.propertySignatures;
+    if (wrapperProps.length !== 1) continue;
+    const eventType = String(wrapperProps[0].name);
+    const eventStruct = unwrap(wrapperProps[0].type);
+    if (eventStruct._tag !== "Objects") continue;
+    for (const prop of eventStruct.propertySignatures) {
+      if (hasPropAnnotation(prop, eventPayloadSymbol)) {
+        map[eventType] = String(prop.name);
+        break;
+      }
+    }
+  }
+  return Object.keys(map).length > 0 ? map : undefined;
+};
+
 // =============================================================================
 // Annotation Retrieval Helpers
 // =============================================================================
 
 export const getAnnotation = <T>(
   ast: AST.AST,
-  symbol: string,
+  symbol: string | symbol,
 ): T | undefined => {
-  return ast.annotations?.[symbol] as T | undefined;
+  return (ast.annotations as Record<string | symbol, unknown> | undefined)?.[
+    symbol
+  ] as T | undefined;
 };
 
 export const getPropAnnotation = <T>(
   prop: AST.PropertySignature,
-  symbol: string,
+  symbol: string | symbol,
 ): T | undefined => {
   // @ts-expect-error
   const propAnnot = prop.annotations?.[symbol] as T | undefined;
@@ -856,7 +904,7 @@ export const getPropAnnotation = <T>(
 
 export const hasPropAnnotation = (
   prop: AST.PropertySignature,
-  symbol: string,
+  symbol: string | symbol,
 ): boolean => {
   // @ts-expect-error
   if (prop.annotations?.[symbol] !== undefined) return true;
@@ -877,11 +925,15 @@ export const getPropAnnotations = (prop: AST.PropertySignature) => {
 };
 
 export const getAnnotations = (schema: AST.AST) => {
-  const header = schema.annotations?.[httpHeaderSymbol] as string | undefined;
-  const body = schema.annotations?.[httpPayloadSymbol] as string | undefined;
-  const streamBody = schema.annotations?.[httpPayloadSymbol] as
-    | boolean
-    | undefined;
+  const header = (
+    schema.annotations as Record<string | symbol, unknown> | undefined
+  )?.[httpHeaderSymbol] as string | undefined;
+  const body = (
+    schema.annotations as Record<string | symbol, unknown> | undefined
+  )?.[httpPayloadSymbol] as string | undefined;
+  const streamBody = (
+    schema.annotations as Record<string | symbol, unknown> | undefined
+  )?.[httpPayloadSymbol] as boolean | undefined;
   const path = schema.annotations?.[contextParamSymbol] as string | undefined;
   const xmlName = schema.annotations?.[xmlNameSymbol] as string | undefined;
   return { header, body, streamBody, path, xmlName };
@@ -897,8 +949,16 @@ export const getXmlName = (ast: AST.AST): string | undefined => {
   return getAnnotationUnwrap(ast, xmlNameSymbol);
 };
 
-export const hasAnnotation = (ast: AST.AST, symbol: string): boolean => {
-  if (ast.annotations?.[symbol] !== undefined) return true;
+export const hasAnnotation = (
+  ast: AST.AST,
+  symbol: string | symbol,
+): boolean => {
+  if (
+    (ast.annotations as Record<string | symbol, unknown> | undefined)?.[
+      symbol
+    ] !== undefined
+  )
+    return true;
   if (ast._tag === "Suspend") {
     return hasAnnotation(ast.thunk(), symbol);
   }
@@ -910,7 +970,14 @@ export const hasAnnotation = (ast: AST.AST, symbol: string): boolean => {
     return nonNullishTypes.some((t: AST.AST) => hasAnnotation(t, symbol));
   }
   if (ast._tag === "Declaration" && ast.encoding?.length) {
-    if (ast.encoding[0].to?.annotations?.[symbol] !== undefined) return true;
+    if (
+      (
+        ast.encoding[0].to?.annotations as
+          | Record<string | symbol, unknown>
+          | undefined
+      )?.[symbol] !== undefined
+    )
+      return true;
   }
   if (ast.encoding && ast.encoding.length > 0) {
     return hasAnnotation(ast.encoding[0].to, symbol);
@@ -920,15 +987,21 @@ export const hasAnnotation = (ast: AST.AST, symbol: string): boolean => {
 
 export const getAnnotationUnwrap = <T>(
   ast: AST.AST,
-  symbol: string,
+  symbol: string | symbol,
 ): T | undefined => {
-  const direct = ast.annotations?.[symbol] as T | undefined;
+  const direct = (
+    ast.annotations as Record<string | symbol, unknown> | undefined
+  )?.[symbol] as T | undefined;
   if (direct !== undefined) return direct;
   if (ast._tag === "Suspend") {
     return getAnnotationUnwrap(ast.thunk(), symbol);
   }
   if (ast._tag === "Declaration" && ast.encoding?.length) {
-    const toValue = ast.encoding[0].to?.annotations?.[symbol] as T | undefined;
+    const toValue = (
+      ast.encoding[0].to?.annotations as
+        | Record<string | symbol, unknown>
+        | undefined
+    )?.[symbol] as T | undefined;
     if (toValue !== undefined) return toValue;
   }
   if (ast.encoding && ast.encoding.length > 0) {
@@ -1014,6 +1087,9 @@ export const getAwsApiService = (
 export const getAwsAuthSigv4 = (ast: AST.AST): AwsAuthSigv4Trait | undefined =>
   getAnnotationUnwrap<AwsAuthSigv4Trait>(ast, awsAuthSigv4Symbol);
 
+export const getAwsAuthSigv2 = (ast: AST.AST): AwsAuthSigv2Trait | undefined =>
+  getAnnotationUnwrap<AwsAuthSigv2Trait>(ast, awsAuthSigv2Symbol);
+
 export const getServiceVersion = (ast: AST.AST): string | undefined =>
   getAnnotationUnwrap<string>(ast, serviceVersionSymbol);
 
@@ -1050,6 +1126,19 @@ export const getAwsQueryError = (
   ast: AST.AST,
 ): AwsQueryErrorTrait | undefined =>
   getAnnotationUnwrap<AwsQueryErrorTrait>(ast, awsQueryErrorSymbol);
+
+/** smithy.api#httpError status code declared on an error shape */
+export const getHttpError = (ast: AST.AST): number | undefined =>
+  getAnnotationUnwrap<number>(ast, httpErrorSymbol);
+
+export const getSyntheticError = (
+  ast: AST.AST,
+): SyntheticErrorTrait | undefined =>
+  getAnnotationUnwrap<SyntheticErrorTrait>(ast, syntheticErrorSymbol);
+
+/** True when this member is the error shape's canonical message. */
+export const hasErrorMessage = (prop: AST.PropertySignature): boolean =>
+  hasPropAnnotation(prop, errorMessageSymbol);
 
 export const getTimestampFormat = (
   prop: AST.PropertySignature,

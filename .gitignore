@@ -1,9 +1,23 @@
-.distilled
-node_modules
-**/*.tsbuildinfo
+node_modules/
+dist/
 lib/
-!scripts/lib
+.out/
+.test/
+.DS_Store
 .env
+*.tsbuildinfo
+
+.repomix-output.txt
+
+# Husky - ignore generated files but keep hooks
+.husky/_
+!.husky/pre-commit
+
+.cache
+.tmp
+*.tgz
+pnpm-lock.yaml
+.scripts-types/
 pnpm-workspace.yaml
 .ai-workspace
 .gen-tmp

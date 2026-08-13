@@ -1,20 +1,14 @@
 /**
  * JSON Patch (RFC 6902) Implementation
  *
- * Provides a unified spec patching system for all SDKs.
- * Patches are applied to OpenAPI/Discovery/Smithy specs before code generation
- * to add error types, fix nullable fields, mark sensitive data, etc.
+ * Provides a unified spec patching system for all SDKs. Patches are applied to
+ * generated intermediary specs (Smithy models, OpenAPI docs, …) before code
+ * generation to add typed error shapes, rename operations, mark nullable
+ * fields, etc. Ported from the distilled repo's `core/json-patch`.
  *
- * @example
- * ```ts
- * import { applyAllPatches } from "@distilled.cloud/core/json-patch";
- *
- * const spec = JSON.parse(fs.readFileSync("openapi.json", "utf-8"));
- * const { applied, errors } = applyAllPatches(spec, "./patches");
- * ```
+ * Pure functions only — callers load patch files themselves (the generators
+ * use Effect's FileSystem) and hand the parsed operations to `applyPatch`.
  */
-import * as fs from "fs";
-import * as path from "path";
 
 // ============================================================================
 // Types
@@ -30,7 +24,7 @@ export interface JsonPatchOperation {
 export type JsonPatch = JsonPatchOperation[];
 
 export interface PatchFile {
-  description: string;
+  description?: string;
   patches: JsonPatch;
 }
 
@@ -38,9 +32,7 @@ export interface PatchFile {
 // JSON Pointer (RFC 6901)
 // ============================================================================
 
-/**
- * Parse a JSON Pointer (RFC 6901) path into segments.
- */
+/** Parse a JSON Pointer (RFC 6901) path into segments. */
 export function parseJsonPointer(pointer: string): string[] {
   if (pointer === "") return [];
   if (!pointer.startsWith("/")) {
@@ -52,9 +44,7 @@ export function parseJsonPointer(pointer: string): string[] {
     .map((segment) => segment.replace(/~1/g, "/").replace(/~0/g, "~"));
 }
 
-/**
- * Get a value at a JSON Pointer path.
- */
+/** Get a value at a JSON Pointer path. */
 export function getValueAtPath(obj: unknown, pointer: string): unknown {
   const segments = parseJsonPointer(pointer);
   let current: unknown = obj;
@@ -74,9 +64,7 @@ export function getValueAtPath(obj: unknown, pointer: string): unknown {
   return current;
 }
 
-/**
- * Set a value at a JSON Pointer path.
- */
+/** Set a value at a JSON Pointer path. */
 export function setValueAtPath(
   obj: unknown,
   pointer: string,
@@ -95,8 +83,7 @@ export function setValueAtPath(
       throw new Error(`Cannot traverse path ${pointer}: not an object`);
     }
     if (Array.isArray(current)) {
-      const index = parseInt(segment, 10);
-      current = current[index];
+      current = current[parseInt(segment, 10)];
     } else {
       current = (current as Record<string, unknown>)[segment];
     }
@@ -110,21 +97,17 @@ export function setValueAtPath(
   }
 
   if (Array.isArray(current)) {
-    const index =
-      lastSegment === "-" ? current.length : parseInt(lastSegment, 10);
     if (lastSegment === "-") {
       current.push(value);
     } else {
-      current[index] = value;
+      current[parseInt(lastSegment, 10)] = value;
     }
   } else {
     (current as Record<string, unknown>)[lastSegment] = value;
   }
 }
 
-/**
- * Remove a value at a JSON Pointer path.
- */
+/** Remove a value at a JSON Pointer path. */
 export function removeValueAtPath(obj: unknown, pointer: string): void {
   const segments = parseJsonPointer(pointer);
   if (segments.length === 0) {
@@ -163,9 +146,7 @@ export function removeValueAtPath(obj: unknown, pointer: string): void {
 // Patch Operations
 // ============================================================================
 
-/**
- * Apply a single JSON Patch operation.
- */
+/** Apply a single JSON Patch operation (mutates `obj` in place). */
 export function applyOperation(
   obj: unknown,
   operation: JsonPatchOperation,
@@ -185,6 +166,11 @@ export function applyOperation(
     case "move": {
       if (!operation.from) throw new Error("move operation requires 'from'");
       const moveValue = getValueAtPath(obj, operation.from);
+      if (moveValue === undefined) {
+        throw new Error(
+          `Cannot move from path ${operation.from}: not an object`,
+        );
+      }
       removeValueAtPath(obj, operation.from);
       setValueAtPath(obj, operation.path, moveValue);
       break;
@@ -213,9 +199,7 @@ export function applyOperation(
   }
 }
 
-/**
- * Apply a JSON Patch to an object (mutates in place).
- */
+/** Apply a JSON Patch to an object (mutates in place). */
 export function applyPatch(obj: unknown, patch: JsonPatch): void {
   for (const operation of patch) {
     applyOperation(obj, operation);
@@ -223,39 +207,16 @@ export function applyPatch(obj: unknown, patch: JsonPatch): void {
 }
 
 /**
- * Load and apply all patches from a directory.
- * Finds all *.patch.json files and applies them.
+ * Whether a per-operation failure is caused by the target location being
+ * absent from the spec (i.e. spec drift — the operation/shape the patch
+ * targets was renamed or removed upstream) as opposed to a malformed patch.
+ * Stale targets should be skipped with a warning rather than aborting the
+ * whole generate; a patch that only adds an error to an operation that no
+ * longer exists is harmless to drop.
  */
-export function applyAllPatches(
-  spec: unknown,
-  patchDir: string,
-): { applied: string[]; errors: string[] } {
-  const applied: string[] = [];
-  const errors: string[] = [];
-
-  if (!fs.existsSync(patchDir)) {
-    return { applied, errors };
-  }
-
-  // Find all .patch.json files
-  const files = fs
-    .readdirSync(patchDir)
-    .filter((f) => f.endsWith(".patch.json"))
-    .sort(); // Sort for deterministic application order
-
-  for (const file of files) {
-    const filePath = path.join(patchDir, file);
-    try {
-      const content = fs.readFileSync(filePath, "utf-8");
-      const patchFile: PatchFile = JSON.parse(content);
-      applyPatch(spec, patchFile.patches);
-      applied.push(`${file}: ${patchFile.description}`);
-    } catch (error) {
-      errors.push(
-        `${file}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-  }
-
-  return { applied, errors };
+export function isStaleTargetError(message: string): boolean {
+  return (
+    message.includes("not an object") ||
+    message.includes("parent is not an object")
+  );
 }

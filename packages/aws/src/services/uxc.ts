@@ -1,12 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region as Rgn } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "uxc",
   serviceShapeName: "AWSAccountUXSetting",
@@ -50,29 +50,51 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
-export type Service = string;
-export type Region = string;
-export type NextToken = string;
-export type MaxResults = number;
-
-//# Schemas
-export interface GetAccountCustomizationsInput {}
-export const GetAccountCustomizationsInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({}).pipe(
-      T.all(
-        T.Http({ method: "GET", uri: "/v1/account-customizations" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class InternalServerException
+  extends /*@__PURE__*/ S.TaggedError<InternalServerException>()(
+    "InternalServerException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class ThrottlingException
+  extends /*@__PURE__*/ S.TaggedError<ThrottlingException>()(
+    "ThrottlingException",
+    { message: S.String.pipe(T.ErrorMessage()) },
+    T.HttpError(429),
+  ).pipe(C.withThrottlingError) {}
+export class ValidationException
+  extends /*@__PURE__*/ S.TaggedError<ValidationException>()(
+    "ValidationException",
+    {
+      message: S.String.pipe(T.ErrorMessage()),
+      fieldList: S.optional(
+        S.suspend(() => ValidationExceptionFieldList).annotate({
+          identifier: "ValidationExceptionFieldList",
+        }),
       ),
+    },
+  ) {}
+export interface GetAccountCustomizationsInput {}
+export const GetAccountCustomizationsInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(
+    T.all(
+      T.Http({ method: "GET", uri: "/v1/account-customizations" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "GetAccountCustomizationsInput",
-  }) as any as S.Schema<GetAccountCustomizationsInput>;
+  ),
+).annotate({
+  identifier: "GetAccountCustomizationsInput",
+}) as any as S.Schema<GetAccountCustomizationsInput>;
 export type AccountColor =
   | "none"
   | "pink"
@@ -85,44 +107,35 @@ export type AccountColor =
   | "orange"
   | "red"
   | (string & {});
-export const AccountColor = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const AccountColor = /*@__PURE__*/ S.String;
+
+export type Service = string;
 export type ServiceList = string[];
-export const ServiceList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ServiceList = /*@__PURE__*/ S.Array(S.String);
+export type Region = string;
 export type RegionsList = string[];
-export const RegionsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const RegionsList = /*@__PURE__*/ S.Array(S.String);
 export interface GetAccountCustomizationsOutput {
   accountColor?: AccountColor;
   visibleServices?: string[];
   visibleRegions?: string[];
 }
-export const GetAccountCustomizationsOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      accountColor: S.optional(AccountColor),
-      visibleServices: S.optional(ServiceList),
-      visibleRegions: S.optional(RegionsList),
-    }),
-  ).annotate({
-    identifier: "GetAccountCustomizationsOutput",
-  }) as any as S.Schema<GetAccountCustomizationsOutput>;
-export interface ValidationExceptionField {
-  path: string;
-  message: string;
-}
-export const ValidationExceptionField = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ path: S.String, message: S.String }),
+export const GetAccountCustomizationsOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    accountColor: S.optional(AccountColor),
+    visibleServices: S.optional(ServiceList),
+    visibleRegions: S.optional(RegionsList),
+  }),
 ).annotate({
-  identifier: "ValidationExceptionField",
-}) as any as S.Schema<ValidationExceptionField>;
-export type ValidationExceptionFieldList = ValidationExceptionField[];
-export const ValidationExceptionFieldList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  ValidationExceptionField,
-);
+  identifier: "GetAccountCustomizationsOutput",
+}) as any as S.Schema<GetAccountCustomizationsOutput>;
+export type NextToken = string;
+export type MaxResults = number;
 export interface ListServicesInput {
   nextToken?: string;
   maxResults?: number;
 }
-export const ListServicesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListServicesInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     nextToken: S.optional(S.String).pipe(T.HttpQuery("nextToken")),
     maxResults: S.optional(S.Number).pipe(T.HttpQuery("maxResults")),
@@ -143,7 +156,7 @@ export interface ListServicesOutput {
   nextToken?: string;
   services?: string[];
 }
-export const ListServicesOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListServicesOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     nextToken: S.optional(S.String),
     services: S.optional(ServiceList),
@@ -156,60 +169,51 @@ export interface UpdateAccountCustomizationsInput {
   visibleServices?: string[];
   visibleRegions?: string[];
 }
-export const UpdateAccountCustomizationsInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      accountColor: S.optional(AccountColor),
-      visibleServices: S.optional(ServiceList),
-      visibleRegions: S.optional(RegionsList),
-    }).pipe(
-      T.all(
-        T.Http({ method: "PATCH", uri: "/v1/account-customizations" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdateAccountCustomizationsInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    accountColor: S.optional(AccountColor),
+    visibleServices: S.optional(ServiceList),
+    visibleRegions: S.optional(RegionsList),
+  }).pipe(
+    T.all(
+      T.Http({ method: "PATCH", uri: "/v1/account-customizations" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "UpdateAccountCustomizationsInput",
-  }) as any as S.Schema<UpdateAccountCustomizationsInput>;
+  ),
+).annotate({
+  identifier: "UpdateAccountCustomizationsInput",
+}) as any as S.Schema<UpdateAccountCustomizationsInput>;
 export interface UpdateAccountCustomizationsOutput {
   accountColor?: AccountColor;
   visibleServices?: string[];
   visibleRegions?: string[];
 }
-export const UpdateAccountCustomizationsOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      accountColor: S.optional(AccountColor),
-      visibleServices: S.optional(ServiceList),
-      visibleRegions: S.optional(RegionsList),
-    }),
-  ).annotate({
-    identifier: "UpdateAccountCustomizationsOutput",
-  }) as any as S.Schema<UpdateAccountCustomizationsOutput>;
-
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { message: S.String },
-).pipe(C.withAuthError) {}
-export class InternalServerException extends S.TaggedErrorClass<InternalServerException>()(
-  "InternalServerException",
-  { message: S.String },
-).pipe(C.withServerError) {}
-export class ThrottlingException extends S.TaggedErrorClass<ThrottlingException>()(
-  "ThrottlingException",
-  { message: S.String },
-).pipe(C.withThrottlingError) {}
-export class ValidationException extends S.TaggedErrorClass<ValidationException>()(
-  "ValidationException",
-  { message: S.String, fieldList: S.optional(ValidationExceptionFieldList) },
-) {}
-
-//# Operations
+export const UpdateAccountCustomizationsOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    accountColor: S.optional(AccountColor),
+    visibleServices: S.optional(ServiceList),
+    visibleRegions: S.optional(RegionsList),
+  }),
+).annotate({
+  identifier: "UpdateAccountCustomizationsOutput",
+}) as any as S.Schema<UpdateAccountCustomizationsOutput>;
+export interface ValidationExceptionField {
+  path: string;
+  message: string;
+}
+export const ValidationExceptionField = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ path: S.String, message: S.String }),
+).annotate({
+  identifier: "ValidationExceptionField",
+}) as any as S.Schema<ValidationExceptionField>;
+export type ValidationExceptionFieldList = ValidationExceptionField[];
+export const ValidationExceptionFieldList = /*@__PURE__*/ S.Array(
+  ValidationExceptionField,
+);
 export type GetAccountCustomizationsError =
   | AccessDeniedException
   | InternalServerException
@@ -225,8 +229,8 @@ export const getAccountCustomizations: API.OperationMethod<
   GetAccountCustomizationsInput,
   GetAccountCustomizationsOutput,
   GetAccountCustomizationsError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetAccountCustomizationsInput,
   output: GetAccountCustomizationsOutput,
   errors: [
@@ -235,7 +239,11 @@ export const getAccountCustomizations: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetAccountCustomizations",
 }));
+
 export type ListServicesError =
   | AccessDeniedException
   | InternalServerException
@@ -247,27 +255,13 @@ export type ListServicesError =
  *
  * The `visibleServices` setting controls only the appearance of services in the Amazon Web Services Management Console. It does not restrict access through the CLI, SDKs, or other APIs.
  */
-export const listServices: API.OperationMethod<
+export const listServices: API.PaginatedOperationMethod<
   ListServicesInput,
   ListServicesOutput,
   ListServicesError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListServicesInput,
-  ) => stream.Stream<
-    ListServicesOutput,
-    ListServicesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListServicesInput,
-  ) => stream.Stream<
-    Service,
-    ListServicesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Service
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListServicesInput,
   output: ListServicesOutput,
   errors: [
@@ -276,12 +270,16 @@ export const listServices: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListServices",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "services",
   } as const,
-}));
+})) as any;
+
 export type UpdateAccountCustomizationsError =
   | AccessDeniedException
   | InternalServerException
@@ -297,8 +295,8 @@ export const updateAccountCustomizations: API.OperationMethod<
   UpdateAccountCustomizationsInput,
   UpdateAccountCustomizationsOutput,
   UpdateAccountCustomizationsError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateAccountCustomizationsInput,
   output: UpdateAccountCustomizationsOutput,
   errors: [
@@ -307,4 +305,7 @@ export const updateAccountCustomizations: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateAccountCustomizations",
 }));

@@ -1,11 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "ApiGatewayManagementApi",
   serviceShapeName: "ApiGatewayManagementApi",
@@ -82,38 +83,57 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
-export type __timestampIso8601 = Date;
-
-//# Schemas
+export class ForbiddenException
+  extends /*@__PURE__*/ S.TaggedError<ForbiddenException>()(
+    "ForbiddenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class GoneException
+  extends /*@__PURE__*/ S.TaggedError<GoneException>()(
+    "GoneException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(410),
+  ).pipe(C.withBadRequestError) {}
+export class LimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<LimitExceededException>()(
+    "LimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(429),
+  ).pipe(C.withThrottlingError) {}
+export class PayloadTooLargeException
+  extends /*@__PURE__*/ S.TaggedError<PayloadTooLargeException>()(
+    "PayloadTooLargeException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(413),
+  ).pipe(C.withBadRequestError) {}
 export interface DeleteConnectionRequest {
   ConnectionId: string;
 }
-export const DeleteConnectionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ ConnectionId: S.String.pipe(T.HttpLabel("ConnectionId")) }).pipe(
-      T.all(
-        T.Http({ method: "DELETE", uri: "/@connections/{ConnectionId}" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteConnectionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ConnectionId: S.String.pipe(T.HttpLabel("ConnectionId")) }).pipe(
+    T.all(
+      T.Http({ method: "DELETE", uri: "/@connections/{ConnectionId}" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "DeleteConnectionRequest",
 }) as any as S.Schema<DeleteConnectionRequest>;
 export interface DeleteConnectionResponse {}
-export const DeleteConnectionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const DeleteConnectionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "DeleteConnectionResponse",
 }) as any as S.Schema<DeleteConnectionResponse>;
 export interface GetConnectionRequest {
   ConnectionId: string;
 }
-export const GetConnectionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetConnectionRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ConnectionId: S.String.pipe(T.HttpLabel("ConnectionId")) }).pipe(
     T.all(
       T.Http({ method: "GET", uri: "/@connections/{ConnectionId}" }),
@@ -127,11 +147,12 @@ export const GetConnectionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "GetConnectionRequest",
 }) as any as S.Schema<GetConnectionRequest>;
+export type __timestampIso8601 = Date;
 export interface Identity {
   SourceIp?: string;
   UserAgent?: string;
 }
-export const Identity = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Identity = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     SourceIp: S.optional(S.String),
     UserAgent: S.optional(S.String),
@@ -142,7 +163,7 @@ export interface GetConnectionResponse {
   Identity?: Identity & { SourceIp: string; UserAgent: string };
   LastActiveAt?: Date;
 }
-export const GetConnectionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetConnectionResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ConnectedAt: S.optional(
       T.DateFromString.pipe(T.TimestampFormat("date-time")),
@@ -165,50 +186,29 @@ export interface PostToConnectionRequest {
   Data?: T.StreamingInputBody;
   ConnectionId: string;
 }
-export const PostToConnectionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Data: S.optional(T.StreamingInput).pipe(T.HttpPayload()),
-      ConnectionId: S.String.pipe(T.HttpLabel("ConnectionId")),
-    }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/@connections/{ConnectionId}" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const PostToConnectionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Data: S.optional(T.StreamingInput).pipe(T.HttpPayload()),
+    ConnectionId: S.String.pipe(T.HttpLabel("ConnectionId")),
+  }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/@connections/{ConnectionId}" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "PostToConnectionRequest",
 }) as any as S.Schema<PostToConnectionRequest>;
 export interface PostToConnectionResponse {}
-export const PostToConnectionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const PostToConnectionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "PostToConnectionResponse",
 }) as any as S.Schema<PostToConnectionResponse>;
-
-//# Errors
-export class ForbiddenException extends S.TaggedErrorClass<ForbiddenException>()(
-  "ForbiddenException",
-  {},
-).pipe(C.withAuthError) {}
-export class GoneException extends S.TaggedErrorClass<GoneException>()(
-  "GoneException",
-  {},
-).pipe(C.withBadRequestError) {}
-export class LimitExceededException extends S.TaggedErrorClass<LimitExceededException>()(
-  "LimitExceededException",
-  {},
-).pipe(C.withThrottlingError) {}
-export class PayloadTooLargeException extends S.TaggedErrorClass<PayloadTooLargeException>()(
-  "PayloadTooLargeException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-
-//# Operations
 export type DeleteConnectionError =
   | ForbiddenException
   | GoneException
@@ -221,12 +221,16 @@ export const deleteConnection: API.OperationMethod<
   DeleteConnectionRequest,
   DeleteConnectionResponse,
   DeleteConnectionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteConnectionRequest,
   output: DeleteConnectionResponse,
   errors: [ForbiddenException, GoneException, LimitExceededException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteConnection",
 }));
+
 export type GetConnectionError =
   | ForbiddenException
   | GoneException
@@ -239,12 +243,16 @@ export const getConnection: API.OperationMethod<
   GetConnectionRequest,
   GetConnectionResponse,
   GetConnectionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetConnectionRequest,
   output: GetConnectionResponse,
   errors: [ForbiddenException, GoneException, LimitExceededException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetConnection",
 }));
+
 export type PostToConnectionError =
   | ForbiddenException
   | GoneException
@@ -258,8 +266,8 @@ export const postToConnection: API.OperationMethod<
   PostToConnectionRequest,
   PostToConnectionResponse,
   PostToConnectionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PostToConnectionRequest,
   output: PostToConnectionResponse,
   errors: [
@@ -268,4 +276,7 @@ export const postToConnection: API.OperationMethod<
     LimitExceededException,
     PayloadTooLargeException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PostToConnection",
 }));

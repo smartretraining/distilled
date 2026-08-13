@@ -1,12 +1,13 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as redacted from "effect/Redacted";
-import * as S from "effect/Schema";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 import { SensitiveString } from "../sensitive.ts";
 const svc = T.AwsApiService({
   sdkId: "Lex Runtime Service",
@@ -96,44 +97,84 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class BadGatewayException
+  extends /*@__PURE__*/ S.TaggedError<BadGatewayException>()(
+    "BadGatewayException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(502),
+  ).pipe(C.withServerError) {}
+export class BadRequestException
+  extends /*@__PURE__*/ S.TaggedError<BadRequestException>()(
+    "BadRequestException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class ConflictException
+  extends /*@__PURE__*/ S.TaggedError<ConflictException>()(
+    "ConflictException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class DependencyFailedException
+  extends /*@__PURE__*/ S.TaggedError<DependencyFailedException>()(
+    "DependencyFailedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(424),
+  ) {}
+export class InternalFailureException
+  extends /*@__PURE__*/ S.TaggedError<InternalFailureException>()(
+    "InternalFailureException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class LimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<LimitExceededException>()(
+    "LimitExceededException",
+    {
+      retryAfterSeconds: S.optional(S.String).pipe(T.HttpHeader("Retry-After")),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(429),
+  ).pipe(C.withThrottlingError) {}
+export class LoopDetectedException
+  extends /*@__PURE__*/ S.TaggedError<LoopDetectedException>()(
+    "LoopDetectedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(508),
+  ).pipe(C.withServerError) {}
+export class NotAcceptableException
+  extends /*@__PURE__*/ S.TaggedError<NotAcceptableException>()(
+    "NotAcceptableException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(406),
+  ).pipe(C.withBadRequestError) {}
+export class NotFoundException
+  extends /*@__PURE__*/ S.TaggedError<NotFoundException>()(
+    "NotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class RequestTimeoutException
+  extends /*@__PURE__*/ S.TaggedError<RequestTimeoutException>()(
+    "RequestTimeoutException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(408),
+  ).pipe(C.withTimeoutError) {}
+export class UnsupportedMediaTypeException
+  extends /*@__PURE__*/ S.TaggedError<UnsupportedMediaTypeException>()(
+    "UnsupportedMediaTypeException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(415),
+  ).pipe(C.withBadRequestError) {}
 export type BotName = string;
 export type BotAlias = string;
 export type UserId = string;
-export type IntentSummaryCheckpointLabel = string;
-export type IntentName = string;
-export type Text = string | redacted.Redacted<string>;
-export type ActiveContextName = string;
-export type ActiveContextTimeToLiveInSeconds = number;
-export type ActiveContextTurnsToLive = number;
-export type ParameterName = string;
-export type SynthesizedJsonAttributesString =
-  | string
-  | redacted.Redacted<string>;
-export type HttpContentType = string;
-export type Accept = string;
-export type SynthesizedJsonActiveContextsString =
-  | string
-  | redacted.Redacted<string>;
-export type SynthesizedJsonString = string;
-export type SensitiveString = string | redacted.Redacted<string>;
-export type SensitiveStringUnbounded = string | redacted.Redacted<string>;
-export type BotVersion = string;
-export type ErrorMessage = string;
-export type SentimentLabel = string;
-export type SentimentScore = string;
-export type StringWithLength = string;
-export type StringUrlWithLength = string;
-export type ButtonTextStringWithLength = string;
-export type ButtonValueStringWithLength = string;
-
-//# Schemas
 export interface DeleteSessionRequest {
   botName: string;
   botAlias: string;
   userId: string;
 }
-export const DeleteSessionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteSessionRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     botName: S.String.pipe(T.HttpLabel("botName")),
     botAlias: S.String.pipe(T.HttpLabel("botAlias")),
@@ -160,7 +201,7 @@ export interface DeleteSessionResponse {
   userId?: string;
   sessionId?: string;
 }
-export const DeleteSessionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteSessionResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     botName: S.optional(S.String),
     botAlias: S.optional(S.String),
@@ -170,13 +211,14 @@ export const DeleteSessionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "DeleteSessionResponse",
 }) as any as S.Schema<DeleteSessionResponse>;
+export type IntentSummaryCheckpointLabel = string;
 export interface GetSessionRequest {
   botName: string;
   botAlias: string;
   userId: string;
   checkpointLabelFilter?: string;
 }
-export const GetSessionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetSessionRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     botName: S.String.pipe(T.HttpLabel("botName")),
     botAlias: S.String.pipe(T.HttpLabel("botAlias")),
@@ -200,8 +242,9 @@ export const GetSessionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "GetSessionRequest",
 }) as any as S.Schema<GetSessionRequest>;
+export type IntentName = string;
 export type StringMap = { [key: string]: string | undefined };
-export const StringMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const StringMap = /*@__PURE__*/ S.Record(
   S.String,
   S.String.pipe(S.optional),
 );
@@ -210,7 +253,8 @@ export type ConfirmationStatus =
   | "Confirmed"
   | "Denied"
   | (string & {});
-export const ConfirmationStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ConfirmationStatus = /*@__PURE__*/ S.String;
+
 export type DialogActionType =
   | "ElicitIntent"
   | "ConfirmIntent"
@@ -218,13 +262,15 @@ export type DialogActionType =
   | "Close"
   | "Delegate"
   | (string & {});
-export const DialogActionType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DialogActionType = /*@__PURE__*/ S.String;
+
 export type FulfillmentState =
   | "Fulfilled"
   | "Failed"
   | "ReadyForFulfillment"
   | (string & {});
-export const FulfillmentState = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const FulfillmentState = /*@__PURE__*/ S.String;
+
 export interface IntentSummary {
   intentName?: string;
   checkpointLabel?: string;
@@ -234,7 +280,7 @@ export interface IntentSummary {
   fulfillmentState?: FulfillmentState;
   slotToElicit?: string;
 }
-export const IntentSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const IntentSummary = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     intentName: S.optional(S.String),
     checkpointLabel: S.optional(S.String),
@@ -246,15 +292,16 @@ export const IntentSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "IntentSummary" }) as any as S.Schema<IntentSummary>;
 export type IntentSummaryList = IntentSummary[];
-export const IntentSummaryList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(IntentSummary);
+export const IntentSummaryList = /*@__PURE__*/ S.Array(IntentSummary);
+export type Text = string | redacted.Redacted<string>;
 export type MessageFormatType =
   | "PlainText"
   | "CustomPayload"
   | "SSML"
   | "Composite"
   | (string & {});
-export const MessageFormatType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const MessageFormatType = /*@__PURE__*/ S.String;
+
 export interface DialogAction {
   type: DialogActionType;
   intentName?: string;
@@ -264,7 +311,7 @@ export interface DialogAction {
   message?: string | redacted.Redacted<string>;
   messageFormat?: MessageFormatType;
 }
-export const DialogAction = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DialogAction = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     type: DialogActionType,
     intentName: S.optional(S.String),
@@ -275,23 +322,26 @@ export const DialogAction = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
     messageFormat: S.optional(MessageFormatType),
   }),
 ).annotate({ identifier: "DialogAction" }) as any as S.Schema<DialogAction>;
+export type ActiveContextName = string;
+export type ActiveContextTimeToLiveInSeconds = number;
+export type ActiveContextTurnsToLive = number;
 export interface ActiveContextTimeToLive {
   timeToLiveInSeconds?: number;
   turnsToLive?: number;
 }
-export const ActiveContextTimeToLive = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      timeToLiveInSeconds: S.optional(S.Number),
-      turnsToLive: S.optional(S.Number),
-    }),
+export const ActiveContextTimeToLive = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    timeToLiveInSeconds: S.optional(S.Number),
+    turnsToLive: S.optional(S.Number),
+  }),
 ).annotate({
   identifier: "ActiveContextTimeToLive",
 }) as any as S.Schema<ActiveContextTimeToLive>;
+export type ParameterName = string;
 export type ActiveContextParametersMap = {
   [key: string]: string | redacted.Redacted<string> | undefined;
 };
-export const ActiveContextParametersMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const ActiveContextParametersMap = /*@__PURE__*/ S.Record(
   S.String,
   SensitiveString.pipe(S.optional),
 );
@@ -300,7 +350,7 @@ export interface ActiveContext {
   timeToLive: ActiveContextTimeToLive;
   parameters: { [key: string]: string | redacted.Redacted<string> | undefined };
 }
-export const ActiveContext = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ActiveContext = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     name: S.String,
     timeToLive: ActiveContextTimeToLive,
@@ -308,8 +358,7 @@ export const ActiveContext = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "ActiveContext" }) as any as S.Schema<ActiveContext>;
 export type ActiveContextsList = ActiveContext[];
-export const ActiveContextsList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ActiveContext);
+export const ActiveContextsList = /*@__PURE__*/ S.Array(ActiveContext);
 export interface GetSessionResponse {
   recentIntentSummaryView?: IntentSummary[];
   sessionAttributes?: { [key: string]: string | undefined };
@@ -317,7 +366,7 @@ export interface GetSessionResponse {
   dialogAction?: DialogAction;
   activeContexts?: ActiveContext[];
 }
-export const GetSessionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetSessionResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     recentIntentSummaryView: S.optional(IntentSummaryList),
     sessionAttributes: S.optional(StringMap),
@@ -328,6 +377,14 @@ export const GetSessionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "GetSessionResponse",
 }) as any as S.Schema<GetSessionResponse>;
+export type SynthesizedJsonAttributesString =
+  | string
+  | redacted.Redacted<string>;
+export type HttpContentType = string;
+export type Accept = string;
+export type SynthesizedJsonActiveContextsString =
+  | string
+  | redacted.Redacted<string>;
 export interface PostContentRequest {
   botName: string;
   botAlias: string;
@@ -339,7 +396,7 @@ export interface PostContentRequest {
   inputStream: T.StreamingInputBody;
   activeContexts?: string | redacted.Redacted<string>;
 }
-export const PostContentRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PostContentRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     botName: S.String.pipe(T.HttpLabel("botName")),
     botAlias: S.String.pipe(T.HttpLabel("botAlias")),
@@ -372,6 +429,8 @@ export const PostContentRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "PostContentRequest",
 }) as any as S.Schema<PostContentRequest>;
+export type SynthesizedJsonString = string;
+export type SensitiveString = string | redacted.Redacted<string>;
 export type DialogState =
   | "ElicitIntent"
   | "ConfirmIntent"
@@ -380,7 +439,10 @@ export type DialogState =
   | "ReadyForFulfillment"
   | "Failed"
   | (string & {});
-export const DialogState = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DialogState = /*@__PURE__*/ S.String;
+
+export type SensitiveStringUnbounded = string | redacted.Redacted<string>;
+export type BotVersion = string;
 export interface PostContentResponse {
   contentType?: string;
   intentName?: string;
@@ -401,7 +463,7 @@ export interface PostContentResponse {
   sessionId?: string;
   activeContexts?: string | redacted.Redacted<string>;
 }
-export const PostContentResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PostContentResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     contentType: S.optional(S.String).pipe(T.HttpHeader("Content-Type")),
     intentName: S.optional(S.String).pipe(
@@ -462,7 +524,7 @@ export interface PostTextRequest {
   inputText: string | redacted.Redacted<string>;
   activeContexts?: ActiveContext[];
 }
-export const PostTextRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PostTextRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     botName: S.String.pipe(T.HttpLabel("botName")),
     botAlias: S.String.pipe(T.HttpLabel("botAlias")),
@@ -490,7 +552,7 @@ export const PostTextRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface IntentConfidence {
   score?: number;
 }
-export const IntentConfidence = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const IntentConfidence = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ score: S.optional(S.Number) }),
 ).annotate({
   identifier: "IntentConfidence",
@@ -500,7 +562,7 @@ export interface PredictedIntent {
   nluIntentConfidence?: IntentConfidence;
   slots?: { [key: string]: string | undefined };
 }
-export const PredictedIntent = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PredictedIntent = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     intentName: S.optional(S.String),
     nluIntentConfidence: S.optional(IntentConfidence),
@@ -510,12 +572,14 @@ export const PredictedIntent = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "PredictedIntent",
 }) as any as S.Schema<PredictedIntent>;
 export type IntentList = PredictedIntent[];
-export const IntentList = /*@__PURE__*/ /*#__PURE__*/ S.Array(PredictedIntent);
+export const IntentList = /*@__PURE__*/ S.Array(PredictedIntent);
+export type SentimentLabel = string;
+export type SentimentScore = string;
 export interface SentimentResponse {
   sentimentLabel?: string;
   sentimentScore?: string;
 }
-export const SentimentResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SentimentResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     sentimentLabel: S.optional(S.String),
     sentimentScore: S.optional(S.String),
@@ -526,16 +590,21 @@ export const SentimentResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export type ContentType =
   | "application/vnd.amazonaws.card.generic"
   | (string & {});
-export const ContentType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ContentType = /*@__PURE__*/ S.String;
+
+export type StringWithLength = string;
+export type StringUrlWithLength = string;
+export type ButtonTextStringWithLength = string;
+export type ButtonValueStringWithLength = string;
 export interface Button {
   text: string;
   value: string;
 }
-export const Button = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Button = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ text: S.String, value: S.String }),
 ).annotate({ identifier: "Button" }) as any as S.Schema<Button>;
 export type ListOfButtons = Button[];
-export const ListOfButtons = /*@__PURE__*/ /*#__PURE__*/ S.Array(Button);
+export const ListOfButtons = /*@__PURE__*/ S.Array(Button);
 export interface GenericAttachment {
   title?: string;
   subTitle?: string;
@@ -543,7 +612,7 @@ export interface GenericAttachment {
   imageUrl?: string;
   buttons?: Button[];
 }
-export const GenericAttachment = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GenericAttachment = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     title: S.optional(S.String),
     subTitle: S.optional(S.String),
@@ -555,14 +624,13 @@ export const GenericAttachment = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "GenericAttachment",
 }) as any as S.Schema<GenericAttachment>;
 export type GenericAttachmentList = GenericAttachment[];
-export const GenericAttachmentList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(GenericAttachment);
+export const GenericAttachmentList = /*@__PURE__*/ S.Array(GenericAttachment);
 export interface ResponseCard {
   version?: string;
   contentType?: ContentType;
   genericAttachments?: GenericAttachment[];
 }
-export const ResponseCard = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResponseCard = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     version: S.optional(S.String),
     contentType: S.optional(ContentType),
@@ -585,7 +653,7 @@ export interface PostTextResponse {
   botVersion?: string;
   activeContexts?: ActiveContext[];
 }
-export const PostTextResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PostTextResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     intentName: S.optional(S.String),
     nluIntentConfidence: S.optional(IntentConfidence),
@@ -615,7 +683,7 @@ export interface PutSessionRequest {
   accept?: string;
   activeContexts?: ActiveContext[];
 }
-export const PutSessionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PutSessionRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     botName: S.String.pipe(T.HttpLabel("botName")),
     botAlias: S.String.pipe(T.HttpLabel("botAlias")),
@@ -655,7 +723,7 @@ export interface PutSessionResponse {
   sessionId?: string;
   activeContexts?: string | redacted.Redacted<string>;
 }
-export const PutSessionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PutSessionResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     contentType: S.optional(S.String).pipe(T.HttpHeader("Content-Type")),
     intentName: S.optional(S.String).pipe(
@@ -689,57 +757,7 @@ export const PutSessionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "PutSessionResponse",
 }) as any as S.Schema<PutSessionResponse>;
-
-//# Errors
-export class BadRequestException extends S.TaggedErrorClass<BadRequestException>()(
-  "BadRequestException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ConflictException extends S.TaggedErrorClass<ConflictException>()(
-  "ConflictException",
-  { message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class InternalFailureException extends S.TaggedErrorClass<InternalFailureException>()(
-  "InternalFailureException",
-  { message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class LimitExceededException extends S.TaggedErrorClass<LimitExceededException>()(
-  "LimitExceededException",
-  {
-    retryAfterSeconds: S.optional(S.String).pipe(T.HttpHeader("Retry-After")),
-    message: S.optional(S.String),
-  },
-).pipe(C.withThrottlingError) {}
-export class NotFoundException extends S.TaggedErrorClass<NotFoundException>()(
-  "NotFoundException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class BadGatewayException extends S.TaggedErrorClass<BadGatewayException>()(
-  "BadGatewayException",
-  { Message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class DependencyFailedException extends S.TaggedErrorClass<DependencyFailedException>()(
-  "DependencyFailedException",
-  { Message: S.optional(S.String) },
-) {}
-export class LoopDetectedException extends S.TaggedErrorClass<LoopDetectedException>()(
-  "LoopDetectedException",
-  { Message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class NotAcceptableException extends S.TaggedErrorClass<NotAcceptableException>()(
-  "NotAcceptableException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class RequestTimeoutException extends S.TaggedErrorClass<RequestTimeoutException>()(
-  "RequestTimeoutException",
-  { message: S.optional(S.String) },
-).pipe(C.withTimeoutError) {}
-export class UnsupportedMediaTypeException extends S.TaggedErrorClass<UnsupportedMediaTypeException>()(
-  "UnsupportedMediaTypeException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-
-//# Operations
+export type ErrorMessage = string;
 export type DeleteSessionError =
   | BadRequestException
   | ConflictException
@@ -754,8 +772,8 @@ export const deleteSession: API.OperationMethod<
   DeleteSessionRequest,
   DeleteSessionResponse,
   DeleteSessionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteSessionRequest,
   output: DeleteSessionResponse,
   errors: [
@@ -765,7 +783,11 @@ export const deleteSession: API.OperationMethod<
     LimitExceededException,
     NotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteSession",
 }));
+
 export type GetSessionError =
   | BadRequestException
   | InternalFailureException
@@ -780,8 +802,8 @@ export const getSession: API.OperationMethod<
   GetSessionRequest,
   GetSessionResponse,
   GetSessionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetSessionRequest,
   output: GetSessionResponse,
   errors: [
@@ -790,7 +812,11 @@ export const getSession: API.OperationMethod<
     LimitExceededException,
     NotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetSession",
 }));
+
 export type PostContentError =
   | BadGatewayException
   | BadRequestException
@@ -869,8 +895,8 @@ export const postContent: API.OperationMethod<
   PostContentRequest,
   PostContentResponse,
   PostContentError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PostContentRequest,
   output: PostContentResponse,
   errors: [
@@ -886,7 +912,11 @@ export const postContent: API.OperationMethod<
     RequestTimeoutException,
     UnsupportedMediaTypeException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PostContent",
 }));
+
 export type PostTextError =
   | BadGatewayException
   | BadRequestException
@@ -959,8 +989,8 @@ export const postText: API.OperationMethod<
   PostTextRequest,
   PostTextResponse,
   PostTextError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PostTextRequest,
   output: PostTextResponse,
   errors: [
@@ -973,7 +1003,11 @@ export const postText: API.OperationMethod<
     LoopDetectedException,
     NotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PostText",
 }));
+
 export type PutSessionError =
   | BadGatewayException
   | BadRequestException
@@ -996,8 +1030,8 @@ export const putSession: API.OperationMethod<
   PutSessionRequest,
   PutSessionResponse,
   PutSessionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PutSessionRequest,
   output: PutSessionResponse,
   errors: [
@@ -1010,4 +1044,7 @@ export const putSession: API.OperationMethod<
     NotAcceptableException,
     NotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PutSession",
 }));

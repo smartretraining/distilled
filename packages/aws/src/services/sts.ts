@@ -1,12 +1,13 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as redacted from "effect/Redacted";
-import * as S from "effect/Schema";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials as Creds } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 import { SensitiveString } from "../sensitive.ts";
 const ns = T.XmlNamespace("https://sts.amazonaws.com/doc/2011-06-15/");
 const svc = T.AwsApiService({
@@ -172,88 +173,173 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class ExpiredTokenException
+  extends /*@__PURE__*/ S.TaggedError<ExpiredTokenException>()(
+    "ExpiredTokenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({ code: "ExpiredTokenException", httpResponseCode: 400 }),
+      T.HttpError(400),
+    ),
+  ).pipe(C.withBadRequestError) {}
+export class ExpiredTradeInTokenException
+  extends /*@__PURE__*/ S.TaggedError<ExpiredTradeInTokenException>()(
+    "ExpiredTradeInTokenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({
+        code: "ExpiredTradeInTokenException",
+        httpResponseCode: 400,
+      }),
+      T.HttpError(400),
+    ),
+  ).pipe(C.withBadRequestError) {}
+export class IDPCommunicationErrorException
+  extends /*@__PURE__*/ S.TaggedError<IDPCommunicationErrorException>()(
+    "IDPCommunicationErrorException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({ code: "IDPCommunicationError", httpResponseCode: 400 }),
+      T.HttpError(400),
+    ),
+  ).pipe(C.withBadRequestError) {}
+export class IDPRejectedClaimException
+  extends /*@__PURE__*/ S.TaggedError<IDPRejectedClaimException>()(
+    "IDPRejectedClaimException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({ code: "IDPRejectedClaim", httpResponseCode: 403 }),
+      T.HttpError(403),
+    ),
+  ).pipe(C.withAuthError) {}
+export class InvalidAuthorizationMessageException
+  extends /*@__PURE__*/ S.TaggedError<InvalidAuthorizationMessageException>()(
+    "InvalidAuthorizationMessageException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({
+        code: "InvalidAuthorizationMessageException",
+        httpResponseCode: 400,
+      }),
+      T.HttpError(400),
+    ),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidIdentityTokenException
+  extends /*@__PURE__*/ S.TaggedError<InvalidIdentityTokenException>()(
+    "InvalidIdentityTokenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({ code: "InvalidIdentityToken", httpResponseCode: 400 }),
+      T.HttpError(400),
+    ),
+  ).pipe(C.withBadRequestError) {}
+export class JWTPayloadSizeExceededException
+  extends /*@__PURE__*/ S.TaggedError<JWTPayloadSizeExceededException>()(
+    "JWTPayloadSizeExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({
+        code: "JWTPayloadSizeExceededException",
+        httpResponseCode: 400,
+      }),
+      T.HttpError(400),
+    ),
+  ).pipe(C.withBadRequestError) {}
+export class MalformedPolicyDocumentException
+  extends /*@__PURE__*/ S.TaggedError<MalformedPolicyDocumentException>()(
+    "MalformedPolicyDocumentException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({
+        code: "MalformedPolicyDocument",
+        httpResponseCode: 400,
+      }),
+      T.HttpError(400),
+    ),
+  ).pipe(C.withBadRequestError) {}
+export class OutboundWebIdentityFederationDisabledException
+  extends /*@__PURE__*/ S.TaggedError<OutboundWebIdentityFederationDisabledException>()(
+    "OutboundWebIdentityFederationDisabledException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({
+        code: "OutboundWebIdentityFederationDisabledException",
+        httpResponseCode: 403,
+      }),
+      T.HttpError(403),
+    ),
+  ).pipe(C.withAuthError) {}
+export class PackedPolicyTooLargeException
+  extends /*@__PURE__*/ S.TaggedError<PackedPolicyTooLargeException>()(
+    "PackedPolicyTooLargeException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({ code: "PackedPolicyTooLarge", httpResponseCode: 400 }),
+      T.HttpError(400),
+    ),
+  ).pipe(C.withBadRequestError) {}
+export class RegionDisabledException
+  extends /*@__PURE__*/ S.TaggedError<RegionDisabledException>()(
+    "RegionDisabledException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({
+        code: "RegionDisabledException",
+        httpResponseCode: 403,
+      }),
+      T.HttpError(403),
+    ),
+  ).pipe(C.withAuthError) {}
+export class SessionDurationEscalationException
+  extends /*@__PURE__*/ S.TaggedError<SessionDurationEscalationException>()(
+    "SessionDurationEscalationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.all(
+      T.AwsQueryError({
+        code: "SessionDurationEscalationException",
+        httpResponseCode: 403,
+      }),
+      T.HttpError(403),
+    ),
+  ).pipe(C.withAuthError) {}
 export type ArnType = string;
 export type RoleSessionNameType = string;
-export type UnrestrictedSessionPolicyDocumentType = string;
-export type RoleDurationSecondsType = number;
-export type TagKeyType = string;
-export type TagValueType = string;
-export type ExternalIdType = string;
-export type SerialNumberType = string;
-export type TokenCodeType = string;
-export type SourceIdentityType = string;
-export type ContextAssertionType = string;
-export type AccessKeyIdType = string;
-export type AccessKeySecretType = string | redacted.Redacted<string>;
-export type TokenType = string;
-export type AssumedRoleIdType = string;
-export type NonNegativeIntegerType = number;
-export type ExpiredIdentityTokenMessage = string;
-export type MalformedPolicyDocumentMessage = string;
-export type PackedPolicyTooLargeMessage = string;
-export type RegionDisabledMessage = string;
-export type SAMLAssertionType = string | redacted.Redacted<string>;
-export type SessionPolicyDocumentType = string;
-export type Subject = string;
-export type SubjectType = string;
-export type Issuer = string;
-export type Audience = string;
-export type NameQualifier = string;
-export type IdpRejectedClaimMessage = string;
-export type InvalidIdentityTokenMessage = string;
-export type ClientTokenType = string | redacted.Redacted<string>;
-export type UrlType = string;
-export type WebIdentitySubjectType = string;
-export type IdpCommunicationErrorMessage = string;
-export type TargetPrincipalType = string;
-export type RootDurationSecondsType = number;
-export type EncodedMessageType = string;
-export type DecodedMessageType = string;
-export type InvalidAuthorizationMessage = string;
-export type AccountType = string;
-export type UserIdType = string;
-export type TradeInTokenType = string | redacted.Redacted<string>;
-export type ExpiredTradeInTokenExceptionMessage = string;
-export type UserNameType = string;
-export type DurationSecondsType = number;
-export type FederatedIdType = string;
-export type WebIdentityTokenAudienceStringType = string;
-export type WebIdentityTokenDurationSecondsType = number;
-export type JwtAlgorithmType = string;
-export type WebIdentityTokenType = string | redacted.Redacted<string>;
-export type JWTPayloadSizeExceededException2 = string;
-export type OutboundWebIdentityFederationDisabledException2 = string;
-export type SessionDurationEscalationException2 = string;
-
-//# Schemas
 export interface PolicyDescriptorType {
   arn?: string;
 }
-export const PolicyDescriptorType = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PolicyDescriptorType = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ arn: S.optional(S.String) }),
 ).annotate({
   identifier: "PolicyDescriptorType",
 }) as any as S.Schema<PolicyDescriptorType>;
 export type PolicyDescriptorListType = PolicyDescriptorType[];
 export const PolicyDescriptorListType =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(PolicyDescriptorType);
+  /*@__PURE__*/ S.Array(PolicyDescriptorType);
+export type UnrestrictedSessionPolicyDocumentType = string;
+export type RoleDurationSecondsType = number;
+export type TagKeyType = string;
+export type TagValueType = string;
 export interface Tag {
   Key: string;
   Value: string;
 }
-export const Tag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Tag = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: S.String, Value: S.String }),
 ).annotate({ identifier: "Tag" }) as any as S.Schema<Tag>;
 export type TagListType = Tag[];
-export const TagListType = /*@__PURE__*/ /*#__PURE__*/ S.Array(Tag);
+export const TagListType = /*@__PURE__*/ S.Array(Tag);
 export type TagKeyListType = string[];
-export const TagKeyListType = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TagKeyListType = /*@__PURE__*/ S.Array(S.String);
+export type ExternalIdType = string;
+export type SerialNumberType = string;
+export type TokenCodeType = string;
+export type SourceIdentityType = string;
+export type ContextAssertionType = string;
 export interface ProvidedContext {
   ProviderArn?: string;
   ContextAssertion?: string;
 }
-export const ProvidedContext = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ProvidedContext = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ProviderArn: S.optional(S.String),
     ContextAssertion: S.optional(S.String),
@@ -262,8 +348,7 @@ export const ProvidedContext = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ProvidedContext",
 }) as any as S.Schema<ProvidedContext>;
 export type ProvidedContextsListType = ProvidedContext[];
-export const ProvidedContextsListType =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ProvidedContext);
+export const ProvidedContextsListType = /*@__PURE__*/ S.Array(ProvidedContext);
 export interface AssumeRoleRequest {
   RoleArn: string;
   RoleSessionName: string;
@@ -278,7 +363,7 @@ export interface AssumeRoleRequest {
   SourceIdentity?: string;
   ProvidedContexts?: ProvidedContext[];
 }
-export const AssumeRoleRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AssumeRoleRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     RoleArn: S.String,
     RoleSessionName: S.String,
@@ -306,13 +391,16 @@ export const AssumeRoleRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "AssumeRoleRequest",
 }) as any as S.Schema<AssumeRoleRequest>;
+export type AccessKeyIdType = string;
+export type AccessKeySecretType = string | redacted.Redacted<string>;
+export type TokenType = string;
 export interface Credentials {
   AccessKeyId: string;
   SecretAccessKey: string | redacted.Redacted<string>;
   SessionToken: string;
   Expiration: Date;
 }
-export const Credentials = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Credentials = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AccessKeyId: S.String,
     SecretAccessKey: SensitiveString,
@@ -320,22 +408,24 @@ export const Credentials = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
     Expiration: T.DateFromString.pipe(T.TimestampFormat("date-time")),
   }),
 ).annotate({ identifier: "Credentials" }) as any as S.Schema<Credentials>;
+export type AssumedRoleIdType = string;
 export interface AssumedRoleUser {
   AssumedRoleId: string;
   Arn: string;
 }
-export const AssumedRoleUser = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AssumedRoleUser = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ AssumedRoleId: S.String, Arn: S.String }),
 ).annotate({
   identifier: "AssumedRoleUser",
 }) as any as S.Schema<AssumedRoleUser>;
+export type NonNegativeIntegerType = number;
 export interface AssumeRoleResponse {
   Credentials?: Credentials;
   AssumedRoleUser?: AssumedRoleUser;
   PackedPolicySize?: number;
   SourceIdentity?: string;
 }
-export const AssumeRoleResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AssumeRoleResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Credentials: S.optional(Credentials),
     AssumedRoleUser: S.optional(AssumedRoleUser),
@@ -345,6 +435,8 @@ export const AssumeRoleResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "AssumeRoleResponse",
 }) as any as S.Schema<AssumeRoleResponse>;
+export type SAMLAssertionType = string | redacted.Redacted<string>;
+export type SessionPolicyDocumentType = string;
 export interface AssumeRoleWithSAMLRequest {
   RoleArn: string;
   PrincipalArn: string;
@@ -353,29 +445,33 @@ export interface AssumeRoleWithSAMLRequest {
   Policy?: string;
   DurationSeconds?: number;
 }
-export const AssumeRoleWithSAMLRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      RoleArn: S.String,
-      PrincipalArn: S.String,
-      SAMLAssertion: SensitiveString,
-      PolicyArns: S.optional(PolicyDescriptorListType),
-      Policy: S.optional(S.String),
-      DurationSeconds: S.optional(S.Number),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const AssumeRoleWithSAMLRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    RoleArn: S.String,
+    PrincipalArn: S.String,
+    SAMLAssertion: SensitiveString,
+    PolicyArns: S.optional(PolicyDescriptorListType),
+    Policy: S.optional(S.String),
+    DurationSeconds: S.optional(S.Number),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "AssumeRoleWithSAMLRequest",
 }) as any as S.Schema<AssumeRoleWithSAMLRequest>;
+export type Subject = string;
+export type SubjectType = string;
+export type Issuer = string;
+export type Audience = string;
+export type NameQualifier = string;
 export interface AssumeRoleWithSAMLResponse {
   Credentials?: Credentials;
   AssumedRoleUser?: AssumedRoleUser;
@@ -387,22 +483,23 @@ export interface AssumeRoleWithSAMLResponse {
   NameQualifier?: string;
   SourceIdentity?: string;
 }
-export const AssumeRoleWithSAMLResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Credentials: S.optional(Credentials),
-      AssumedRoleUser: S.optional(AssumedRoleUser),
-      PackedPolicySize: S.optional(S.Number),
-      Subject: S.optional(S.String),
-      SubjectType: S.optional(S.String),
-      Issuer: S.optional(S.String),
-      Audience: S.optional(S.String),
-      NameQualifier: S.optional(S.String),
-      SourceIdentity: S.optional(S.String),
-    }).pipe(ns),
+export const AssumeRoleWithSAMLResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Credentials: S.optional(Credentials),
+    AssumedRoleUser: S.optional(AssumedRoleUser),
+    PackedPolicySize: S.optional(S.Number),
+    Subject: S.optional(S.String),
+    SubjectType: S.optional(S.String),
+    Issuer: S.optional(S.String),
+    Audience: S.optional(S.String),
+    NameQualifier: S.optional(S.String),
+    SourceIdentity: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "AssumeRoleWithSAMLResponse",
 }) as any as S.Schema<AssumeRoleWithSAMLResponse>;
+export type ClientTokenType = string | redacted.Redacted<string>;
+export type UrlType = string;
 export interface AssumeRoleWithWebIdentityRequest {
   RoleArn: string;
   RoleSessionName: string;
@@ -412,30 +509,30 @@ export interface AssumeRoleWithWebIdentityRequest {
   Policy?: string;
   DurationSeconds?: number;
 }
-export const AssumeRoleWithWebIdentityRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      RoleArn: S.String,
-      RoleSessionName: S.String,
-      WebIdentityToken: SensitiveString,
-      ProviderId: S.optional(S.String),
-      PolicyArns: S.optional(PolicyDescriptorListType),
-      Policy: S.optional(S.String),
-      DurationSeconds: S.optional(S.Number),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const AssumeRoleWithWebIdentityRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    RoleArn: S.String,
+    RoleSessionName: S.String,
+    WebIdentityToken: SensitiveString,
+    ProviderId: S.optional(S.String),
+    PolicyArns: S.optional(PolicyDescriptorListType),
+    Policy: S.optional(S.String),
+    DurationSeconds: S.optional(S.Number),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "AssumeRoleWithWebIdentityRequest",
-  }) as any as S.Schema<AssumeRoleWithWebIdentityRequest>;
+  ),
+).annotate({
+  identifier: "AssumeRoleWithWebIdentityRequest",
+}) as any as S.Schema<AssumeRoleWithWebIdentityRequest>;
+export type WebIdentitySubjectType = string;
 export interface AssumeRoleWithWebIdentityResponse {
   Credentials?: Credentials;
   SubjectFromWebIdentityToken?: string;
@@ -445,26 +542,27 @@ export interface AssumeRoleWithWebIdentityResponse {
   Audience?: string;
   SourceIdentity?: string;
 }
-export const AssumeRoleWithWebIdentityResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      Credentials: S.optional(Credentials),
-      SubjectFromWebIdentityToken: S.optional(S.String),
-      AssumedRoleUser: S.optional(AssumedRoleUser),
-      PackedPolicySize: S.optional(S.Number),
-      Provider: S.optional(S.String),
-      Audience: S.optional(S.String),
-      SourceIdentity: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "AssumeRoleWithWebIdentityResponse",
-  }) as any as S.Schema<AssumeRoleWithWebIdentityResponse>;
+export const AssumeRoleWithWebIdentityResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Credentials: S.optional(Credentials),
+    SubjectFromWebIdentityToken: S.optional(S.String),
+    AssumedRoleUser: S.optional(AssumedRoleUser),
+    PackedPolicySize: S.optional(S.Number),
+    Provider: S.optional(S.String),
+    Audience: S.optional(S.String),
+    SourceIdentity: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "AssumeRoleWithWebIdentityResponse",
+}) as any as S.Schema<AssumeRoleWithWebIdentityResponse>;
+export type TargetPrincipalType = string;
+export type RootDurationSecondsType = number;
 export interface AssumeRootRequest {
   TargetPrincipal: string;
   TaskPolicyArn: PolicyDescriptorType;
   DurationSeconds?: number;
 }
-export const AssumeRootRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AssumeRootRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     TargetPrincipal: S.String,
     TaskPolicyArn: PolicyDescriptorType,
@@ -487,7 +585,7 @@ export interface AssumeRootResponse {
   Credentials?: Credentials;
   SourceIdentity?: string;
 }
-export const AssumeRootResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AssumeRootResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Credentials: S.optional(Credentials),
     SourceIdentity: S.optional(S.String),
@@ -495,127 +593,127 @@ export const AssumeRootResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "AssumeRootResponse",
 }) as any as S.Schema<AssumeRootResponse>;
+export type EncodedMessageType = string;
 export interface DecodeAuthorizationMessageRequest {
   EncodedMessage: string;
 }
-export const DecodeAuthorizationMessageRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ EncodedMessage: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DecodeAuthorizationMessageRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ EncodedMessage: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "DecodeAuthorizationMessageRequest",
-  }) as any as S.Schema<DecodeAuthorizationMessageRequest>;
+  ),
+).annotate({
+  identifier: "DecodeAuthorizationMessageRequest",
+}) as any as S.Schema<DecodeAuthorizationMessageRequest>;
+export type DecodedMessageType = string;
 export interface DecodeAuthorizationMessageResponse {
   DecodedMessage?: string;
 }
-export const DecodeAuthorizationMessageResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ DecodedMessage: S.optional(S.String) }).pipe(ns),
-  ).annotate({
-    identifier: "DecodeAuthorizationMessageResponse",
-  }) as any as S.Schema<DecodeAuthorizationMessageResponse>;
+export const DecodeAuthorizationMessageResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ DecodedMessage: S.optional(S.String) }).pipe(ns),
+).annotate({
+  identifier: "DecodeAuthorizationMessageResponse",
+}) as any as S.Schema<DecodeAuthorizationMessageResponse>;
 export interface GetAccessKeyInfoRequest {
   AccessKeyId: string;
 }
-export const GetAccessKeyInfoRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ AccessKeyId: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetAccessKeyInfoRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ AccessKeyId: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetAccessKeyInfoRequest",
 }) as any as S.Schema<GetAccessKeyInfoRequest>;
+export type AccountType = string;
 export interface GetAccessKeyInfoResponse {
   Account?: string;
 }
-export const GetAccessKeyInfoResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ Account: S.optional(S.String) }).pipe(ns),
+export const GetAccessKeyInfoResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Account: S.optional(S.String) }).pipe(ns),
 ).annotate({
   identifier: "GetAccessKeyInfoResponse",
 }) as any as S.Schema<GetAccessKeyInfoResponse>;
 export interface GetCallerIdentityRequest {}
-export const GetCallerIdentityRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({}).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetCallerIdentityRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetCallerIdentityRequest",
 }) as any as S.Schema<GetCallerIdentityRequest>;
+export type UserIdType = string;
 export interface GetCallerIdentityResponse {
   UserId?: string;
   Account?: string;
   Arn?: string;
 }
-export const GetCallerIdentityResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      UserId: S.optional(S.String),
-      Account: S.optional(S.String),
-      Arn: S.optional(S.String),
-    }).pipe(ns),
+export const GetCallerIdentityResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    UserId: S.optional(S.String),
+    Account: S.optional(S.String),
+    Arn: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "GetCallerIdentityResponse",
 }) as any as S.Schema<GetCallerIdentityResponse>;
+export type TradeInTokenType = string | redacted.Redacted<string>;
 export interface GetDelegatedAccessTokenRequest {
   TradeInToken: string | redacted.Redacted<string>;
 }
-export const GetDelegatedAccessTokenRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ TradeInToken: SensitiveString }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetDelegatedAccessTokenRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ TradeInToken: SensitiveString }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "GetDelegatedAccessTokenRequest",
-  }) as any as S.Schema<GetDelegatedAccessTokenRequest>;
+  ),
+).annotate({
+  identifier: "GetDelegatedAccessTokenRequest",
+}) as any as S.Schema<GetDelegatedAccessTokenRequest>;
 export interface GetDelegatedAccessTokenResponse {
   Credentials?: Credentials;
   PackedPolicySize?: number;
   AssumedPrincipal?: string;
 }
-export const GetDelegatedAccessTokenResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      Credentials: S.optional(Credentials),
-      PackedPolicySize: S.optional(S.Number),
-      AssumedPrincipal: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "GetDelegatedAccessTokenResponse",
-  }) as any as S.Schema<GetDelegatedAccessTokenResponse>;
+export const GetDelegatedAccessTokenResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Credentials: S.optional(Credentials),
+    PackedPolicySize: S.optional(S.Number),
+    AssumedPrincipal: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "GetDelegatedAccessTokenResponse",
+}) as any as S.Schema<GetDelegatedAccessTokenResponse>;
+export type UserNameType = string;
+export type DurationSecondsType = number;
 export interface GetFederationTokenRequest {
   Name: string;
   Policy?: string;
@@ -623,33 +721,33 @@ export interface GetFederationTokenRequest {
   DurationSeconds?: number;
   Tags?: Tag[];
 }
-export const GetFederationTokenRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Name: S.String,
-      Policy: S.optional(S.String),
-      PolicyArns: S.optional(PolicyDescriptorListType),
-      DurationSeconds: S.optional(S.Number),
-      Tags: S.optional(TagListType),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetFederationTokenRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Name: S.String,
+    Policy: S.optional(S.String),
+    PolicyArns: S.optional(PolicyDescriptorListType),
+    DurationSeconds: S.optional(S.Number),
+    Tags: S.optional(TagListType),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetFederationTokenRequest",
 }) as any as S.Schema<GetFederationTokenRequest>;
+export type FederatedIdType = string;
 export interface FederatedUser {
   FederatedUserId: string;
   Arn: string;
 }
-export const FederatedUser = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const FederatedUser = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ FederatedUserId: S.String, Arn: S.String }),
 ).annotate({ identifier: "FederatedUser" }) as any as S.Schema<FederatedUser>;
 export interface GetFederationTokenResponse {
@@ -657,13 +755,12 @@ export interface GetFederationTokenResponse {
   FederatedUser?: FederatedUser;
   PackedPolicySize?: number;
 }
-export const GetFederationTokenResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Credentials: S.optional(Credentials),
-      FederatedUser: S.optional(FederatedUser),
-      PackedPolicySize: S.optional(S.Number),
-    }).pipe(ns),
+export const GetFederationTokenResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Credentials: S.optional(Credentials),
+    FederatedUser: S.optional(FederatedUser),
+    PackedPolicySize: S.optional(S.Number),
+  }).pipe(ns),
 ).annotate({
   identifier: "GetFederationTokenResponse",
 }) as any as S.Schema<GetFederationTokenResponse>;
@@ -672,158 +769,91 @@ export interface GetSessionTokenRequest {
   SerialNumber?: string;
   TokenCode?: string;
 }
-export const GetSessionTokenRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      DurationSeconds: S.optional(S.Number),
-      SerialNumber: S.optional(S.String),
-      TokenCode: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetSessionTokenRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    DurationSeconds: S.optional(S.Number),
+    SerialNumber: S.optional(S.String),
+    TokenCode: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetSessionTokenRequest",
 }) as any as S.Schema<GetSessionTokenRequest>;
 export interface GetSessionTokenResponse {
   Credentials?: Credentials;
 }
-export const GetSessionTokenResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ Credentials: S.optional(Credentials) }).pipe(ns),
+export const GetSessionTokenResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Credentials: S.optional(Credentials) }).pipe(ns),
 ).annotate({
   identifier: "GetSessionTokenResponse",
 }) as any as S.Schema<GetSessionTokenResponse>;
+export type WebIdentityTokenAudienceStringType = string;
 export type WebIdentityTokenAudienceListType = string[];
-export const WebIdentityTokenAudienceListType =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const WebIdentityTokenAudienceListType = /*@__PURE__*/ S.Array(S.String);
+export type WebIdentityTokenDurationSecondsType = number;
+export type JwtAlgorithmType = string;
 export interface GetWebIdentityTokenRequest {
   Audience: string[];
   DurationSeconds?: number;
   SigningAlgorithm: string;
   Tags?: Tag[];
 }
-export const GetWebIdentityTokenRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Audience: WebIdentityTokenAudienceListType,
-      DurationSeconds: S.optional(S.Number),
-      SigningAlgorithm: S.String,
-      Tags: S.optional(TagListType),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetWebIdentityTokenRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Audience: WebIdentityTokenAudienceListType,
+    DurationSeconds: S.optional(S.Number),
+    SigningAlgorithm: S.String,
+    Tags: S.optional(TagListType),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetWebIdentityTokenRequest",
 }) as any as S.Schema<GetWebIdentityTokenRequest>;
+export type WebIdentityTokenType = string | redacted.Redacted<string>;
 export interface GetWebIdentityTokenResponse {
   WebIdentityToken?: string | redacted.Redacted<string>;
   Expiration?: Date;
 }
-export const GetWebIdentityTokenResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      WebIdentityToken: S.optional(SensitiveString),
-      Expiration: S.optional(
-        T.DateFromString.pipe(T.TimestampFormat("date-time")),
-      ),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "GetWebIdentityTokenResponse",
-  }) as any as S.Schema<GetWebIdentityTokenResponse>;
-
-//# Errors
-export class ExpiredTokenException extends S.TaggedErrorClass<ExpiredTokenException>()(
-  "ExpiredTokenException",
-  { message: S.optional(S.String) },
-  T.AwsQueryError({ code: "ExpiredTokenException", httpResponseCode: 400 }),
-).pipe(C.withBadRequestError) {}
-export class MalformedPolicyDocumentException extends S.TaggedErrorClass<MalformedPolicyDocumentException>()(
-  "MalformedPolicyDocumentException",
-  { message: S.optional(S.String) },
-  T.AwsQueryError({ code: "MalformedPolicyDocument", httpResponseCode: 400 }),
-).pipe(C.withBadRequestError) {}
-export class PackedPolicyTooLargeException extends S.TaggedErrorClass<PackedPolicyTooLargeException>()(
-  "PackedPolicyTooLargeException",
-  { message: S.optional(S.String) },
-  T.AwsQueryError({ code: "PackedPolicyTooLarge", httpResponseCode: 400 }),
-).pipe(C.withBadRequestError) {}
-export class RegionDisabledException extends S.TaggedErrorClass<RegionDisabledException>()(
-  "RegionDisabledException",
-  { message: S.optional(S.String) },
-  T.AwsQueryError({ code: "RegionDisabledException", httpResponseCode: 403 }),
-).pipe(C.withAuthError) {}
-export class IDPRejectedClaimException extends S.TaggedErrorClass<IDPRejectedClaimException>()(
-  "IDPRejectedClaimException",
-  { message: S.optional(S.String) },
-  T.AwsQueryError({ code: "IDPRejectedClaim", httpResponseCode: 403 }),
-).pipe(C.withAuthError) {}
-export class InvalidIdentityTokenException extends S.TaggedErrorClass<InvalidIdentityTokenException>()(
-  "InvalidIdentityTokenException",
-  { message: S.optional(S.String) },
-  T.AwsQueryError({ code: "InvalidIdentityToken", httpResponseCode: 400 }),
-).pipe(C.withBadRequestError) {}
-export class IDPCommunicationErrorException extends S.TaggedErrorClass<IDPCommunicationErrorException>()(
-  "IDPCommunicationErrorException",
-  { message: S.optional(S.String) },
-  T.AwsQueryError({ code: "IDPCommunicationError", httpResponseCode: 400 }),
-).pipe(C.withBadRequestError) {}
-export class InvalidAuthorizationMessageException extends S.TaggedErrorClass<InvalidAuthorizationMessageException>()(
-  "InvalidAuthorizationMessageException",
-  { message: S.optional(S.String) },
-  T.AwsQueryError({
-    code: "InvalidAuthorizationMessageException",
-    httpResponseCode: 400,
-  }),
-).pipe(C.withBadRequestError) {}
-export class ExpiredTradeInTokenException extends S.TaggedErrorClass<ExpiredTradeInTokenException>()(
-  "ExpiredTradeInTokenException",
-  { message: S.optional(S.String) },
-  T.AwsQueryError({
-    code: "ExpiredTradeInTokenException",
-    httpResponseCode: 400,
-  }),
-).pipe(C.withBadRequestError) {}
-export class JWTPayloadSizeExceededException extends S.TaggedErrorClass<JWTPayloadSizeExceededException>()(
-  "JWTPayloadSizeExceededException",
-  { message: S.optional(S.String) },
-  T.AwsQueryError({
-    code: "JWTPayloadSizeExceededException",
-    httpResponseCode: 400,
-  }),
-).pipe(C.withBadRequestError) {}
-export class OutboundWebIdentityFederationDisabledException extends S.TaggedErrorClass<OutboundWebIdentityFederationDisabledException>()(
-  "OutboundWebIdentityFederationDisabledException",
-  { message: S.optional(S.String) },
-  T.AwsQueryError({
-    code: "OutboundWebIdentityFederationDisabledException",
-    httpResponseCode: 403,
-  }),
-).pipe(C.withAuthError) {}
-export class SessionDurationEscalationException extends S.TaggedErrorClass<SessionDurationEscalationException>()(
-  "SessionDurationEscalationException",
-  { message: S.optional(S.String) },
-  T.AwsQueryError({
-    code: "SessionDurationEscalationException",
-    httpResponseCode: 403,
-  }),
-).pipe(C.withAuthError) {}
-
-//# Operations
+export const GetWebIdentityTokenResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    WebIdentityToken: S.optional(SensitiveString),
+    Expiration: S.optional(
+      T.DateFromString.pipe(T.TimestampFormat("date-time")),
+    ),
+  }).pipe(ns),
+).annotate({
+  identifier: "GetWebIdentityTokenResponse",
+}) as any as S.Schema<GetWebIdentityTokenResponse>;
+export type ExpiredIdentityTokenMessage = string;
+export type MalformedPolicyDocumentMessage = string;
+export type PackedPolicyTooLargeMessage = string;
+export type RegionDisabledMessage = string;
+export type IdpRejectedClaimMessage = string;
+export type InvalidIdentityTokenMessage = string;
+export type IdpCommunicationErrorMessage = string;
+export type InvalidAuthorizationMessage = string;
+export type ExpiredTradeInTokenExceptionMessage = string;
+export type JWTPayloadSizeExceededException2 = string;
+export type OutboundWebIdentityFederationDisabledException2 = string;
+export type SessionDurationEscalationException2 = string;
 export type AssumeRoleError =
   | ExpiredTokenException
   | MalformedPolicyDocumentException
@@ -929,8 +959,8 @@ export const assumeRole: API.OperationMethod<
   AssumeRoleRequest,
   AssumeRoleResponse,
   AssumeRoleError,
-  Creds | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Creds | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: AssumeRoleRequest,
   output: AssumeRoleResponse,
   errors: [
@@ -939,7 +969,11 @@ export const assumeRole: API.OperationMethod<
     PackedPolicyTooLargeException,
     RegionDisabledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "AssumeRole",
 }));
+
 export type AssumeRoleWithSAMLError =
   | ExpiredTokenException
   | IDPRejectedClaimException
@@ -1078,8 +1112,8 @@ export const assumeRoleWithSAML: API.OperationMethod<
   AssumeRoleWithSAMLRequest,
   AssumeRoleWithSAMLResponse,
   AssumeRoleWithSAMLError,
-  Creds | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Creds | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: AssumeRoleWithSAMLRequest,
   output: AssumeRoleWithSAMLResponse,
   errors: [
@@ -1090,7 +1124,11 @@ export const assumeRoleWithSAML: API.OperationMethod<
     PackedPolicyTooLargeException,
     RegionDisabledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "AssumeRoleWithSAML",
 }));
+
 export type AssumeRoleWithWebIdentityError =
   | ExpiredTokenException
   | IDPCommunicationErrorException
@@ -1224,8 +1262,8 @@ export const assumeRoleWithWebIdentity: API.OperationMethod<
   AssumeRoleWithWebIdentityRequest,
   AssumeRoleWithWebIdentityResponse,
   AssumeRoleWithWebIdentityError,
-  Creds | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Creds | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: AssumeRoleWithWebIdentityRequest,
   output: AssumeRoleWithWebIdentityResponse,
   errors: [
@@ -1237,7 +1275,11 @@ export const assumeRoleWithWebIdentity: API.OperationMethod<
     PackedPolicyTooLargeException,
     RegionDisabledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "AssumeRoleWithWebIdentity",
 }));
+
 export type AssumeRootError =
   | ExpiredTokenException
   | RegionDisabledException
@@ -1269,12 +1311,16 @@ export const assumeRoot: API.OperationMethod<
   AssumeRootRequest,
   AssumeRootResponse,
   AssumeRootError,
-  Creds | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Creds | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: AssumeRootRequest,
   output: AssumeRootResponse,
   errors: [ExpiredTokenException, RegionDisabledException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "AssumeRoot",
 }));
+
 export type DecodeAuthorizationMessageError =
   | InvalidAuthorizationMessageException
   | CommonErrors;
@@ -1315,12 +1361,16 @@ export const decodeAuthorizationMessage: API.OperationMethod<
   DecodeAuthorizationMessageRequest,
   DecodeAuthorizationMessageResponse,
   DecodeAuthorizationMessageError,
-  Creds | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Creds | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DecodeAuthorizationMessageRequest,
   output: DecodeAuthorizationMessageResponse,
   errors: [InvalidAuthorizationMessageException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DecodeAuthorizationMessage",
 }));
+
 export type GetAccessKeyInfoError = CommonErrors;
 /**
  * Returns the account identifier for the specified access key ID.
@@ -1348,12 +1398,16 @@ export const getAccessKeyInfo: API.OperationMethod<
   GetAccessKeyInfoRequest,
   GetAccessKeyInfoResponse,
   GetAccessKeyInfoError,
-  Creds | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Creds | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetAccessKeyInfoRequest,
   output: GetAccessKeyInfoResponse,
   errors: [],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetAccessKeyInfo",
 }));
+
 export type GetCallerIdentityError = CommonErrors;
 /**
  * Returns details about the IAM user or role whose credentials are used to
@@ -1370,12 +1424,16 @@ export const getCallerIdentity: API.OperationMethod<
   GetCallerIdentityRequest,
   GetCallerIdentityResponse,
   GetCallerIdentityError,
-  Creds | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Creds | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetCallerIdentityRequest,
   output: GetCallerIdentityResponse,
   errors: [],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetCallerIdentity",
 }));
+
 export type GetDelegatedAccessTokenError =
   | ExpiredTradeInTokenException
   | PackedPolicyTooLargeException
@@ -1391,8 +1449,8 @@ export const getDelegatedAccessToken: API.OperationMethod<
   GetDelegatedAccessTokenRequest,
   GetDelegatedAccessTokenResponse,
   GetDelegatedAccessTokenError,
-  Creds | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Creds | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetDelegatedAccessTokenRequest,
   output: GetDelegatedAccessTokenResponse,
   errors: [
@@ -1400,7 +1458,11 @@ export const getDelegatedAccessToken: API.OperationMethod<
     PackedPolicyTooLargeException,
     RegionDisabledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetDelegatedAccessToken",
 }));
+
 export type GetFederationTokenError =
   | MalformedPolicyDocumentException
   | PackedPolicyTooLargeException
@@ -1503,8 +1565,8 @@ export const getFederationToken: API.OperationMethod<
   GetFederationTokenRequest,
   GetFederationTokenResponse,
   GetFederationTokenError,
-  Creds | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Creds | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetFederationTokenRequest,
   output: GetFederationTokenResponse,
   errors: [
@@ -1512,7 +1574,11 @@ export const getFederationToken: API.OperationMethod<
     PackedPolicyTooLargeException,
     RegionDisabledException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetFederationToken",
 }));
+
 export type GetSessionTokenError = RegionDisabledException | CommonErrors;
 /**
  * Returns a set of temporary credentials for an Amazon Web Services account or IAM user.
@@ -1575,12 +1641,16 @@ export const getSessionToken: API.OperationMethod<
   GetSessionTokenRequest,
   GetSessionTokenResponse,
   GetSessionTokenError,
-  Creds | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Creds | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetSessionTokenRequest,
   output: GetSessionTokenResponse,
   errors: [RegionDisabledException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetSessionToken",
 }));
+
 export type GetWebIdentityTokenError =
   | JWTPayloadSizeExceededException
   | OutboundWebIdentityFederationDisabledException
@@ -1595,8 +1665,8 @@ export const getWebIdentityToken: API.OperationMethod<
   GetWebIdentityTokenRequest,
   GetWebIdentityTokenResponse,
   GetWebIdentityTokenError,
-  Creds | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Creds | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetWebIdentityTokenRequest,
   output: GetWebIdentityTokenResponse,
   errors: [
@@ -1604,4 +1674,7 @@ export const getWebIdentityToken: API.OperationMethod<
     OutboundWebIdentityFederationDisabledException,
     SessionDurationEscalationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetWebIdentityToken",
 }));

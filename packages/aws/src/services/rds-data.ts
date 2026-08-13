@@ -1,11 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "RDS Data",
   serviceShapeName: "RdsDataService",
@@ -82,7 +83,111 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class BadRequestException
+  extends /*@__PURE__*/ S.TaggedError<BadRequestException>()(
+    "BadRequestException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class DatabaseErrorException
+  extends /*@__PURE__*/ S.TaggedError<DatabaseErrorException>()(
+    "DatabaseErrorException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class DatabaseNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<DatabaseNotFoundException>()(
+    "DatabaseNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class DatabaseResumingException
+  extends /*@__PURE__*/ S.TaggedError<DatabaseResumingException>()(
+    "DatabaseResumingException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class DatabaseUnavailableException
+  extends /*@__PURE__*/ S.TaggedError<DatabaseUnavailableException>()(
+    "DatabaseUnavailableException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(504),
+  ).pipe(C.withTimeoutError) {}
+export class ForbiddenException
+  extends /*@__PURE__*/ S.TaggedError<ForbiddenException>()(
+    "ForbiddenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class HttpEndpointNotEnabledException
+  extends /*@__PURE__*/ S.TaggedError<HttpEndpointNotEnabledException>()(
+    "HttpEndpointNotEnabledException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InternalServerErrorException
+  extends /*@__PURE__*/ S.TaggedError<InternalServerErrorException>()(
+    "InternalServerErrorException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class InvalidResourceStateException
+  extends /*@__PURE__*/ S.TaggedError<InvalidResourceStateException>()(
+    "InvalidResourceStateException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidSecretException
+  extends /*@__PURE__*/ S.TaggedError<InvalidSecretException>()(
+    "InvalidSecretException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class NotFoundException
+  extends /*@__PURE__*/ S.TaggedError<NotFoundException>()(
+    "NotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class SecretsErrorException
+  extends /*@__PURE__*/ S.TaggedError<SecretsErrorException>()(
+    "SecretsErrorException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class ServiceUnavailableError
+  extends /*@__PURE__*/ S.TaggedError<ServiceUnavailableError>()(
+    "ServiceUnavailableError",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(503),
+  ).pipe(C.withServerError) {}
+export class StatementTimeoutException
+  extends /*@__PURE__*/ S.TaggedError<StatementTimeoutException>()(
+    "StatementTimeoutException",
+    {
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+      dbConnectionId: S.optional(S.Number),
+    },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class TransactionNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<TransactionNotFoundException>()(
+    "TransactionNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class UnsupportedResultException
+  extends /*@__PURE__*/ S.TaggedError<UnsupportedResultException>()(
+    "UnsupportedResultException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
 export type Arn = string;
 export type SqlStatement = string;
 export type DbName = string;
@@ -90,31 +195,18 @@ export type ParameterName = string;
 export type BoxedBoolean = boolean;
 export type BoxedLong = number;
 export type BoxedDouble = number;
-export type TypeHint = string;
-export type Id = string;
-export type ErrorMessage = string;
-export type TransactionStatus = string;
-export type BoxedInteger = number;
-export type BoxedFloat = number;
-export type RecordsUpdated = number;
-export type DecimalReturnType = string;
-export type LongReturnType = string;
-export type RecordsFormatType = string;
-export type FormattedSqlRecords = string;
-
-//# Schemas
 export type BooleanArray = boolean[];
-export const BooleanArray = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.Boolean);
+export const BooleanArray = /*@__PURE__*/ S.Array(S.Boolean).pipe(T.Sparse());
 export type LongArray = number[];
-export const LongArray = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.Number);
+export const LongArray = /*@__PURE__*/ S.Array(S.Number).pipe(T.Sparse());
 export type DoubleArray = number[];
-export const DoubleArray = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.Number);
+export const DoubleArray = /*@__PURE__*/ S.Array(S.Number).pipe(T.Sparse());
 export type StringArray = string[];
-export const StringArray = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const StringArray = /*@__PURE__*/ S.Array(S.String).pipe(T.Sparse());
 export type ArrayOfArray = ArrayValue[];
-export const ArrayOfArray = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const ArrayOfArray = /*@__PURE__*/ S.Array(
   S.suspend(() => ArrayValue).annotate({ identifier: "ArrayValue" }),
-) as any as S.Schema<ArrayOfArray>;
+).pipe(T.Sparse()) as any as S.Schema<ArrayOfArray>;
 export type ArrayValue =
   | {
       booleanValues: boolean[];
@@ -151,7 +243,7 @@ export type ArrayValue =
       stringValues?: never;
       arrayValues: ArrayValue[];
     };
-export const ArrayValue = /*@__PURE__*/ /*#__PURE__*/ S.Union([
+export const ArrayValue = /*@__PURE__*/ S.Union([
   S.Struct({ booleanValues: BooleanArray }),
   S.Struct({ longValues: LongArray }),
   S.Struct({ doubleValues: DoubleArray }),
@@ -226,7 +318,7 @@ export type Field =
       blobValue?: never;
       arrayValue: ArrayValue;
     };
-export const Field = /*@__PURE__*/ /*#__PURE__*/ S.Union([
+export const Field = /*@__PURE__*/ S.Union([
   S.Struct({ isNull: S.Boolean }),
   S.Struct({ booleanValue: S.Boolean }),
   S.Struct({ longValue: S.Number }),
@@ -235,24 +327,33 @@ export const Field = /*@__PURE__*/ /*#__PURE__*/ S.Union([
   S.Struct({ blobValue: T.Blob }),
   S.Struct({ arrayValue: ArrayValue }),
 ]);
+export type TypeHint =
+  | "JSON"
+  | "UUID"
+  | "TIMESTAMP"
+  | "DATE"
+  | "TIME"
+  | "DECIMAL"
+  | (string & {});
+export const TypeHint = /*@__PURE__*/ S.String;
+
 export interface SqlParameter {
   name?: string;
   value?: Field;
-  typeHint?: string;
+  typeHint?: TypeHint;
 }
-export const SqlParameter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SqlParameter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     name: S.optional(S.String),
     value: S.optional(Field),
-    typeHint: S.optional(S.String),
+    typeHint: S.optional(TypeHint),
   }),
 ).annotate({ identifier: "SqlParameter" }) as any as S.Schema<SqlParameter>;
 export type SqlParametersList = SqlParameter[];
-export const SqlParametersList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(SqlParameter);
+export const SqlParametersList = /*@__PURE__*/ S.Array(SqlParameter);
 export type SqlParameterSets = SqlParameter[][];
-export const SqlParameterSets =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(SqlParametersList);
+export const SqlParameterSets = /*@__PURE__*/ S.Array(SqlParametersList);
+export type Id = string;
 export interface BatchExecuteStatementRequest {
   resourceArn: string;
   secretArn: string;
@@ -262,79 +363,76 @@ export interface BatchExecuteStatementRequest {
   parameterSets?: SqlParameter[][];
   transactionId?: string;
 }
-export const BatchExecuteStatementRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      resourceArn: S.String,
-      secretArn: S.String,
-      sql: S.String,
-      database: S.optional(S.String),
-      schema: S.optional(S.String),
-      parameterSets: S.optional(SqlParameterSets),
-      transactionId: S.optional(S.String),
-    }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/BatchExecute" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const BatchExecuteStatementRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    resourceArn: S.String,
+    secretArn: S.String,
+    sql: S.String,
+    database: S.optional(S.String),
+    schema: S.optional(S.String),
+    parameterSets: S.optional(SqlParameterSets),
+    transactionId: S.optional(S.String),
+  }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/BatchExecute" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "BatchExecuteStatementRequest",
-  }) as any as S.Schema<BatchExecuteStatementRequest>;
+  ),
+).annotate({
+  identifier: "BatchExecuteStatementRequest",
+}) as any as S.Schema<BatchExecuteStatementRequest>;
 export type FieldList = Field[];
-export const FieldList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Field);
+export const FieldList = /*@__PURE__*/ S.Array(Field);
 export interface UpdateResult {
   generatedFields?: Field[];
 }
-export const UpdateResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ generatedFields: S.optional(FieldList) }),
 ).annotate({ identifier: "UpdateResult" }) as any as S.Schema<UpdateResult>;
 export type UpdateResults = UpdateResult[];
-export const UpdateResults = /*@__PURE__*/ /*#__PURE__*/ S.Array(UpdateResult);
+export const UpdateResults = /*@__PURE__*/ S.Array(UpdateResult);
 export interface BatchExecuteStatementResponse {
   updateResults?: UpdateResult[];
 }
-export const BatchExecuteStatementResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ updateResults: S.optional(UpdateResults) }),
-  ).annotate({
-    identifier: "BatchExecuteStatementResponse",
-  }) as any as S.Schema<BatchExecuteStatementResponse>;
+export const BatchExecuteStatementResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ updateResults: S.optional(UpdateResults) }),
+).annotate({
+  identifier: "BatchExecuteStatementResponse",
+}) as any as S.Schema<BatchExecuteStatementResponse>;
 export interface BeginTransactionRequest {
   resourceArn: string;
   secretArn: string;
   database?: string;
   schema?: string;
 }
-export const BeginTransactionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      resourceArn: S.String,
-      secretArn: S.String,
-      database: S.optional(S.String),
-      schema: S.optional(S.String),
-    }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/BeginTransaction" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const BeginTransactionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    resourceArn: S.String,
+    secretArn: S.String,
+    database: S.optional(S.String),
+    schema: S.optional(S.String),
+  }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/BeginTransaction" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "BeginTransactionRequest",
 }) as any as S.Schema<BeginTransactionRequest>;
 export interface BeginTransactionResponse {
   transactionId?: string;
 }
-export const BeginTransactionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ transactionId: S.optional(S.String) }),
+export const BeginTransactionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ transactionId: S.optional(S.String) }),
 ).annotate({
   identifier: "BeginTransactionResponse",
 }) as any as S.Schema<BeginTransactionResponse>;
@@ -343,30 +441,30 @@ export interface CommitTransactionRequest {
   secretArn: string;
   transactionId: string;
 }
-export const CommitTransactionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      resourceArn: S.String,
-      secretArn: S.String,
-      transactionId: S.String,
-    }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/CommitTransaction" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CommitTransactionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    resourceArn: S.String,
+    secretArn: S.String,
+    transactionId: S.String,
+  }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/CommitTransaction" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "CommitTransactionRequest",
 }) as any as S.Schema<CommitTransactionRequest>;
+export type TransactionStatus = string;
 export interface CommitTransactionResponse {
   transactionStatus?: string;
 }
-export const CommitTransactionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ transactionStatus: S.optional(S.String) }),
+export const CommitTransactionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ transactionStatus: S.optional(S.String) }),
 ).annotate({
   identifier: "CommitTransactionResponse",
 }) as any as S.Schema<CommitTransactionResponse>;
@@ -377,7 +475,7 @@ export interface ExecuteSqlRequest {
   database?: string;
   schema?: string;
 }
-export const ExecuteSqlRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ExecuteSqlRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     dbClusterOrInstanceArn: S.String,
     awsSecretStoreArn: S.String,
@@ -413,7 +511,7 @@ export interface ColumnMetadata {
   scale?: number;
   arrayBaseColumnType?: number;
 }
-export const ColumnMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ColumnMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     name: S.optional(S.String),
     type: S.optional(S.Number),
@@ -432,12 +530,12 @@ export const ColumnMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "ColumnMetadata" }) as any as S.Schema<ColumnMetadata>;
 export type Metadata = ColumnMetadata[];
-export const Metadata = /*@__PURE__*/ /*#__PURE__*/ S.Array(ColumnMetadata);
+export const Metadata = /*@__PURE__*/ S.Array(ColumnMetadata);
 export interface ResultSetMetadata {
   columnCount?: number;
   columnMetadata?: ColumnMetadata[];
 }
-export const ResultSetMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResultSetMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     columnCount: S.optional(S.Number),
     columnMetadata: S.optional(Metadata),
@@ -445,14 +543,16 @@ export const ResultSetMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ResultSetMetadata",
 }) as any as S.Schema<ResultSetMetadata>;
+export type BoxedInteger = number;
+export type BoxedFloat = number;
 export type ArrayValueList = Value[];
-export const ArrayValueList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const ArrayValueList = /*@__PURE__*/ S.Array(
   S.suspend(() => Value).annotate({ identifier: "Value" }),
 ) as any as S.Schema<ArrayValueList>;
 export interface StructValue {
   attributes?: Value[];
 }
-export const StructValue = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StructValue = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     attributes: S.optional(
       S.suspend(() => ArrayValueList).annotate({
@@ -582,7 +682,7 @@ export type Value =
       arrayValues?: never;
       structValue: StructValue;
     };
-export const Value = /*@__PURE__*/ /*#__PURE__*/ S.Union([
+export const Value = /*@__PURE__*/ S.Union([
   S.Struct({ isNull: S.Boolean }),
   S.Struct({ bitValue: S.Boolean }),
   S.Struct({ bigIntValue: S.Number }),
@@ -603,32 +703,33 @@ export const Value = /*@__PURE__*/ /*#__PURE__*/ S.Union([
   }),
 ]) as any as S.Schema<Value>;
 export type Row = Value[];
-export const Row = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const Row = /*@__PURE__*/ S.Array(
   S.suspend(() => Value).annotate({ identifier: "Value" }),
 );
 export interface Record {
   values?: Value[];
 }
-export const Record = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Record = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ values: S.optional(Row) }),
 ).annotate({ identifier: "Record" }) as any as S.Schema<Record>;
 export type Records = Record[];
-export const Records = /*@__PURE__*/ /*#__PURE__*/ S.Array(Record);
+export const Records = /*@__PURE__*/ S.Array(Record);
 export interface ResultFrame {
   resultSetMetadata?: ResultSetMetadata;
   records?: Record[];
 }
-export const ResultFrame = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResultFrame = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     resultSetMetadata: S.optional(ResultSetMetadata),
     records: S.optional(Records),
   }),
 ).annotate({ identifier: "ResultFrame" }) as any as S.Schema<ResultFrame>;
+export type RecordsUpdated = number;
 export interface SqlStatementResult {
   resultFrame?: ResultFrame;
   numberOfRecordsUpdated?: number;
 }
-export const SqlStatementResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SqlStatementResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     resultFrame: S.optional(ResultFrame),
     numberOfRecordsUpdated: S.optional(S.Number),
@@ -637,28 +738,36 @@ export const SqlStatementResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "SqlStatementResult",
 }) as any as S.Schema<SqlStatementResult>;
 export type SqlStatementResults = SqlStatementResult[];
-export const SqlStatementResults =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(SqlStatementResult);
+export const SqlStatementResults = /*@__PURE__*/ S.Array(SqlStatementResult);
 export interface ExecuteSqlResponse {
   sqlStatementResults?: SqlStatementResult[];
 }
-export const ExecuteSqlResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ExecuteSqlResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ sqlStatementResults: S.optional(SqlStatementResults) }),
 ).annotate({
   identifier: "ExecuteSqlResponse",
 }) as any as S.Schema<ExecuteSqlResponse>;
+export type DecimalReturnType = "STRING" | "DOUBLE_OR_LONG" | (string & {});
+export const DecimalReturnType = /*@__PURE__*/ S.String;
+
+export type LongReturnType = "STRING" | "LONG" | (string & {});
+export const LongReturnType = /*@__PURE__*/ S.String;
+
 export interface ResultSetOptions {
-  decimalReturnType?: string;
-  longReturnType?: string;
+  decimalReturnType?: DecimalReturnType;
+  longReturnType?: LongReturnType;
 }
-export const ResultSetOptions = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResultSetOptions = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    decimalReturnType: S.optional(S.String),
-    longReturnType: S.optional(S.String),
+    decimalReturnType: S.optional(DecimalReturnType),
+    longReturnType: S.optional(LongReturnType),
   }),
 ).annotate({
   identifier: "ResultSetOptions",
 }) as any as S.Schema<ResultSetOptions>;
+export type RecordsFormatType = "NONE" | "JSON" | (string & {});
+export const RecordsFormatType = /*@__PURE__*/ S.String;
+
 export interface ExecuteStatementRequest {
   resourceArn: string;
   secretArn: string;
@@ -670,37 +779,37 @@ export interface ExecuteStatementRequest {
   includeResultMetadata?: boolean;
   continueAfterTimeout?: boolean;
   resultSetOptions?: ResultSetOptions;
-  formatRecordsAs?: string;
+  formatRecordsAs?: RecordsFormatType;
 }
-export const ExecuteStatementRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      resourceArn: S.String,
-      secretArn: S.String,
-      sql: S.String,
-      database: S.optional(S.String),
-      schema: S.optional(S.String),
-      parameters: S.optional(SqlParametersList),
-      transactionId: S.optional(S.String),
-      includeResultMetadata: S.optional(S.Boolean),
-      continueAfterTimeout: S.optional(S.Boolean),
-      resultSetOptions: S.optional(ResultSetOptions),
-      formatRecordsAs: S.optional(S.String),
-    }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/Execute" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ExecuteStatementRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    resourceArn: S.String,
+    secretArn: S.String,
+    sql: S.String,
+    database: S.optional(S.String),
+    schema: S.optional(S.String),
+    parameters: S.optional(SqlParametersList),
+    transactionId: S.optional(S.String),
+    includeResultMetadata: S.optional(S.Boolean),
+    continueAfterTimeout: S.optional(S.Boolean),
+    resultSetOptions: S.optional(ResultSetOptions),
+    formatRecordsAs: S.optional(RecordsFormatType),
+  }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/Execute" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "ExecuteStatementRequest",
 }) as any as S.Schema<ExecuteStatementRequest>;
 export type SqlRecords = Field[][];
-export const SqlRecords = /*@__PURE__*/ /*#__PURE__*/ S.Array(FieldList);
+export const SqlRecords = /*@__PURE__*/ S.Array(FieldList);
+export type FormattedSqlRecords = string;
 export interface ExecuteStatementResponse {
   records?: Field[][];
   columnMetadata?: ColumnMetadata[];
@@ -708,15 +817,14 @@ export interface ExecuteStatementResponse {
   generatedFields?: Field[];
   formattedRecords?: string;
 }
-export const ExecuteStatementResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      records: S.optional(SqlRecords),
-      columnMetadata: S.optional(Metadata),
-      numberOfRecordsUpdated: S.optional(S.Number),
-      generatedFields: S.optional(FieldList),
-      formattedRecords: S.optional(S.String),
-    }),
+export const ExecuteStatementResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    records: S.optional(SqlRecords),
+    columnMetadata: S.optional(Metadata),
+    numberOfRecordsUpdated: S.optional(S.Number),
+    generatedFields: S.optional(FieldList),
+    formattedRecords: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "ExecuteStatementResponse",
 }) as any as S.Schema<ExecuteStatementResponse>;
@@ -725,106 +833,33 @@ export interface RollbackTransactionRequest {
   secretArn: string;
   transactionId: string;
 }
-export const RollbackTransactionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      resourceArn: S.String,
-      secretArn: S.String,
-      transactionId: S.String,
-    }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/RollbackTransaction" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const RollbackTransactionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    resourceArn: S.String,
+    secretArn: S.String,
+    transactionId: S.String,
+  }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/RollbackTransaction" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "RollbackTransactionRequest",
 }) as any as S.Schema<RollbackTransactionRequest>;
 export interface RollbackTransactionResponse {
   transactionStatus?: string;
 }
-export const RollbackTransactionResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ transactionStatus: S.optional(S.String) }),
-  ).annotate({
-    identifier: "RollbackTransactionResponse",
-  }) as any as S.Schema<RollbackTransactionResponse>;
-
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class BadRequestException extends S.TaggedErrorClass<BadRequestException>()(
-  "BadRequestException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class DatabaseErrorException extends S.TaggedErrorClass<DatabaseErrorException>()(
-  "DatabaseErrorException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class DatabaseNotFoundException extends S.TaggedErrorClass<DatabaseNotFoundException>()(
-  "DatabaseNotFoundException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class DatabaseResumingException extends S.TaggedErrorClass<DatabaseResumingException>()(
-  "DatabaseResumingException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class DatabaseUnavailableException extends S.TaggedErrorClass<DatabaseUnavailableException>()(
-  "DatabaseUnavailableException",
-  {},
-).pipe(C.withTimeoutError) {}
-export class ForbiddenException extends S.TaggedErrorClass<ForbiddenException>()(
-  "ForbiddenException",
-  { message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class HttpEndpointNotEnabledException extends S.TaggedErrorClass<HttpEndpointNotEnabledException>()(
-  "HttpEndpointNotEnabledException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InternalServerErrorException extends S.TaggedErrorClass<InternalServerErrorException>()(
-  "InternalServerErrorException",
-  {},
-).pipe(C.withServerError) {}
-export class InvalidResourceStateException extends S.TaggedErrorClass<InvalidResourceStateException>()(
-  "InvalidResourceStateException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InvalidSecretException extends S.TaggedErrorClass<InvalidSecretException>()(
-  "InvalidSecretException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class SecretsErrorException extends S.TaggedErrorClass<SecretsErrorException>()(
-  "SecretsErrorException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ServiceUnavailableError extends S.TaggedErrorClass<ServiceUnavailableError>()(
-  "ServiceUnavailableError",
-  {},
-).pipe(C.withServerError) {}
-export class StatementTimeoutException extends S.TaggedErrorClass<StatementTimeoutException>()(
-  "StatementTimeoutException",
-  { message: S.optional(S.String), dbConnectionId: S.optional(S.Number) },
-).pipe(C.withBadRequestError) {}
-export class TransactionNotFoundException extends S.TaggedErrorClass<TransactionNotFoundException>()(
-  "TransactionNotFoundException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class NotFoundException extends S.TaggedErrorClass<NotFoundException>()(
-  "NotFoundException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class UnsupportedResultException extends S.TaggedErrorClass<UnsupportedResultException>()(
-  "UnsupportedResultException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-
-//# Operations
+export const RollbackTransactionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ transactionStatus: S.optional(S.String) }),
+).annotate({
+  identifier: "RollbackTransactionResponse",
+}) as any as S.Schema<RollbackTransactionResponse>;
+export type ErrorMessage = string;
 export type BatchExecuteStatementError =
   | AccessDeniedException
   | BadRequestException
@@ -845,18 +880,11 @@ export type BatchExecuteStatementError =
 /**
  * Runs a batch SQL statement over an array of data.
  *
- * You can run bulk update and insert operations for multiple records using a DML
- * statement with different parameter sets. Bulk operations can provide a significant
- * performance improvement over individual insert and update operations.
+ * You can run bulk update and insert operations for multiple records using a DML statement with different parameter sets. Bulk operations can provide a significant performance improvement over individual insert and update operations.
  *
- * If a call isn't part of a transaction because it doesn't include the `transactionID` parameter,
- * changes that result from the call are committed automatically.
+ * If a call isn't part of a transaction because it doesn't include the `transactionID` parameter, changes that result from the call are committed automatically.
  *
- * There isn't a fixed upper limit on the number of parameter sets. However, the maximum size of the HTTP request
- * submitted through the Data API is 4 MiB. If the request exceeds this limit, the Data API returns an error and doesn't
- * process the request. This 4-MiB limit includes the size of the HTTP headers and the JSON notation in the request. Thus, the
- * number of parameter sets that you can include depends on a combination of factors, such as the size of the SQL statement and
- * the size of each parameter set.
+ * There isn't a fixed upper limit on the number of parameter sets. However, the maximum size of the HTTP request submitted through the Data API is 4 MiB. If the request exceeds this limit, the Data API returns an error and doesn't process the request. This 4-MiB limit includes the size of the HTTP headers and the JSON notation in the request. Thus, the number of parameter sets that you can include depends on a combination of factors, such as the size of the SQL statement and the size of each parameter set.
  *
  * The response size limit is 1 MiB. If the call returns more than 1 MiB of response data, the call is terminated.
  */
@@ -864,8 +892,8 @@ export const batchExecuteStatement: API.OperationMethod<
   BatchExecuteStatementRequest,
   BatchExecuteStatementResponse,
   BatchExecuteStatementError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: BatchExecuteStatementRequest,
   output: BatchExecuteStatementResponse,
   errors: [
@@ -885,7 +913,11 @@ export const batchExecuteStatement: API.OperationMethod<
     StatementTimeoutException,
     TransactionNotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "BatchExecuteStatement",
 }));
+
 export type BeginTransactionError =
   | AccessDeniedException
   | BadRequestException
@@ -906,21 +938,18 @@ export type BeginTransactionError =
 /**
  * Starts a SQL transaction.
  *
- * A transaction can run for a maximum of 24 hours. A transaction is terminated and rolled back automatically after 24
- * hours.
+ * A transaction can run for a maximum of 24 hours. A transaction is terminated and rolled back automatically after 24 hours.
  *
- * A transaction times out if no calls use its transaction ID in three minutes. If a transaction times out before it's
- * committed, it's rolled back automatically.
+ * A transaction times out if no calls use its transaction ID in three minutes. If a transaction times out before it's committed, it's rolled back automatically.
  *
- * For Aurora MySQL, DDL statements inside a transaction cause an implicit commit. We recommend that you run each MySQL DDL statement in a separate
- * `ExecuteStatement` call with `continueAfterTimeout` enabled.
+ * For Aurora MySQL, DDL statements inside a transaction cause an implicit commit. We recommend that you run each MySQL DDL statement in a separate `ExecuteStatement` call with `continueAfterTimeout` enabled.
  */
 export const beginTransaction: API.OperationMethod<
   BeginTransactionRequest,
   BeginTransactionResponse,
   BeginTransactionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: BeginTransactionRequest,
   output: BeginTransactionResponse,
   errors: [
@@ -940,7 +969,11 @@ export const beginTransaction: API.OperationMethod<
     StatementTimeoutException,
     TransactionNotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "BeginTransaction",
 }));
+
 export type CommitTransactionError =
   | AccessDeniedException
   | BadRequestException
@@ -959,15 +992,14 @@ export type CommitTransactionError =
   | TransactionNotFoundException
   | CommonErrors;
 /**
- * Ends a SQL transaction started with the `BeginTransaction` operation and
- * commits the changes.
+ * Ends a SQL transaction started with the `BeginTransaction` operation and commits the changes.
  */
 export const commitTransaction: API.OperationMethod<
   CommitTransactionRequest,
   CommitTransactionResponse,
   CommitTransactionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CommitTransactionRequest,
   output: CommitTransactionResponse,
   errors: [
@@ -987,7 +1019,11 @@ export const commitTransaction: API.OperationMethod<
     StatementTimeoutException,
     TransactionNotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CommitTransaction",
 }));
+
 export type ExecuteSqlError =
   | AccessDeniedException
   | BadRequestException
@@ -998,16 +1034,14 @@ export type ExecuteSqlError =
 /**
  * Runs one or more SQL statements.
  *
- * This operation isn't supported for Aurora Serverless v2 and provisioned DB clusters.
- * For Aurora Serverless v1 DB clusters, the operation is deprecated.
- * Use the `BatchExecuteStatement` or `ExecuteStatement` operation.
+ * This operation is deprecated. Please use the `BatchExecuteStatement` or `ExecuteStatement` operation.
  */
 export const executeSql: API.OperationMethod<
   ExecuteSqlRequest,
   ExecuteSqlResponse,
   ExecuteSqlError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ExecuteSqlRequest,
   output: ExecuteSqlResponse,
   errors: [
@@ -1017,7 +1051,11 @@ export const executeSql: API.OperationMethod<
     InternalServerErrorException,
     ServiceUnavailableError,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ExecuteSql",
 }));
+
 export type ExecuteStatementError =
   | AccessDeniedException
   | BadRequestException
@@ -1039,9 +1077,7 @@ export type ExecuteStatementError =
 /**
  * Runs a SQL statement against a database.
  *
- * If a call isn't part of a transaction because it doesn't include the
- * `transactionID` parameter, changes that result from the call are
- * committed automatically.
+ * If a call isn't part of a transaction because it doesn't include the `transactionID` parameter, changes that result from the call are committed automatically.
  *
  * If the binary response data from the database is more than 1 MB, the call is terminated.
  */
@@ -1049,8 +1085,8 @@ export const executeStatement: API.OperationMethod<
   ExecuteStatementRequest,
   ExecuteStatementResponse,
   ExecuteStatementError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ExecuteStatementRequest,
   output: ExecuteStatementResponse,
   errors: [
@@ -1071,7 +1107,11 @@ export const executeStatement: API.OperationMethod<
     TransactionNotFoundException,
     UnsupportedResultException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ExecuteStatement",
 }));
+
 export type RollbackTransactionError =
   | AccessDeniedException
   | BadRequestException
@@ -1096,8 +1136,8 @@ export const rollbackTransaction: API.OperationMethod<
   RollbackTransactionRequest,
   RollbackTransactionResponse,
   RollbackTransactionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: RollbackTransactionRequest,
   output: RollbackTransactionResponse,
   errors: [
@@ -1117,4 +1157,7 @@ export const rollbackTransaction: API.OperationMethod<
     StatementTimeoutException,
     TransactionNotFoundException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "RollbackTransaction",
 }));

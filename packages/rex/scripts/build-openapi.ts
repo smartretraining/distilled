@@ -74,7 +74,9 @@ interface RexOpenApiBlock {
   };
   response?: {
     // Object keyed by example name, or `[]` when no example is available.
-    examples?: Record<string, { code?: string; summary?: string; example?: unknown }> | unknown[];
+    examples?:
+      | Record<string, { code?: string; summary?: string; example?: unknown }>
+      | unknown[];
   };
 }
 
@@ -155,7 +157,9 @@ function mapType(rexType: string | undefined): string | undefined {
  * It is the only machine-readable signal that a field carries a valuelist id.
  */
 function isValuelistRef(description: string | undefined): boolean {
-  return description !== undefined && /\(valuelist:\s*[\w-]+\)/.test(description);
+  return (
+    description !== undefined && /\(valuelist:\s*[\w-]+\)/.test(description)
+  );
 }
 
 /** Convert a Rex parameter/field definition into a JSON Schema node. */
@@ -199,7 +203,10 @@ function convertDefinition(def: RexDefinition | undefined): JsonSchema {
   if (def.items !== undefined) {
     if (def.type === "object") {
       schema.type = "object";
-      schema.properties = { ...schema.properties, ...convertDefinition(def.items).properties };
+      schema.properties = {
+        ...schema.properties,
+        ...convertDefinition(def.items).properties,
+      };
     } else {
       schema.type = "array";
       schema.items = convertDefinition(def.items);

@@ -1,12 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const ns = T.XmlNamespace("http://osis.amazonaws.com/doc/2022-01-01");
 const svc = T.AwsApiService({
   sdkId: "OSIS",
@@ -84,33 +84,69 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class ConflictException
+  extends /*@__PURE__*/ S.TaggedError<ConflictException>()(
+    "ConflictException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class DisabledOperationException
+  extends /*@__PURE__*/ S.TaggedError<DisabledOperationException>()(
+    "DisabledOperationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class InternalException
+  extends /*@__PURE__*/ S.TaggedError<InternalException>()(
+    "InternalException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class InvalidPaginationTokenException
+  extends /*@__PURE__*/ S.TaggedError<InvalidPaginationTokenException>()(
+    "InvalidPaginationTokenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class LimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<LimitExceededException>()(
+    "LimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class ResourceAlreadyExistsException
+  extends /*@__PURE__*/ S.TaggedError<ResourceAlreadyExistsException>()(
+    "ResourceAlreadyExistsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError, C.withAlreadyExistsError) {}
+export class ResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotFoundException>()(
+    "ResourceNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class ValidationException
+  extends /*@__PURE__*/ S.TaggedError<ValidationException>()(
+    "ValidationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
 export type PipelineName = string;
 export type PipelineUnits = number;
 export type PipelineConfigurationBody = string;
 export type LogGroup = string;
-export type SubnetId = string;
-export type SecurityGroupId = string;
-export type CidrBlock = string;
-export type KmsKeyArn = string;
-export type TagKey = string;
-export type TagValue = string;
-export type PipelineRoleArn = string;
-export type ErrorMessage = string;
-export type PipelineArn = string;
-export type PipelineEndpointId = string;
-export type BlueprintFormat = string;
-export type ResourcePolicy = string;
-export type MaxResults = number;
-export type NextToken = string;
-export type AwsAccountId = string;
-
-//# Schemas
 export interface CloudWatchLogDestination {
   LogGroup: string;
 }
-export const CloudWatchLogDestination = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ LogGroup: S.String }),
+export const CloudWatchLogDestination = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ LogGroup: S.String }),
 ).annotate({
   identifier: "CloudWatchLogDestination",
 }) as any as S.Schema<CloudWatchLogDestination>;
@@ -118,7 +154,7 @@ export interface LogPublishingOptions {
   IsLoggingEnabled?: boolean;
   CloudWatchLogDestination?: CloudWatchLogDestination;
 }
-export const LogPublishingOptions = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const LogPublishingOptions = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     IsLoggingEnabled: S.optional(S.Boolean),
     CloudWatchLogDestination: S.optional(CloudWatchLogDestination),
@@ -126,28 +162,32 @@ export const LogPublishingOptions = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "LogPublishingOptions",
 }) as any as S.Schema<LogPublishingOptions>;
+export type SubnetId = string;
 export type SubnetIds = string[];
-export const SubnetIds = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const SubnetIds = /*@__PURE__*/ S.Array(S.String);
+export type SecurityGroupId = string;
 export type SecurityGroupIds = string[];
-export const SecurityGroupIds = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const SecurityGroupIds = /*@__PURE__*/ S.Array(S.String);
+export type CidrBlock = string;
 export interface VpcAttachmentOptions {
   AttachToVpc: boolean;
   CidrBlock?: string;
 }
-export const VpcAttachmentOptions = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const VpcAttachmentOptions = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ AttachToVpc: S.Boolean, CidrBlock: S.optional(S.String) }),
 ).annotate({
   identifier: "VpcAttachmentOptions",
 }) as any as S.Schema<VpcAttachmentOptions>;
 export type VpcEndpointManagement = "CUSTOMER" | "SERVICE" | (string & {});
-export const VpcEndpointManagement = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const VpcEndpointManagement = /*@__PURE__*/ S.String;
+
 export interface VpcOptions {
   SubnetIds: string[];
   SecurityGroupIds?: string[];
   VpcAttachmentOptions?: VpcAttachmentOptions;
   VpcEndpointManagement?: VpcEndpointManagement;
 }
-export const VpcOptions = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const VpcOptions = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     SubnetIds: SubnetIds,
     SecurityGroupIds: S.optional(SecurityGroupIds),
@@ -158,26 +198,30 @@ export const VpcOptions = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface BufferOptions {
   PersistentBufferEnabled: boolean;
 }
-export const BufferOptions = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const BufferOptions = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ PersistentBufferEnabled: S.Boolean }),
 ).annotate({ identifier: "BufferOptions" }) as any as S.Schema<BufferOptions>;
+export type KmsKeyArn = string;
 export interface EncryptionAtRestOptions {
   KmsKeyArn: string;
 }
-export const EncryptionAtRestOptions = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ KmsKeyArn: S.String }),
+export const EncryptionAtRestOptions = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ KmsKeyArn: S.String }),
 ).annotate({
   identifier: "EncryptionAtRestOptions",
 }) as any as S.Schema<EncryptionAtRestOptions>;
+export type TagKey = string;
+export type TagValue = string;
 export interface Tag {
   Key: string;
   Value: string;
 }
-export const Tag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Tag = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: S.String, Value: S.String }),
 ).annotate({ identifier: "Tag" }) as any as S.Schema<Tag>;
 export type TagList = Tag[];
-export const TagList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Tag);
+export const TagList = /*@__PURE__*/ S.Array(Tag);
+export type PipelineRoleArn = string;
 export interface CreatePipelineRequest {
   PipelineName: string;
   MinUnits: number;
@@ -190,7 +234,7 @@ export interface CreatePipelineRequest {
   Tags?: Tag[];
   PipelineRoleArn?: string;
 }
-export const CreatePipelineRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreatePipelineRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     PipelineName: S.String,
     MinUnits: S.Number,
@@ -228,25 +272,24 @@ export type PipelineStatus =
   | "STOPPING"
   | "STOPPED"
   | (string & {});
-export const PipelineStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const PipelineStatus = /*@__PURE__*/ S.String;
+
 export interface PipelineStatusReason {
   Description?: string;
 }
-export const PipelineStatusReason = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PipelineStatusReason = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Description: S.optional(S.String) }),
 ).annotate({
   identifier: "PipelineStatusReason",
 }) as any as S.Schema<PipelineStatusReason>;
 export type IngestEndpointUrlsList = string[];
-export const IngestEndpointUrlsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const IngestEndpointUrlsList = /*@__PURE__*/ S.Array(S.String);
 export interface VpcEndpoint {
   VpcEndpointId?: string;
   VpcId?: string;
   VpcOptions?: VpcOptions;
 }
-export const VpcEndpoint = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const VpcEndpoint = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     VpcEndpointId: S.optional(S.String),
     VpcId: S.optional(S.String),
@@ -254,15 +297,15 @@ export const VpcEndpoint = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "VpcEndpoint" }) as any as S.Schema<VpcEndpoint>;
 export type VpcEndpointsList = VpcEndpoint[];
-export const VpcEndpointsList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(VpcEndpoint);
+export const VpcEndpointsList = /*@__PURE__*/ S.Array(VpcEndpoint);
 export type VpcEndpointServiceName = "OPENSEARCH_SERVERLESS" | (string & {});
-export const VpcEndpointServiceName = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const VpcEndpointServiceName = /*@__PURE__*/ S.String;
+
 export interface ServiceVpcEndpoint {
   ServiceName?: VpcEndpointServiceName;
   VpcEndpointId?: string;
 }
-export const ServiceVpcEndpoint = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ServiceVpcEndpoint = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ServiceName: S.optional(VpcEndpointServiceName),
     VpcEndpointId: S.optional(S.String),
@@ -272,12 +315,12 @@ export const ServiceVpcEndpoint = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<ServiceVpcEndpoint>;
 export type ServiceVpcEndpointsList = ServiceVpcEndpoint[];
 export const ServiceVpcEndpointsList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ServiceVpcEndpoint);
+  /*@__PURE__*/ S.Array(ServiceVpcEndpoint);
 export interface PipelineDestination {
   ServiceName?: string;
   Endpoint?: string;
 }
-export const PipelineDestination = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PipelineDestination = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ServiceName: S.optional(S.String),
     Endpoint: S.optional(S.String),
@@ -287,7 +330,7 @@ export const PipelineDestination = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<PipelineDestination>;
 export type PipelineDestinationList = PipelineDestination[];
 export const PipelineDestinationList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(PipelineDestination);
+  /*@__PURE__*/ S.Array(PipelineDestination);
 export interface Pipeline {
   PipelineName?: string;
   PipelineArn?: string;
@@ -309,7 +352,7 @@ export interface Pipeline {
   Tags?: Tag[];
   PipelineRoleArn?: string;
 }
-export const Pipeline = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Pipeline = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     PipelineName: S.optional(S.String),
     PipelineArn: S.optional(S.String),
@@ -335,21 +378,21 @@ export const Pipeline = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreatePipelineResponse {
   Pipeline?: Pipeline;
 }
-export const CreatePipelineResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ Pipeline: S.optional(Pipeline) }).pipe(ns),
+export const CreatePipelineResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Pipeline: S.optional(Pipeline) }).pipe(ns),
 ).annotate({
   identifier: "CreatePipelineResponse",
 }) as any as S.Schema<CreatePipelineResponse>;
+export type PipelineArn = string;
 export interface PipelineEndpointVpcOptions {
   SubnetIds?: string[];
   SecurityGroupIds?: string[];
 }
-export const PipelineEndpointVpcOptions = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      SubnetIds: S.optional(SubnetIds),
-      SecurityGroupIds: S.optional(SecurityGroupIds),
-    }),
+export const PipelineEndpointVpcOptions = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    SubnetIds: S.optional(SubnetIds),
+    SecurityGroupIds: S.optional(SecurityGroupIds),
+  }),
 ).annotate({
   identifier: "PipelineEndpointVpcOptions",
 }) as any as S.Schema<PipelineEndpointVpcOptions>;
@@ -357,28 +400,28 @@ export interface CreatePipelineEndpointRequest {
   PipelineArn: string;
   VpcOptions: PipelineEndpointVpcOptions;
 }
-export const CreatePipelineEndpointRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      PipelineArn: S.String,
-      VpcOptions: PipelineEndpointVpcOptions,
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "POST",
-          uri: "/2022-01-01/osis/createPipelineEndpoint",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreatePipelineEndpointRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    PipelineArn: S.String,
+    VpcOptions: PipelineEndpointVpcOptions,
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "POST",
+        uri: "/2022-01-01/osis/createPipelineEndpoint",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "CreatePipelineEndpointRequest",
-  }) as any as S.Schema<CreatePipelineEndpointRequest>;
+  ),
+).annotate({
+  identifier: "CreatePipelineEndpointRequest",
+}) as any as S.Schema<CreatePipelineEndpointRequest>;
+export type PipelineEndpointId = string;
 export type PipelineEndpointStatus =
   | "CREATING"
   | "ACTIVE"
@@ -387,28 +430,28 @@ export type PipelineEndpointStatus =
   | "REVOKING"
   | "REVOKED"
   | (string & {});
-export const PipelineEndpointStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const PipelineEndpointStatus = /*@__PURE__*/ S.String;
+
 export interface CreatePipelineEndpointResponse {
   PipelineArn?: string;
   EndpointId?: string;
   Status?: PipelineEndpointStatus;
   VpcId?: string;
 }
-export const CreatePipelineEndpointResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      PipelineArn: S.optional(S.String),
-      EndpointId: S.optional(S.String),
-      Status: S.optional(PipelineEndpointStatus),
-      VpcId: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "CreatePipelineEndpointResponse",
-  }) as any as S.Schema<CreatePipelineEndpointResponse>;
+export const CreatePipelineEndpointResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    PipelineArn: S.optional(S.String),
+    EndpointId: S.optional(S.String),
+    Status: S.optional(PipelineEndpointStatus),
+    VpcId: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "CreatePipelineEndpointResponse",
+}) as any as S.Schema<CreatePipelineEndpointResponse>;
 export interface DeletePipelineRequest {
   PipelineName: string;
 }
-export const DeletePipelineRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeletePipelineRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ PipelineName: S.String.pipe(T.HttpLabel("PipelineName")) }).pipe(
     T.all(
       ns,
@@ -427,69 +470,69 @@ export const DeletePipelineRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeletePipelineRequest",
 }) as any as S.Schema<DeletePipelineRequest>;
 export interface DeletePipelineResponse {}
-export const DeletePipelineResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}).pipe(ns),
+export const DeletePipelineResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "DeletePipelineResponse",
 }) as any as S.Schema<DeletePipelineResponse>;
 export interface DeletePipelineEndpointRequest {
   EndpointId: string;
 }
-export const DeletePipelineEndpointRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ EndpointId: S.String.pipe(T.HttpLabel("EndpointId")) }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "DELETE",
-          uri: "/2022-01-01/osis/deletePipelineEndpoint/{EndpointId}",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeletePipelineEndpointRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ EndpointId: S.String.pipe(T.HttpLabel("EndpointId")) }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "DELETE",
+        uri: "/2022-01-01/osis/deletePipelineEndpoint/{EndpointId}",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "DeletePipelineEndpointRequest",
-  }) as any as S.Schema<DeletePipelineEndpointRequest>;
+  ),
+).annotate({
+  identifier: "DeletePipelineEndpointRequest",
+}) as any as S.Schema<DeletePipelineEndpointRequest>;
 export interface DeletePipelineEndpointResponse {}
-export const DeletePipelineEndpointResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "DeletePipelineEndpointResponse",
-  }) as any as S.Schema<DeletePipelineEndpointResponse>;
+export const DeletePipelineEndpointResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "DeletePipelineEndpointResponse",
+}) as any as S.Schema<DeletePipelineEndpointResponse>;
 export interface DeleteResourcePolicyRequest {
   ResourceArn: string;
 }
-export const DeleteResourcePolicyRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ ResourceArn: S.String.pipe(T.HttpLabel("ResourceArn")) }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "DELETE",
-          uri: "/2022-01-01/osis/resourcePolicy/{ResourceArn}",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteResourcePolicyRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String.pipe(T.HttpLabel("ResourceArn")) }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "DELETE",
+        uri: "/2022-01-01/osis/resourcePolicy/{ResourceArn}",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "DeleteResourcePolicyRequest",
-  }) as any as S.Schema<DeleteResourcePolicyRequest>;
+  ),
+).annotate({
+  identifier: "DeleteResourcePolicyRequest",
+}) as any as S.Schema<DeleteResourcePolicyRequest>;
 export interface DeleteResourcePolicyResponse {}
-export const DeleteResourcePolicyResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "DeleteResourcePolicyResponse",
-  }) as any as S.Schema<DeleteResourcePolicyResponse>;
+export const DeleteResourcePolicyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "DeleteResourcePolicyResponse",
+}) as any as S.Schema<DeleteResourcePolicyResponse>;
 export interface GetPipelineRequest {
   PipelineName: string;
 }
-export const GetPipelineRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetPipelineRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ PipelineName: S.String.pipe(T.HttpLabel("PipelineName")) }).pipe(
     T.all(
       ns,
@@ -510,37 +553,37 @@ export const GetPipelineRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetPipelineResponse {
   Pipeline?: Pipeline;
 }
-export const GetPipelineResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetPipelineResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Pipeline: S.optional(Pipeline) }).pipe(ns),
 ).annotate({
   identifier: "GetPipelineResponse",
 }) as any as S.Schema<GetPipelineResponse>;
+export type BlueprintFormat = string;
 export interface GetPipelineBlueprintRequest {
   BlueprintName: string;
   Format?: string;
 }
-export const GetPipelineBlueprintRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      BlueprintName: S.String.pipe(T.HttpLabel("BlueprintName")),
-      Format: S.optional(S.String).pipe(T.HttpQuery("format")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "GET",
-          uri: "/2022-01-01/osis/getPipelineBlueprint/{BlueprintName}",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetPipelineBlueprintRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    BlueprintName: S.String.pipe(T.HttpLabel("BlueprintName")),
+    Format: S.optional(S.String).pipe(T.HttpQuery("format")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "GET",
+        uri: "/2022-01-01/osis/getPipelineBlueprint/{BlueprintName}",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "GetPipelineBlueprintRequest",
-  }) as any as S.Schema<GetPipelineBlueprintRequest>;
+  ),
+).annotate({
+  identifier: "GetPipelineBlueprintRequest",
+}) as any as S.Schema<GetPipelineBlueprintRequest>;
 export interface PipelineBlueprint {
   BlueprintName?: string;
   PipelineConfigurationBody?: string;
@@ -549,7 +592,7 @@ export interface PipelineBlueprint {
   Service?: string;
   UseCase?: string;
 }
-export const PipelineBlueprint = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PipelineBlueprint = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     BlueprintName: S.optional(S.String),
     PipelineConfigurationBody: S.optional(S.String),
@@ -565,58 +608,58 @@ export interface GetPipelineBlueprintResponse {
   Blueprint?: PipelineBlueprint;
   Format?: string;
 }
-export const GetPipelineBlueprintResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      Blueprint: S.optional(PipelineBlueprint),
-      Format: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "GetPipelineBlueprintResponse",
-  }) as any as S.Schema<GetPipelineBlueprintResponse>;
+export const GetPipelineBlueprintResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Blueprint: S.optional(PipelineBlueprint),
+    Format: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "GetPipelineBlueprintResponse",
+}) as any as S.Schema<GetPipelineBlueprintResponse>;
 export interface GetPipelineChangeProgressRequest {
   PipelineName: string;
 }
-export const GetPipelineChangeProgressRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ PipelineName: S.String.pipe(T.HttpLabel("PipelineName")) }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "GET",
-          uri: "/2022-01-01/osis/getPipelineChangeProgress/{PipelineName}",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetPipelineChangeProgressRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ PipelineName: S.String.pipe(T.HttpLabel("PipelineName")) }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "GET",
+        uri: "/2022-01-01/osis/getPipelineChangeProgress/{PipelineName}",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "GetPipelineChangeProgressRequest",
-  }) as any as S.Schema<GetPipelineChangeProgressRequest>;
+  ),
+).annotate({
+  identifier: "GetPipelineChangeProgressRequest",
+}) as any as S.Schema<GetPipelineChangeProgressRequest>;
 export type ChangeProgressStatuses =
   | "PENDING"
   | "IN_PROGRESS"
   | "COMPLETED"
   | "FAILED"
   | (string & {});
-export const ChangeProgressStatuses = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ChangeProgressStatuses = /*@__PURE__*/ S.String;
+
 export type ChangeProgressStageStatuses =
   | "PENDING"
   | "IN_PROGRESS"
   | "COMPLETED"
   | "FAILED"
   | (string & {});
-export const ChangeProgressStageStatuses = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ChangeProgressStageStatuses = /*@__PURE__*/ S.String;
+
 export interface ChangeProgressStage {
   Name?: string;
   Status?: ChangeProgressStageStatuses;
   Description?: string;
   LastUpdatedAt?: Date;
 }
-export const ChangeProgressStage = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ChangeProgressStage = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Name: S.optional(S.String),
     Status: S.optional(ChangeProgressStageStatuses),
@@ -628,14 +671,14 @@ export const ChangeProgressStage = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<ChangeProgressStage>;
 export type ChangeProgressStageList = ChangeProgressStage[];
 export const ChangeProgressStageList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ChangeProgressStage);
+  /*@__PURE__*/ S.Array(ChangeProgressStage);
 export interface ChangeProgressStatus {
   StartTime?: Date;
   Status?: ChangeProgressStatuses;
   TotalNumberOfStages?: number;
   ChangeProgressStages?: ChangeProgressStage[];
 }
-export const ChangeProgressStatus = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ChangeProgressStatus = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     StartTime: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
     Status: S.optional(ChangeProgressStatuses),
@@ -647,73 +690,70 @@ export const ChangeProgressStatus = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<ChangeProgressStatus>;
 export type ChangeProgressStatusList = ChangeProgressStatus[];
 export const ChangeProgressStatusList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ChangeProgressStatus);
+  /*@__PURE__*/ S.Array(ChangeProgressStatus);
 export interface GetPipelineChangeProgressResponse {
   ChangeProgressStatuses?: ChangeProgressStatus[];
 }
-export const GetPipelineChangeProgressResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      ChangeProgressStatuses: S.optional(ChangeProgressStatusList),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "GetPipelineChangeProgressResponse",
-  }) as any as S.Schema<GetPipelineChangeProgressResponse>;
+export const GetPipelineChangeProgressResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ChangeProgressStatuses: S.optional(ChangeProgressStatusList),
+  }).pipe(ns),
+).annotate({
+  identifier: "GetPipelineChangeProgressResponse",
+}) as any as S.Schema<GetPipelineChangeProgressResponse>;
 export interface GetResourcePolicyRequest {
   ResourceArn: string;
 }
-export const GetResourcePolicyRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ ResourceArn: S.String.pipe(T.HttpLabel("ResourceArn")) }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "GET",
-          uri: "/2022-01-01/osis/resourcePolicy/{ResourceArn}",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetResourcePolicyRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String.pipe(T.HttpLabel("ResourceArn")) }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "GET",
+        uri: "/2022-01-01/osis/resourcePolicy/{ResourceArn}",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetResourcePolicyRequest",
 }) as any as S.Schema<GetResourcePolicyRequest>;
+export type ResourcePolicy = string;
 export interface GetResourcePolicyResponse {
   ResourceArn?: string;
   Policy?: string;
 }
-export const GetResourcePolicyResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ResourceArn: S.optional(S.String),
-      Policy: S.optional(S.String),
-    }).pipe(ns),
+export const GetResourcePolicyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ResourceArn: S.optional(S.String),
+    Policy: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "GetResourcePolicyResponse",
 }) as any as S.Schema<GetResourcePolicyResponse>;
 export interface ListPipelineBlueprintsRequest {}
-export const ListPipelineBlueprintsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({}).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "POST",
-          uri: "/2022-01-01/osis/listPipelineBlueprints",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListPipelineBlueprintsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "POST",
+        uri: "/2022-01-01/osis/listPipelineBlueprints",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "ListPipelineBlueprintsRequest",
-  }) as any as S.Schema<ListPipelineBlueprintsRequest>;
+  ),
+).annotate({
+  identifier: "ListPipelineBlueprintsRequest",
+}) as any as S.Schema<ListPipelineBlueprintsRequest>;
 export interface PipelineBlueprintSummary {
   BlueprintName?: string;
   DisplayName?: string;
@@ -721,38 +761,37 @@ export interface PipelineBlueprintSummary {
   Service?: string;
   UseCase?: string;
 }
-export const PipelineBlueprintSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      BlueprintName: S.optional(S.String),
-      DisplayName: S.optional(S.String),
-      DisplayDescription: S.optional(S.String),
-      Service: S.optional(S.String),
-      UseCase: S.optional(S.String),
-    }),
+export const PipelineBlueprintSummary = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    BlueprintName: S.optional(S.String),
+    DisplayName: S.optional(S.String),
+    DisplayDescription: S.optional(S.String),
+    Service: S.optional(S.String),
+    UseCase: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "PipelineBlueprintSummary",
 }) as any as S.Schema<PipelineBlueprintSummary>;
 export type PipelineBlueprintsSummaryList = PipelineBlueprintSummary[];
-export const PipelineBlueprintsSummaryList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(PipelineBlueprintSummary);
+export const PipelineBlueprintsSummaryList = /*@__PURE__*/ S.Array(
+  PipelineBlueprintSummary,
+);
 export interface ListPipelineBlueprintsResponse {
   Blueprints?: PipelineBlueprintSummary[];
 }
-export const ListPipelineBlueprintsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ Blueprints: S.optional(PipelineBlueprintsSummaryList) }).pipe(
-      ns,
-    ),
-  ).annotate({
-    identifier: "ListPipelineBlueprintsResponse",
-  }) as any as S.Schema<ListPipelineBlueprintsResponse>;
+export const ListPipelineBlueprintsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Blueprints: S.optional(PipelineBlueprintsSummaryList) }).pipe(ns),
+).annotate({
+  identifier: "ListPipelineBlueprintsResponse",
+}) as any as S.Schema<ListPipelineBlueprintsResponse>;
+export type MaxResults = number;
+export type NextToken = string;
 export interface ListPipelineEndpointConnectionsRequest {
   MaxResults?: number;
   NextToken?: string;
 }
-export const ListPipelineEndpointConnectionsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListPipelineEndpointConnectionsRequest = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       MaxResults: S.optional(S.Number).pipe(T.HttpQuery("maxResults")),
       NextToken: S.optional(S.String).pipe(T.HttpQuery("nextToken")),
@@ -770,71 +809,68 @@ export const ListPipelineEndpointConnectionsRequest =
         rules,
       ),
     ),
-  ).annotate({
-    identifier: "ListPipelineEndpointConnectionsRequest",
-  }) as any as S.Schema<ListPipelineEndpointConnectionsRequest>;
+).annotate({
+  identifier: "ListPipelineEndpointConnectionsRequest",
+}) as any as S.Schema<ListPipelineEndpointConnectionsRequest>;
+export type AwsAccountId = string;
 export interface PipelineEndpointConnection {
   PipelineArn?: string;
   EndpointId?: string;
   Status?: PipelineEndpointStatus;
   VpcEndpointOwner?: string;
 }
-export const PipelineEndpointConnection = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      PipelineArn: S.optional(S.String),
-      EndpointId: S.optional(S.String),
-      Status: S.optional(PipelineEndpointStatus),
-      VpcEndpointOwner: S.optional(S.String),
-    }),
+export const PipelineEndpointConnection = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    PipelineArn: S.optional(S.String),
+    EndpointId: S.optional(S.String),
+    Status: S.optional(PipelineEndpointStatus),
+    VpcEndpointOwner: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "PipelineEndpointConnection",
 }) as any as S.Schema<PipelineEndpointConnection>;
 export type PipelineEndpointConnectionsSummaryList =
   PipelineEndpointConnection[];
-export const PipelineEndpointConnectionsSummaryList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(PipelineEndpointConnection);
+export const PipelineEndpointConnectionsSummaryList = /*@__PURE__*/ S.Array(
+  PipelineEndpointConnection,
+);
 export interface ListPipelineEndpointConnectionsResponse {
   NextToken?: string;
   PipelineEndpointConnections?: PipelineEndpointConnection[];
 }
-export const ListPipelineEndpointConnectionsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListPipelineEndpointConnectionsResponse = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       NextToken: S.optional(S.String),
       PipelineEndpointConnections: S.optional(
         PipelineEndpointConnectionsSummaryList,
       ),
     }).pipe(ns),
-  ).annotate({
-    identifier: "ListPipelineEndpointConnectionsResponse",
-  }) as any as S.Schema<ListPipelineEndpointConnectionsResponse>;
+).annotate({
+  identifier: "ListPipelineEndpointConnectionsResponse",
+}) as any as S.Schema<ListPipelineEndpointConnectionsResponse>;
 export interface ListPipelineEndpointsRequest {
   MaxResults?: number;
   NextToken?: string;
 }
-export const ListPipelineEndpointsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      MaxResults: S.optional(S.Number).pipe(T.HttpQuery("maxResults")),
-      NextToken: S.optional(S.String).pipe(T.HttpQuery("nextToken")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "GET",
-          uri: "/2022-01-01/osis/listPipelineEndpoints",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListPipelineEndpointsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    MaxResults: S.optional(S.Number).pipe(T.HttpQuery("maxResults")),
+    NextToken: S.optional(S.String).pipe(T.HttpQuery("nextToken")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "GET", uri: "/2022-01-01/osis/listPipelineEndpoints" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "ListPipelineEndpointsRequest",
-  }) as any as S.Schema<ListPipelineEndpointsRequest>;
+  ),
+).annotate({
+  identifier: "ListPipelineEndpointsRequest",
+}) as any as S.Schema<ListPipelineEndpointsRequest>;
 export interface PipelineEndpoint {
   PipelineArn?: string;
   EndpointId?: string;
@@ -843,7 +879,7 @@ export interface PipelineEndpoint {
   VpcOptions?: PipelineEndpointVpcOptions;
   IngestEndpointUrl?: string;
 }
-export const PipelineEndpoint = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PipelineEndpoint = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     PipelineArn: S.optional(S.String),
     EndpointId: S.optional(S.String),
@@ -857,25 +893,24 @@ export const PipelineEndpoint = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<PipelineEndpoint>;
 export type PipelineEndpointsSummaryList = PipelineEndpoint[];
 export const PipelineEndpointsSummaryList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(PipelineEndpoint);
+  /*@__PURE__*/ S.Array(PipelineEndpoint);
 export interface ListPipelineEndpointsResponse {
   NextToken?: string;
   PipelineEndpoints?: PipelineEndpoint[];
 }
-export const ListPipelineEndpointsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      NextToken: S.optional(S.String),
-      PipelineEndpoints: S.optional(PipelineEndpointsSummaryList),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "ListPipelineEndpointsResponse",
-  }) as any as S.Schema<ListPipelineEndpointsResponse>;
+export const ListPipelineEndpointsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    NextToken: S.optional(S.String),
+    PipelineEndpoints: S.optional(PipelineEndpointsSummaryList),
+  }).pipe(ns),
+).annotate({
+  identifier: "ListPipelineEndpointsResponse",
+}) as any as S.Schema<ListPipelineEndpointsResponse>;
 export interface ListPipelinesRequest {
   MaxResults?: number;
   NextToken?: string;
 }
-export const ListPipelinesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListPipelinesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     MaxResults: S.optional(S.Number).pipe(T.HttpQuery("maxResults")),
     NextToken: S.optional(S.String).pipe(T.HttpQuery("nextToken")),
@@ -905,7 +940,7 @@ export interface PipelineSummary {
   Destinations?: PipelineDestination[];
   Tags?: Tag[];
 }
-export const PipelineSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PipelineSummary = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Status: S.optional(PipelineStatus),
     StatusReason: S.optional(PipelineStatusReason),
@@ -922,13 +957,12 @@ export const PipelineSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "PipelineSummary",
 }) as any as S.Schema<PipelineSummary>;
 export type PipelineSummaryList = PipelineSummary[];
-export const PipelineSummaryList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(PipelineSummary);
+export const PipelineSummaryList = /*@__PURE__*/ S.Array(PipelineSummary);
 export interface ListPipelinesResponse {
   NextToken?: string;
   Pipelines?: PipelineSummary[];
 }
-export const ListPipelinesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListPipelinesResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     NextToken: S.optional(S.String),
     Pipelines: S.optional(PipelineSummaryList),
@@ -939,54 +973,51 @@ export const ListPipelinesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface ListTagsForResourceRequest {
   Arn: string;
 }
-export const ListTagsForResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ Arn: S.String.pipe(T.HttpQuery("arn")) }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "GET", uri: "/2022-01-01/osis/listTagsForResource" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListTagsForResourceRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Arn: S.String.pipe(T.HttpQuery("arn")) }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "GET", uri: "/2022-01-01/osis/listTagsForResource" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "ListTagsForResourceRequest",
 }) as any as S.Schema<ListTagsForResourceRequest>;
 export interface ListTagsForResourceResponse {
   Tags?: Tag[];
 }
-export const ListTagsForResourceResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ Tags: S.optional(TagList) }).pipe(ns),
-  ).annotate({
-    identifier: "ListTagsForResourceResponse",
-  }) as any as S.Schema<ListTagsForResourceResponse>;
+export const ListTagsForResourceResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Tags: S.optional(TagList) }).pipe(ns),
+).annotate({
+  identifier: "ListTagsForResourceResponse",
+}) as any as S.Schema<ListTagsForResourceResponse>;
 export interface PutResourcePolicyRequest {
   ResourceArn: string;
   Policy: string;
 }
-export const PutResourcePolicyRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ResourceArn: S.String.pipe(T.HttpLabel("ResourceArn")),
-      Policy: S.String,
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "PUT",
-          uri: "/2022-01-01/osis/resourcePolicy/{ResourceArn}",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const PutResourcePolicyRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ResourceArn: S.String.pipe(T.HttpLabel("ResourceArn")),
+    Policy: S.String,
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "PUT",
+        uri: "/2022-01-01/osis/resourcePolicy/{ResourceArn}",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "PutResourcePolicyRequest",
 }) as any as S.Schema<PutResourcePolicyRequest>;
@@ -994,25 +1025,22 @@ export interface PutResourcePolicyResponse {
   ResourceArn?: string;
   Policy?: string;
 }
-export const PutResourcePolicyResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ResourceArn: S.optional(S.String),
-      Policy: S.optional(S.String),
-    }).pipe(ns),
+export const PutResourcePolicyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ResourceArn: S.optional(S.String),
+    Policy: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "PutResourcePolicyResponse",
 }) as any as S.Schema<PutResourcePolicyResponse>;
 export type PipelineEndpointIdsList = string[];
-export const PipelineEndpointIdsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const PipelineEndpointIdsList = /*@__PURE__*/ S.Array(S.String);
 export interface RevokePipelineEndpointConnectionsRequest {
   PipelineArn: string;
   EndpointIds: string[];
 }
-export const RevokePipelineEndpointConnectionsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RevokePipelineEndpointConnectionsRequest = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       PipelineArn: S.String,
       EndpointIds: PipelineEndpointIdsList,
@@ -1030,14 +1058,14 @@ export const RevokePipelineEndpointConnectionsRequest =
         rules,
       ),
     ),
-  ).annotate({
-    identifier: "RevokePipelineEndpointConnectionsRequest",
-  }) as any as S.Schema<RevokePipelineEndpointConnectionsRequest>;
+).annotate({
+  identifier: "RevokePipelineEndpointConnectionsRequest",
+}) as any as S.Schema<RevokePipelineEndpointConnectionsRequest>;
 export interface RevokePipelineEndpointConnectionsResponse {
   PipelineArn?: string;
 }
 export const RevokePipelineEndpointConnectionsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({ PipelineArn: S.optional(S.String) }).pipe(ns),
   ).annotate({
     identifier: "RevokePipelineEndpointConnectionsResponse",
@@ -1045,7 +1073,7 @@ export const RevokePipelineEndpointConnectionsResponse =
 export interface StartPipelineRequest {
   PipelineName: string;
 }
-export const StartPipelineRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StartPipelineRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ PipelineName: S.String.pipe(T.HttpLabel("PipelineName")) }).pipe(
     T.all(
       ns,
@@ -1066,7 +1094,7 @@ export const StartPipelineRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface StartPipelineResponse {
   Pipeline?: Pipeline;
 }
-export const StartPipelineResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StartPipelineResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Pipeline: S.optional(Pipeline) }).pipe(ns),
 ).annotate({
   identifier: "StartPipelineResponse",
@@ -1074,7 +1102,7 @@ export const StartPipelineResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface StopPipelineRequest {
   PipelineName: string;
 }
-export const StopPipelineRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StopPipelineRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ PipelineName: S.String.pipe(T.HttpLabel("PipelineName")) }).pipe(
     T.all(
       ns,
@@ -1095,7 +1123,7 @@ export const StopPipelineRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface StopPipelineResponse {
   Pipeline?: Pipeline;
 }
-export const StopPipelineResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StopPipelineResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Pipeline: S.optional(Pipeline) }).pipe(ns),
 ).annotate({
   identifier: "StopPipelineResponse",
@@ -1104,7 +1132,7 @@ export interface TagResourceRequest {
   Arn: string;
   Tags: Tag[];
 }
-export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Arn: S.String.pipe(T.HttpQuery("arn")), Tags: TagList }).pipe(
     T.all(
       ns,
@@ -1120,18 +1148,18 @@ export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "TagResourceRequest",
 }) as any as S.Schema<TagResourceRequest>;
 export interface TagResourceResponse {}
-export const TagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "TagResourceResponse",
 }) as any as S.Schema<TagResourceResponse>;
 export type StringList = string[];
-export const StringList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const StringList = /*@__PURE__*/ S.Array(S.String);
 export interface UntagResourceRequest {
   Arn: string;
   TagKeys: string[];
 }
-export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Arn: S.String.pipe(T.HttpQuery("arn")),
     TagKeys: StringList,
@@ -1150,7 +1178,7 @@ export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "UntagResourceRequest",
 }) as any as S.Schema<UntagResourceRequest>;
 export interface UntagResourceResponse {}
-export const UntagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "UntagResourceResponse",
@@ -1165,7 +1193,7 @@ export interface UpdatePipelineRequest {
   EncryptionAtRestOptions?: EncryptionAtRestOptions;
   PipelineRoleArn?: string;
 }
-export const UpdatePipelineRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdatePipelineRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     PipelineName: S.String.pipe(T.HttpLabel("PipelineName")),
     MinUnits: S.optional(S.Number),
@@ -1195,94 +1223,52 @@ export const UpdatePipelineRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface UpdatePipelineResponse {
   Pipeline?: Pipeline;
 }
-export const UpdatePipelineResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ Pipeline: S.optional(Pipeline) }).pipe(ns),
+export const UpdatePipelineResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Pipeline: S.optional(Pipeline) }).pipe(ns),
 ).annotate({
   identifier: "UpdatePipelineResponse",
 }) as any as S.Schema<UpdatePipelineResponse>;
 export interface ValidatePipelineRequest {
   PipelineConfigurationBody: string;
 }
-export const ValidatePipelineRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ PipelineConfigurationBody: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/2022-01-01/osis/validatePipeline" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ValidatePipelineRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ PipelineConfigurationBody: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/2022-01-01/osis/validatePipeline" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "ValidatePipelineRequest",
 }) as any as S.Schema<ValidatePipelineRequest>;
 export interface ValidationMessage {
   Message?: string;
 }
-export const ValidationMessage = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ValidationMessage = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Message: S.optional(S.String) }),
 ).annotate({
   identifier: "ValidationMessage",
 }) as any as S.Schema<ValidationMessage>;
 export type ValidationMessageList = ValidationMessage[];
-export const ValidationMessageList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ValidationMessage);
+export const ValidationMessageList = /*@__PURE__*/ S.Array(ValidationMessage);
 export interface ValidatePipelineResponse {
   isValid?: boolean;
   Errors?: ValidationMessage[];
 }
-export const ValidatePipelineResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      isValid: S.optional(S.Boolean),
-      Errors: S.optional(ValidationMessageList),
-    }).pipe(ns),
+export const ValidatePipelineResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    isValid: S.optional(S.Boolean),
+    Errors: S.optional(ValidationMessageList),
+  }).pipe(ns),
 ).annotate({
   identifier: "ValidatePipelineResponse",
 }) as any as S.Schema<ValidatePipelineResponse>;
-
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class DisabledOperationException extends S.TaggedErrorClass<DisabledOperationException>()(
-  "DisabledOperationException",
-  { message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class InternalException extends S.TaggedErrorClass<InternalException>()(
-  "InternalException",
-  { message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class LimitExceededException extends S.TaggedErrorClass<LimitExceededException>()(
-  "LimitExceededException",
-  { message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class ResourceAlreadyExistsException extends S.TaggedErrorClass<ResourceAlreadyExistsException>()(
-  "ResourceAlreadyExistsException",
-  { message: S.optional(S.String) },
-).pipe(C.withConflictError, C.withAlreadyExistsError) {}
-export class ResourceNotFoundException extends S.TaggedErrorClass<ResourceNotFoundException>()(
-  "ResourceNotFoundException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ValidationException extends S.TaggedErrorClass<ValidationException>()(
-  "ValidationException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ConflictException extends S.TaggedErrorClass<ConflictException>()(
-  "ConflictException",
-  { message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class InvalidPaginationTokenException extends S.TaggedErrorClass<InvalidPaginationTokenException>()(
-  "InvalidPaginationTokenException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-
-//# Operations
+export type ErrorMessage = string;
 export type CreatePipelineError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1300,8 +1286,8 @@ export const createPipeline: API.OperationMethod<
   CreatePipelineRequest,
   CreatePipelineResponse,
   CreatePipelineError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreatePipelineRequest,
   output: CreatePipelineResponse,
   errors: [
@@ -1313,7 +1299,11 @@ export const createPipeline: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreatePipeline",
 }));
+
 export type CreatePipelineEndpointError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1330,8 +1320,8 @@ export const createPipelineEndpoint: API.OperationMethod<
   CreatePipelineEndpointRequest,
   CreatePipelineEndpointResponse,
   CreatePipelineEndpointError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreatePipelineEndpointRequest,
   output: CreatePipelineEndpointResponse,
   errors: [
@@ -1342,7 +1332,11 @@ export const createPipelineEndpoint: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreatePipelineEndpoint",
 }));
+
 export type DeletePipelineError =
   | AccessDeniedException
   | ConflictException
@@ -1359,8 +1353,8 @@ export const deletePipeline: API.OperationMethod<
   DeletePipelineRequest,
   DeletePipelineResponse,
   DeletePipelineError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeletePipelineRequest,
   output: DeletePipelineResponse,
   errors: [
@@ -1371,7 +1365,11 @@ export const deletePipeline: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeletePipeline",
 }));
+
 export type DeletePipelineEndpointError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1385,8 +1383,8 @@ export const deletePipelineEndpoint: API.OperationMethod<
   DeletePipelineEndpointRequest,
   DeletePipelineEndpointResponse,
   DeletePipelineEndpointError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeletePipelineEndpointRequest,
   output: DeletePipelineEndpointResponse,
   errors: [
@@ -1395,7 +1393,11 @@ export const deletePipelineEndpoint: API.OperationMethod<
     InternalException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeletePipelineEndpoint",
 }));
+
 export type DeleteResourcePolicyError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1411,8 +1413,8 @@ export const deleteResourcePolicy: API.OperationMethod<
   DeleteResourcePolicyRequest,
   DeleteResourcePolicyResponse,
   DeleteResourcePolicyError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteResourcePolicyRequest,
   output: DeleteResourcePolicyResponse,
   errors: [
@@ -1423,7 +1425,11 @@ export const deleteResourcePolicy: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteResourcePolicy",
 }));
+
 export type GetPipelineError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1438,8 +1444,8 @@ export const getPipeline: API.OperationMethod<
   GetPipelineRequest,
   GetPipelineResponse,
   GetPipelineError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetPipelineRequest,
   output: GetPipelineResponse,
   errors: [
@@ -1449,7 +1455,11 @@ export const getPipeline: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetPipeline",
 }));
+
 export type GetPipelineBlueprintError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1467,8 +1477,8 @@ export const getPipelineBlueprint: API.OperationMethod<
   GetPipelineBlueprintRequest,
   GetPipelineBlueprintResponse,
   GetPipelineBlueprintError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetPipelineBlueprintRequest,
   output: GetPipelineBlueprintResponse,
   errors: [
@@ -1478,7 +1488,11 @@ export const getPipelineBlueprint: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetPipelineBlueprint",
 }));
+
 export type GetPipelineChangeProgressError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1497,8 +1511,8 @@ export const getPipelineChangeProgress: API.OperationMethod<
   GetPipelineChangeProgressRequest,
   GetPipelineChangeProgressResponse,
   GetPipelineChangeProgressError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetPipelineChangeProgressRequest,
   output: GetPipelineChangeProgressResponse,
   errors: [
@@ -1508,7 +1522,11 @@ export const getPipelineChangeProgress: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetPipelineChangeProgress",
 }));
+
 export type GetResourcePolicyError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1524,8 +1542,8 @@ export const getResourcePolicy: API.OperationMethod<
   GetResourcePolicyRequest,
   GetResourcePolicyResponse,
   GetResourcePolicyError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetResourcePolicyRequest,
   output: GetResourcePolicyResponse,
   errors: [
@@ -1536,7 +1554,11 @@ export const getResourcePolicy: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetResourcePolicy",
 }));
+
 export type ListPipelineBlueprintsError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1553,8 +1575,8 @@ export const listPipelineBlueprints: API.OperationMethod<
   ListPipelineBlueprintsRequest,
   ListPipelineBlueprintsResponse,
   ListPipelineBlueprintsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListPipelineBlueprintsRequest,
   output: ListPipelineBlueprintsResponse,
   errors: [
@@ -1564,7 +1586,11 @@ export const listPipelineBlueprints: API.OperationMethod<
     InvalidPaginationTokenException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListPipelineBlueprints",
 }));
+
 export type ListPipelineEndpointConnectionsError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1575,27 +1601,13 @@ export type ListPipelineEndpointConnectionsError =
 /**
  * Lists the pipeline endpoints connected to pipelines in your account.
  */
-export const listPipelineEndpointConnections: API.OperationMethod<
+export const listPipelineEndpointConnections: API.PaginatedOperationMethod<
   ListPipelineEndpointConnectionsRequest,
   ListPipelineEndpointConnectionsResponse,
   ListPipelineEndpointConnectionsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListPipelineEndpointConnectionsRequest,
-  ) => stream.Stream<
-    ListPipelineEndpointConnectionsResponse,
-    ListPipelineEndpointConnectionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListPipelineEndpointConnectionsRequest,
-  ) => stream.Stream<
-    PipelineEndpointConnection,
-    ListPipelineEndpointConnectionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  PipelineEndpointConnection
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListPipelineEndpointConnectionsRequest,
   output: ListPipelineEndpointConnectionsResponse,
   errors: [
@@ -1605,13 +1617,17 @@ export const listPipelineEndpointConnections: API.OperationMethod<
     LimitExceededException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListPipelineEndpointConnections",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "PipelineEndpointConnections",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ListPipelineEndpointsError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1622,27 +1638,13 @@ export type ListPipelineEndpointsError =
 /**
  * Lists all pipeline endpoints in your account.
  */
-export const listPipelineEndpoints: API.OperationMethod<
+export const listPipelineEndpoints: API.PaginatedOperationMethod<
   ListPipelineEndpointsRequest,
   ListPipelineEndpointsResponse,
   ListPipelineEndpointsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListPipelineEndpointsRequest,
-  ) => stream.Stream<
-    ListPipelineEndpointsResponse,
-    ListPipelineEndpointsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListPipelineEndpointsRequest,
-  ) => stream.Stream<
-    PipelineEndpoint,
-    ListPipelineEndpointsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  PipelineEndpoint
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListPipelineEndpointsRequest,
   output: ListPipelineEndpointsResponse,
   errors: [
@@ -1652,13 +1654,17 @@ export const listPipelineEndpoints: API.OperationMethod<
     LimitExceededException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListPipelineEndpoints",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "PipelineEndpoints",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ListPipelinesError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1671,27 +1677,13 @@ export type ListPipelinesError =
  * For more information, see Viewing Amazon OpenSearch
  * Ingestion pipelines.
  */
-export const listPipelines: API.OperationMethod<
+export const listPipelines: API.PaginatedOperationMethod<
   ListPipelinesRequest,
   ListPipelinesResponse,
   ListPipelinesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListPipelinesRequest,
-  ) => stream.Stream<
-    ListPipelinesResponse,
-    ListPipelinesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListPipelinesRequest,
-  ) => stream.Stream<
-    unknown,
-    ListPipelinesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListPipelinesRequest,
   output: ListPipelinesResponse,
   errors: [
@@ -1701,12 +1693,16 @@ export const listPipelines: API.OperationMethod<
     InvalidPaginationTokenException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListPipelines",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ListTagsForResourceError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1722,8 +1718,8 @@ export const listTagsForResource: API.OperationMethod<
   ListTagsForResourceRequest,
   ListTagsForResourceResponse,
   ListTagsForResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListTagsForResourceRequest,
   output: ListTagsForResourceResponse,
   errors: [
@@ -1733,7 +1729,11 @@ export const listTagsForResource: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTagsForResource",
 }));
+
 export type PutResourcePolicyError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1750,8 +1750,8 @@ export const putResourcePolicy: API.OperationMethod<
   PutResourcePolicyRequest,
   PutResourcePolicyResponse,
   PutResourcePolicyError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PutResourcePolicyRequest,
   output: PutResourcePolicyResponse,
   errors: [
@@ -1762,7 +1762,11 @@ export const putResourcePolicy: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PutResourcePolicy",
 }));
+
 export type RevokePipelineEndpointConnectionsError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1777,8 +1781,8 @@ export const revokePipelineEndpointConnections: API.OperationMethod<
   RevokePipelineEndpointConnectionsRequest,
   RevokePipelineEndpointConnectionsResponse,
   RevokePipelineEndpointConnectionsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: RevokePipelineEndpointConnectionsRequest,
   output: RevokePipelineEndpointConnectionsResponse,
   errors: [
@@ -1788,7 +1792,11 @@ export const revokePipelineEndpointConnections: API.OperationMethod<
     LimitExceededException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "RevokePipelineEndpointConnections",
 }));
+
 export type StartPipelineError =
   | AccessDeniedException
   | ConflictException
@@ -1804,8 +1812,8 @@ export const startPipeline: API.OperationMethod<
   StartPipelineRequest,
   StartPipelineResponse,
   StartPipelineError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: StartPipelineRequest,
   output: StartPipelineResponse,
   errors: [
@@ -1816,7 +1824,11 @@ export const startPipeline: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "StartPipeline",
 }));
+
 export type StopPipelineError =
   | AccessDeniedException
   | ConflictException
@@ -1833,8 +1845,8 @@ export const stopPipeline: API.OperationMethod<
   StopPipelineRequest,
   StopPipelineResponse,
   StopPipelineError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: StopPipelineRequest,
   output: StopPipelineResponse,
   errors: [
@@ -1845,7 +1857,11 @@ export const stopPipeline: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "StopPipeline",
 }));
+
 export type TagResourceError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1862,8 +1878,8 @@ export const tagResource: API.OperationMethod<
   TagResourceRequest,
   TagResourceResponse,
   TagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TagResourceRequest,
   output: TagResourceResponse,
   errors: [
@@ -1874,7 +1890,11 @@ export const tagResource: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TagResource",
 }));
+
 export type UntagResourceError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1890,8 +1910,8 @@ export const untagResource: API.OperationMethod<
   UntagResourceRequest,
   UntagResourceResponse,
   UntagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UntagResourceRequest,
   output: UntagResourceResponse,
   errors: [
@@ -1901,7 +1921,11 @@ export const untagResource: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UntagResource",
 }));
+
 export type UpdatePipelineError =
   | AccessDeniedException
   | ConflictException
@@ -1918,8 +1942,8 @@ export const updatePipeline: API.OperationMethod<
   UpdatePipelineRequest,
   UpdatePipelineResponse,
   UpdatePipelineError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdatePipelineRequest,
   output: UpdatePipelineResponse,
   errors: [
@@ -1930,7 +1954,11 @@ export const updatePipeline: API.OperationMethod<
     ResourceNotFoundException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdatePipeline",
 }));
+
 export type ValidatePipelineError =
   | AccessDeniedException
   | DisabledOperationException
@@ -1946,8 +1974,8 @@ export const validatePipeline: API.OperationMethod<
   ValidatePipelineRequest,
   ValidatePipelineResponse,
   ValidatePipelineError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ValidatePipelineRequest,
   output: ValidatePipelineResponse,
   errors: [
@@ -1956,4 +1984,7 @@ export const validatePipeline: API.OperationMethod<
     InternalException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ValidatePipeline",
 }));

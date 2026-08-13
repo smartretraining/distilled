@@ -1,12 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "Marketplace Catalog",
   serviceShapeName: "AWSMPSeymour",
@@ -92,103 +92,87 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class InternalServiceException
+  extends /*@__PURE__*/ S.TaggedError<InternalServiceException>()(
+    "InternalServiceException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class ResourceInUseException
+  extends /*@__PURE__*/ S.TaggedError<ResourceInUseException>()(
+    "ResourceInUseException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(423),
+  ) {}
+export class ResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotFoundException>()(
+    "ResourceNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class ResourceNotSupportedException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotSupportedException>()(
+    "ResourceNotSupportedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(415),
+  ).pipe(C.withBadRequestError) {}
+export class ServiceQuotaExceededException
+  extends /*@__PURE__*/ S.TaggedError<ServiceQuotaExceededException>()(
+    "ServiceQuotaExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(402),
+  ).pipe(C.withQuotaError) {}
+export class ThrottlingException
+  extends /*@__PURE__*/ S.TaggedError<ThrottlingException>()(
+    "ThrottlingException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(429),
+  ).pipe(C.withThrottlingError) {}
+export class ValidationException
+  extends /*@__PURE__*/ S.TaggedError<ValidationException>()(
+    "ValidationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(422),
+  ).pipe(C.withBadRequestError) {}
 export type Catalog = string;
 export type EntityId = string;
+export interface EntityRequest {
+  Catalog: string;
+  EntityId: string;
+}
+export const EntityRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Catalog: S.String, EntityId: S.String }),
+).annotate({ identifier: "EntityRequest" }) as any as S.Schema<EntityRequest>;
+export type EntityRequestList = EntityRequest[];
+export const EntityRequestList = /*@__PURE__*/ S.Array(EntityRequest);
+export interface BatchDescribeEntitiesRequest {
+  EntityRequestList: EntityRequest[];
+}
+export const BatchDescribeEntitiesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ EntityRequestList: EntityRequestList }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/BatchDescribeEntities" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "BatchDescribeEntitiesRequest",
+}) as any as S.Schema<BatchDescribeEntitiesRequest>;
 export type EntityType = string;
 export type ARN = string;
 export type Identifier = string;
 export type DateTimeISO8601 = string;
 export type JsonDocumentType = unknown;
-export type BatchDescribeErrorCodeString = string;
-export type BatchDescribeErrorMessageContent = string;
-export type ExceptionMessageContent = string;
-export type ResourceId = string;
-export type ResourceARN = string;
-export type ChangeSetName = string;
-export type ChangeType = string;
-export type Json = string;
-export type ErrorCodeString = string;
-export type ChangeName = string;
-export type ResourcePolicyJson = string;
-export type FilterName = string;
-export type FilterValueContent = string;
-export type SortBy = string;
-export type ListChangeSetsMaxResultInteger = number;
-export type NextToken = string;
-export type ListEntitiesMaxResultInteger = number;
-export type DataProductEntityIdString = string;
-export type DataProductTitleString = string;
-export type SaaSProductEntityIdString = string;
-export type SaaSProductTitleString = string;
-export type AmiProductEntityIdString = string;
-export type AmiProductTitleString = string;
-export type OfferEntityIdString = string;
-export type OfferNameString = string;
-export type OfferProductIdString = string;
-export type OfferResaleAuthorizationIdString = string;
-export type OfferBuyerAccountsFilterWildcard = string;
-export type OfferSetIdString = string;
-export type ContainerProductEntityIdString = string;
-export type ContainerProductTitleString = string;
-export type ResaleAuthorizationEntityIdString = string;
-export type ResaleAuthorizationNameString = string;
-export type ResaleAuthorizationNameFilterWildcard = string;
-export type ResaleAuthorizationProductIdString = string;
-export type ResaleAuthorizationProductIdFilterWildcard = string;
-export type ResaleAuthorizationManufacturerAccountIdString = string;
-export type ResaleAuthorizationManufacturerAccountIdFilterWildcard = string;
-export type ResaleAuthorizationProductNameString = string;
-export type ResaleAuthorizationProductNameFilterWildcard = string;
-export type ResaleAuthorizationManufacturerLegalNameString = string;
-export type ResaleAuthorizationManufacturerLegalNameFilterWildcard = string;
-export type ResaleAuthorizationResellerAccountIDString = string;
-export type ResaleAuthorizationResellerAccountIDFilterWildcard = string;
-export type ResaleAuthorizationResellerLegalNameString = string;
-export type ResaleAuthorizationResellerLegalNameFilterWildcard = string;
-export type ResaleAuthorizationOfferExtendedStatusString = string;
-export type MachineLearningProductEntityIdString = string;
-export type MachineLearningProductTitleString = string;
-export type OfferSetEntityIdString = string;
-export type OfferSetNameString = string;
-export type OfferSetAssociatedOfferIdsString = string;
-export type OfferSetSolutionIdString = string;
-export type EntityNameString = string;
-export type VisibilityValue = string;
-export type OfferBuyerAccountsString = string;
-export type TagKey = string;
-export type TagValue = string;
-export type ClientRequestToken = string;
-
-//# Schemas
-export interface EntityRequest {
-  Catalog: string;
-  EntityId: string;
-}
-export const EntityRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ Catalog: S.String, EntityId: S.String }),
-).annotate({ identifier: "EntityRequest" }) as any as S.Schema<EntityRequest>;
-export type EntityRequestList = EntityRequest[];
-export const EntityRequestList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EntityRequest);
-export interface BatchDescribeEntitiesRequest {
-  EntityRequestList: EntityRequest[];
-}
-export const BatchDescribeEntitiesRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ EntityRequestList: EntityRequestList }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/BatchDescribeEntities" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
-    ),
-  ).annotate({
-    identifier: "BatchDescribeEntitiesRequest",
-  }) as any as S.Schema<BatchDescribeEntitiesRequest>;
 export interface EntityDetail {
   EntityType?: string;
   EntityArn?: string;
@@ -196,7 +180,7 @@ export interface EntityDetail {
   LastModifiedDate?: string;
   DetailsDocument?: any;
 }
-export const EntityDetail = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EntityDetail = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     EntityType: S.optional(S.String),
     EntityArn: S.optional(S.String),
@@ -206,25 +190,26 @@ export const EntityDetail = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "EntityDetail" }) as any as S.Schema<EntityDetail>;
 export type EntityDetails = { [key: string]: EntityDetail | undefined };
-export const EntityDetails = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const EntityDetails = /*@__PURE__*/ S.Record(
   S.String,
   EntityDetail.pipe(S.optional),
 );
+export type BatchDescribeErrorCodeString = string;
+export type BatchDescribeErrorMessageContent = string;
 export interface BatchDescribeErrorDetail {
   ErrorCode?: string;
   ErrorMessage?: string;
 }
-export const BatchDescribeErrorDetail = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ErrorCode: S.optional(S.String),
-      ErrorMessage: S.optional(S.String),
-    }),
+export const BatchDescribeErrorDetail = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ErrorCode: S.optional(S.String),
+    ErrorMessage: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "BatchDescribeErrorDetail",
 }) as any as S.Schema<BatchDescribeErrorDetail>;
 export type Errors = { [key: string]: BatchDescribeErrorDetail | undefined };
-export const Errors = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const Errors = /*@__PURE__*/ S.Record(
   S.String,
   BatchDescribeErrorDetail.pipe(S.optional),
 );
@@ -232,34 +217,33 @@ export interface BatchDescribeEntitiesResponse {
   EntityDetails?: { [key: string]: EntityDetail | undefined };
   Errors?: { [key: string]: BatchDescribeErrorDetail | undefined };
 }
-export const BatchDescribeEntitiesResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      EntityDetails: S.optional(EntityDetails),
-      Errors: S.optional(Errors),
-    }),
-  ).annotate({
-    identifier: "BatchDescribeEntitiesResponse",
-  }) as any as S.Schema<BatchDescribeEntitiesResponse>;
+export const BatchDescribeEntitiesResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    EntityDetails: S.optional(EntityDetails),
+    Errors: S.optional(Errors),
+  }),
+).annotate({
+  identifier: "BatchDescribeEntitiesResponse",
+}) as any as S.Schema<BatchDescribeEntitiesResponse>;
+export type ResourceId = string;
 export interface CancelChangeSetRequest {
   Catalog: string;
   ChangeSetId: string;
 }
-export const CancelChangeSetRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Catalog: S.String.pipe(T.HttpQuery("catalog")),
-      ChangeSetId: S.String.pipe(T.HttpQuery("changeSetId")),
-    }).pipe(
-      T.all(
-        T.Http({ method: "PATCH", uri: "/CancelChangeSet" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CancelChangeSetRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Catalog: S.String.pipe(T.HttpQuery("catalog")),
+    ChangeSetId: S.String.pipe(T.HttpQuery("changeSetId")),
+  }).pipe(
+    T.all(
+      T.Http({ method: "PATCH", uri: "/CancelChangeSet" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "CancelChangeSetRequest",
 }) as any as S.Schema<CancelChangeSetRequest>;
@@ -267,62 +251,63 @@ export interface CancelChangeSetResponse {
   ChangeSetId?: string;
   ChangeSetArn?: string;
 }
-export const CancelChangeSetResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ChangeSetId: S.optional(S.String),
-      ChangeSetArn: S.optional(S.String),
-    }),
+export const CancelChangeSetResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ChangeSetId: S.optional(S.String),
+    ChangeSetArn: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "CancelChangeSetResponse",
 }) as any as S.Schema<CancelChangeSetResponse>;
+export type ResourceARN = string;
 export interface DeleteResourcePolicyRequest {
   ResourceArn: string;
 }
-export const DeleteResourcePolicyRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ ResourceArn: S.String.pipe(T.HttpQuery("resourceArn")) }).pipe(
-      T.all(
-        T.Http({ method: "DELETE", uri: "/DeleteResourcePolicy" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteResourcePolicyRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String.pipe(T.HttpQuery("resourceArn")) }).pipe(
+    T.all(
+      T.Http({ method: "DELETE", uri: "/DeleteResourcePolicy" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "DeleteResourcePolicyRequest",
-  }) as any as S.Schema<DeleteResourcePolicyRequest>;
+  ),
+).annotate({
+  identifier: "DeleteResourcePolicyRequest",
+}) as any as S.Schema<DeleteResourcePolicyRequest>;
 export interface DeleteResourcePolicyResponse {}
-export const DeleteResourcePolicyResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({})).annotate({
-    identifier: "DeleteResourcePolicyResponse",
-  }) as any as S.Schema<DeleteResourcePolicyResponse>;
+export const DeleteResourcePolicyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
+).annotate({
+  identifier: "DeleteResourcePolicyResponse",
+}) as any as S.Schema<DeleteResourcePolicyResponse>;
 export interface DescribeChangeSetRequest {
   Catalog: string;
   ChangeSetId: string;
 }
-export const DescribeChangeSetRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Catalog: S.String.pipe(T.HttpQuery("catalog")),
-      ChangeSetId: S.String.pipe(T.HttpQuery("changeSetId")),
-    }).pipe(
-      T.all(
-        T.Http({ method: "GET", uri: "/DescribeChangeSet" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DescribeChangeSetRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Catalog: S.String.pipe(T.HttpQuery("catalog")),
+    ChangeSetId: S.String.pipe(T.HttpQuery("changeSetId")),
+  }).pipe(
+    T.all(
+      T.Http({ method: "GET", uri: "/DescribeChangeSet" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "DescribeChangeSetRequest",
 }) as any as S.Schema<DescribeChangeSetRequest>;
+export type ChangeSetName = string;
 export type Intent = "VALIDATE" | "APPLY" | (string & {});
-export const Intent = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const Intent = /*@__PURE__*/ S.String;
+
 export type ChangeStatus =
   | "PREPARING"
   | "APPLYING"
@@ -330,28 +315,35 @@ export type ChangeStatus =
   | "CANCELLED"
   | "FAILED"
   | (string & {});
-export const ChangeStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ChangeStatus = /*@__PURE__*/ S.String;
+
 export type FailureCode = "CLIENT_ERROR" | "SERVER_FAULT" | (string & {});
-export const FailureCode = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const FailureCode = /*@__PURE__*/ S.String;
+
+export type ExceptionMessageContent = string;
+export type ChangeType = string;
 export interface Entity {
   Type: string;
   Identifier?: string;
 }
-export const Entity = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Entity = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Type: S.String, Identifier: S.optional(S.String) }),
 ).annotate({ identifier: "Entity" }) as any as S.Schema<Entity>;
+export type Json = string;
+export type ErrorCodeString = string;
 export interface ErrorDetail {
   ErrorCode?: string;
   ErrorMessage?: string;
 }
-export const ErrorDetail = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ErrorDetail = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ErrorCode: S.optional(S.String),
     ErrorMessage: S.optional(S.String),
   }),
 ).annotate({ identifier: "ErrorDetail" }) as any as S.Schema<ErrorDetail>;
 export type ErrorDetailList = ErrorDetail[];
-export const ErrorDetailList = /*@__PURE__*/ /*#__PURE__*/ S.Array(ErrorDetail);
+export const ErrorDetailList = /*@__PURE__*/ S.Array(ErrorDetail);
+export type ChangeName = string;
 export interface ChangeSummary {
   ChangeType?: string;
   Entity?: Entity;
@@ -360,7 +352,7 @@ export interface ChangeSummary {
   ErrorDetailList?: ErrorDetail[];
   ChangeName?: string;
 }
-export const ChangeSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ChangeSummary = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ChangeType: S.optional(S.String),
     Entity: S.optional(Entity),
@@ -371,8 +363,7 @@ export const ChangeSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "ChangeSummary" }) as any as S.Schema<ChangeSummary>;
 export type ChangeSetDescription = ChangeSummary[];
-export const ChangeSetDescription =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ChangeSummary);
+export const ChangeSetDescription = /*@__PURE__*/ S.Array(ChangeSummary);
 export interface DescribeChangeSetResponse {
   ChangeSetId?: string;
   ChangeSetArn?: string;
@@ -385,20 +376,19 @@ export interface DescribeChangeSetResponse {
   FailureDescription?: string;
   ChangeSet?: ChangeSummary[];
 }
-export const DescribeChangeSetResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ChangeSetId: S.optional(S.String),
-      ChangeSetArn: S.optional(S.String),
-      ChangeSetName: S.optional(S.String),
-      Intent: S.optional(Intent),
-      StartTime: S.optional(S.String),
-      EndTime: S.optional(S.String),
-      Status: S.optional(ChangeStatus),
-      FailureCode: S.optional(FailureCode),
-      FailureDescription: S.optional(S.String),
-      ChangeSet: S.optional(ChangeSetDescription),
-    }),
+export const DescribeChangeSetResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ChangeSetId: S.optional(S.String),
+    ChangeSetArn: S.optional(S.String),
+    ChangeSetName: S.optional(S.String),
+    Intent: S.optional(Intent),
+    StartTime: S.optional(S.String),
+    EndTime: S.optional(S.String),
+    Status: S.optional(ChangeStatus),
+    FailureCode: S.optional(FailureCode),
+    FailureDescription: S.optional(S.String),
+    ChangeSet: S.optional(ChangeSetDescription),
+  }),
 ).annotate({
   identifier: "DescribeChangeSetResponse",
 }) as any as S.Schema<DescribeChangeSetResponse>;
@@ -406,7 +396,7 @@ export interface DescribeEntityRequest {
   Catalog: string;
   EntityId: string;
 }
-export const DescribeEntityRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeEntityRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Catalog: S.String.pipe(T.HttpQuery("catalog")),
     EntityId: S.String.pipe(T.HttpQuery("entityId")),
@@ -431,65 +421,70 @@ export interface DescribeEntityResponse {
   Details?: string;
   DetailsDocument?: any;
 }
-export const DescribeEntityResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      EntityType: S.optional(S.String),
-      EntityIdentifier: S.optional(S.String),
-      EntityArn: S.optional(S.String),
-      LastModifiedDate: S.optional(S.String),
-      Details: S.optional(S.String),
-      DetailsDocument: S.optional(S.Any),
-    }),
+export const DescribeEntityResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    EntityType: S.optional(S.String),
+    EntityIdentifier: S.optional(S.String),
+    EntityArn: S.optional(S.String),
+    LastModifiedDate: S.optional(S.String),
+    Details: S.optional(S.String),
+    DetailsDocument: S.optional(S.Any),
+  }),
 ).annotate({
   identifier: "DescribeEntityResponse",
 }) as any as S.Schema<DescribeEntityResponse>;
 export interface GetResourcePolicyRequest {
   ResourceArn: string;
 }
-export const GetResourcePolicyRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ ResourceArn: S.String.pipe(T.HttpQuery("resourceArn")) }).pipe(
-      T.all(
-        T.Http({ method: "GET", uri: "/GetResourcePolicy" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetResourcePolicyRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String.pipe(T.HttpQuery("resourceArn")) }).pipe(
+    T.all(
+      T.Http({ method: "GET", uri: "/GetResourcePolicy" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetResourcePolicyRequest",
 }) as any as S.Schema<GetResourcePolicyRequest>;
+export type ResourcePolicyJson = string;
 export interface GetResourcePolicyResponse {
   Policy?: string;
 }
-export const GetResourcePolicyResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ Policy: S.optional(S.String) }),
+export const GetResourcePolicyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Policy: S.optional(S.String) }),
 ).annotate({
   identifier: "GetResourcePolicyResponse",
 }) as any as S.Schema<GetResourcePolicyResponse>;
+export type FilterName = string;
+export type FilterValueContent = string;
 export type ValueList = string[];
-export const ValueList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ValueList = /*@__PURE__*/ S.Array(S.String);
 export interface Filter {
   Name?: string;
   ValueList?: string[];
 }
-export const Filter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Filter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Name: S.optional(S.String), ValueList: S.optional(ValueList) }),
 ).annotate({ identifier: "Filter" }) as any as S.Schema<Filter>;
 export type FilterList = Filter[];
-export const FilterList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Filter);
+export const FilterList = /*@__PURE__*/ S.Array(Filter);
+export type SortBy = string;
 export type SortOrder = "ASCENDING" | "DESCENDING" | (string & {});
-export const SortOrder = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SortOrder = /*@__PURE__*/ S.String;
+
 export interface Sort {
   SortBy?: string;
   SortOrder?: SortOrder;
 }
-export const Sort = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Sort = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ SortBy: S.optional(S.String), SortOrder: S.optional(SortOrder) }),
 ).annotate({ identifier: "Sort" }) as any as S.Schema<Sort>;
+export type ListChangeSetsMaxResultInteger = number;
+export type NextToken = string;
 export interface ListChangeSetsRequest {
   Catalog: string;
   FilterList?: Filter[];
@@ -497,7 +492,7 @@ export interface ListChangeSetsRequest {
   MaxResults?: number;
   NextToken?: string;
 }
-export const ListChangeSetsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListChangeSetsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Catalog: S.String,
     FilterList: S.optional(FilterList),
@@ -518,7 +513,7 @@ export const ListChangeSetsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListChangeSetsRequest",
 }) as any as S.Schema<ListChangeSetsRequest>;
 export type ResourceIdList = string[];
-export const ResourceIdList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ResourceIdList = /*@__PURE__*/ S.Array(S.String);
 export interface ChangeSetSummaryListItem {
   ChangeSetId?: string;
   ChangeSetArn?: string;
@@ -529,64 +524,65 @@ export interface ChangeSetSummaryListItem {
   EntityIdList?: string[];
   FailureCode?: FailureCode;
 }
-export const ChangeSetSummaryListItem = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ChangeSetId: S.optional(S.String),
-      ChangeSetArn: S.optional(S.String),
-      ChangeSetName: S.optional(S.String),
-      StartTime: S.optional(S.String),
-      EndTime: S.optional(S.String),
-      Status: S.optional(ChangeStatus),
-      EntityIdList: S.optional(ResourceIdList),
-      FailureCode: S.optional(FailureCode),
-    }),
+export const ChangeSetSummaryListItem = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ChangeSetId: S.optional(S.String),
+    ChangeSetArn: S.optional(S.String),
+    ChangeSetName: S.optional(S.String),
+    StartTime: S.optional(S.String),
+    EndTime: S.optional(S.String),
+    Status: S.optional(ChangeStatus),
+    EntityIdList: S.optional(ResourceIdList),
+    FailureCode: S.optional(FailureCode),
+  }),
 ).annotate({
   identifier: "ChangeSetSummaryListItem",
 }) as any as S.Schema<ChangeSetSummaryListItem>;
 export type ChangeSetSummaryList = ChangeSetSummaryListItem[];
-export const ChangeSetSummaryList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const ChangeSetSummaryList = /*@__PURE__*/ S.Array(
   ChangeSetSummaryListItem,
 );
 export interface ListChangeSetsResponse {
   ChangeSetSummaryList?: ChangeSetSummaryListItem[];
   NextToken?: string;
 }
-export const ListChangeSetsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ChangeSetSummaryList: S.optional(ChangeSetSummaryList),
-      NextToken: S.optional(S.String),
-    }),
+export const ListChangeSetsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ChangeSetSummaryList: S.optional(ChangeSetSummaryList),
+    NextToken: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "ListChangeSetsResponse",
 }) as any as S.Schema<ListChangeSetsResponse>;
+export type ListEntitiesMaxResultInteger = number;
 export type OwnershipType = "SELF" | "SHARED" | (string & {});
-export const OwnershipType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const OwnershipType = /*@__PURE__*/ S.String;
+
+export type DataProductEntityIdString = string;
 export type DataProductEntityIdFilterValueList = string[];
-export const DataProductEntityIdFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const DataProductEntityIdFilterValueList = /*@__PURE__*/ S.Array(
+  S.String,
+);
 export interface DataProductEntityIdFilter {
   ValueList?: string[];
 }
-export const DataProductEntityIdFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ ValueList: S.optional(DataProductEntityIdFilterValueList) }),
+export const DataProductEntityIdFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ValueList: S.optional(DataProductEntityIdFilterValueList) }),
 ).annotate({
   identifier: "DataProductEntityIdFilter",
 }) as any as S.Schema<DataProductEntityIdFilter>;
+export type DataProductTitleString = string;
 export type DataProductTitleFilterValueList = string[];
-export const DataProductTitleFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const DataProductTitleFilterValueList = /*@__PURE__*/ S.Array(S.String);
 export interface DataProductTitleFilter {
   ValueList?: string[];
   WildCardValue?: string;
 }
-export const DataProductTitleFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ValueList: S.optional(DataProductTitleFilterValueList),
-      WildCardValue: S.optional(S.String),
-    }),
+export const DataProductTitleFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ValueList: S.optional(DataProductTitleFilterValueList),
+    WildCardValue: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "DataProductTitleFilter",
 }) as any as S.Schema<DataProductTitleFilter>;
@@ -597,26 +593,27 @@ export type DataProductVisibilityString =
   | "Unavailable"
   | "Draft"
   | (string & {});
-export const DataProductVisibilityString = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DataProductVisibilityString = /*@__PURE__*/ S.String;
+
 export type DataProductVisibilityFilterValueList =
   DataProductVisibilityString[];
-export const DataProductVisibilityFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(DataProductVisibilityString);
+export const DataProductVisibilityFilterValueList = /*@__PURE__*/ S.Array(
+  DataProductVisibilityString,
+);
 export interface DataProductVisibilityFilter {
   ValueList?: DataProductVisibilityString[];
 }
-export const DataProductVisibilityFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ ValueList: S.optional(DataProductVisibilityFilterValueList) }),
-  ).annotate({
-    identifier: "DataProductVisibilityFilter",
-  }) as any as S.Schema<DataProductVisibilityFilter>;
+export const DataProductVisibilityFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ValueList: S.optional(DataProductVisibilityFilterValueList) }),
+).annotate({
+  identifier: "DataProductVisibilityFilter",
+}) as any as S.Schema<DataProductVisibilityFilter>;
 export interface DataProductLastModifiedDateFilterDateRange {
   AfterValue?: string;
   BeforeValue?: string;
 }
 export const DataProductLastModifiedDateFilterDateRange =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       AfterValue: S.optional(S.String),
       BeforeValue: S.optional(S.String),
@@ -627,21 +624,20 @@ export const DataProductLastModifiedDateFilterDateRange =
 export interface DataProductLastModifiedDateFilter {
   DateRange?: DataProductLastModifiedDateFilterDateRange;
 }
-export const DataProductLastModifiedDateFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      DateRange: S.optional(DataProductLastModifiedDateFilterDateRange),
-    }),
-  ).annotate({
-    identifier: "DataProductLastModifiedDateFilter",
-  }) as any as S.Schema<DataProductLastModifiedDateFilter>;
+export const DataProductLastModifiedDateFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    DateRange: S.optional(DataProductLastModifiedDateFilterDateRange),
+  }),
+).annotate({
+  identifier: "DataProductLastModifiedDateFilter",
+}) as any as S.Schema<DataProductLastModifiedDateFilter>;
 export interface DataProductFilters {
   EntityId?: DataProductEntityIdFilter;
   ProductTitle?: DataProductTitleFilter;
   Visibility?: DataProductVisibilityFilter;
   LastModifiedDate?: DataProductLastModifiedDateFilter;
 }
-export const DataProductFilters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DataProductFilters = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     EntityId: S.optional(DataProductEntityIdFilter),
     ProductTitle: S.optional(DataProductTitleFilter),
@@ -651,30 +647,31 @@ export const DataProductFilters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "DataProductFilters",
 }) as any as S.Schema<DataProductFilters>;
+export type SaaSProductEntityIdString = string;
 export type SaaSProductEntityIdFilterValueList = string[];
-export const SaaSProductEntityIdFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const SaaSProductEntityIdFilterValueList = /*@__PURE__*/ S.Array(
+  S.String,
+);
 export interface SaaSProductEntityIdFilter {
   ValueList?: string[];
 }
-export const SaaSProductEntityIdFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ ValueList: S.optional(SaaSProductEntityIdFilterValueList) }),
+export const SaaSProductEntityIdFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ValueList: S.optional(SaaSProductEntityIdFilterValueList) }),
 ).annotate({
   identifier: "SaaSProductEntityIdFilter",
 }) as any as S.Schema<SaaSProductEntityIdFilter>;
+export type SaaSProductTitleString = string;
 export type SaaSProductTitleFilterValueList = string[];
-export const SaaSProductTitleFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const SaaSProductTitleFilterValueList = /*@__PURE__*/ S.Array(S.String);
 export interface SaaSProductTitleFilter {
   ValueList?: string[];
   WildCardValue?: string;
 }
-export const SaaSProductTitleFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ValueList: S.optional(SaaSProductTitleFilterValueList),
-      WildCardValue: S.optional(S.String),
-    }),
+export const SaaSProductTitleFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ValueList: S.optional(SaaSProductTitleFilterValueList),
+    WildCardValue: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "SaaSProductTitleFilter",
 }) as any as S.Schema<SaaSProductTitleFilter>;
@@ -684,26 +681,27 @@ export type SaaSProductVisibilityString =
   | "Restricted"
   | "Draft"
   | (string & {});
-export const SaaSProductVisibilityString = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SaaSProductVisibilityString = /*@__PURE__*/ S.String;
+
 export type SaaSProductVisibilityFilterValueList =
   SaaSProductVisibilityString[];
-export const SaaSProductVisibilityFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(SaaSProductVisibilityString);
+export const SaaSProductVisibilityFilterValueList = /*@__PURE__*/ S.Array(
+  SaaSProductVisibilityString,
+);
 export interface SaaSProductVisibilityFilter {
   ValueList?: SaaSProductVisibilityString[];
 }
-export const SaaSProductVisibilityFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ ValueList: S.optional(SaaSProductVisibilityFilterValueList) }),
-  ).annotate({
-    identifier: "SaaSProductVisibilityFilter",
-  }) as any as S.Schema<SaaSProductVisibilityFilter>;
+export const SaaSProductVisibilityFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ValueList: S.optional(SaaSProductVisibilityFilterValueList) }),
+).annotate({
+  identifier: "SaaSProductVisibilityFilter",
+}) as any as S.Schema<SaaSProductVisibilityFilter>;
 export interface SaaSProductLastModifiedDateFilterDateRange {
   AfterValue?: string;
   BeforeValue?: string;
 }
 export const SaaSProductLastModifiedDateFilterDateRange =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       AfterValue: S.optional(S.String),
       BeforeValue: S.optional(S.String),
@@ -714,21 +712,20 @@ export const SaaSProductLastModifiedDateFilterDateRange =
 export interface SaaSProductLastModifiedDateFilter {
   DateRange?: SaaSProductLastModifiedDateFilterDateRange;
 }
-export const SaaSProductLastModifiedDateFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      DateRange: S.optional(SaaSProductLastModifiedDateFilterDateRange),
-    }),
-  ).annotate({
-    identifier: "SaaSProductLastModifiedDateFilter",
-  }) as any as S.Schema<SaaSProductLastModifiedDateFilter>;
+export const SaaSProductLastModifiedDateFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    DateRange: S.optional(SaaSProductLastModifiedDateFilterDateRange),
+  }),
+).annotate({
+  identifier: "SaaSProductLastModifiedDateFilter",
+}) as any as S.Schema<SaaSProductLastModifiedDateFilter>;
 export interface SaaSProductFilters {
   EntityId?: SaaSProductEntityIdFilter;
   ProductTitle?: SaaSProductTitleFilter;
   Visibility?: SaaSProductVisibilityFilter;
   LastModifiedDate?: SaaSProductLastModifiedDateFilter;
 }
-export const SaaSProductFilters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SaaSProductFilters = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     EntityId: S.optional(SaaSProductEntityIdFilter),
     ProductTitle: S.optional(SaaSProductTitleFilter),
@@ -738,14 +735,16 @@ export const SaaSProductFilters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "SaaSProductFilters",
 }) as any as S.Schema<SaaSProductFilters>;
+export type AmiProductEntityIdString = string;
 export type AmiProductEntityIdFilterValueList = string[];
-export const AmiProductEntityIdFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const AmiProductEntityIdFilterValueList = /*@__PURE__*/ S.Array(
+  S.String,
+);
 export interface AmiProductEntityIdFilter {
   ValueList?: string[];
 }
-export const AmiProductEntityIdFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ ValueList: S.optional(AmiProductEntityIdFilterValueList) }),
+export const AmiProductEntityIdFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ValueList: S.optional(AmiProductEntityIdFilterValueList) }),
 ).annotate({
   identifier: "AmiProductEntityIdFilter",
 }) as any as S.Schema<AmiProductEntityIdFilter>;
@@ -754,7 +753,7 @@ export interface AmiProductLastModifiedDateFilterDateRange {
   BeforeValue?: string;
 }
 export const AmiProductLastModifiedDateFilterDateRange =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       AfterValue: S.optional(S.String),
       BeforeValue: S.optional(S.String),
@@ -765,22 +764,21 @@ export const AmiProductLastModifiedDateFilterDateRange =
 export interface AmiProductLastModifiedDateFilter {
   DateRange?: AmiProductLastModifiedDateFilterDateRange;
 }
-export const AmiProductLastModifiedDateFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      DateRange: S.optional(AmiProductLastModifiedDateFilterDateRange),
-    }),
-  ).annotate({
-    identifier: "AmiProductLastModifiedDateFilter",
-  }) as any as S.Schema<AmiProductLastModifiedDateFilter>;
+export const AmiProductLastModifiedDateFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    DateRange: S.optional(AmiProductLastModifiedDateFilterDateRange),
+  }),
+).annotate({
+  identifier: "AmiProductLastModifiedDateFilter",
+}) as any as S.Schema<AmiProductLastModifiedDateFilter>;
+export type AmiProductTitleString = string;
 export type AmiProductTitleFilterValueList = string[];
-export const AmiProductTitleFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const AmiProductTitleFilterValueList = /*@__PURE__*/ S.Array(S.String);
 export interface AmiProductTitleFilter {
   ValueList?: string[];
   WildCardValue?: string;
 }
-export const AmiProductTitleFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AmiProductTitleFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ValueList: S.optional(AmiProductTitleFilterValueList),
     WildCardValue: S.optional(S.String),
@@ -794,16 +792,17 @@ export type AmiProductVisibilityString =
   | "Restricted"
   | "Draft"
   | (string & {});
-export const AmiProductVisibilityString = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const AmiProductVisibilityString = /*@__PURE__*/ S.String;
+
 export type AmiProductVisibilityFilterValueList = AmiProductVisibilityString[];
-export const AmiProductVisibilityFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(AmiProductVisibilityString);
+export const AmiProductVisibilityFilterValueList = /*@__PURE__*/ S.Array(
+  AmiProductVisibilityString,
+);
 export interface AmiProductVisibilityFilter {
   ValueList?: AmiProductVisibilityString[];
 }
-export const AmiProductVisibilityFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ ValueList: S.optional(AmiProductVisibilityFilterValueList) }),
+export const AmiProductVisibilityFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ValueList: S.optional(AmiProductVisibilityFilterValueList) }),
 ).annotate({
   identifier: "AmiProductVisibilityFilter",
 }) as any as S.Schema<AmiProductVisibilityFilter>;
@@ -813,7 +812,7 @@ export interface AmiProductFilters {
   ProductTitle?: AmiProductTitleFilter;
   Visibility?: AmiProductVisibilityFilter;
 }
-export const AmiProductFilters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AmiProductFilters = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     EntityId: S.optional(AmiProductEntityIdFilter),
     LastModifiedDate: S.optional(AmiProductLastModifiedDateFilter),
@@ -823,27 +822,25 @@ export const AmiProductFilters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "AmiProductFilters",
 }) as any as S.Schema<AmiProductFilters>;
+export type OfferEntityIdString = string;
 export type OfferEntityIdFilterValueList = string[];
-export const OfferEntityIdFilterValueList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const OfferEntityIdFilterValueList = /*@__PURE__*/ S.Array(S.String);
 export interface OfferEntityIdFilter {
   ValueList?: string[];
 }
-export const OfferEntityIdFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferEntityIdFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ValueList: S.optional(OfferEntityIdFilterValueList) }),
 ).annotate({
   identifier: "OfferEntityIdFilter",
 }) as any as S.Schema<OfferEntityIdFilter>;
+export type OfferNameString = string;
 export type OfferNameFilterValueList = string[];
-export const OfferNameFilterValueList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const OfferNameFilterValueList = /*@__PURE__*/ S.Array(S.String);
 export interface OfferNameFilter {
   ValueList?: string[];
   WildCardValue?: string;
 }
-export const OfferNameFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferNameFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ValueList: S.optional(OfferNameFilterValueList),
     WildCardValue: S.optional(S.String),
@@ -851,49 +848,49 @@ export const OfferNameFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "OfferNameFilter",
 }) as any as S.Schema<OfferNameFilter>;
+export type OfferProductIdString = string;
 export type OfferProductIdFilterValueList = string[];
-export const OfferProductIdFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const OfferProductIdFilterValueList = /*@__PURE__*/ S.Array(S.String);
 export interface OfferProductIdFilter {
   ValueList?: string[];
 }
-export const OfferProductIdFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferProductIdFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ValueList: S.optional(OfferProductIdFilterValueList) }),
 ).annotate({
   identifier: "OfferProductIdFilter",
 }) as any as S.Schema<OfferProductIdFilter>;
+export type OfferResaleAuthorizationIdString = string;
 export type OfferResaleAuthorizationIdFilterValueList = string[];
-export const OfferResaleAuthorizationIdFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const OfferResaleAuthorizationIdFilterValueList = /*@__PURE__*/ S.Array(
+  S.String,
+);
 export interface OfferResaleAuthorizationIdFilter {
   ValueList?: string[];
 }
-export const OfferResaleAuthorizationIdFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      ValueList: S.optional(OfferResaleAuthorizationIdFilterValueList),
-    }),
-  ).annotate({
-    identifier: "OfferResaleAuthorizationIdFilter",
-  }) as any as S.Schema<OfferResaleAuthorizationIdFilter>;
+export const OfferResaleAuthorizationIdFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ValueList: S.optional(OfferResaleAuthorizationIdFilterValueList),
+  }),
+).annotate({
+  identifier: "OfferResaleAuthorizationIdFilter",
+}) as any as S.Schema<OfferResaleAuthorizationIdFilter>;
 export interface OfferReleaseDateFilterDateRange {
   AfterValue?: string;
   BeforeValue?: string;
 }
-export const OfferReleaseDateFilterDateRange =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AfterValue: S.optional(S.String),
-      BeforeValue: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "OfferReleaseDateFilterDateRange",
-  }) as any as S.Schema<OfferReleaseDateFilterDateRange>;
+export const OfferReleaseDateFilterDateRange = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AfterValue: S.optional(S.String),
+    BeforeValue: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "OfferReleaseDateFilterDateRange",
+}) as any as S.Schema<OfferReleaseDateFilterDateRange>;
 export interface OfferReleaseDateFilter {
   DateRange?: OfferReleaseDateFilterDateRange;
 }
-export const OfferReleaseDateFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ DateRange: S.optional(OfferReleaseDateFilterDateRange) }),
+export const OfferReleaseDateFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ DateRange: S.optional(OfferReleaseDateFilterDateRange) }),
 ).annotate({
   identifier: "OfferReleaseDateFilter",
 }) as any as S.Schema<OfferReleaseDateFilter>;
@@ -901,43 +898,42 @@ export interface OfferAvailabilityEndDateFilterDateRange {
   AfterValue?: string;
   BeforeValue?: string;
 }
-export const OfferAvailabilityEndDateFilterDateRange =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferAvailabilityEndDateFilterDateRange = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       AfterValue: S.optional(S.String),
       BeforeValue: S.optional(S.String),
     }),
-  ).annotate({
-    identifier: "OfferAvailabilityEndDateFilterDateRange",
-  }) as any as S.Schema<OfferAvailabilityEndDateFilterDateRange>;
+).annotate({
+  identifier: "OfferAvailabilityEndDateFilterDateRange",
+}) as any as S.Schema<OfferAvailabilityEndDateFilterDateRange>;
 export interface OfferAvailabilityEndDateFilter {
   DateRange?: OfferAvailabilityEndDateFilterDateRange;
 }
-export const OfferAvailabilityEndDateFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      DateRange: S.optional(OfferAvailabilityEndDateFilterDateRange),
-    }),
-  ).annotate({
-    identifier: "OfferAvailabilityEndDateFilter",
-  }) as any as S.Schema<OfferAvailabilityEndDateFilter>;
+export const OfferAvailabilityEndDateFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ DateRange: S.optional(OfferAvailabilityEndDateFilterDateRange) }),
+).annotate({
+  identifier: "OfferAvailabilityEndDateFilter",
+}) as any as S.Schema<OfferAvailabilityEndDateFilter>;
+export type OfferBuyerAccountsFilterWildcard = string;
 export interface OfferBuyerAccountsFilter {
   WildCardValue?: string;
 }
-export const OfferBuyerAccountsFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ WildCardValue: S.optional(S.String) }),
+export const OfferBuyerAccountsFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ WildCardValue: S.optional(S.String) }),
 ).annotate({
   identifier: "OfferBuyerAccountsFilter",
 }) as any as S.Schema<OfferBuyerAccountsFilter>;
 export type OfferStateString = "Draft" | "Released" | (string & {});
-export const OfferStateString = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const OfferStateString = /*@__PURE__*/ S.String;
+
 export type OfferStateFilterValueList = OfferStateString[];
 export const OfferStateFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(OfferStateString);
+  /*@__PURE__*/ S.Array(OfferStateString);
 export interface OfferStateFilter {
   ValueList?: OfferStateString[];
 }
-export const OfferStateFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferStateFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ValueList: S.optional(OfferStateFilterValueList) }),
 ).annotate({
   identifier: "OfferStateFilter",
@@ -948,14 +944,15 @@ export type OfferTargetingString =
   | "CountryCodes"
   | "None"
   | (string & {});
-export const OfferTargetingString = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const OfferTargetingString = /*@__PURE__*/ S.String;
+
 export type OfferTargetingFilterValueList = OfferTargetingString[];
 export const OfferTargetingFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(OfferTargetingString);
+  /*@__PURE__*/ S.Array(OfferTargetingString);
 export interface OfferTargetingFilter {
   ValueList?: OfferTargetingString[];
 }
-export const OfferTargetingFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferTargetingFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ValueList: S.optional(OfferTargetingFilterValueList) }),
 ).annotate({
   identifier: "OfferTargetingFilter",
@@ -964,32 +961,30 @@ export interface OfferLastModifiedDateFilterDateRange {
   AfterValue?: string;
   BeforeValue?: string;
 }
-export const OfferLastModifiedDateFilterDateRange =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferLastModifiedDateFilterDateRange = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       AfterValue: S.optional(S.String),
       BeforeValue: S.optional(S.String),
     }),
-  ).annotate({
-    identifier: "OfferLastModifiedDateFilterDateRange",
-  }) as any as S.Schema<OfferLastModifiedDateFilterDateRange>;
+).annotate({
+  identifier: "OfferLastModifiedDateFilterDateRange",
+}) as any as S.Schema<OfferLastModifiedDateFilterDateRange>;
 export interface OfferLastModifiedDateFilter {
   DateRange?: OfferLastModifiedDateFilterDateRange;
 }
-export const OfferLastModifiedDateFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ DateRange: S.optional(OfferLastModifiedDateFilterDateRange) }),
-  ).annotate({
-    identifier: "OfferLastModifiedDateFilter",
-  }) as any as S.Schema<OfferLastModifiedDateFilter>;
+export const OfferLastModifiedDateFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ DateRange: S.optional(OfferLastModifiedDateFilterDateRange) }),
+).annotate({
+  identifier: "OfferLastModifiedDateFilter",
+}) as any as S.Schema<OfferLastModifiedDateFilter>;
+export type OfferSetIdString = string;
 export type OfferSetIdFilterValueList = string[];
-export const OfferSetIdFilterValueList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const OfferSetIdFilterValueList = /*@__PURE__*/ S.Array(S.String);
 export interface OfferSetIdFilter {
   ValueList?: string[];
 }
-export const OfferSetIdFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferSetIdFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ValueList: S.optional(OfferSetIdFilterValueList) }),
 ).annotate({
   identifier: "OfferSetIdFilter",
@@ -1007,7 +1002,7 @@ export interface OfferFilters {
   LastModifiedDate?: OfferLastModifiedDateFilter;
   OfferSetId?: OfferSetIdFilter;
 }
-export const OfferFilters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferFilters = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     EntityId: S.optional(OfferEntityIdFilter),
     Name: S.optional(OfferNameFilter),
@@ -1022,26 +1017,25 @@ export const OfferFilters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
     OfferSetId: S.optional(OfferSetIdFilter),
   }),
 ).annotate({ identifier: "OfferFilters" }) as any as S.Schema<OfferFilters>;
+export type ContainerProductEntityIdString = string;
 export type ContainerProductEntityIdFilterValueList = string[];
-export const ContainerProductEntityIdFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ContainerProductEntityIdFilterValueList = /*@__PURE__*/ S.Array(
+  S.String,
+);
 export interface ContainerProductEntityIdFilter {
   ValueList?: string[];
 }
-export const ContainerProductEntityIdFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      ValueList: S.optional(ContainerProductEntityIdFilterValueList),
-    }),
-  ).annotate({
-    identifier: "ContainerProductEntityIdFilter",
-  }) as any as S.Schema<ContainerProductEntityIdFilter>;
+export const ContainerProductEntityIdFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ValueList: S.optional(ContainerProductEntityIdFilterValueList) }),
+).annotate({
+  identifier: "ContainerProductEntityIdFilter",
+}) as any as S.Schema<ContainerProductEntityIdFilter>;
 export interface ContainerProductLastModifiedDateFilterDateRange {
   AfterValue?: string;
   BeforeValue?: string;
 }
 export const ContainerProductLastModifiedDateFilterDateRange =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       AfterValue: S.optional(S.String),
       BeforeValue: S.optional(S.String),
@@ -1052,122 +1046,126 @@ export const ContainerProductLastModifiedDateFilterDateRange =
 export interface ContainerProductLastModifiedDateFilter {
   DateRange?: ContainerProductLastModifiedDateFilterDateRange;
 }
-export const ContainerProductLastModifiedDateFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ContainerProductLastModifiedDateFilter = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       DateRange: S.optional(ContainerProductLastModifiedDateFilterDateRange),
     }),
-  ).annotate({
-    identifier: "ContainerProductLastModifiedDateFilter",
-  }) as any as S.Schema<ContainerProductLastModifiedDateFilter>;
+).annotate({
+  identifier: "ContainerProductLastModifiedDateFilter",
+}) as any as S.Schema<ContainerProductLastModifiedDateFilter>;
+export type ContainerProductTitleString = string;
 export type ContainerProductTitleFilterValueList = string[];
-export const ContainerProductTitleFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ContainerProductTitleFilterValueList = /*@__PURE__*/ S.Array(
+  S.String,
+);
 export interface ContainerProductTitleFilter {
   ValueList?: string[];
   WildCardValue?: string;
 }
-export const ContainerProductTitleFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      ValueList: S.optional(ContainerProductTitleFilterValueList),
-      WildCardValue: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "ContainerProductTitleFilter",
-  }) as any as S.Schema<ContainerProductTitleFilter>;
+export const ContainerProductTitleFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ValueList: S.optional(ContainerProductTitleFilterValueList),
+    WildCardValue: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "ContainerProductTitleFilter",
+}) as any as S.Schema<ContainerProductTitleFilter>;
 export type ContainerProductVisibilityString =
   | "Limited"
   | "Public"
   | "Restricted"
   | "Draft"
   | (string & {});
-export const ContainerProductVisibilityString =
-  /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ContainerProductVisibilityString = /*@__PURE__*/ S.String;
+
 export type ContainerProductVisibilityFilterValueList =
   ContainerProductVisibilityString[];
-export const ContainerProductVisibilityFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ContainerProductVisibilityString);
+export const ContainerProductVisibilityFilterValueList = /*@__PURE__*/ S.Array(
+  ContainerProductVisibilityString,
+);
 export interface ContainerProductVisibilityFilter {
   ValueList?: ContainerProductVisibilityString[];
 }
-export const ContainerProductVisibilityFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      ValueList: S.optional(ContainerProductVisibilityFilterValueList),
-    }),
-  ).annotate({
-    identifier: "ContainerProductVisibilityFilter",
-  }) as any as S.Schema<ContainerProductVisibilityFilter>;
+export const ContainerProductVisibilityFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ValueList: S.optional(ContainerProductVisibilityFilterValueList),
+  }),
+).annotate({
+  identifier: "ContainerProductVisibilityFilter",
+}) as any as S.Schema<ContainerProductVisibilityFilter>;
 export interface ContainerProductFilters {
   EntityId?: ContainerProductEntityIdFilter;
   LastModifiedDate?: ContainerProductLastModifiedDateFilter;
   ProductTitle?: ContainerProductTitleFilter;
   Visibility?: ContainerProductVisibilityFilter;
 }
-export const ContainerProductFilters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      EntityId: S.optional(ContainerProductEntityIdFilter),
-      LastModifiedDate: S.optional(ContainerProductLastModifiedDateFilter),
-      ProductTitle: S.optional(ContainerProductTitleFilter),
-      Visibility: S.optional(ContainerProductVisibilityFilter),
-    }),
+export const ContainerProductFilters = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    EntityId: S.optional(ContainerProductEntityIdFilter),
+    LastModifiedDate: S.optional(ContainerProductLastModifiedDateFilter),
+    ProductTitle: S.optional(ContainerProductTitleFilter),
+    Visibility: S.optional(ContainerProductVisibilityFilter),
+  }),
 ).annotate({
   identifier: "ContainerProductFilters",
 }) as any as S.Schema<ContainerProductFilters>;
+export type ResaleAuthorizationEntityIdString = string;
 export type ResaleAuthorizationEntityIdFilterValueList = string[];
-export const ResaleAuthorizationEntityIdFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ResaleAuthorizationEntityIdFilterValueList = /*@__PURE__*/ S.Array(
+  S.String,
+);
 export interface ResaleAuthorizationEntityIdFilter {
   ValueList?: string[];
 }
-export const ResaleAuthorizationEntityIdFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      ValueList: S.optional(ResaleAuthorizationEntityIdFilterValueList),
-    }),
-  ).annotate({
-    identifier: "ResaleAuthorizationEntityIdFilter",
-  }) as any as S.Schema<ResaleAuthorizationEntityIdFilter>;
+export const ResaleAuthorizationEntityIdFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ValueList: S.optional(ResaleAuthorizationEntityIdFilterValueList),
+  }),
+).annotate({
+  identifier: "ResaleAuthorizationEntityIdFilter",
+}) as any as S.Schema<ResaleAuthorizationEntityIdFilter>;
+export type ResaleAuthorizationNameString = string;
 export type ResaleAuthorizationNameFilterValueList = string[];
-export const ResaleAuthorizationNameFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ResaleAuthorizationNameFilterValueList = /*@__PURE__*/ S.Array(
+  S.String,
+);
+export type ResaleAuthorizationNameFilterWildcard = string;
 export interface ResaleAuthorizationNameFilter {
   ValueList?: string[];
   WildCardValue?: string;
 }
-export const ResaleAuthorizationNameFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      ValueList: S.optional(ResaleAuthorizationNameFilterValueList),
-      WildCardValue: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "ResaleAuthorizationNameFilter",
-  }) as any as S.Schema<ResaleAuthorizationNameFilter>;
+export const ResaleAuthorizationNameFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ValueList: S.optional(ResaleAuthorizationNameFilterValueList),
+    WildCardValue: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "ResaleAuthorizationNameFilter",
+}) as any as S.Schema<ResaleAuthorizationNameFilter>;
+export type ResaleAuthorizationProductIdString = string;
 export type ResaleAuthorizationProductIdFilterValueList = string[];
 export const ResaleAuthorizationProductIdFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+  /*@__PURE__*/ S.Array(S.String);
+export type ResaleAuthorizationProductIdFilterWildcard = string;
 export interface ResaleAuthorizationProductIdFilter {
   ValueList?: string[];
   WildCardValue?: string;
 }
-export const ResaleAuthorizationProductIdFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      ValueList: S.optional(ResaleAuthorizationProductIdFilterValueList),
-      WildCardValue: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "ResaleAuthorizationProductIdFilter",
-  }) as any as S.Schema<ResaleAuthorizationProductIdFilter>;
+export const ResaleAuthorizationProductIdFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ValueList: S.optional(ResaleAuthorizationProductIdFilterValueList),
+    WildCardValue: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "ResaleAuthorizationProductIdFilter",
+}) as any as S.Schema<ResaleAuthorizationProductIdFilter>;
 export interface ResaleAuthorizationCreatedDateFilterDateRange {
   AfterValue?: string;
   BeforeValue?: string;
 }
 export const ResaleAuthorizationCreatedDateFilterDateRange =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       AfterValue: S.optional(S.String),
       BeforeValue: S.optional(S.String),
@@ -1177,26 +1175,26 @@ export const ResaleAuthorizationCreatedDateFilterDateRange =
   }) as any as S.Schema<ResaleAuthorizationCreatedDateFilterDateRange>;
 export type ResaleAuthorizationCreatedDateFilterValueList = string[];
 export const ResaleAuthorizationCreatedDateFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+  /*@__PURE__*/ S.Array(S.String);
 export interface ResaleAuthorizationCreatedDateFilter {
   DateRange?: ResaleAuthorizationCreatedDateFilterDateRange;
   ValueList?: string[];
 }
-export const ResaleAuthorizationCreatedDateFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResaleAuthorizationCreatedDateFilter = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       DateRange: S.optional(ResaleAuthorizationCreatedDateFilterDateRange),
       ValueList: S.optional(ResaleAuthorizationCreatedDateFilterValueList),
     }),
-  ).annotate({
-    identifier: "ResaleAuthorizationCreatedDateFilter",
-  }) as any as S.Schema<ResaleAuthorizationCreatedDateFilter>;
+).annotate({
+  identifier: "ResaleAuthorizationCreatedDateFilter",
+}) as any as S.Schema<ResaleAuthorizationCreatedDateFilter>;
 export interface ResaleAuthorizationAvailabilityEndDateFilterDateRange {
   AfterValue?: string;
   BeforeValue?: string;
 }
 export const ResaleAuthorizationAvailabilityEndDateFilterDateRange =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       AfterValue: S.optional(S.String),
       BeforeValue: S.optional(S.String),
@@ -1206,13 +1204,13 @@ export const ResaleAuthorizationAvailabilityEndDateFilterDateRange =
   }) as any as S.Schema<ResaleAuthorizationAvailabilityEndDateFilterDateRange>;
 export type ResaleAuthorizationAvailabilityEndDateFilterValueList = string[];
 export const ResaleAuthorizationAvailabilityEndDateFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+  /*@__PURE__*/ S.Array(S.String);
 export interface ResaleAuthorizationAvailabilityEndDateFilter {
   DateRange?: ResaleAuthorizationAvailabilityEndDateFilterDateRange;
   ValueList?: string[];
 }
 export const ResaleAuthorizationAvailabilityEndDateFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       DateRange: S.optional(
         ResaleAuthorizationAvailabilityEndDateFilterDateRange,
@@ -1224,15 +1222,17 @@ export const ResaleAuthorizationAvailabilityEndDateFilter =
   ).annotate({
     identifier: "ResaleAuthorizationAvailabilityEndDateFilter",
   }) as any as S.Schema<ResaleAuthorizationAvailabilityEndDateFilter>;
+export type ResaleAuthorizationManufacturerAccountIdString = string;
 export type ResaleAuthorizationManufacturerAccountIdFilterValueList = string[];
 export const ResaleAuthorizationManufacturerAccountIdFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+  /*@__PURE__*/ S.Array(S.String);
+export type ResaleAuthorizationManufacturerAccountIdFilterWildcard = string;
 export interface ResaleAuthorizationManufacturerAccountIdFilter {
   ValueList?: string[];
   WildCardValue?: string;
 }
 export const ResaleAuthorizationManufacturerAccountIdFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       ValueList: S.optional(
         ResaleAuthorizationManufacturerAccountIdFilterValueList,
@@ -1242,31 +1242,35 @@ export const ResaleAuthorizationManufacturerAccountIdFilter =
   ).annotate({
     identifier: "ResaleAuthorizationManufacturerAccountIdFilter",
   }) as any as S.Schema<ResaleAuthorizationManufacturerAccountIdFilter>;
+export type ResaleAuthorizationProductNameString = string;
 export type ResaleAuthorizationProductNameFilterValueList = string[];
 export const ResaleAuthorizationProductNameFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+  /*@__PURE__*/ S.Array(S.String);
+export type ResaleAuthorizationProductNameFilterWildcard = string;
 export interface ResaleAuthorizationProductNameFilter {
   ValueList?: string[];
   WildCardValue?: string;
 }
-export const ResaleAuthorizationProductNameFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResaleAuthorizationProductNameFilter = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       ValueList: S.optional(ResaleAuthorizationProductNameFilterValueList),
       WildCardValue: S.optional(S.String),
     }),
-  ).annotate({
-    identifier: "ResaleAuthorizationProductNameFilter",
-  }) as any as S.Schema<ResaleAuthorizationProductNameFilter>;
+).annotate({
+  identifier: "ResaleAuthorizationProductNameFilter",
+}) as any as S.Schema<ResaleAuthorizationProductNameFilter>;
+export type ResaleAuthorizationManufacturerLegalNameString = string;
 export type ResaleAuthorizationManufacturerLegalNameFilterValueList = string[];
 export const ResaleAuthorizationManufacturerLegalNameFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+  /*@__PURE__*/ S.Array(S.String);
+export type ResaleAuthorizationManufacturerLegalNameFilterWildcard = string;
 export interface ResaleAuthorizationManufacturerLegalNameFilter {
   ValueList?: string[];
   WildCardValue?: string;
 }
 export const ResaleAuthorizationManufacturerLegalNameFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       ValueList: S.optional(
         ResaleAuthorizationManufacturerLegalNameFilterValueList,
@@ -1276,15 +1280,17 @@ export const ResaleAuthorizationManufacturerLegalNameFilter =
   ).annotate({
     identifier: "ResaleAuthorizationManufacturerLegalNameFilter",
   }) as any as S.Schema<ResaleAuthorizationManufacturerLegalNameFilter>;
+export type ResaleAuthorizationResellerAccountIDString = string;
 export type ResaleAuthorizationResellerAccountIDFilterValueList = string[];
 export const ResaleAuthorizationResellerAccountIDFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+  /*@__PURE__*/ S.Array(S.String);
+export type ResaleAuthorizationResellerAccountIDFilterWildcard = string;
 export interface ResaleAuthorizationResellerAccountIDFilter {
   ValueList?: string[];
   WildCardValue?: string;
 }
 export const ResaleAuthorizationResellerAccountIDFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       ValueList: S.optional(
         ResaleAuthorizationResellerAccountIDFilterValueList,
@@ -1294,15 +1300,17 @@ export const ResaleAuthorizationResellerAccountIDFilter =
   ).annotate({
     identifier: "ResaleAuthorizationResellerAccountIDFilter",
   }) as any as S.Schema<ResaleAuthorizationResellerAccountIDFilter>;
+export type ResaleAuthorizationResellerLegalNameString = string;
 export type ResaleAuthorizationResellerLegalNameFilterValueList = string[];
 export const ResaleAuthorizationResellerLegalNameFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+  /*@__PURE__*/ S.Array(S.String);
+export type ResaleAuthorizationResellerLegalNameFilterWildcard = string;
 export interface ResaleAuthorizationResellerLegalNameFilter {
   ValueList?: string[];
   WildCardValue?: string;
 }
 export const ResaleAuthorizationResellerLegalNameFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       ValueList: S.optional(
         ResaleAuthorizationResellerLegalNameFilterValueList,
@@ -1317,31 +1325,30 @@ export type ResaleAuthorizationStatusString =
   | "Active"
   | "Restricted"
   | (string & {});
-export const ResaleAuthorizationStatusString =
-  /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ResaleAuthorizationStatusString = /*@__PURE__*/ S.String;
+
 export type ResaleAuthorizationStatusFilterValueList =
   ResaleAuthorizationStatusString[];
-export const ResaleAuthorizationStatusFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ResaleAuthorizationStatusString);
+export const ResaleAuthorizationStatusFilterValueList = /*@__PURE__*/ S.Array(
+  ResaleAuthorizationStatusString,
+);
 export interface ResaleAuthorizationStatusFilter {
   ValueList?: ResaleAuthorizationStatusString[];
 }
-export const ResaleAuthorizationStatusFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      ValueList: S.optional(ResaleAuthorizationStatusFilterValueList),
-    }),
-  ).annotate({
-    identifier: "ResaleAuthorizationStatusFilter",
-  }) as any as S.Schema<ResaleAuthorizationStatusFilter>;
+export const ResaleAuthorizationStatusFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ValueList: S.optional(ResaleAuthorizationStatusFilterValueList) }),
+).annotate({
+  identifier: "ResaleAuthorizationStatusFilter",
+}) as any as S.Schema<ResaleAuthorizationStatusFilter>;
+export type ResaleAuthorizationOfferExtendedStatusString = string;
 export type ResaleAuthorizationOfferExtendedStatusFilterValueList = string[];
 export const ResaleAuthorizationOfferExtendedStatusFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+  /*@__PURE__*/ S.Array(S.String);
 export interface ResaleAuthorizationOfferExtendedStatusFilter {
   ValueList?: string[];
 }
 export const ResaleAuthorizationOfferExtendedStatusFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       ValueList: S.optional(
         ResaleAuthorizationOfferExtendedStatusFilterValueList,
@@ -1355,7 +1362,7 @@ export interface ResaleAuthorizationLastModifiedDateFilterDateRange {
   BeforeValue?: string;
 }
 export const ResaleAuthorizationLastModifiedDateFilterDateRange =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       AfterValue: S.optional(S.String),
       BeforeValue: S.optional(S.String),
@@ -1367,7 +1374,7 @@ export interface ResaleAuthorizationLastModifiedDateFilter {
   DateRange?: ResaleAuthorizationLastModifiedDateFilterDateRange;
 }
 export const ResaleAuthorizationLastModifiedDateFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       DateRange: S.optional(ResaleAuthorizationLastModifiedDateFilterDateRange),
     }),
@@ -1389,54 +1396,54 @@ export interface ResaleAuthorizationFilters {
   OfferExtendedStatus?: ResaleAuthorizationOfferExtendedStatusFilter;
   LastModifiedDate?: ResaleAuthorizationLastModifiedDateFilter;
 }
-export const ResaleAuthorizationFilters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      EntityId: S.optional(ResaleAuthorizationEntityIdFilter),
-      Name: S.optional(ResaleAuthorizationNameFilter),
-      ProductId: S.optional(ResaleAuthorizationProductIdFilter),
-      CreatedDate: S.optional(ResaleAuthorizationCreatedDateFilter),
-      AvailabilityEndDate: S.optional(
-        ResaleAuthorizationAvailabilityEndDateFilter,
-      ),
-      ManufacturerAccountId: S.optional(
-        ResaleAuthorizationManufacturerAccountIdFilter,
-      ),
-      ProductName: S.optional(ResaleAuthorizationProductNameFilter),
-      ManufacturerLegalName: S.optional(
-        ResaleAuthorizationManufacturerLegalNameFilter,
-      ),
-      ResellerAccountID: S.optional(ResaleAuthorizationResellerAccountIDFilter),
-      ResellerLegalName: S.optional(ResaleAuthorizationResellerLegalNameFilter),
-      Status: S.optional(ResaleAuthorizationStatusFilter),
-      OfferExtendedStatus: S.optional(
-        ResaleAuthorizationOfferExtendedStatusFilter,
-      ),
-      LastModifiedDate: S.optional(ResaleAuthorizationLastModifiedDateFilter),
-    }),
+export const ResaleAuthorizationFilters = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    EntityId: S.optional(ResaleAuthorizationEntityIdFilter),
+    Name: S.optional(ResaleAuthorizationNameFilter),
+    ProductId: S.optional(ResaleAuthorizationProductIdFilter),
+    CreatedDate: S.optional(ResaleAuthorizationCreatedDateFilter),
+    AvailabilityEndDate: S.optional(
+      ResaleAuthorizationAvailabilityEndDateFilter,
+    ),
+    ManufacturerAccountId: S.optional(
+      ResaleAuthorizationManufacturerAccountIdFilter,
+    ),
+    ProductName: S.optional(ResaleAuthorizationProductNameFilter),
+    ManufacturerLegalName: S.optional(
+      ResaleAuthorizationManufacturerLegalNameFilter,
+    ),
+    ResellerAccountID: S.optional(ResaleAuthorizationResellerAccountIDFilter),
+    ResellerLegalName: S.optional(ResaleAuthorizationResellerLegalNameFilter),
+    Status: S.optional(ResaleAuthorizationStatusFilter),
+    OfferExtendedStatus: S.optional(
+      ResaleAuthorizationOfferExtendedStatusFilter,
+    ),
+    LastModifiedDate: S.optional(ResaleAuthorizationLastModifiedDateFilter),
+  }),
 ).annotate({
   identifier: "ResaleAuthorizationFilters",
 }) as any as S.Schema<ResaleAuthorizationFilters>;
+export type MachineLearningProductEntityIdString = string;
 export type MachineLearningProductEntityIdFilterValueList = string[];
 export const MachineLearningProductEntityIdFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+  /*@__PURE__*/ S.Array(S.String);
 export interface MachineLearningProductEntityIdFilter {
   ValueList?: string[];
 }
-export const MachineLearningProductEntityIdFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const MachineLearningProductEntityIdFilter = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       ValueList: S.optional(MachineLearningProductEntityIdFilterValueList),
     }),
-  ).annotate({
-    identifier: "MachineLearningProductEntityIdFilter",
-  }) as any as S.Schema<MachineLearningProductEntityIdFilter>;
+).annotate({
+  identifier: "MachineLearningProductEntityIdFilter",
+}) as any as S.Schema<MachineLearningProductEntityIdFilter>;
 export interface MachineLearningProductLastModifiedDateFilterDateRange {
   AfterValue?: string;
   BeforeValue?: string;
 }
 export const MachineLearningProductLastModifiedDateFilterDateRange =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       AfterValue: S.optional(S.String),
       BeforeValue: S.optional(S.String),
@@ -1448,7 +1455,7 @@ export interface MachineLearningProductLastModifiedDateFilter {
   DateRange?: MachineLearningProductLastModifiedDateFilterDateRange;
 }
 export const MachineLearningProductLastModifiedDateFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       DateRange: S.optional(
         MachineLearningProductLastModifiedDateFilterDateRange,
@@ -1457,96 +1464,94 @@ export const MachineLearningProductLastModifiedDateFilter =
   ).annotate({
     identifier: "MachineLearningProductLastModifiedDateFilter",
   }) as any as S.Schema<MachineLearningProductLastModifiedDateFilter>;
+export type MachineLearningProductTitleString = string;
 export type MachineLearningProductTitleFilterValueList = string[];
-export const MachineLearningProductTitleFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const MachineLearningProductTitleFilterValueList = /*@__PURE__*/ S.Array(
+  S.String,
+);
 export interface MachineLearningProductTitleFilter {
   ValueList?: string[];
   WildCardValue?: string;
 }
-export const MachineLearningProductTitleFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      ValueList: S.optional(MachineLearningProductTitleFilterValueList),
-      WildCardValue: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "MachineLearningProductTitleFilter",
-  }) as any as S.Schema<MachineLearningProductTitleFilter>;
+export const MachineLearningProductTitleFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ValueList: S.optional(MachineLearningProductTitleFilterValueList),
+    WildCardValue: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "MachineLearningProductTitleFilter",
+}) as any as S.Schema<MachineLearningProductTitleFilter>;
 export type MachineLearningProductVisibilityString =
   | "Limited"
   | "Public"
   | "Restricted"
   | "Draft"
   | (string & {});
-export const MachineLearningProductVisibilityString =
-  /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const MachineLearningProductVisibilityString = /*@__PURE__*/ S.String;
+
 export type MachineLearningProductVisibilityFilterValueList =
   MachineLearningProductVisibilityString[];
 export const MachineLearningProductVisibilityFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(MachineLearningProductVisibilityString);
+  /*@__PURE__*/ S.Array(MachineLearningProductVisibilityString);
 export interface MachineLearningProductVisibilityFilter {
   ValueList?: MachineLearningProductVisibilityString[];
 }
-export const MachineLearningProductVisibilityFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const MachineLearningProductVisibilityFilter = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       ValueList: S.optional(MachineLearningProductVisibilityFilterValueList),
     }),
-  ).annotate({
-    identifier: "MachineLearningProductVisibilityFilter",
-  }) as any as S.Schema<MachineLearningProductVisibilityFilter>;
+).annotate({
+  identifier: "MachineLearningProductVisibilityFilter",
+}) as any as S.Schema<MachineLearningProductVisibilityFilter>;
 export interface MachineLearningProductFilters {
   EntityId?: MachineLearningProductEntityIdFilter;
   LastModifiedDate?: MachineLearningProductLastModifiedDateFilter;
   ProductTitle?: MachineLearningProductTitleFilter;
   Visibility?: MachineLearningProductVisibilityFilter;
 }
-export const MachineLearningProductFilters =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      EntityId: S.optional(MachineLearningProductEntityIdFilter),
-      LastModifiedDate: S.optional(
-        MachineLearningProductLastModifiedDateFilter,
-      ),
-      ProductTitle: S.optional(MachineLearningProductTitleFilter),
-      Visibility: S.optional(MachineLearningProductVisibilityFilter),
-    }),
-  ).annotate({
-    identifier: "MachineLearningProductFilters",
-  }) as any as S.Schema<MachineLearningProductFilters>;
+export const MachineLearningProductFilters = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    EntityId: S.optional(MachineLearningProductEntityIdFilter),
+    LastModifiedDate: S.optional(MachineLearningProductLastModifiedDateFilter),
+    ProductTitle: S.optional(MachineLearningProductTitleFilter),
+    Visibility: S.optional(MachineLearningProductVisibilityFilter),
+  }),
+).annotate({
+  identifier: "MachineLearningProductFilters",
+}) as any as S.Schema<MachineLearningProductFilters>;
+export type OfferSetEntityIdString = string;
 export type OfferSetEntityIdFilterValueList = string[];
-export const OfferSetEntityIdFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const OfferSetEntityIdFilterValueList = /*@__PURE__*/ S.Array(S.String);
 export interface OfferSetEntityIdFilter {
   ValueList?: string[];
 }
-export const OfferSetEntityIdFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ ValueList: S.optional(OfferSetEntityIdFilterValueList) }),
+export const OfferSetEntityIdFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ValueList: S.optional(OfferSetEntityIdFilterValueList) }),
 ).annotate({
   identifier: "OfferSetEntityIdFilter",
 }) as any as S.Schema<OfferSetEntityIdFilter>;
+export type OfferSetNameString = string;
 export type OfferSetNameFilterValueList = string[];
-export const OfferSetNameFilterValueList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const OfferSetNameFilterValueList = /*@__PURE__*/ S.Array(S.String);
 export interface OfferSetNameFilter {
   ValueList?: string[];
 }
-export const OfferSetNameFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferSetNameFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ValueList: S.optional(OfferSetNameFilterValueList) }),
 ).annotate({
   identifier: "OfferSetNameFilter",
 }) as any as S.Schema<OfferSetNameFilter>;
 export type OfferSetStateString = "Draft" | "Released" | (string & {});
-export const OfferSetStateString = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const OfferSetStateString = /*@__PURE__*/ S.String;
+
 export type OfferSetStateFilterValueList = OfferSetStateString[];
 export const OfferSetStateFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(OfferSetStateString);
+  /*@__PURE__*/ S.Array(OfferSetStateString);
 export interface OfferSetStateFilter {
   ValueList?: OfferSetStateString[];
 }
-export const OfferSetStateFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferSetStateFilter = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ValueList: S.optional(OfferSetStateFilterValueList) }),
 ).annotate({
   identifier: "OfferSetStateFilter",
@@ -1555,45 +1560,47 @@ export interface OfferSetReleaseDateFilterDateRange {
   AfterValue?: string;
   BeforeValue?: string;
 }
-export const OfferSetReleaseDateFilterDateRange =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AfterValue: S.optional(S.String),
-      BeforeValue: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "OfferSetReleaseDateFilterDateRange",
-  }) as any as S.Schema<OfferSetReleaseDateFilterDateRange>;
+export const OfferSetReleaseDateFilterDateRange = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AfterValue: S.optional(S.String),
+    BeforeValue: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "OfferSetReleaseDateFilterDateRange",
+}) as any as S.Schema<OfferSetReleaseDateFilterDateRange>;
 export interface OfferSetReleaseDateFilter {
   DateRange?: OfferSetReleaseDateFilterDateRange;
 }
-export const OfferSetReleaseDateFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ DateRange: S.optional(OfferSetReleaseDateFilterDateRange) }),
+export const OfferSetReleaseDateFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ DateRange: S.optional(OfferSetReleaseDateFilterDateRange) }),
 ).annotate({
   identifier: "OfferSetReleaseDateFilter",
 }) as any as S.Schema<OfferSetReleaseDateFilter>;
+export type OfferSetAssociatedOfferIdsString = string;
 export type OfferSetAssociatedOfferIdsFilterValueList = string[];
-export const OfferSetAssociatedOfferIdsFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const OfferSetAssociatedOfferIdsFilterValueList = /*@__PURE__*/ S.Array(
+  S.String,
+);
 export interface OfferSetAssociatedOfferIdsFilter {
   ValueList?: string[];
 }
-export const OfferSetAssociatedOfferIdsFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      ValueList: S.optional(OfferSetAssociatedOfferIdsFilterValueList),
-    }),
-  ).annotate({
-    identifier: "OfferSetAssociatedOfferIdsFilter",
-  }) as any as S.Schema<OfferSetAssociatedOfferIdsFilter>;
+export const OfferSetAssociatedOfferIdsFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ValueList: S.optional(OfferSetAssociatedOfferIdsFilterValueList),
+  }),
+).annotate({
+  identifier: "OfferSetAssociatedOfferIdsFilter",
+}) as any as S.Schema<OfferSetAssociatedOfferIdsFilter>;
+export type OfferSetSolutionIdString = string;
 export type OfferSetSolutionIdFilterValueList = string[];
-export const OfferSetSolutionIdFilterValueList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const OfferSetSolutionIdFilterValueList = /*@__PURE__*/ S.Array(
+  S.String,
+);
 export interface OfferSetSolutionIdFilter {
   ValueList?: string[];
 }
-export const OfferSetSolutionIdFilter = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ ValueList: S.optional(OfferSetSolutionIdFilterValueList) }),
+export const OfferSetSolutionIdFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ValueList: S.optional(OfferSetSolutionIdFilterValueList) }),
 ).annotate({
   identifier: "OfferSetSolutionIdFilter",
 }) as any as S.Schema<OfferSetSolutionIdFilter>;
@@ -1601,26 +1608,23 @@ export interface OfferSetLastModifiedDateFilterDateRange {
   AfterValue?: string;
   BeforeValue?: string;
 }
-export const OfferSetLastModifiedDateFilterDateRange =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferSetLastModifiedDateFilterDateRange = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       AfterValue: S.optional(S.String),
       BeforeValue: S.optional(S.String),
     }),
-  ).annotate({
-    identifier: "OfferSetLastModifiedDateFilterDateRange",
-  }) as any as S.Schema<OfferSetLastModifiedDateFilterDateRange>;
+).annotate({
+  identifier: "OfferSetLastModifiedDateFilterDateRange",
+}) as any as S.Schema<OfferSetLastModifiedDateFilterDateRange>;
 export interface OfferSetLastModifiedDateFilter {
   DateRange?: OfferSetLastModifiedDateFilterDateRange;
 }
-export const OfferSetLastModifiedDateFilter =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      DateRange: S.optional(OfferSetLastModifiedDateFilterDateRange),
-    }),
-  ).annotate({
-    identifier: "OfferSetLastModifiedDateFilter",
-  }) as any as S.Schema<OfferSetLastModifiedDateFilter>;
+export const OfferSetLastModifiedDateFilter = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ DateRange: S.optional(OfferSetLastModifiedDateFilterDateRange) }),
+).annotate({
+  identifier: "OfferSetLastModifiedDateFilter",
+}) as any as S.Schema<OfferSetLastModifiedDateFilter>;
 export interface OfferSetFilters {
   EntityId?: OfferSetEntityIdFilter;
   Name?: OfferSetNameFilter;
@@ -1630,7 +1634,7 @@ export interface OfferSetFilters {
   SolutionId?: OfferSetSolutionIdFilter;
   LastModifiedDate?: OfferSetLastModifiedDateFilter;
 }
-export const OfferSetFilters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferSetFilters = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     EntityId: S.optional(OfferSetEntityIdFilter),
     Name: S.optional(OfferSetNameFilter),
@@ -1724,7 +1728,7 @@ export type EntityTypeFilters =
       MachineLearningProductFilters?: never;
       OfferSetFilters: OfferSetFilters;
     };
-export const EntityTypeFilters = /*@__PURE__*/ /*#__PURE__*/ S.Union([
+export const EntityTypeFilters = /*@__PURE__*/ S.Union([
   S.Struct({ DataProductFilters: DataProductFilters }),
   S.Struct({ SaaSProductFilters: SaaSProductFilters }),
   S.Struct({ AmiProductFilters: AmiProductFilters }),
@@ -1740,12 +1744,13 @@ export type DataProductSortBy =
   | "Visibility"
   | "LastModifiedDate"
   | (string & {});
-export const DataProductSortBy = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DataProductSortBy = /*@__PURE__*/ S.String;
+
 export interface DataProductSort {
   SortBy?: DataProductSortBy;
   SortOrder?: SortOrder;
 }
-export const DataProductSort = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DataProductSort = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     SortBy: S.optional(DataProductSortBy),
     SortOrder: S.optional(SortOrder),
@@ -1760,12 +1765,13 @@ export type SaaSProductSortBy =
   | "LastModifiedDate"
   | "DeliveryOptionTypes"
   | (string & {});
-export const SaaSProductSortBy = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SaaSProductSortBy = /*@__PURE__*/ S.String;
+
 export interface SaaSProductSort {
   SortBy?: SaaSProductSortBy;
   SortOrder?: SortOrder;
 }
-export const SaaSProductSort = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SaaSProductSort = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     SortBy: S.optional(SaaSProductSortBy),
     SortOrder: S.optional(SortOrder),
@@ -1779,12 +1785,13 @@ export type AmiProductSortBy =
   | "ProductTitle"
   | "Visibility"
   | (string & {});
-export const AmiProductSortBy = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const AmiProductSortBy = /*@__PURE__*/ S.String;
+
 export interface AmiProductSort {
   SortBy?: AmiProductSortBy;
   SortOrder?: SortOrder;
 }
-export const AmiProductSort = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AmiProductSort = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     SortBy: S.optional(AmiProductSortBy),
     SortOrder: S.optional(SortOrder),
@@ -1803,12 +1810,13 @@ export type OfferSortBy =
   | "LastModifiedDate"
   | "OfferSetId"
   | (string & {});
-export const OfferSortBy = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const OfferSortBy = /*@__PURE__*/ S.String;
+
 export interface OfferSort {
   SortBy?: OfferSortBy;
   SortOrder?: SortOrder;
 }
-export const OfferSort = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferSort = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     SortBy: S.optional(OfferSortBy),
     SortOrder: S.optional(SortOrder),
@@ -1821,12 +1829,13 @@ export type ContainerProductSortBy =
   | "Visibility"
   | "CompatibleAWSServices"
   | (string & {});
-export const ContainerProductSortBy = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ContainerProductSortBy = /*@__PURE__*/ S.String;
+
 export interface ContainerProductSort {
   SortBy?: ContainerProductSortBy;
   SortOrder?: SortOrder;
 }
-export const ContainerProductSort = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ContainerProductSort = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     SortBy: S.optional(ContainerProductSortBy),
     SortOrder: S.optional(SortOrder),
@@ -1849,17 +1858,17 @@ export type ResaleAuthorizationSortBy =
   | "AvailabilityEndDate"
   | "LastModifiedDate"
   | (string & {});
-export const ResaleAuthorizationSortBy = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ResaleAuthorizationSortBy = /*@__PURE__*/ S.String;
+
 export interface ResaleAuthorizationSort {
   SortBy?: ResaleAuthorizationSortBy;
   SortOrder?: SortOrder;
 }
-export const ResaleAuthorizationSort = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      SortBy: S.optional(ResaleAuthorizationSortBy),
-      SortOrder: S.optional(SortOrder),
-    }),
+export const ResaleAuthorizationSort = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    SortBy: S.optional(ResaleAuthorizationSortBy),
+    SortOrder: S.optional(SortOrder),
+  }),
 ).annotate({
   identifier: "ResaleAuthorizationSort",
 }) as any as S.Schema<ResaleAuthorizationSort>;
@@ -1869,18 +1878,17 @@ export type MachineLearningProductSortBy =
   | "ProductTitle"
   | "Visibility"
   | (string & {});
-export const MachineLearningProductSortBy =
-  /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const MachineLearningProductSortBy = /*@__PURE__*/ S.String;
+
 export interface MachineLearningProductSort {
   SortBy?: MachineLearningProductSortBy;
   SortOrder?: SortOrder;
 }
-export const MachineLearningProductSort = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      SortBy: S.optional(MachineLearningProductSortBy),
-      SortOrder: S.optional(SortOrder),
-    }),
+export const MachineLearningProductSort = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    SortBy: S.optional(MachineLearningProductSortBy),
+    SortOrder: S.optional(SortOrder),
+  }),
 ).annotate({
   identifier: "MachineLearningProductSort",
 }) as any as S.Schema<MachineLearningProductSort>;
@@ -1892,12 +1900,13 @@ export type OfferSetSortBy =
   | "EntityId"
   | "LastModifiedDate"
   | (string & {});
-export const OfferSetSortBy = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const OfferSetSortBy = /*@__PURE__*/ S.String;
+
 export interface OfferSetSort {
   SortBy?: OfferSetSortBy;
   SortOrder?: SortOrder;
 }
-export const OfferSetSort = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferSetSort = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     SortBy: S.optional(OfferSetSortBy),
     SortOrder: S.optional(SortOrder),
@@ -1984,7 +1993,7 @@ export type EntityTypeSort =
       MachineLearningProductSort?: never;
       OfferSetSort: OfferSetSort;
     };
-export const EntityTypeSort = /*@__PURE__*/ /*#__PURE__*/ S.Union([
+export const EntityTypeSort = /*@__PURE__*/ S.Union([
   S.Struct({ DataProductSort: DataProductSort }),
   S.Struct({ SaaSProductSort: SaaSProductSort }),
   S.Struct({ AmiProductSort: AmiProductSort }),
@@ -2005,7 +2014,7 @@ export interface ListEntitiesRequest {
   EntityTypeFilters?: EntityTypeFilters;
   EntityTypeSort?: EntityTypeSort;
 }
-export const ListEntitiesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListEntitiesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Catalog: S.String,
     EntityType: S.String,
@@ -2029,11 +2038,13 @@ export const ListEntitiesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ListEntitiesRequest",
 }) as any as S.Schema<ListEntitiesRequest>;
+export type EntityNameString = string;
+export type VisibilityValue = string;
 export interface AmiProductSummary {
   ProductTitle?: string;
   Visibility?: AmiProductVisibilityString;
 }
-export const AmiProductSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const AmiProductSummary = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ProductTitle: S.optional(S.String),
     Visibility: S.optional(AmiProductVisibilityString),
@@ -2045,12 +2056,11 @@ export interface ContainerProductSummary {
   ProductTitle?: string;
   Visibility?: ContainerProductVisibilityString;
 }
-export const ContainerProductSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ProductTitle: S.optional(S.String),
-      Visibility: S.optional(ContainerProductVisibilityString),
-    }),
+export const ContainerProductSummary = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ProductTitle: S.optional(S.String),
+    Visibility: S.optional(ContainerProductVisibilityString),
+  }),
 ).annotate({
   identifier: "ContainerProductSummary",
 }) as any as S.Schema<ContainerProductSummary>;
@@ -2058,7 +2068,7 @@ export interface DataProductSummary {
   ProductTitle?: string;
   Visibility?: DataProductVisibilityString;
 }
-export const DataProductSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DataProductSummary = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ProductTitle: S.optional(S.String),
     Visibility: S.optional(DataProductVisibilityString),
@@ -2070,7 +2080,7 @@ export interface SaaSProductSummary {
   ProductTitle?: string;
   Visibility?: SaaSProductVisibilityString;
 }
-export const SaaSProductSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SaaSProductSummary = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ProductTitle: S.optional(S.String),
     Visibility: S.optional(SaaSProductVisibilityString),
@@ -2078,13 +2088,11 @@ export const SaaSProductSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "SaaSProductSummary",
 }) as any as S.Schema<SaaSProductSummary>;
+export type OfferBuyerAccountsString = string;
 export type OfferBuyerAccountsList = string[];
-export const OfferBuyerAccountsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const OfferBuyerAccountsList = /*@__PURE__*/ S.Array(S.String);
 export type OfferTargetingList = OfferTargetingString[];
-export const OfferTargetingList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(OfferTargetingString);
+export const OfferTargetingList = /*@__PURE__*/ S.Array(OfferTargetingString);
 export interface OfferSummary {
   Name?: string;
   ProductId?: string;
@@ -2096,7 +2104,7 @@ export interface OfferSummary {
   Targeting?: OfferTargetingString[];
   OfferSetId?: string;
 }
-export const OfferSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferSummary = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Name: S.optional(S.String),
     ProductId: S.optional(S.String),
@@ -2122,21 +2130,20 @@ export interface ResaleAuthorizationSummary {
   CreatedDate?: string;
   AvailabilityEndDate?: string;
 }
-export const ResaleAuthorizationSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Name: S.optional(S.String),
-      ProductId: S.optional(S.String),
-      ProductName: S.optional(S.String),
-      ManufacturerAccountId: S.optional(S.String),
-      ManufacturerLegalName: S.optional(S.String),
-      ResellerAccountID: S.optional(S.String),
-      ResellerLegalName: S.optional(S.String),
-      Status: S.optional(ResaleAuthorizationStatusString),
-      OfferExtendedStatus: S.optional(S.String),
-      CreatedDate: S.optional(S.String),
-      AvailabilityEndDate: S.optional(S.String),
-    }),
+export const ResaleAuthorizationSummary = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Name: S.optional(S.String),
+    ProductId: S.optional(S.String),
+    ProductName: S.optional(S.String),
+    ManufacturerAccountId: S.optional(S.String),
+    ManufacturerLegalName: S.optional(S.String),
+    ResellerAccountID: S.optional(S.String),
+    ResellerLegalName: S.optional(S.String),
+    Status: S.optional(ResaleAuthorizationStatusString),
+    OfferExtendedStatus: S.optional(S.String),
+    CreatedDate: S.optional(S.String),
+    AvailabilityEndDate: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "ResaleAuthorizationSummary",
 }) as any as S.Schema<ResaleAuthorizationSummary>;
@@ -2144,18 +2151,16 @@ export interface MachineLearningProductSummary {
   ProductTitle?: string;
   Visibility?: MachineLearningProductVisibilityString;
 }
-export const MachineLearningProductSummary =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      ProductTitle: S.optional(S.String),
-      Visibility: S.optional(MachineLearningProductVisibilityString),
-    }),
-  ).annotate({
-    identifier: "MachineLearningProductSummary",
-  }) as any as S.Schema<MachineLearningProductSummary>;
+export const MachineLearningProductSummary = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ProductTitle: S.optional(S.String),
+    Visibility: S.optional(MachineLearningProductVisibilityString),
+  }),
+).annotate({
+  identifier: "MachineLearningProductSummary",
+}) as any as S.Schema<MachineLearningProductSummary>;
 export type OfferSetAssociatedOfferIdsList = string[];
-export const OfferSetAssociatedOfferIdsList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const OfferSetAssociatedOfferIdsList = /*@__PURE__*/ S.Array(S.String);
 export interface OfferSetSummary {
   Name?: string;
   State?: OfferSetStateString;
@@ -2163,7 +2168,7 @@ export interface OfferSetSummary {
   AssociatedOfferIds?: string[];
   SolutionId?: string;
 }
-export const OfferSetSummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OfferSetSummary = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Name: S.optional(S.String),
     State: S.optional(OfferSetStateString),
@@ -2190,7 +2195,7 @@ export interface EntitySummary {
   MachineLearningProductSummary?: MachineLearningProductSummary;
   OfferSetSummary?: OfferSetSummary;
 }
-export const EntitySummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EntitySummary = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Name: S.optional(S.String),
     EntityType: S.optional(S.String),
@@ -2209,13 +2214,12 @@ export const EntitySummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "EntitySummary" }) as any as S.Schema<EntitySummary>;
 export type EntitySummaryList = EntitySummary[];
-export const EntitySummaryList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(EntitySummary);
+export const EntitySummaryList = /*@__PURE__*/ S.Array(EntitySummary);
 export interface ListEntitiesResponse {
   EntitySummaryList?: EntitySummary[];
   NextToken?: string;
 }
-export const ListEntitiesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListEntitiesResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     EntitySummaryList: S.optional(EntitySummaryList),
     NextToken: S.optional(S.String),
@@ -2226,62 +2230,61 @@ export const ListEntitiesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface ListTagsForResourceRequest {
   ResourceArn: string;
 }
-export const ListTagsForResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ ResourceArn: S.String }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/ListTagsForResource" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListTagsForResourceRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/ListTagsForResource" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "ListTagsForResourceRequest",
 }) as any as S.Schema<ListTagsForResourceRequest>;
+export type TagKey = string;
+export type TagValue = string;
 export interface Tag {
   Key: string;
   Value: string;
 }
-export const Tag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Tag = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: S.String, Value: S.String }),
 ).annotate({ identifier: "Tag" }) as any as S.Schema<Tag>;
 export type TagList = Tag[];
-export const TagList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Tag);
+export const TagList = /*@__PURE__*/ S.Array(Tag);
 export interface ListTagsForResourceResponse {
   ResourceArn?: string;
   Tags?: Tag[];
 }
-export const ListTagsForResourceResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ ResourceArn: S.optional(S.String), Tags: S.optional(TagList) }),
-  ).annotate({
-    identifier: "ListTagsForResourceResponse",
-  }) as any as S.Schema<ListTagsForResourceResponse>;
+export const ListTagsForResourceResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.optional(S.String), Tags: S.optional(TagList) }),
+).annotate({
+  identifier: "ListTagsForResourceResponse",
+}) as any as S.Schema<ListTagsForResourceResponse>;
 export interface PutResourcePolicyRequest {
   ResourceArn: string;
   Policy: string;
 }
-export const PutResourcePolicyRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ ResourceArn: S.String, Policy: S.String }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/PutResourcePolicy" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const PutResourcePolicyRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String, Policy: S.String }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/PutResourcePolicy" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "PutResourcePolicyRequest",
 }) as any as S.Schema<PutResourcePolicyRequest>;
 export interface PutResourcePolicyResponse {}
-export const PutResourcePolicyResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}),
+export const PutResourcePolicyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
 ).annotate({
   identifier: "PutResourcePolicyResponse",
 }) as any as S.Schema<PutResourcePolicyResponse>;
@@ -2293,7 +2296,7 @@ export interface Change {
   DetailsDocument?: any;
   ChangeName?: string;
 }
-export const Change = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Change = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ChangeType: S.String,
     Entity: Entity,
@@ -2304,7 +2307,8 @@ export const Change = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Change" }) as any as S.Schema<Change>;
 export type RequestedChangeList = Change[];
-export const RequestedChangeList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Change);
+export const RequestedChangeList = /*@__PURE__*/ S.Array(Change);
+export type ClientRequestToken = string;
 export interface StartChangeSetRequest {
   Catalog: string;
   ChangeSet: Change[];
@@ -2313,7 +2317,7 @@ export interface StartChangeSetRequest {
   ChangeSetTags?: Tag[];
   Intent?: Intent;
 }
-export const StartChangeSetRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StartChangeSetRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Catalog: S.String,
     ChangeSet: RequestedChangeList,
@@ -2338,12 +2342,11 @@ export interface StartChangeSetResponse {
   ChangeSetId?: string;
   ChangeSetArn?: string;
 }
-export const StartChangeSetResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ChangeSetId: S.optional(S.String),
-      ChangeSetArn: S.optional(S.String),
-    }),
+export const StartChangeSetResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ChangeSetId: S.optional(S.String),
+    ChangeSetArn: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "StartChangeSetResponse",
 }) as any as S.Schema<StartChangeSetResponse>;
@@ -2351,7 +2354,7 @@ export interface TagResourceRequest {
   ResourceArn: string;
   Tags: Tag[];
 }
-export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ResourceArn: S.String, Tags: TagList }).pipe(
     T.all(
       T.Http({ method: "POST", uri: "/TagResource" }),
@@ -2366,18 +2369,18 @@ export const TagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "TagResourceRequest",
 }) as any as S.Schema<TagResourceRequest>;
 export interface TagResourceResponse {}
-export const TagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "TagResourceResponse",
 }) as any as S.Schema<TagResourceResponse>;
 export type TagKeyList = string[];
-export const TagKeyList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TagKeyList = /*@__PURE__*/ S.Array(S.String);
 export interface UntagResourceRequest {
   ResourceArn: string;
   TagKeys: string[];
 }
-export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ ResourceArn: S.String, TagKeys: TagKeyList }).pipe(
     T.all(
       T.Http({ method: "POST", uri: "/UntagResource" }),
@@ -2392,47 +2395,11 @@ export const UntagResourceRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "UntagResourceRequest",
 }) as any as S.Schema<UntagResourceRequest>;
 export interface UntagResourceResponse {}
-export const UntagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}),
 ).annotate({
   identifier: "UntagResourceResponse",
 }) as any as S.Schema<UntagResourceResponse>;
-
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { Message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class InternalServiceException extends S.TaggedErrorClass<InternalServiceException>()(
-  "InternalServiceException",
-  { Message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class ThrottlingException extends S.TaggedErrorClass<ThrottlingException>()(
-  "ThrottlingException",
-  { Message: S.optional(S.String) },
-).pipe(C.withThrottlingError) {}
-export class ValidationException extends S.TaggedErrorClass<ValidationException>()(
-  "ValidationException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ResourceInUseException extends S.TaggedErrorClass<ResourceInUseException>()(
-  "ResourceInUseException",
-  { Message: S.optional(S.String) },
-) {}
-export class ResourceNotFoundException extends S.TaggedErrorClass<ResourceNotFoundException>()(
-  "ResourceNotFoundException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ResourceNotSupportedException extends S.TaggedErrorClass<ResourceNotSupportedException>()(
-  "ResourceNotSupportedException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ServiceQuotaExceededException extends S.TaggedErrorClass<ServiceQuotaExceededException>()(
-  "ServiceQuotaExceededException",
-  { Message: S.optional(S.String) },
-).pipe(C.withQuotaError) {}
-
-//# Operations
 export type BatchDescribeEntitiesError =
   | AccessDeniedException
   | InternalServiceException
@@ -2446,8 +2413,8 @@ export const batchDescribeEntities: API.OperationMethod<
   BatchDescribeEntitiesRequest,
   BatchDescribeEntitiesResponse,
   BatchDescribeEntitiesError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: BatchDescribeEntitiesRequest,
   output: BatchDescribeEntitiesResponse,
   errors: [
@@ -2456,7 +2423,11 @@ export const batchDescribeEntities: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "BatchDescribeEntities",
 }));
+
 export type CancelChangeSetError =
   | AccessDeniedException
   | InternalServiceException
@@ -2475,8 +2446,8 @@ export const cancelChangeSet: API.OperationMethod<
   CancelChangeSetRequest,
   CancelChangeSetResponse,
   CancelChangeSetError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CancelChangeSetRequest,
   output: CancelChangeSetResponse,
   errors: [
@@ -2487,7 +2458,11 @@ export const cancelChangeSet: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CancelChangeSet",
 }));
+
 export type DeleteResourcePolicyError =
   | AccessDeniedException
   | InternalServiceException
@@ -2503,8 +2478,8 @@ export const deleteResourcePolicy: API.OperationMethod<
   DeleteResourcePolicyRequest,
   DeleteResourcePolicyResponse,
   DeleteResourcePolicyError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteResourcePolicyRequest,
   output: DeleteResourcePolicyResponse,
   errors: [
@@ -2514,7 +2489,11 @@ export const deleteResourcePolicy: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteResourcePolicy",
 }));
+
 export type DescribeChangeSetError =
   | AccessDeniedException
   | InternalServiceException
@@ -2529,8 +2508,8 @@ export const describeChangeSet: API.OperationMethod<
   DescribeChangeSetRequest,
   DescribeChangeSetResponse,
   DescribeChangeSetError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeChangeSetRequest,
   output: DescribeChangeSetResponse,
   errors: [
@@ -2540,7 +2519,11 @@ export const describeChangeSet: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeChangeSet",
 }));
+
 export type DescribeEntityError =
   | AccessDeniedException
   | InternalServiceException
@@ -2556,8 +2539,8 @@ export const describeEntity: API.OperationMethod<
   DescribeEntityRequest,
   DescribeEntityResponse,
   DescribeEntityError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DescribeEntityRequest,
   output: DescribeEntityResponse,
   errors: [
@@ -2568,7 +2551,11 @@ export const describeEntity: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeEntity",
 }));
+
 export type GetResourcePolicyError =
   | AccessDeniedException
   | InternalServiceException
@@ -2584,8 +2571,8 @@ export const getResourcePolicy: API.OperationMethod<
   GetResourcePolicyRequest,
   GetResourcePolicyResponse,
   GetResourcePolicyError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetResourcePolicyRequest,
   output: GetResourcePolicyResponse,
   errors: [
@@ -2595,7 +2582,11 @@ export const getResourcePolicy: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetResourcePolicy",
 }));
+
 export type ListChangeSetsError =
   | AccessDeniedException
   | InternalServiceException
@@ -2611,27 +2602,13 @@ export type ListChangeSetsError =
  * You can describe a change during the 60-day request history retention period for API
  * calls.
  */
-export const listChangeSets: API.OperationMethod<
+export const listChangeSets: API.PaginatedOperationMethod<
   ListChangeSetsRequest,
   ListChangeSetsResponse,
   ListChangeSetsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListChangeSetsRequest,
-  ) => stream.Stream<
-    ListChangeSetsResponse,
-    ListChangeSetsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListChangeSetsRequest,
-  ) => stream.Stream<
-    ChangeSetSummaryListItem,
-    ListChangeSetsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  ChangeSetSummaryListItem
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListChangeSetsRequest,
   output: ListChangeSetsResponse,
   errors: [
@@ -2640,13 +2617,17 @@ export const listChangeSets: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListChangeSets",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "ChangeSetSummaryList",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ListEntitiesError =
   | AccessDeniedException
   | InternalServiceException
@@ -2657,27 +2638,13 @@ export type ListEntitiesError =
 /**
  * Provides the list of entities of a given type.
  */
-export const listEntities: API.OperationMethod<
+export const listEntities: API.PaginatedOperationMethod<
   ListEntitiesRequest,
   ListEntitiesResponse,
   ListEntitiesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListEntitiesRequest,
-  ) => stream.Stream<
-    ListEntitiesResponse,
-    ListEntitiesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListEntitiesRequest,
-  ) => stream.Stream<
-    EntitySummary,
-    ListEntitiesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  EntitySummary
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListEntitiesRequest,
   output: ListEntitiesResponse,
   errors: [
@@ -2687,13 +2654,17 @@ export const listEntities: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListEntities",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "EntitySummaryList",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type ListTagsForResourceError =
   | AccessDeniedException
   | InternalServiceException
@@ -2708,8 +2679,8 @@ export const listTagsForResource: API.OperationMethod<
   ListTagsForResourceRequest,
   ListTagsForResourceResponse,
   ListTagsForResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListTagsForResourceRequest,
   output: ListTagsForResourceResponse,
   errors: [
@@ -2719,7 +2690,11 @@ export const listTagsForResource: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTagsForResource",
 }));
+
 export type PutResourcePolicyError =
   | AccessDeniedException
   | InternalServiceException
@@ -2735,8 +2710,8 @@ export const putResourcePolicy: API.OperationMethod<
   PutResourcePolicyRequest,
   PutResourcePolicyResponse,
   PutResourcePolicyError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PutResourcePolicyRequest,
   output: PutResourcePolicyResponse,
   errors: [
@@ -2746,7 +2721,11 @@ export const putResourcePolicy: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PutResourcePolicy",
 }));
+
 export type StartChangeSetError =
   | AccessDeniedException
   | InternalServiceException
@@ -2780,8 +2759,8 @@ export const startChangeSet: API.OperationMethod<
   StartChangeSetRequest,
   StartChangeSetResponse,
   StartChangeSetError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: StartChangeSetRequest,
   output: StartChangeSetResponse,
   errors: [
@@ -2793,7 +2772,11 @@ export const startChangeSet: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "StartChangeSet",
 }));
+
 export type TagResourceError =
   | AccessDeniedException
   | InternalServiceException
@@ -2808,8 +2791,8 @@ export const tagResource: API.OperationMethod<
   TagResourceRequest,
   TagResourceResponse,
   TagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TagResourceRequest,
   output: TagResourceResponse,
   errors: [
@@ -2819,7 +2802,11 @@ export const tagResource: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TagResource",
 }));
+
 export type UntagResourceError =
   | AccessDeniedException
   | InternalServiceException
@@ -2834,8 +2821,8 @@ export const untagResource: API.OperationMethod<
   UntagResourceRequest,
   UntagResourceResponse,
   UntagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UntagResourceRequest,
   output: UntagResourceResponse,
   errors: [
@@ -2845,4 +2832,7 @@ export const untagResource: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UntagResource",
 }));

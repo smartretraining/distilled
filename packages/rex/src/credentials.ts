@@ -5,13 +5,20 @@
  * session-token based: you POST email + password to
  * `Authentication/login` and receive a token string, which is then sent as
  * `Authorization: Bearer <token>` on every subsequent call (see
- * `client.ts`).
+ * `protocol.ts`).
  *
  * Three ways to provide credentials:
  *   - `CredentialsFromToken(token)` — you already have a token.
  *   - `CredentialsFromEnv` — reads `REX_API_TOKEN`, or falls back to
  *     `REX_EMAIL` + `REX_PASSWORD` and performs the login exchange.
  *   - construct the `Credentials` service directly.
+ *
+ * Following the core convention, the `Credentials` service holds an
+ * *effect* resolving the current config; the protocol layer runs it per
+ * request on the calling fiber. Rex session tokens are long-lived, so the
+ * login exchange happens once at layer construction and the resolved config
+ * is handed back as a constant effect rather than re-authenticating on
+ * every call.
  */
 import { ConfigError } from "@distilled.cloud/core/errors";
 import * as EffectConfig from "effect/Config";
@@ -29,9 +36,10 @@ export interface Config {
   readonly apiBaseUrl: string;
 }
 
-export class Credentials extends Context.Service<Credentials, Config>()(
-  "RexCredentials",
-) {}
+export class Credentials extends Context.Service<
+  Credentials,
+  Effect.Effect<Config>
+>()("RexCredentials") {}
 
 /**
  * Exchange email + password for a session token via
@@ -74,10 +82,13 @@ export const CredentialsFromToken = (
   token: string,
   options?: { apiBaseUrl?: string },
 ): Layer.Layer<Credentials> =>
-  Layer.succeed(Credentials, {
-    token: Redacted.make(token),
-    apiBaseUrl: options?.apiBaseUrl ?? DEFAULT_API_BASE_URL,
-  });
+  Layer.succeed(
+    Credentials,
+    Effect.succeed({
+      token: Redacted.make(token),
+      apiBaseUrl: options?.apiBaseUrl ?? DEFAULT_API_BASE_URL,
+    }),
+  );
 
 const envConfig = EffectConfig.all({
   token: EffectConfig.string("REX_API_TOKEN").pipe(EffectConfig.option),
@@ -88,49 +99,43 @@ const envConfig = EffectConfig.all({
   ),
 });
 
+const missingCredentials = new ConfigError({
+  message:
+    "Rex credentials require either REX_API_TOKEN, or REX_EMAIL + REX_PASSWORD",
+});
+
 /**
  * Resolve credentials from the environment.
  *
  * Prefers `REX_API_TOKEN`. If absent, requires `REX_EMAIL` + `REX_PASSWORD`
- * and performs the login exchange to obtain a token.
+ * and performs the login exchange to obtain a token. Resolution happens once,
+ * when the layer is built.
  */
-export const CredentialsFromEnv: Layer.Layer<Credentials, ConfigError> =
-  Layer.effect(
-    Credentials,
-    Effect.gen(function* () {
-      const cfg = yield* envConfig.pipe(
-        Effect.mapError(
-          () =>
-            new ConfigError({
-              message:
-                "Rex credentials require either REX_API_TOKEN, or REX_EMAIL + REX_PASSWORD",
-            }),
-        ),
+export const CredentialsFromEnv: Layer.Layer<Credentials> = Layer.effect(
+  Credentials,
+  Effect.gen(function* () {
+    const cfg = yield* envConfig.pipe(
+      Effect.mapError(() => missingCredentials),
+    );
+
+    const tokenValue = cfg.token._tag === "Some" ? cfg.token.value : undefined;
+    if (tokenValue !== undefined) {
+      return {
+        token: Redacted.make(tokenValue),
+        apiBaseUrl: cfg.apiBaseUrl,
+      };
+    }
+
+    if (cfg.email._tag === "Some" && cfg.password._tag === "Some") {
+      const token = yield* login(
+        cfg.email.value,
+        cfg.password.value,
+        cfg.apiBaseUrl,
       );
+      return { token: Redacted.make(token), apiBaseUrl: cfg.apiBaseUrl };
+    }
 
-      const tokenValue =
-        cfg.token._tag === "Some" ? cfg.token.value : undefined;
-      if (tokenValue !== undefined) {
-        return {
-          token: Redacted.make(tokenValue),
-          apiBaseUrl: cfg.apiBaseUrl,
-        };
-      }
-
-      if (cfg.email._tag === "Some" && cfg.password._tag === "Some") {
-        const token = yield* login(
-          cfg.email.value,
-          cfg.password.value,
-          cfg.apiBaseUrl,
-        );
-        return { token: Redacted.make(token), apiBaseUrl: cfg.apiBaseUrl };
-      }
-
-      return yield* Effect.fail(
-        new ConfigError({
-          message:
-            "Rex credentials require either REX_API_TOKEN, or REX_EMAIL + REX_PASSWORD",
-        }),
-      );
-    }),
-  );
+    return yield* Effect.fail(missingCredentials);
+    // Resolved once at layer build; handed to the protocol as a constant.
+  }).pipe(Effect.orDie, Effect.map(Effect.succeed)),
+);

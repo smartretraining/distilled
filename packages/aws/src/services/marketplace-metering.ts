@@ -1,11 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "Marketplace Metering",
   serviceShapeName: "AWSMPMeteringService",
@@ -116,44 +117,130 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class CustomerNotEntitledException
+  extends /*@__PURE__*/ S.TaggedError<CustomerNotEntitledException>()(
+    "CustomerNotEntitledException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class DisabledApiException
+  extends /*@__PURE__*/ S.TaggedError<DisabledApiException>()(
+    "DisabledApiException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class DuplicateRequestException
+  extends /*@__PURE__*/ S.TaggedError<DuplicateRequestException>()(
+    "DuplicateRequestException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ExpiredTokenException
+  extends /*@__PURE__*/ S.TaggedError<ExpiredTokenException>()(
+    "ExpiredTokenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class IdempotencyConflictException
+  extends /*@__PURE__*/ S.TaggedError<IdempotencyConflictException>()(
+    "IdempotencyConflictException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class InternalServiceErrorException
+  extends /*@__PURE__*/ S.TaggedError<InternalServiceErrorException>()(
+    "InternalServiceErrorException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidCustomerIdentifierException
+  extends /*@__PURE__*/ S.TaggedError<InvalidCustomerIdentifierException>()(
+    "InvalidCustomerIdentifierException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidEndpointRegionException
+  extends /*@__PURE__*/ S.TaggedError<InvalidEndpointRegionException>()(
+    "InvalidEndpointRegionException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidLicenseException
+  extends /*@__PURE__*/ S.TaggedError<InvalidLicenseException>()(
+    "InvalidLicenseException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidProductCodeException
+  extends /*@__PURE__*/ S.TaggedError<InvalidProductCodeException>()(
+    "InvalidProductCodeException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidPublicKeyVersionException
+  extends /*@__PURE__*/ S.TaggedError<InvalidPublicKeyVersionException>()(
+    "InvalidPublicKeyVersionException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidRegionException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRegionException>()(
+    "InvalidRegionException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidTagException
+  extends /*@__PURE__*/ S.TaggedError<InvalidTagException>()(
+    "InvalidTagException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidTokenException
+  extends /*@__PURE__*/ S.TaggedError<InvalidTokenException>()(
+    "InvalidTokenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidUsageAllocationsException
+  extends /*@__PURE__*/ S.TaggedError<InvalidUsageAllocationsException>()(
+    "InvalidUsageAllocationsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidUsageDimensionException
+  extends /*@__PURE__*/ S.TaggedError<InvalidUsageDimensionException>()(
+    "InvalidUsageDimensionException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class PlatformNotSupportedException
+  extends /*@__PURE__*/ S.TaggedError<PlatformNotSupportedException>()(
+    "PlatformNotSupportedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ThrottlingException
+  extends /*@__PURE__*/ S.TaggedError<ThrottlingException>()(
+    "ThrottlingException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class TimestampOutOfBoundsException
+  extends /*@__PURE__*/ S.TaggedError<TimestampOutOfBoundsException>()(
+    "TimestampOutOfBoundsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
 export type CustomerIdentifier = string;
 export type UsageDimension = string;
 export type UsageQuantity = number;
 export type AllocatedUsageQuantity = number;
 export type TagKey = string;
 export type TagValue = string;
-export type CustomerAWSAccountId = string;
-export type LicenseArn = string;
-export type ProductCode = string;
-export type ErrorMessage = string;
-export type ClientToken = string;
-export type VersionInteger = number;
-export type Nonce = string;
-export type NonEmptyString = string;
-
-//# Schemas
 export interface Tag {
   Key: string;
   Value: string;
 }
-export const Tag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Tag = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: S.String, Value: S.String }),
 ).annotate({ identifier: "Tag" }) as any as S.Schema<Tag>;
 export type TagList = Tag[];
-export const TagList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Tag);
+export const TagList = /*@__PURE__*/ S.Array(Tag);
 export interface UsageAllocation {
   AllocatedUsageQuantity: number;
   Tags?: Tag[];
 }
-export const UsageAllocation = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UsageAllocation = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ AllocatedUsageQuantity: S.Number, Tags: S.optional(TagList) }),
 ).annotate({
   identifier: "UsageAllocation",
 }) as any as S.Schema<UsageAllocation>;
 export type UsageAllocations = UsageAllocation[];
-export const UsageAllocations =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(UsageAllocation);
+export const UsageAllocations = /*@__PURE__*/ S.Array(UsageAllocation);
+export type CustomerAWSAccountId = string;
+export type LicenseArn = string;
 export interface UsageRecord {
   Timestamp: Date;
   CustomerIdentifier?: string;
@@ -163,7 +250,7 @@ export interface UsageRecord {
   CustomerAWSAccountId?: string;
   LicenseArn?: string;
 }
-export const UsageRecord = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UsageRecord = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Timestamp: S.Date.pipe(T.TimestampFormat("epoch-seconds")),
     CustomerIdentifier: S.optional(S.String),
@@ -175,19 +262,19 @@ export const UsageRecord = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "UsageRecord" }) as any as S.Schema<UsageRecord>;
 export type UsageRecordList = UsageRecord[];
-export const UsageRecordList = /*@__PURE__*/ /*#__PURE__*/ S.Array(UsageRecord);
+export const UsageRecordList = /*@__PURE__*/ S.Array(UsageRecord);
+export type ProductCode = string;
 export interface BatchMeterUsageRequest {
   UsageRecords: UsageRecord[];
   ProductCode?: string;
 }
-export const BatchMeterUsageRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      UsageRecords: UsageRecordList,
-      ProductCode: S.optional(S.String),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const BatchMeterUsageRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    UsageRecords: UsageRecordList,
+    ProductCode: S.optional(S.String),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "BatchMeterUsageRequest",
 }) as any as S.Schema<BatchMeterUsageRequest>;
@@ -196,13 +283,14 @@ export type UsageRecordResultStatus =
   | "CustomerNotSubscribed"
   | "DuplicateRecord"
   | (string & {});
-export const UsageRecordResultStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const UsageRecordResultStatus = /*@__PURE__*/ S.String;
+
 export interface UsageRecordResult {
   UsageRecord?: UsageRecord;
   MeteringRecordId?: string;
   Status?: UsageRecordResultStatus;
 }
-export const UsageRecordResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UsageRecordResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     UsageRecord: S.optional(UsageRecord),
     MeteringRecordId: S.optional(S.String),
@@ -212,13 +300,12 @@ export const UsageRecordResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "UsageRecordResult",
 }) as any as S.Schema<UsageRecordResult>;
 export type UsageRecordResultList = UsageRecordResult[];
-export const UsageRecordResultList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(UsageRecordResult);
+export const UsageRecordResultList = /*@__PURE__*/ S.Array(UsageRecordResult);
 export interface BatchMeterUsageResult {
   Results?: UsageRecordResult[];
   UnprocessedRecords?: UsageRecord[];
 }
-export const BatchMeterUsageResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const BatchMeterUsageResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Results: S.optional(UsageRecordResultList),
     UnprocessedRecords: S.optional(UsageRecordList),
@@ -226,6 +313,7 @@ export const BatchMeterUsageResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "BatchMeterUsageResult",
 }) as any as S.Schema<BatchMeterUsageResult>;
+export type ClientToken = string;
 export interface MeterUsageRequest {
   ProductCode: string;
   Timestamp: Date;
@@ -235,7 +323,7 @@ export interface MeterUsageRequest {
   UsageAllocations?: UsageAllocation[];
   ClientToken?: string;
 }
-export const MeterUsageRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const MeterUsageRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ProductCode: S.String,
     Timestamp: S.Date.pipe(T.TimestampFormat("epoch-seconds")),
@@ -253,17 +341,19 @@ export const MeterUsageRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface MeterUsageResult {
   MeteringRecordId?: string;
 }
-export const MeterUsageResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const MeterUsageResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ MeteringRecordId: S.optional(S.String) }),
 ).annotate({
   identifier: "MeterUsageResult",
 }) as any as S.Schema<MeterUsageResult>;
+export type VersionInteger = number;
+export type Nonce = string;
 export interface RegisterUsageRequest {
   ProductCode: string;
   PublicKeyVersion: number;
   Nonce?: string;
 }
-export const RegisterUsageRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RegisterUsageRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ProductCode: S.String,
     PublicKeyVersion: S.Number,
@@ -274,11 +364,12 @@ export const RegisterUsageRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "RegisterUsageRequest",
 }) as any as S.Schema<RegisterUsageRequest>;
+export type NonEmptyString = string;
 export interface RegisterUsageResult {
   PublicKeyRotationTimestamp?: Date;
   Signature?: string;
 }
-export const RegisterUsageResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RegisterUsageResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     PublicKeyRotationTimestamp: S.optional(
       S.Date.pipe(T.TimestampFormat("epoch-seconds")),
@@ -291,11 +382,10 @@ export const RegisterUsageResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface ResolveCustomerRequest {
   RegistrationToken: string;
 }
-export const ResolveCustomerRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ RegistrationToken: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
+export const ResolveCustomerRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ RegistrationToken: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
 ).annotate({
   identifier: "ResolveCustomerRequest",
 }) as any as S.Schema<ResolveCustomerRequest>;
@@ -305,7 +395,7 @@ export interface ResolveCustomerResult {
   CustomerAWSAccountId?: string;
   LicenseArn?: string;
 }
-export const ResolveCustomerResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResolveCustomerResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     CustomerIdentifier: S.optional(S.String),
     ProductCode: S.optional(S.String),
@@ -315,86 +405,7 @@ export const ResolveCustomerResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ResolveCustomerResult",
 }) as any as S.Schema<ResolveCustomerResult>;
-
-//# Errors
-export class DisabledApiException extends S.TaggedErrorClass<DisabledApiException>()(
-  "DisabledApiException",
-  { message: S.optional(S.String) },
-) {}
-export class InternalServiceErrorException extends S.TaggedErrorClass<InternalServiceErrorException>()(
-  "InternalServiceErrorException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidCustomerIdentifierException extends S.TaggedErrorClass<InvalidCustomerIdentifierException>()(
-  "InvalidCustomerIdentifierException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidLicenseException extends S.TaggedErrorClass<InvalidLicenseException>()(
-  "InvalidLicenseException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidProductCodeException extends S.TaggedErrorClass<InvalidProductCodeException>()(
-  "InvalidProductCodeException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidTagException extends S.TaggedErrorClass<InvalidTagException>()(
-  "InvalidTagException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidUsageAllocationsException extends S.TaggedErrorClass<InvalidUsageAllocationsException>()(
-  "InvalidUsageAllocationsException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidUsageDimensionException extends S.TaggedErrorClass<InvalidUsageDimensionException>()(
-  "InvalidUsageDimensionException",
-  { message: S.optional(S.String) },
-) {}
-export class ThrottlingException extends S.TaggedErrorClass<ThrottlingException>()(
-  "ThrottlingException",
-  { message: S.optional(S.String) },
-) {}
-export class TimestampOutOfBoundsException extends S.TaggedErrorClass<TimestampOutOfBoundsException>()(
-  "TimestampOutOfBoundsException",
-  { message: S.optional(S.String) },
-) {}
-export class CustomerNotEntitledException extends S.TaggedErrorClass<CustomerNotEntitledException>()(
-  "CustomerNotEntitledException",
-  { message: S.optional(S.String) },
-) {}
-export class DuplicateRequestException extends S.TaggedErrorClass<DuplicateRequestException>()(
-  "DuplicateRequestException",
-  { message: S.optional(S.String) },
-) {}
-export class IdempotencyConflictException extends S.TaggedErrorClass<IdempotencyConflictException>()(
-  "IdempotencyConflictException",
-  { message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class InvalidEndpointRegionException extends S.TaggedErrorClass<InvalidEndpointRegionException>()(
-  "InvalidEndpointRegionException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidPublicKeyVersionException extends S.TaggedErrorClass<InvalidPublicKeyVersionException>()(
-  "InvalidPublicKeyVersionException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidRegionException extends S.TaggedErrorClass<InvalidRegionException>()(
-  "InvalidRegionException",
-  { message: S.optional(S.String) },
-) {}
-export class PlatformNotSupportedException extends S.TaggedErrorClass<PlatformNotSupportedException>()(
-  "PlatformNotSupportedException",
-  { message: S.optional(S.String) },
-) {}
-export class ExpiredTokenException extends S.TaggedErrorClass<ExpiredTokenException>()(
-  "ExpiredTokenException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidTokenException extends S.TaggedErrorClass<InvalidTokenException>()(
-  "InvalidTokenException",
-  { message: S.optional(S.String) },
-) {}
-
-//# Operations
+export type ErrorMessage = string;
 export type BatchMeterUsageError =
   | DisabledApiException
   | InternalServiceErrorException
@@ -442,8 +453,8 @@ export const batchMeterUsage: API.OperationMethod<
   BatchMeterUsageRequest,
   BatchMeterUsageResult,
   BatchMeterUsageError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: BatchMeterUsageRequest,
   output: BatchMeterUsageResult,
   errors: [
@@ -458,7 +469,11 @@ export const batchMeterUsage: API.OperationMethod<
     ThrottlingException,
     TimestampOutOfBoundsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "BatchMeterUsage",
 }));
+
 export type MeterUsageError =
   | CustomerNotEntitledException
   | DuplicateRequestException
@@ -517,8 +532,8 @@ export const meterUsage: API.OperationMethod<
   MeterUsageRequest,
   MeterUsageResult,
   MeterUsageError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: MeterUsageRequest,
   output: MeterUsageResult,
   errors: [
@@ -534,7 +549,11 @@ export const meterUsage: API.OperationMethod<
     ThrottlingException,
     TimestampOutOfBoundsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "MeterUsage",
 }));
+
 export type RegisterUsageError =
   | CustomerNotEntitledException
   | DisabledApiException
@@ -590,8 +609,8 @@ export const registerUsage: API.OperationMethod<
   RegisterUsageRequest,
   RegisterUsageResult,
   RegisterUsageError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: RegisterUsageRequest,
   output: RegisterUsageResult,
   errors: [
@@ -604,7 +623,11 @@ export const registerUsage: API.OperationMethod<
     PlatformNotSupportedException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "RegisterUsage",
 }));
+
 export type ResolveCustomerError =
   | DisabledApiException
   | ExpiredTokenException
@@ -634,8 +657,8 @@ export const resolveCustomer: API.OperationMethod<
   ResolveCustomerRequest,
   ResolveCustomerResult,
   ResolveCustomerError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ResolveCustomerRequest,
   output: ResolveCustomerResult,
   errors: [
@@ -645,4 +668,7 @@ export const resolveCustomer: API.OperationMethod<
     InvalidTokenException,
     ThrottlingException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ResolveCustomer",
 }));

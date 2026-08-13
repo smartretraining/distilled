@@ -58,9 +58,18 @@ export const awsQueryProtocol: Protocol = (
   // Pre-compute encoder (done once at init)
   const encodeInput = S.encodeEffect(inputSchema);
 
-  // Pre-compute operation name and version from annotations
+  // Pre-compute operation name and version from annotations.
+  // Prefer the explicit operation name emitted by the generator; fall back to
+  // deriving it from the input shape identifier. RDS-family query services
+  // (RDS, ElastiCache, Redshift, Neptune, DocDB, …) name their input shapes
+  // "XxxMessage" (e.g. DescribeDBInstancesMessage), so we must strip "Message"
+  // in addition to "Request"/"Input" to recover the Action name. Note the
+  // fallback is wrong for services whose input shapes aren't named after the
+  // operation at all (e.g. AutoScaling's `AutoScalingGroupNamesType`).
   const identifier = getIdentifier(inputAst) ?? "";
-  const action = identifier.replace(/(?:Request|Input)$/, "");
+  const action =
+    operation.operationName ??
+    identifier.replace(/(?:Request|Input|Message)$/, "");
   const version = getServiceVersion(inputAst) ?? "";
 
   return {
@@ -169,6 +178,27 @@ export const awsQueryProtocol: Protocol = (
         }
         if (typeof errorResponse.RequestId === "string") {
           requestId = errorResponse.RequestId;
+        }
+      }
+
+      // Legacy query services (SimpleDB) wrap errors EC2-style:
+      // <Response><Errors><Error><Code>..</Code><Message>..</Message></Error></Errors><RequestID>..</RequestID></Response>
+      if (
+        !errorContent &&
+        parsed.Response &&
+        typeof parsed.Response === "object"
+      ) {
+        const responseObj = parsed.Response as Record<string, unknown>;
+        if (typeof responseObj.RequestID === "string") {
+          requestId = responseObj.RequestID;
+        }
+        if (responseObj.Errors && typeof responseObj.Errors === "object") {
+          const errors = responseObj.Errors as Record<string, unknown>;
+          if (errors.Error && typeof errors.Error === "object") {
+            errorContent = (
+              Array.isArray(errors.Error) ? errors.Error[0] : errors.Error
+            ) as Record<string, unknown>;
+          }
         }
       }
 

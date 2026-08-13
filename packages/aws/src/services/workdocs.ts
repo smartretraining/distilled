@@ -1,13 +1,13 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as redacted from "effect/Redacted";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 import { SensitiveString } from "../sensitive.ts";
 const ns = T.XmlNamespace("https://aws.amazon.com/api/v1/");
 const svc = T.AwsApiService({
@@ -86,93 +86,211 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class ConcurrentModificationException
+  extends /*@__PURE__*/ S.TaggedError<ConcurrentModificationException>()(
+    "ConcurrentModificationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class ConflictingOperationException
+  extends /*@__PURE__*/ S.TaggedError<ConflictingOperationException>()(
+    "ConflictingOperationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class CustomMetadataLimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<CustomMetadataLimitExceededException>()(
+    "CustomMetadataLimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(429),
+  ).pipe(C.withThrottlingError) {}
+export class DeactivatingLastSystemUserException
+  extends /*@__PURE__*/ S.TaggedError<DeactivatingLastSystemUserException>()(
+    "DeactivatingLastSystemUserException",
+    {
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+      Code: S.optional(S.String),
+    },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class DocumentLockedForCommentsException
+  extends /*@__PURE__*/ S.TaggedError<DocumentLockedForCommentsException>()(
+    "DocumentLockedForCommentsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class DraftUploadOutOfSyncException
+  extends /*@__PURE__*/ S.TaggedError<DraftUploadOutOfSyncException>()(
+    "DraftUploadOutOfSyncException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class EntityAlreadyExistsException
+  extends /*@__PURE__*/ S.TaggedError<EntityAlreadyExistsException>()(
+    "EntityAlreadyExistsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError, C.withAlreadyExistsError) {}
+export class EntityNotExistsException
+  extends /*@__PURE__*/ S.TaggedError<EntityNotExistsException>()(
+    "EntityNotExistsException",
+    {
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+      EntityIds: S.optional(
+        S.suspend(() => EntityIdList).annotate({ identifier: "EntityIdList" }),
+      ),
+    },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class FailedDependencyException
+  extends /*@__PURE__*/ S.TaggedError<FailedDependencyException>()(
+    "FailedDependencyException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(424),
+  ) {}
+export class IllegalUserStateException
+  extends /*@__PURE__*/ S.TaggedError<IllegalUserStateException>()(
+    "IllegalUserStateException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class InvalidArgumentException
+  extends /*@__PURE__*/ S.TaggedError<InvalidArgumentException>()(
+    "InvalidArgumentException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidCommentOperationException
+  extends /*@__PURE__*/ S.TaggedError<InvalidCommentOperationException>()(
+    "InvalidCommentOperationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class InvalidOperationException
+  extends /*@__PURE__*/ S.TaggedError<InvalidOperationException>()(
+    "InvalidOperationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(405),
+  ).pipe(C.withBadRequestError) {}
+export class InvalidPasswordException
+  extends /*@__PURE__*/ S.TaggedError<InvalidPasswordException>()(
+    "InvalidPasswordException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(401),
+  ).pipe(C.withAuthError) {}
+export class LimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<LimitExceededException>()(
+    "LimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class ProhibitedStateException
+  extends /*@__PURE__*/ S.TaggedError<ProhibitedStateException>()(
+    "ProhibitedStateException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class RequestedEntityTooLargeException
+  extends /*@__PURE__*/ S.TaggedError<RequestedEntityTooLargeException>()(
+    "RequestedEntityTooLargeException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(413),
+  ).pipe(C.withBadRequestError) {}
+export class ResourceAlreadyCheckedOutException
+  extends /*@__PURE__*/ S.TaggedError<ResourceAlreadyCheckedOutException>()(
+    "ResourceAlreadyCheckedOutException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class ServiceUnavailableException
+  extends /*@__PURE__*/ S.TaggedError<ServiceUnavailableException>()(
+    "ServiceUnavailableException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(503),
+  ).pipe(C.withServerError) {}
+export class StorageLimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<StorageLimitExceededException>()(
+    "StorageLimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class StorageLimitWillExceedException
+  extends /*@__PURE__*/ S.TaggedError<StorageLimitWillExceedException>()(
+    "StorageLimitWillExceedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(413),
+  ).pipe(C.withBadRequestError) {}
+export class TooManyLabelsException
+  extends /*@__PURE__*/ S.TaggedError<TooManyLabelsException>()(
+    "TooManyLabelsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(429),
+  ).pipe(C.withThrottlingError) {}
+export class TooManySubscriptionsException
+  extends /*@__PURE__*/ S.TaggedError<TooManySubscriptionsException>()(
+    "TooManySubscriptionsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(429),
+  ).pipe(C.withThrottlingError) {}
+export class UnauthorizedOperationException
+  extends /*@__PURE__*/ S.TaggedError<UnauthorizedOperationException>()(
+    "UnauthorizedOperationException",
+    {
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+      Code: S.optional(S.String),
+    },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class UnauthorizedResourceAccessException
+  extends /*@__PURE__*/ S.TaggedError<UnauthorizedResourceAccessException>()(
+    "UnauthorizedResourceAccessException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError, C.withAuthError) {}
 export type AuthenticationHeaderType = string | redacted.Redacted<string>;
 export type ResourceIdType = string;
 export type DocumentVersionIdType = string;
-export type ErrorMessageType = string;
-export type IdType = string;
-export type ExceptionCodeType = string;
-export type UsernameType = string | redacted.Redacted<string>;
-export type EmailAddressType = string | redacted.Redacted<string>;
-export type UserAttributeValueType = string | redacted.Redacted<string>;
-export type TimeZoneIdType = string;
-export type SizeType = number;
-export type PositiveSizeType = number;
-export type MessageType = string | redacted.Redacted<string>;
-export type CommentIdType = string;
-export type CommentTextType = string | redacted.Redacted<string>;
-export type CustomMetadataKeyType = string;
-export type CustomMetadataValueType = string;
-export type ResourceNameType = string | redacted.Redacted<string>;
-export type HashType = string;
-export type SharedLabel = string;
-export type SubscriptionEndPointType = string;
-export type PasswordType = string | redacted.Redacted<string>;
-export type ActivityNamesFilterType = string;
-export type LimitType = number;
-export type SearchMarkerType = string;
-export type GroupNameType = string;
-export type MarkerType = string;
-export type PageMarkerType = string;
-export type FieldNamesType = string;
-export type DocumentContentType = string;
-export type UrlType = string | redacted.Redacted<string>;
-export type SearchQueryType = string | redacted.Redacted<string>;
-export type PositiveIntegerType = number;
-export type UserIdsType = string;
-export type HeaderNameType = string;
-export type HeaderValueType = string;
-export type SearchLabel = string;
-export type SearchAncestorId = string;
-export type LongType = number;
-export type SearchResultsLimitType = number;
-export type NextMarkerType = string;
-export type ResponseItemWebUrl = string | redacted.Redacted<string>;
-
-//# Schemas
 export interface AbortDocumentVersionUploadRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   DocumentId: string;
   VersionId: string;
 }
-export const AbortDocumentVersionUploadRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
-      VersionId: S.String.pipe(T.HttpLabel("VersionId")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "DELETE",
-          uri: "/api/v1/documents/{DocumentId}/versions/{VersionId}",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const AbortDocumentVersionUploadRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
-  ).annotate({
-    identifier: "AbortDocumentVersionUploadRequest",
-  }) as any as S.Schema<AbortDocumentVersionUploadRequest>;
+    DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
+    VersionId: S.String.pipe(T.HttpLabel("VersionId")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "DELETE",
+        uri: "/api/v1/documents/{DocumentId}/versions/{VersionId}",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "AbortDocumentVersionUploadRequest",
+}) as any as S.Schema<AbortDocumentVersionUploadRequest>;
 export interface AbortDocumentVersionUploadResponse {}
-export const AbortDocumentVersionUploadResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "AbortDocumentVersionUploadResponse",
-  }) as any as S.Schema<AbortDocumentVersionUploadResponse>;
-export type EntityIdList = string[];
-export const EntityIdList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const AbortDocumentVersionUploadResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "AbortDocumentVersionUploadResponse",
+}) as any as S.Schema<AbortDocumentVersionUploadResponse>;
+export type IdType = string;
 export interface ActivateUserRequest {
   UserId: string;
   AuthenticationToken?: string | redacted.Redacted<string>;
 }
-export const ActivateUserRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ActivateUserRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     UserId: S.String.pipe(T.HttpLabel("UserId")),
     AuthenticationToken: S.optional(SensitiveString).pipe(
@@ -192,8 +310,12 @@ export const ActivateUserRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ActivateUserRequest",
 }) as any as S.Schema<ActivateUserRequest>;
+export type UsernameType = string | redacted.Redacted<string>;
+export type EmailAddressType = string | redacted.Redacted<string>;
+export type UserAttributeValueType = string | redacted.Redacted<string>;
 export type UserStatusType = "ACTIVE" | "INACTIVE" | "PENDING" | (string & {});
-export const UserStatusType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const UserStatusType = /*@__PURE__*/ S.String;
+
 export type UserType =
   | "USER"
   | "ADMIN"
@@ -201,7 +323,9 @@ export type UserType =
   | "MINIMALUSER"
   | "WORKSPACESUSER"
   | (string & {});
-export const UserType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const UserType = /*@__PURE__*/ S.String;
+
+export type TimeZoneIdType = string;
 export type LocaleType =
   | "en"
   | "fr"
@@ -215,14 +339,18 @@ export type LocaleType =
   | "pt_BR"
   | "default"
   | (string & {});
-export const LocaleType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const LocaleType = /*@__PURE__*/ S.String;
+
+export type SizeType = number;
+export type PositiveSizeType = number;
 export type StorageType = "UNLIMITED" | "QUOTA" | (string & {});
-export const StorageType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const StorageType = /*@__PURE__*/ S.String;
+
 export interface StorageRuleType {
   StorageAllocatedInBytes?: number;
   StorageType?: StorageType;
 }
-export const StorageRuleType = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StorageRuleType = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     StorageAllocatedInBytes: S.optional(S.Number),
     StorageType: S.optional(StorageType),
@@ -234,7 +362,7 @@ export interface UserStorageMetadata {
   StorageUtilizedInBytes?: number;
   StorageRule?: StorageRuleType;
 }
-export const UserStorageMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UserStorageMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     StorageUtilizedInBytes: S.optional(S.Number),
     StorageRule: S.optional(StorageRuleType),
@@ -259,7 +387,7 @@ export interface User {
   Locale?: LocaleType;
   Storage?: UserStorageMetadata;
 }
-export const User = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const User = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Id: S.optional(S.String),
     Username: S.optional(SensitiveString),
@@ -285,7 +413,7 @@ export const User = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface ActivateUserResponse {
   User?: User;
 }
-export const ActivateUserResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ActivateUserResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ User: S.optional(User) }).pipe(ns),
 ).annotate({
   identifier: "ActivateUserResponse",
@@ -297,30 +425,32 @@ export type PrincipalType =
   | "ANONYMOUS"
   | "ORGANIZATION"
   | (string & {});
-export const PrincipalType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const PrincipalType = /*@__PURE__*/ S.String;
+
 export type RoleType =
   | "VIEWER"
   | "CONTRIBUTOR"
   | "OWNER"
   | "COOWNER"
   | (string & {});
-export const RoleType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const RoleType = /*@__PURE__*/ S.String;
+
 export interface SharePrincipal {
   Id: string;
   Type: PrincipalType;
   Role: RoleType;
 }
-export const SharePrincipal = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SharePrincipal = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Id: S.String, Type: PrincipalType, Role: RoleType }),
 ).annotate({ identifier: "SharePrincipal" }) as any as S.Schema<SharePrincipal>;
 export type SharePrincipalList = SharePrincipal[];
-export const SharePrincipalList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(SharePrincipal);
+export const SharePrincipalList = /*@__PURE__*/ S.Array(SharePrincipal);
+export type MessageType = string | redacted.Redacted<string>;
 export interface NotificationOptions {
   SendEmail?: boolean;
   EmailMessage?: string | redacted.Redacted<string>;
 }
-export const NotificationOptions = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const NotificationOptions = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     SendEmail: S.optional(S.Boolean),
     EmailMessage: S.optional(SensitiveString),
@@ -334,34 +464,34 @@ export interface AddResourcePermissionsRequest {
   Principals: SharePrincipal[];
   NotificationOptions?: NotificationOptions;
 }
-export const AddResourcePermissionsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
-      Principals: SharePrincipalList,
-      NotificationOptions: S.optional(NotificationOptions),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "POST",
-          uri: "/api/v1/resources/{ResourceId}/permissions",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const AddResourcePermissionsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
-  ).annotate({
-    identifier: "AddResourcePermissionsRequest",
-  }) as any as S.Schema<AddResourcePermissionsRequest>;
+    ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
+    Principals: SharePrincipalList,
+    NotificationOptions: S.optional(NotificationOptions),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "POST",
+        uri: "/api/v1/resources/{ResourceId}/permissions",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "AddResourcePermissionsRequest",
+}) as any as S.Schema<AddResourcePermissionsRequest>;
 export type ShareStatusType = "SUCCESS" | "FAILURE" | (string & {});
-export const ShareStatusType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ShareStatusType = /*@__PURE__*/ S.String;
+
 export interface ShareResult {
   PrincipalId?: string;
   InviteePrincipalId?: string;
@@ -370,7 +500,7 @@ export interface ShareResult {
   ShareId?: string;
   StatusMessage?: string | redacted.Redacted<string>;
 }
-export const ShareResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ShareResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     PrincipalId: S.optional(S.String),
     InviteePrincipalId: S.optional(S.String),
@@ -381,19 +511,20 @@ export const ShareResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "ShareResult" }) as any as S.Schema<ShareResult>;
 export type ShareResultsList = ShareResult[];
-export const ShareResultsList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ShareResult);
+export const ShareResultsList = /*@__PURE__*/ S.Array(ShareResult);
 export interface AddResourcePermissionsResponse {
   ShareResults?: ShareResult[];
 }
-export const AddResourcePermissionsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ ShareResults: S.optional(ShareResultsList) }).pipe(ns),
-  ).annotate({
-    identifier: "AddResourcePermissionsResponse",
-  }) as any as S.Schema<AddResourcePermissionsResponse>;
+export const AddResourcePermissionsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ShareResults: S.optional(ShareResultsList) }).pipe(ns),
+).annotate({
+  identifier: "AddResourcePermissionsResponse",
+}) as any as S.Schema<AddResourcePermissionsResponse>;
+export type CommentIdType = string;
+export type CommentTextType = string | redacted.Redacted<string>;
 export type CommentVisibilityType = "PUBLIC" | "PRIVATE" | (string & {});
-export const CommentVisibilityType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const CommentVisibilityType = /*@__PURE__*/ S.String;
+
 export interface CreateCommentRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   DocumentId: string;
@@ -404,7 +535,7 @@ export interface CreateCommentRequest {
   Visibility?: CommentVisibilityType;
   NotifyCollaborators?: boolean;
 }
-export const CreateCommentRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateCommentRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -438,7 +569,8 @@ export type CommentStatusType =
   | "PUBLISHED"
   | "DELETED"
   | (string & {});
-export const CommentStatusType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const CommentStatusType = /*@__PURE__*/ S.String;
+
 export interface Comment {
   CommentId: string;
   ParentId?: string;
@@ -450,7 +582,7 @@ export interface Comment {
   Visibility?: CommentVisibilityType;
   RecipientId?: string;
 }
-export const Comment = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Comment = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     CommentId: S.String,
     ParentId: S.optional(S.String),
@@ -468,13 +600,15 @@ export const Comment = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateCommentResponse {
   Comment?: Comment;
 }
-export const CreateCommentResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateCommentResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Comment: S.optional(Comment) }).pipe(ns),
 ).annotate({
   identifier: "CreateCommentResponse",
 }) as any as S.Schema<CreateCommentResponse>;
+export type CustomMetadataKeyType = string;
+export type CustomMetadataValueType = string;
 export type CustomMetadataMap = { [key: string]: string | undefined };
-export const CustomMetadataMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const CustomMetadataMap = /*@__PURE__*/ S.Record(
   S.String,
   S.String.pipe(S.optional),
 );
@@ -484,43 +618,44 @@ export interface CreateCustomMetadataRequest {
   VersionId?: string;
   CustomMetadata: { [key: string]: string | undefined };
 }
-export const CreateCustomMetadataRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
-      VersionId: S.optional(S.String).pipe(T.HttpQuery("versionid")),
-      CustomMetadata: CustomMetadataMap,
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "PUT",
-          uri: "/api/v1/resources/{ResourceId}/customMetadata",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreateCustomMetadataRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
-  ).annotate({
-    identifier: "CreateCustomMetadataRequest",
-  }) as any as S.Schema<CreateCustomMetadataRequest>;
+    ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
+    VersionId: S.optional(S.String).pipe(T.HttpQuery("versionid")),
+    CustomMetadata: CustomMetadataMap,
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "PUT",
+        uri: "/api/v1/resources/{ResourceId}/customMetadata",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "CreateCustomMetadataRequest",
+}) as any as S.Schema<CreateCustomMetadataRequest>;
 export interface CreateCustomMetadataResponse {}
-export const CreateCustomMetadataResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "CreateCustomMetadataResponse",
-  }) as any as S.Schema<CreateCustomMetadataResponse>;
+export const CreateCustomMetadataResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "CreateCustomMetadataResponse",
+}) as any as S.Schema<CreateCustomMetadataResponse>;
+export type ResourceNameType = string | redacted.Redacted<string>;
 export interface CreateFolderRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   Name?: string | redacted.Redacted<string>;
   ParentFolderId: string;
 }
-export const CreateFolderRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateFolderRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -547,9 +682,12 @@ export type ResourceStateType =
   | "RECYCLING"
   | "RECYCLED"
   | (string & {});
-export const ResourceStateType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ResourceStateType = /*@__PURE__*/ S.String;
+
+export type HashType = string;
+export type SharedLabel = string;
 export type SharedLabels = string[];
-export const SharedLabels = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const SharedLabels = /*@__PURE__*/ S.Array(S.String);
 export interface FolderMetadata {
   Id?: string;
   Name?: string | redacted.Redacted<string>;
@@ -563,7 +701,7 @@ export interface FolderMetadata {
   Size?: number;
   LatestVersionSize?: number;
 }
-export const FolderMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const FolderMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Id: S.optional(S.String),
     Name: S.optional(SensitiveString),
@@ -585,7 +723,7 @@ export const FolderMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateFolderResponse {
   Metadata?: FolderMetadata;
 }
-export const CreateFolderResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateFolderResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Metadata: S.optional(FolderMetadata) }).pipe(ns),
 ).annotate({
   identifier: "CreateFolderResponse",
@@ -595,7 +733,7 @@ export interface CreateLabelsRequest {
   Labels: string[];
   AuthenticationToken?: string | redacted.Redacted<string>;
 }
-export const CreateLabelsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateLabelsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
     Labels: SharedLabels,
@@ -617,23 +755,26 @@ export const CreateLabelsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "CreateLabelsRequest",
 }) as any as S.Schema<CreateLabelsRequest>;
 export interface CreateLabelsResponse {}
-export const CreateLabelsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateLabelsResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "CreateLabelsResponse",
 }) as any as S.Schema<CreateLabelsResponse>;
+export type SubscriptionEndPointType = string;
 export type SubscriptionProtocolType = "HTTPS" | "SQS" | (string & {});
-export const SubscriptionProtocolType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SubscriptionProtocolType = /*@__PURE__*/ S.String;
+
 export type SubscriptionType = "ALL" | (string & {});
-export const SubscriptionType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SubscriptionType = /*@__PURE__*/ S.String;
+
 export interface CreateNotificationSubscriptionRequest {
   OrganizationId: string;
   Endpoint: string;
   Protocol: SubscriptionProtocolType;
   SubscriptionType: SubscriptionType;
 }
-export const CreateNotificationSubscriptionRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateNotificationSubscriptionRequest = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       OrganizationId: S.String.pipe(T.HttpLabel("OrganizationId")),
       Endpoint: S.String,
@@ -653,15 +794,15 @@ export const CreateNotificationSubscriptionRequest =
         rules,
       ),
     ),
-  ).annotate({
-    identifier: "CreateNotificationSubscriptionRequest",
-  }) as any as S.Schema<CreateNotificationSubscriptionRequest>;
+).annotate({
+  identifier: "CreateNotificationSubscriptionRequest",
+}) as any as S.Schema<CreateNotificationSubscriptionRequest>;
 export interface Subscription {
   SubscriptionId?: string;
   EndPoint?: string;
   Protocol?: SubscriptionProtocolType;
 }
-export const Subscription = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Subscription = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     SubscriptionId: S.optional(S.String),
     EndPoint: S.optional(S.String),
@@ -671,12 +812,12 @@ export const Subscription = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateNotificationSubscriptionResponse {
   Subscription?: Subscription;
 }
-export const CreateNotificationSubscriptionResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ Subscription: S.optional(Subscription) }).pipe(ns),
-  ).annotate({
-    identifier: "CreateNotificationSubscriptionResponse",
-  }) as any as S.Schema<CreateNotificationSubscriptionResponse>;
+export const CreateNotificationSubscriptionResponse = /*@__PURE__*/ S.suspend(
+  () => S.Struct({ Subscription: S.optional(Subscription) }).pipe(ns),
+).annotate({
+  identifier: "CreateNotificationSubscriptionResponse",
+}) as any as S.Schema<CreateNotificationSubscriptionResponse>;
+export type PasswordType = string | redacted.Redacted<string>;
 export interface CreateUserRequest {
   OrganizationId?: string;
   Username: string | redacted.Redacted<string>;
@@ -688,7 +829,7 @@ export interface CreateUserRequest {
   StorageRule?: StorageRuleType;
   AuthenticationToken?: string | redacted.Redacted<string>;
 }
-export const CreateUserRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateUserRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     OrganizationId: S.optional(S.String),
     Username: SensitiveString,
@@ -718,7 +859,7 @@ export const CreateUserRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateUserResponse {
   User?: User;
 }
-export const CreateUserResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateUserResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ User: S.optional(User) }).pipe(ns),
 ).annotate({
   identifier: "CreateUserResponse",
@@ -727,7 +868,7 @@ export interface DeactivateUserRequest {
   UserId: string;
   AuthenticationToken?: string | redacted.Redacted<string>;
 }
-export const DeactivateUserRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeactivateUserRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     UserId: S.String.pipe(T.HttpLabel("UserId")),
     AuthenticationToken: S.optional(SensitiveString).pipe(
@@ -748,8 +889,8 @@ export const DeactivateUserRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeactivateUserRequest",
 }) as any as S.Schema<DeactivateUserRequest>;
 export interface DeactivateUserResponse {}
-export const DeactivateUserResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}).pipe(ns),
+export const DeactivateUserResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "DeactivateUserResponse",
 }) as any as S.Schema<DeactivateUserResponse>;
@@ -759,7 +900,7 @@ export interface DeleteCommentRequest {
   VersionId: string;
   CommentId: string;
 }
-export const DeleteCommentRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteCommentRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -785,15 +926,13 @@ export const DeleteCommentRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeleteCommentRequest",
 }) as any as S.Schema<DeleteCommentRequest>;
 export interface DeleteCommentResponse {}
-export const DeleteCommentResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteCommentResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "DeleteCommentResponse",
 }) as any as S.Schema<DeleteCommentResponse>;
 export type CustomMetadataKeyList = string[];
-export const CustomMetadataKeyList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const CustomMetadataKeyList = /*@__PURE__*/ S.Array(S.String);
 export interface DeleteCustomMetadataRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   ResourceId: string;
@@ -801,43 +940,43 @@ export interface DeleteCustomMetadataRequest {
   Keys?: string[];
   DeleteAll?: boolean;
 }
-export const DeleteCustomMetadataRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
-      VersionId: S.optional(S.String).pipe(T.HttpQuery("versionId")),
-      Keys: S.optional(CustomMetadataKeyList).pipe(T.HttpQuery("keys")),
-      DeleteAll: S.optional(S.Boolean).pipe(T.HttpQuery("deleteAll")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "DELETE",
-          uri: "/api/v1/resources/{ResourceId}/customMetadata",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteCustomMetadataRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
-  ).annotate({
-    identifier: "DeleteCustomMetadataRequest",
-  }) as any as S.Schema<DeleteCustomMetadataRequest>;
+    ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
+    VersionId: S.optional(S.String).pipe(T.HttpQuery("versionId")),
+    Keys: S.optional(CustomMetadataKeyList).pipe(T.HttpQuery("keys")),
+    DeleteAll: S.optional(S.Boolean).pipe(T.HttpQuery("deleteAll")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "DELETE",
+        uri: "/api/v1/resources/{ResourceId}/customMetadata",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "DeleteCustomMetadataRequest",
+}) as any as S.Schema<DeleteCustomMetadataRequest>;
 export interface DeleteCustomMetadataResponse {}
-export const DeleteCustomMetadataResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "DeleteCustomMetadataResponse",
-  }) as any as S.Schema<DeleteCustomMetadataResponse>;
+export const DeleteCustomMetadataResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "DeleteCustomMetadataResponse",
+}) as any as S.Schema<DeleteCustomMetadataResponse>;
 export interface DeleteDocumentRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   DocumentId: string;
 }
-export const DeleteDocumentRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteDocumentRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -858,8 +997,8 @@ export const DeleteDocumentRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeleteDocumentRequest",
 }) as any as S.Schema<DeleteDocumentRequest>;
 export interface DeleteDocumentResponse {}
-export const DeleteDocumentResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}).pipe(ns),
+export const DeleteDocumentResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "DeleteDocumentResponse",
 }) as any as S.Schema<DeleteDocumentResponse>;
@@ -869,42 +1008,42 @@ export interface DeleteDocumentVersionRequest {
   VersionId: string;
   DeletePriorVersions: boolean;
 }
-export const DeleteDocumentVersionRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
-      VersionId: S.String.pipe(T.HttpLabel("VersionId")),
-      DeletePriorVersions: S.Boolean.pipe(T.HttpQuery("deletePriorVersions")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "DELETE",
-          uri: "/api/v1/documentVersions/{DocumentId}/versions/{VersionId}",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteDocumentVersionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
-  ).annotate({
-    identifier: "DeleteDocumentVersionRequest",
-  }) as any as S.Schema<DeleteDocumentVersionRequest>;
+    DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
+    VersionId: S.String.pipe(T.HttpLabel("VersionId")),
+    DeletePriorVersions: S.Boolean.pipe(T.HttpQuery("deletePriorVersions")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "DELETE",
+        uri: "/api/v1/documentVersions/{DocumentId}/versions/{VersionId}",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "DeleteDocumentVersionRequest",
+}) as any as S.Schema<DeleteDocumentVersionRequest>;
 export interface DeleteDocumentVersionResponse {}
-export const DeleteDocumentVersionResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "DeleteDocumentVersionResponse",
-  }) as any as S.Schema<DeleteDocumentVersionResponse>;
+export const DeleteDocumentVersionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "DeleteDocumentVersionResponse",
+}) as any as S.Schema<DeleteDocumentVersionResponse>;
 export interface DeleteFolderRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   FolderId: string;
 }
-export const DeleteFolderRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteFolderRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -925,7 +1064,7 @@ export const DeleteFolderRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeleteFolderRequest",
 }) as any as S.Schema<DeleteFolderRequest>;
 export interface DeleteFolderResponse {}
-export const DeleteFolderResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteFolderResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "DeleteFolderResponse",
@@ -934,42 +1073,39 @@ export interface DeleteFolderContentsRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   FolderId: string;
 }
-export const DeleteFolderContentsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      FolderId: S.String.pipe(T.HttpLabel("FolderId")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "DELETE",
-          uri: "/api/v1/folders/{FolderId}/contents",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteFolderContentsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
-  ).annotate({
-    identifier: "DeleteFolderContentsRequest",
-  }) as any as S.Schema<DeleteFolderContentsRequest>;
+    FolderId: S.String.pipe(T.HttpLabel("FolderId")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "DELETE", uri: "/api/v1/folders/{FolderId}/contents" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "DeleteFolderContentsRequest",
+}) as any as S.Schema<DeleteFolderContentsRequest>;
 export interface DeleteFolderContentsResponse {}
-export const DeleteFolderContentsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "DeleteFolderContentsResponse",
-  }) as any as S.Schema<DeleteFolderContentsResponse>;
+export const DeleteFolderContentsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "DeleteFolderContentsResponse",
+}) as any as S.Schema<DeleteFolderContentsResponse>;
 export interface DeleteLabelsRequest {
   ResourceId: string;
   AuthenticationToken?: string | redacted.Redacted<string>;
   Labels?: string[];
   DeleteAll?: boolean;
 }
-export const DeleteLabelsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteLabelsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
     AuthenticationToken: S.optional(SensitiveString).pipe(
@@ -995,7 +1131,7 @@ export const DeleteLabelsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeleteLabelsRequest",
 }) as any as S.Schema<DeleteLabelsRequest>;
 export interface DeleteLabelsResponse {}
-export const DeleteLabelsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteLabelsResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "DeleteLabelsResponse",
@@ -1004,8 +1140,8 @@ export interface DeleteNotificationSubscriptionRequest {
   SubscriptionId: string;
   OrganizationId: string;
 }
-export const DeleteNotificationSubscriptionRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteNotificationSubscriptionRequest = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       SubscriptionId: S.String.pipe(T.HttpLabel("SubscriptionId")),
       OrganizationId: S.String.pipe(T.HttpLabel("OrganizationId")),
@@ -1023,19 +1159,20 @@ export const DeleteNotificationSubscriptionRequest =
         rules,
       ),
     ),
-  ).annotate({
-    identifier: "DeleteNotificationSubscriptionRequest",
-  }) as any as S.Schema<DeleteNotificationSubscriptionRequest>;
+).annotate({
+  identifier: "DeleteNotificationSubscriptionRequest",
+}) as any as S.Schema<DeleteNotificationSubscriptionRequest>;
 export interface DeleteNotificationSubscriptionResponse {}
-export const DeleteNotificationSubscriptionResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "DeleteNotificationSubscriptionResponse",
-  }) as any as S.Schema<DeleteNotificationSubscriptionResponse>;
+export const DeleteNotificationSubscriptionResponse = /*@__PURE__*/ S.suspend(
+  () => S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "DeleteNotificationSubscriptionResponse",
+}) as any as S.Schema<DeleteNotificationSubscriptionResponse>;
 export interface DeleteUserRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   UserId: string;
 }
-export const DeleteUserRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteUserRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -1056,11 +1193,14 @@ export const DeleteUserRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DeleteUserRequest",
 }) as any as S.Schema<DeleteUserRequest>;
 export interface DeleteUserResponse {}
-export const DeleteUserResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteUserResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "DeleteUserResponse",
 }) as any as S.Schema<DeleteUserResponse>;
+export type ActivityNamesFilterType = string;
+export type LimitType = number;
+export type SearchMarkerType = string;
 export interface DescribeActivitiesRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   StartTime?: Date;
@@ -1073,38 +1213,37 @@ export interface DescribeActivitiesRequest {
   Limit?: number;
   Marker?: string;
 }
-export const DescribeActivitiesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      StartTime: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ).pipe(T.HttpQuery("startTime")),
-      EndTime: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))).pipe(
-        T.HttpQuery("endTime"),
-      ),
-      OrganizationId: S.optional(S.String).pipe(T.HttpQuery("organizationId")),
-      ActivityTypes: S.optional(S.String).pipe(T.HttpQuery("activityTypes")),
-      ResourceId: S.optional(S.String).pipe(T.HttpQuery("resourceId")),
-      UserId: S.optional(S.String).pipe(T.HttpQuery("userId")),
-      IncludeIndirectActivities: S.optional(S.Boolean).pipe(
-        T.HttpQuery("includeIndirectActivities"),
-      ),
-      Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
-      Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "GET", uri: "/api/v1/activities" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DescribeActivitiesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
+    StartTime: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))).pipe(
+      T.HttpQuery("startTime"),
+    ),
+    EndTime: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))).pipe(
+      T.HttpQuery("endTime"),
+    ),
+    OrganizationId: S.optional(S.String).pipe(T.HttpQuery("organizationId")),
+    ActivityTypes: S.optional(S.String).pipe(T.HttpQuery("activityTypes")),
+    ResourceId: S.optional(S.String).pipe(T.HttpQuery("resourceId")),
+    UserId: S.optional(S.String).pipe(T.HttpQuery("userId")),
+    IncludeIndirectActivities: S.optional(S.Boolean).pipe(
+      T.HttpQuery("includeIndirectActivities"),
+    ),
+    Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
+    Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "GET", uri: "/api/v1/activities" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
 ).annotate({
   identifier: "DescribeActivitiesRequest",
 }) as any as S.Schema<DescribeActivitiesRequest>;
@@ -1143,7 +1282,8 @@ export type ActivityType =
   | "FOLDER_SHAREABLE_LINK_PERMISSION_CHANGED"
   | "FOLDER_MOVED"
   | (string & {});
-export const ActivityType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ActivityType = /*@__PURE__*/ S.String;
+
 export interface UserMetadata {
   Id?: string;
   Username?: string | redacted.Redacted<string>;
@@ -1151,7 +1291,7 @@ export interface UserMetadata {
   Surname?: string | redacted.Redacted<string>;
   EmailAddress?: string | redacted.Redacted<string>;
 }
-export const UserMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UserMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Id: S.optional(S.String),
     Username: S.optional(SensitiveString),
@@ -1161,30 +1301,30 @@ export const UserMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "UserMetadata" }) as any as S.Schema<UserMetadata>;
 export type UserMetadataList = UserMetadata[];
-export const UserMetadataList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(UserMetadata);
+export const UserMetadataList = /*@__PURE__*/ S.Array(UserMetadata);
+export type GroupNameType = string;
 export interface GroupMetadata {
   Id?: string;
   Name?: string;
 }
-export const GroupMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GroupMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Id: S.optional(S.String), Name: S.optional(S.String) }),
 ).annotate({ identifier: "GroupMetadata" }) as any as S.Schema<GroupMetadata>;
 export type GroupMetadataList = GroupMetadata[];
-export const GroupMetadataList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(GroupMetadata);
+export const GroupMetadataList = /*@__PURE__*/ S.Array(GroupMetadata);
 export interface Participants {
   Users?: UserMetadata[];
   Groups?: GroupMetadata[];
 }
-export const Participants = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Participants = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Users: S.optional(UserMetadataList),
     Groups: S.optional(GroupMetadataList),
   }),
 ).annotate({ identifier: "Participants" }) as any as S.Schema<Participants>;
 export type ResourceType = "FOLDER" | "DOCUMENT" | (string & {});
-export const ResourceType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ResourceType = /*@__PURE__*/ S.String;
+
 export interface ResourceMetadata {
   Type?: ResourceType;
   Name?: string | redacted.Redacted<string>;
@@ -1194,7 +1334,7 @@ export interface ResourceMetadata {
   Owner?: UserMetadata;
   ParentId?: string;
 }
-export const ResourceMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResourceMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Type: S.optional(ResourceType),
     Name: S.optional(SensitiveString),
@@ -1215,7 +1355,7 @@ export interface CommentMetadata {
   RecipientId?: string;
   ContributorId?: string;
 }
-export const CommentMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CommentMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     CommentId: S.optional(S.String),
     Contributor: S.optional(User),
@@ -1240,7 +1380,7 @@ export interface Activity {
   OriginalParent?: ResourceMetadata;
   CommentMetadata?: CommentMetadata;
 }
-export const Activity = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Activity = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Type: S.optional(ActivityType),
     TimeStamp: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
@@ -1254,20 +1394,20 @@ export const Activity = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Activity" }) as any as S.Schema<Activity>;
 export type UserActivities = Activity[];
-export const UserActivities = /*@__PURE__*/ /*#__PURE__*/ S.Array(Activity);
+export const UserActivities = /*@__PURE__*/ S.Array(Activity);
 export interface DescribeActivitiesResponse {
   UserActivities?: Activity[];
   Marker?: string;
 }
-export const DescribeActivitiesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      UserActivities: S.optional(UserActivities),
-      Marker: S.optional(S.String),
-    }).pipe(ns),
+export const DescribeActivitiesResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    UserActivities: S.optional(UserActivities),
+    Marker: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "DescribeActivitiesResponse",
 }) as any as S.Schema<DescribeActivitiesResponse>;
+export type MarkerType = string;
 export interface DescribeCommentsRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   DocumentId: string;
@@ -1275,48 +1415,48 @@ export interface DescribeCommentsRequest {
   Limit?: number;
   Marker?: string;
 }
-export const DescribeCommentsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
-      VersionId: S.String.pipe(T.HttpLabel("VersionId")),
-      Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
-      Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "GET",
-          uri: "/api/v1/documents/{DocumentId}/versions/{VersionId}/comments",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DescribeCommentsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
+    DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
+    VersionId: S.String.pipe(T.HttpLabel("VersionId")),
+    Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
+    Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "GET",
+        uri: "/api/v1/documents/{DocumentId}/versions/{VersionId}/comments",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
 ).annotate({
   identifier: "DescribeCommentsRequest",
 }) as any as S.Schema<DescribeCommentsRequest>;
 export type CommentList = Comment[];
-export const CommentList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Comment);
+export const CommentList = /*@__PURE__*/ S.Array(Comment);
 export interface DescribeCommentsResponse {
   Comments?: Comment[];
   Marker?: string;
 }
-export const DescribeCommentsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Comments: S.optional(CommentList),
-      Marker: S.optional(S.String),
-    }).pipe(ns),
+export const DescribeCommentsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Comments: S.optional(CommentList),
+    Marker: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "DescribeCommentsResponse",
 }) as any as S.Schema<DescribeCommentsResponse>;
+export type PageMarkerType = string;
+export type FieldNamesType = string;
 export interface DescribeDocumentVersionsRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   DocumentId: string;
@@ -1325,55 +1465,56 @@ export interface DescribeDocumentVersionsRequest {
   Include?: string;
   Fields?: string;
 }
-export const DescribeDocumentVersionsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
-      Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
-      Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
-      Include: S.optional(S.String).pipe(T.HttpQuery("include")),
-      Fields: S.optional(S.String).pipe(T.HttpQuery("fields")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "GET",
-          uri: "/api/v1/documents/{DocumentId}/versions",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DescribeDocumentVersionsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
-  ).annotate({
-    identifier: "DescribeDocumentVersionsRequest",
-  }) as any as S.Schema<DescribeDocumentVersionsRequest>;
+    DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
+    Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
+    Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
+    Include: S.optional(S.String).pipe(T.HttpQuery("include")),
+    Fields: S.optional(S.String).pipe(T.HttpQuery("fields")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "GET", uri: "/api/v1/documents/{DocumentId}/versions" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "DescribeDocumentVersionsRequest",
+}) as any as S.Schema<DescribeDocumentVersionsRequest>;
+export type DocumentContentType = string;
 export type DocumentStatusType = "INITIALIZED" | "ACTIVE" | (string & {});
-export const DocumentStatusType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DocumentStatusType = /*@__PURE__*/ S.String;
+
 export type DocumentThumbnailType =
   | "SMALL"
   | "SMALL_HQ"
   | "LARGE"
   | (string & {});
-export const DocumentThumbnailType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DocumentThumbnailType = /*@__PURE__*/ S.String;
+
+export type UrlType = string | redacted.Redacted<string>;
 export type DocumentThumbnailUrlMap = {
   [key in DocumentThumbnailType]?: string | redacted.Redacted<string>;
 };
-export const DocumentThumbnailUrlMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const DocumentThumbnailUrlMap = /*@__PURE__*/ S.Record(
   DocumentThumbnailType,
   SensitiveString.pipe(S.optional),
 );
 export type DocumentSourceType = "ORIGINAL" | "WITH_COMMENTS" | (string & {});
-export const DocumentSourceType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DocumentSourceType = /*@__PURE__*/ S.String;
+
 export type DocumentSourceUrlMap = {
   [key in DocumentSourceType]?: string | redacted.Redacted<string>;
 };
-export const DocumentSourceUrlMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const DocumentSourceUrlMap = /*@__PURE__*/ S.Record(
   DocumentSourceType,
   SensitiveString.pipe(S.optional),
 );
@@ -1392,57 +1533,58 @@ export interface DocumentVersionMetadata {
   Thumbnail?: { [key: string]: string | redacted.Redacted<string> | undefined };
   Source?: { [key: string]: string | redacted.Redacted<string> | undefined };
 }
-export const DocumentVersionMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Id: S.optional(S.String),
-      Name: S.optional(SensitiveString),
-      ContentType: S.optional(S.String),
-      Size: S.optional(S.Number),
-      Signature: S.optional(S.String),
-      Status: S.optional(DocumentStatusType),
-      CreatedTimestamp: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-      ModifiedTimestamp: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-      ContentCreatedTimestamp: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-      ContentModifiedTimestamp: S.optional(
-        S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-      ),
-      CreatorId: S.optional(S.String),
-      Thumbnail: S.optional(DocumentThumbnailUrlMap),
-      Source: S.optional(DocumentSourceUrlMap),
-    }),
+export const DocumentVersionMetadata = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Id: S.optional(S.String),
+    Name: S.optional(SensitiveString),
+    ContentType: S.optional(S.String),
+    Size: S.optional(S.Number),
+    Signature: S.optional(S.String),
+    Status: S.optional(DocumentStatusType),
+    CreatedTimestamp: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+    ModifiedTimestamp: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+    ContentCreatedTimestamp: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+    ContentModifiedTimestamp: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+    CreatorId: S.optional(S.String),
+    Thumbnail: S.optional(DocumentThumbnailUrlMap),
+    Source: S.optional(DocumentSourceUrlMap),
+  }),
 ).annotate({
   identifier: "DocumentVersionMetadata",
 }) as any as S.Schema<DocumentVersionMetadata>;
 export type DocumentVersionMetadataList = DocumentVersionMetadata[];
-export const DocumentVersionMetadataList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const DocumentVersionMetadataList = /*@__PURE__*/ S.Array(
   DocumentVersionMetadata,
 );
 export interface DescribeDocumentVersionsResponse {
   DocumentVersions?: DocumentVersionMetadata[];
   Marker?: string;
 }
-export const DescribeDocumentVersionsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      DocumentVersions: S.optional(DocumentVersionMetadataList),
-      Marker: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "DescribeDocumentVersionsResponse",
-  }) as any as S.Schema<DescribeDocumentVersionsResponse>;
+export const DescribeDocumentVersionsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    DocumentVersions: S.optional(DocumentVersionMetadataList),
+    Marker: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "DescribeDocumentVersionsResponse",
+}) as any as S.Schema<DescribeDocumentVersionsResponse>;
 export type ResourceSortType = "DATE" | "NAME" | (string & {});
-export const ResourceSortType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ResourceSortType = /*@__PURE__*/ S.String;
+
 export type OrderType = "ASCENDING" | "DESCENDING" | (string & {});
-export const OrderType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const OrderType = /*@__PURE__*/ S.String;
+
 export type FolderContentType = "ALL" | "DOCUMENT" | "FOLDER" | (string & {});
-export const FolderContentType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const FolderContentType = /*@__PURE__*/ S.String;
+
 export interface DescribeFolderContentsRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   FolderId: string;
@@ -1453,36 +1595,34 @@ export interface DescribeFolderContentsRequest {
   Type?: FolderContentType;
   Include?: string;
 }
-export const DescribeFolderContentsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      FolderId: S.String.pipe(T.HttpLabel("FolderId")),
-      Sort: S.optional(ResourceSortType).pipe(T.HttpQuery("sort")),
-      Order: S.optional(OrderType).pipe(T.HttpQuery("order")),
-      Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
-      Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
-      Type: S.optional(FolderContentType).pipe(T.HttpQuery("type")),
-      Include: S.optional(S.String).pipe(T.HttpQuery("include")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "GET", uri: "/api/v1/folders/{FolderId}/contents" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DescribeFolderContentsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
-  ).annotate({
-    identifier: "DescribeFolderContentsRequest",
-  }) as any as S.Schema<DescribeFolderContentsRequest>;
+    FolderId: S.String.pipe(T.HttpLabel("FolderId")),
+    Sort: S.optional(ResourceSortType).pipe(T.HttpQuery("sort")),
+    Order: S.optional(OrderType).pipe(T.HttpQuery("order")),
+    Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
+    Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
+    Type: S.optional(FolderContentType).pipe(T.HttpQuery("type")),
+    Include: S.optional(S.String).pipe(T.HttpQuery("include")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "GET", uri: "/api/v1/folders/{FolderId}/contents" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "DescribeFolderContentsRequest",
+}) as any as S.Schema<DescribeFolderContentsRequest>;
 export type FolderMetadataList = FolderMetadata[];
-export const FolderMetadataList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(FolderMetadata);
+export const FolderMetadataList = /*@__PURE__*/ S.Array(FolderMetadata);
 export interface DocumentMetadata {
   Id?: string;
   CreatorId?: string;
@@ -1493,7 +1633,7 @@ export interface DocumentMetadata {
   ResourceState?: ResourceStateType;
   Labels?: string[];
 }
-export const DocumentMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DocumentMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Id: S.optional(S.String),
     CreatorId: S.optional(S.String),
@@ -1512,23 +1652,23 @@ export const DocumentMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DocumentMetadata",
 }) as any as S.Schema<DocumentMetadata>;
 export type DocumentMetadataList = DocumentMetadata[];
-export const DocumentMetadataList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(DocumentMetadata);
+export const DocumentMetadataList = /*@__PURE__*/ S.Array(DocumentMetadata);
 export interface DescribeFolderContentsResponse {
   Folders?: FolderMetadata[];
   Documents?: DocumentMetadata[];
   Marker?: string;
 }
-export const DescribeFolderContentsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      Folders: S.optional(FolderMetadataList),
-      Documents: S.optional(DocumentMetadataList),
-      Marker: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "DescribeFolderContentsResponse",
-  }) as any as S.Schema<DescribeFolderContentsResponse>;
+export const DescribeFolderContentsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Folders: S.optional(FolderMetadataList),
+    Documents: S.optional(DocumentMetadataList),
+    Marker: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "DescribeFolderContentsResponse",
+}) as any as S.Schema<DescribeFolderContentsResponse>;
+export type SearchQueryType = string | redacted.Redacted<string>;
+export type PositiveIntegerType = number;
 export interface DescribeGroupsRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   SearchQuery: string | redacted.Redacted<string>;
@@ -1536,7 +1676,7 @@ export interface DescribeGroupsRequest {
   Marker?: string;
   Limit?: number;
 }
-export const DescribeGroupsRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeGroupsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -1563,12 +1703,11 @@ export interface DescribeGroupsResponse {
   Groups?: GroupMetadata[];
   Marker?: string;
 }
-export const DescribeGroupsResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Groups: S.optional(GroupMetadataList),
-      Marker: S.optional(S.String),
-    }).pipe(ns),
+export const DescribeGroupsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Groups: S.optional(GroupMetadataList),
+    Marker: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "DescribeGroupsResponse",
 }) as any as S.Schema<DescribeGroupsResponse>;
@@ -1577,8 +1716,8 @@ export interface DescribeNotificationSubscriptionsRequest {
   Marker?: string;
   Limit?: number;
 }
-export const DescribeNotificationSubscriptionsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeNotificationSubscriptionsRequest = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       OrganizationId: S.String.pipe(T.HttpLabel("OrganizationId")),
       Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
@@ -1597,18 +1736,17 @@ export const DescribeNotificationSubscriptionsRequest =
         rules,
       ),
     ),
-  ).annotate({
-    identifier: "DescribeNotificationSubscriptionsRequest",
-  }) as any as S.Schema<DescribeNotificationSubscriptionsRequest>;
+).annotate({
+  identifier: "DescribeNotificationSubscriptionsRequest",
+}) as any as S.Schema<DescribeNotificationSubscriptionsRequest>;
 export type SubscriptionList = Subscription[];
-export const SubscriptionList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(Subscription);
+export const SubscriptionList = /*@__PURE__*/ S.Array(Subscription);
 export interface DescribeNotificationSubscriptionsResponse {
   Subscriptions?: Subscription[];
   Marker?: string;
 }
 export const DescribeNotificationSubscriptionsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       Subscriptions: S.optional(SubscriptionList),
       Marker: S.optional(S.String),
@@ -1623,54 +1761,53 @@ export interface DescribeResourcePermissionsRequest {
   Limit?: number;
   Marker?: string;
 }
-export const DescribeResourcePermissionsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
-      PrincipalId: S.optional(S.String).pipe(T.HttpQuery("principalId")),
-      Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
-      Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "GET",
-          uri: "/api/v1/resources/{ResourceId}/permissions",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DescribeResourcePermissionsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
-  ).annotate({
-    identifier: "DescribeResourcePermissionsRequest",
-  }) as any as S.Schema<DescribeResourcePermissionsRequest>;
+    ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
+    PrincipalId: S.optional(S.String).pipe(T.HttpQuery("principalId")),
+    Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
+    Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "GET",
+        uri: "/api/v1/resources/{ResourceId}/permissions",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "DescribeResourcePermissionsRequest",
+}) as any as S.Schema<DescribeResourcePermissionsRequest>;
 export type RolePermissionType = "DIRECT" | "INHERITED" | (string & {});
-export const RolePermissionType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const RolePermissionType = /*@__PURE__*/ S.String;
+
 export interface PermissionInfo {
   Role?: RoleType;
   Type?: RolePermissionType;
 }
-export const PermissionInfo = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PermissionInfo = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Role: S.optional(RoleType),
     Type: S.optional(RolePermissionType),
   }),
 ).annotate({ identifier: "PermissionInfo" }) as any as S.Schema<PermissionInfo>;
 export type PermissionInfoList = PermissionInfo[];
-export const PermissionInfoList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(PermissionInfo);
+export const PermissionInfoList = /*@__PURE__*/ S.Array(PermissionInfo);
 export interface Principal {
   Id?: string;
   Type?: PrincipalType;
   Roles?: PermissionInfo[];
 }
-export const Principal = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Principal = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Id: S.optional(S.String),
     Type: S.optional(PrincipalType),
@@ -1678,42 +1815,40 @@ export const Principal = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Principal" }) as any as S.Schema<Principal>;
 export type PrincipalList = Principal[];
-export const PrincipalList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Principal);
+export const PrincipalList = /*@__PURE__*/ S.Array(Principal);
 export interface DescribeResourcePermissionsResponse {
   Principals?: Principal[];
   Marker?: string;
 }
-export const DescribeResourcePermissionsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      Principals: S.optional(PrincipalList),
-      Marker: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "DescribeResourcePermissionsResponse",
-  }) as any as S.Schema<DescribeResourcePermissionsResponse>;
+export const DescribeResourcePermissionsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Principals: S.optional(PrincipalList),
+    Marker: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "DescribeResourcePermissionsResponse",
+}) as any as S.Schema<DescribeResourcePermissionsResponse>;
 export interface DescribeRootFoldersRequest {
   AuthenticationToken: string | redacted.Redacted<string>;
   Limit?: number;
   Marker?: string;
 }
-export const DescribeRootFoldersRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AuthenticationToken: SensitiveString.pipe(T.HttpHeader("Authentication")),
-      Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
-      Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "GET", uri: "/api/v1/me/root" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DescribeRootFoldersRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: SensitiveString.pipe(T.HttpHeader("Authentication")),
+    Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
+    Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "GET", uri: "/api/v1/me/root" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "DescribeRootFoldersRequest",
 }) as any as S.Schema<DescribeRootFoldersRequest>;
@@ -1721,17 +1856,18 @@ export interface DescribeRootFoldersResponse {
   Folders?: FolderMetadata[];
   Marker?: string;
 }
-export const DescribeRootFoldersResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      Folders: S.optional(FolderMetadataList),
-      Marker: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "DescribeRootFoldersResponse",
-  }) as any as S.Schema<DescribeRootFoldersResponse>;
+export const DescribeRootFoldersResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Folders: S.optional(FolderMetadataList),
+    Marker: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "DescribeRootFoldersResponse",
+}) as any as S.Schema<DescribeRootFoldersResponse>;
+export type UserIdsType = string;
 export type UserFilterType = "ALL" | "ACTIVE_PENDING" | (string & {});
-export const UserFilterType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const UserFilterType = /*@__PURE__*/ S.String;
+
 export type UserSortType =
   | "USER_NAME"
   | "FULL_NAME"
@@ -1739,7 +1875,8 @@ export type UserSortType =
   | "USER_STATUS"
   | "STORAGE_USED"
   | (string & {});
-export const UserSortType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const UserSortType = /*@__PURE__*/ S.String;
+
 export interface DescribeUsersRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   OrganizationId?: string;
@@ -1752,7 +1889,7 @@ export interface DescribeUsersRequest {
   Limit?: number;
   Fields?: string;
 }
-export const DescribeUsersRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeUsersRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -1781,13 +1918,13 @@ export const DescribeUsersRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "DescribeUsersRequest",
 }) as any as S.Schema<DescribeUsersRequest>;
 export type OrganizationUserList = User[];
-export const OrganizationUserList = /*@__PURE__*/ /*#__PURE__*/ S.Array(User);
+export const OrganizationUserList = /*@__PURE__*/ S.Array(User);
 export interface DescribeUsersResponse {
   Users?: User[];
   TotalNumberOfUsers?: number;
   Marker?: string;
 }
-export const DescribeUsersResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DescribeUsersResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Users: S.optional(OrganizationUserList),
     TotalNumberOfUsers: S.optional(S.Number),
@@ -1799,7 +1936,7 @@ export const DescribeUsersResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetCurrentUserRequest {
   AuthenticationToken: string | redacted.Redacted<string>;
 }
-export const GetCurrentUserRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetCurrentUserRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: SensitiveString.pipe(T.HttpHeader("Authentication")),
   }).pipe(
@@ -1819,8 +1956,8 @@ export const GetCurrentUserRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetCurrentUserResponse {
   User?: User;
 }
-export const GetCurrentUserResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ User: S.optional(User) }).pipe(ns),
+export const GetCurrentUserResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ User: S.optional(User) }).pipe(ns),
 ).annotate({
   identifier: "GetCurrentUserResponse",
 }) as any as S.Schema<GetCurrentUserResponse>;
@@ -1829,7 +1966,7 @@ export interface GetDocumentRequest {
   DocumentId: string;
   IncludeCustomMetadata?: boolean;
 }
-export const GetDocumentRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetDocumentRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -1856,7 +1993,7 @@ export interface GetDocumentResponse {
   Metadata?: DocumentMetadata;
   CustomMetadata?: { [key: string]: string | undefined };
 }
-export const GetDocumentResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetDocumentResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Metadata: S.optional(DocumentMetadata),
     CustomMetadata: S.optional(CustomMetadataMap),
@@ -1871,27 +2008,26 @@ export interface GetDocumentPathRequest {
   Fields?: string;
   Marker?: string;
 }
-export const GetDocumentPathRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
-      Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
-      Fields: S.optional(S.String).pipe(T.HttpQuery("fields")),
-      Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "GET", uri: "/api/v1/documents/{DocumentId}/path" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetDocumentPathRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
+    DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
+    Limit: S.optional(S.Number).pipe(T.HttpQuery("limit")),
+    Fields: S.optional(S.String).pipe(T.HttpQuery("fields")),
+    Marker: S.optional(S.String).pipe(T.HttpQuery("marker")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "GET", uri: "/api/v1/documents/{DocumentId}/path" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
 ).annotate({
   identifier: "GetDocumentPathRequest",
 }) as any as S.Schema<GetDocumentPathRequest>;
@@ -1899,26 +2035,26 @@ export interface ResourcePathComponent {
   Id?: string;
   Name?: string | redacted.Redacted<string>;
 }
-export const ResourcePathComponent = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResourcePathComponent = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Id: S.optional(S.String), Name: S.optional(SensitiveString) }),
 ).annotate({
   identifier: "ResourcePathComponent",
 }) as any as S.Schema<ResourcePathComponent>;
 export type ResourcePathComponentList = ResourcePathComponent[];
-export const ResourcePathComponentList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const ResourcePathComponentList = /*@__PURE__*/ S.Array(
   ResourcePathComponent,
 );
 export interface ResourcePath {
   Components?: ResourcePathComponent[];
 }
-export const ResourcePath = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResourcePath = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Components: S.optional(ResourcePathComponentList) }),
 ).annotate({ identifier: "ResourcePath" }) as any as S.Schema<ResourcePath>;
 export interface GetDocumentPathResponse {
   Path?: ResourcePath;
 }
-export const GetDocumentPathResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ Path: S.optional(ResourcePath) }).pipe(ns),
+export const GetDocumentPathResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Path: S.optional(ResourcePath) }).pipe(ns),
 ).annotate({
   identifier: "GetDocumentPathResponse",
 }) as any as S.Schema<GetDocumentPathResponse>;
@@ -1929,32 +2065,31 @@ export interface GetDocumentVersionRequest {
   Fields?: string;
   IncludeCustomMetadata?: boolean;
 }
-export const GetDocumentVersionRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
-      VersionId: S.String.pipe(T.HttpLabel("VersionId")),
-      Fields: S.optional(S.String).pipe(T.HttpQuery("fields")),
-      IncludeCustomMetadata: S.optional(S.Boolean).pipe(
-        T.HttpQuery("includeCustomMetadata"),
-      ),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "GET",
-          uri: "/api/v1/documents/{DocumentId}/versions/{VersionId}",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetDocumentVersionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
+    DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
+    VersionId: S.String.pipe(T.HttpLabel("VersionId")),
+    Fields: S.optional(S.String).pipe(T.HttpQuery("fields")),
+    IncludeCustomMetadata: S.optional(S.Boolean).pipe(
+      T.HttpQuery("includeCustomMetadata"),
+    ),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "GET",
+        uri: "/api/v1/documents/{DocumentId}/versions/{VersionId}",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
 ).annotate({
   identifier: "GetDocumentVersionRequest",
 }) as any as S.Schema<GetDocumentVersionRequest>;
@@ -1962,12 +2097,11 @@ export interface GetDocumentVersionResponse {
   Metadata?: DocumentVersionMetadata;
   CustomMetadata?: { [key: string]: string | undefined };
 }
-export const GetDocumentVersionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Metadata: S.optional(DocumentVersionMetadata),
-      CustomMetadata: S.optional(CustomMetadataMap),
-    }).pipe(ns),
+export const GetDocumentVersionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Metadata: S.optional(DocumentVersionMetadata),
+    CustomMetadata: S.optional(CustomMetadataMap),
+  }).pipe(ns),
 ).annotate({
   identifier: "GetDocumentVersionResponse",
 }) as any as S.Schema<GetDocumentVersionResponse>;
@@ -1976,7 +2110,7 @@ export interface GetFolderRequest {
   FolderId: string;
   IncludeCustomMetadata?: boolean;
 }
-export const GetFolderRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetFolderRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -2003,7 +2137,7 @@ export interface GetFolderResponse {
   Metadata?: FolderMetadata;
   CustomMetadata?: { [key: string]: string | undefined };
 }
-export const GetFolderResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetFolderResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Metadata: S.optional(FolderMetadata),
     CustomMetadata: S.optional(CustomMetadataMap),
@@ -2018,7 +2152,7 @@ export interface GetFolderPathRequest {
   Fields?: string;
   Marker?: string;
 }
-export const GetFolderPathRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetFolderPathRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -2044,13 +2178,14 @@ export const GetFolderPathRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetFolderPathResponse {
   Path?: ResourcePath;
 }
-export const GetFolderPathResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetFolderPathResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Path: S.optional(ResourcePath) }).pipe(ns),
 ).annotate({
   identifier: "GetFolderPathResponse",
 }) as any as S.Schema<GetFolderPathResponse>;
 export type ResourceCollectionType = "SHARED_WITH_ME" | (string & {});
-export const ResourceCollectionType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ResourceCollectionType = /*@__PURE__*/ S.String;
+
 export interface GetResourcesRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   UserId?: string;
@@ -2058,7 +2193,7 @@ export interface GetResourcesRequest {
   Limit?: number;
   Marker?: string;
 }
-export const GetResourcesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetResourcesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -2088,7 +2223,7 @@ export interface GetResourcesResponse {
   Documents?: DocumentMetadata[];
   Marker?: string;
 }
-export const GetResourcesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetResourcesResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Folders: S.optional(FolderMetadataList),
     Documents: S.optional(DocumentMetadataList),
@@ -2107,8 +2242,8 @@ export interface InitiateDocumentVersionUploadRequest {
   DocumentSizeInBytes?: number;
   ParentFolderId?: string;
 }
-export const InitiateDocumentVersionUploadRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const InitiateDocumentVersionUploadRequest = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       AuthenticationToken: S.optional(SensitiveString).pipe(
         T.HttpHeader("Authentication"),
@@ -2135,11 +2270,13 @@ export const InitiateDocumentVersionUploadRequest =
         rules,
       ),
     ),
-  ).annotate({
-    identifier: "InitiateDocumentVersionUploadRequest",
-  }) as any as S.Schema<InitiateDocumentVersionUploadRequest>;
+).annotate({
+  identifier: "InitiateDocumentVersionUploadRequest",
+}) as any as S.Schema<InitiateDocumentVersionUploadRequest>;
+export type HeaderNameType = string;
+export type HeaderValueType = string;
 export type SignedHeaderMap = { [key: string]: string | undefined };
-export const SignedHeaderMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const SignedHeaderMap = /*@__PURE__*/ S.Record(
   S.String,
   S.String.pipe(S.optional),
 );
@@ -2147,7 +2284,7 @@ export interface UploadMetadata {
   UploadUrl?: string | redacted.Redacted<string>;
   SignedHeaders?: { [key: string]: string | undefined };
 }
-export const UploadMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UploadMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     UploadUrl: S.optional(SensitiveString),
     SignedHeaders: S.optional(SignedHeaderMap),
@@ -2157,127 +2294,129 @@ export interface InitiateDocumentVersionUploadResponse {
   Metadata?: DocumentMetadata;
   UploadMetadata?: UploadMetadata;
 }
-export const InitiateDocumentVersionUploadResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const InitiateDocumentVersionUploadResponse = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       Metadata: S.optional(DocumentMetadata),
       UploadMetadata: S.optional(UploadMetadata),
     }).pipe(ns),
-  ).annotate({
-    identifier: "InitiateDocumentVersionUploadResponse",
-  }) as any as S.Schema<InitiateDocumentVersionUploadResponse>;
+).annotate({
+  identifier: "InitiateDocumentVersionUploadResponse",
+}) as any as S.Schema<InitiateDocumentVersionUploadResponse>;
 export interface RemoveAllResourcePermissionsRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   ResourceId: string;
 }
-export const RemoveAllResourcePermissionsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "DELETE",
-          uri: "/api/v1/resources/{ResourceId}/permissions",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const RemoveAllResourcePermissionsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
-  ).annotate({
-    identifier: "RemoveAllResourcePermissionsRequest",
-  }) as any as S.Schema<RemoveAllResourcePermissionsRequest>;
+    ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "DELETE",
+        uri: "/api/v1/resources/{ResourceId}/permissions",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "RemoveAllResourcePermissionsRequest",
+}) as any as S.Schema<RemoveAllResourcePermissionsRequest>;
 export interface RemoveAllResourcePermissionsResponse {}
-export const RemoveAllResourcePermissionsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "RemoveAllResourcePermissionsResponse",
-  }) as any as S.Schema<RemoveAllResourcePermissionsResponse>;
+export const RemoveAllResourcePermissionsResponse = /*@__PURE__*/ S.suspend(
+  () => S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "RemoveAllResourcePermissionsResponse",
+}) as any as S.Schema<RemoveAllResourcePermissionsResponse>;
 export interface RemoveResourcePermissionRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   ResourceId: string;
   PrincipalId: string;
   PrincipalType?: PrincipalType;
 }
-export const RemoveResourcePermissionRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
-      PrincipalId: S.String.pipe(T.HttpLabel("PrincipalId")),
-      PrincipalType: S.optional(PrincipalType).pipe(T.HttpQuery("type")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "DELETE",
-          uri: "/api/v1/resources/{ResourceId}/permissions/{PrincipalId}",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const RemoveResourcePermissionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
-  ).annotate({
-    identifier: "RemoveResourcePermissionRequest",
-  }) as any as S.Schema<RemoveResourcePermissionRequest>;
+    ResourceId: S.String.pipe(T.HttpLabel("ResourceId")),
+    PrincipalId: S.String.pipe(T.HttpLabel("PrincipalId")),
+    PrincipalType: S.optional(PrincipalType).pipe(T.HttpQuery("type")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "DELETE",
+        uri: "/api/v1/resources/{ResourceId}/permissions/{PrincipalId}",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "RemoveResourcePermissionRequest",
+}) as any as S.Schema<RemoveResourcePermissionRequest>;
 export interface RemoveResourcePermissionResponse {}
-export const RemoveResourcePermissionResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "RemoveResourcePermissionResponse",
-  }) as any as S.Schema<RemoveResourcePermissionResponse>;
+export const RemoveResourcePermissionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "RemoveResourcePermissionResponse",
+}) as any as S.Schema<RemoveResourcePermissionResponse>;
 export interface RestoreDocumentVersionsRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   DocumentId: string;
 }
-export const RestoreDocumentVersionsRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "POST",
-          uri: "/api/v1/documentVersions/restore/{DocumentId}",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const RestoreDocumentVersionsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
-  ).annotate({
-    identifier: "RestoreDocumentVersionsRequest",
-  }) as any as S.Schema<RestoreDocumentVersionsRequest>;
+    DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "POST",
+        uri: "/api/v1/documentVersions/restore/{DocumentId}",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "RestoreDocumentVersionsRequest",
+}) as any as S.Schema<RestoreDocumentVersionsRequest>;
 export interface RestoreDocumentVersionsResponse {}
-export const RestoreDocumentVersionsResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "RestoreDocumentVersionsResponse",
-  }) as any as S.Schema<RestoreDocumentVersionsResponse>;
+export const RestoreDocumentVersionsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "RestoreDocumentVersionsResponse",
+}) as any as S.Schema<RestoreDocumentVersionsResponse>;
 export type SearchQueryScopeType = "NAME" | "CONTENT" | (string & {});
-export const SearchQueryScopeType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SearchQueryScopeType = /*@__PURE__*/ S.String;
+
 export type SearchQueryScopeTypeList = SearchQueryScopeType[];
 export const SearchQueryScopeTypeList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(SearchQueryScopeType);
+  /*@__PURE__*/ S.Array(SearchQueryScopeType);
 export type AdditionalResponseFieldType = "WEBURL" | (string & {});
-export const AdditionalResponseFieldType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const AdditionalResponseFieldType = /*@__PURE__*/ S.String;
+
 export type AdditionalResponseFieldsList = AdditionalResponseFieldType[];
-export const AdditionalResponseFieldsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const AdditionalResponseFieldsList = /*@__PURE__*/ S.Array(
   AdditionalResponseFieldType,
 );
 export type LanguageCodeType =
@@ -2313,10 +2452,10 @@ export type LanguageCodeType =
   | "ZH"
   | "DEFAULT"
   | (string & {});
-export const LanguageCodeType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const LanguageCodeType = /*@__PURE__*/ S.String;
+
 export type TextLocaleTypeList = LanguageCodeType[];
-export const TextLocaleTypeList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(LanguageCodeType);
+export const TextLocaleTypeList = /*@__PURE__*/ S.Array(LanguageCodeType);
 export type ContentCategoryType =
   | "IMAGE"
   | "DOCUMENT"
@@ -2328,58 +2467,61 @@ export type ContentCategoryType =
   | "SOURCE_CODE"
   | "OTHER"
   | (string & {});
-export const ContentCategoryType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ContentCategoryType = /*@__PURE__*/ S.String;
+
 export type SearchContentCategoryTypeList = ContentCategoryType[];
 export const SearchContentCategoryTypeList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ContentCategoryType);
+  /*@__PURE__*/ S.Array(ContentCategoryType);
 export type SearchResourceType =
   | "FOLDER"
   | "DOCUMENT"
   | "COMMENT"
   | "DOCUMENT_VERSION"
   | (string & {});
-export const SearchResourceType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SearchResourceType = /*@__PURE__*/ S.String;
+
 export type SearchResourceTypeList = SearchResourceType[];
-export const SearchResourceTypeList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(SearchResourceType);
+export const SearchResourceTypeList = /*@__PURE__*/ S.Array(SearchResourceType);
+export type SearchLabel = string;
 export type SearchLabelList = string[];
-export const SearchLabelList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const SearchLabelList = /*@__PURE__*/ S.Array(S.String);
 export type PrincipalRoleType =
   | "VIEWER"
   | "CONTRIBUTOR"
   | "OWNER"
   | "COOWNER"
   | (string & {});
-export const PrincipalRoleType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const PrincipalRoleType = /*@__PURE__*/ S.String;
+
 export type SearchPrincipalRoleList = PrincipalRoleType[];
-export const SearchPrincipalRoleList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(PrincipalRoleType);
+export const SearchPrincipalRoleList = /*@__PURE__*/ S.Array(PrincipalRoleType);
 export interface SearchPrincipalType {
   Id: string;
   Roles?: PrincipalRoleType[];
 }
-export const SearchPrincipalType = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SearchPrincipalType = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Id: S.String, Roles: S.optional(SearchPrincipalRoleList) }),
 ).annotate({
   identifier: "SearchPrincipalType",
 }) as any as S.Schema<SearchPrincipalType>;
 export type SearchPrincipalTypeList = SearchPrincipalType[];
 export const SearchPrincipalTypeList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(SearchPrincipalType);
+  /*@__PURE__*/ S.Array(SearchPrincipalType);
+export type SearchAncestorId = string;
 export type SearchAncestorIdList = string[];
-export const SearchAncestorIdList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const SearchAncestorIdList = /*@__PURE__*/ S.Array(S.String);
 export type SearchCollectionType = "OWNED" | "SHARED_WITH_ME" | (string & {});
-export const SearchCollectionType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SearchCollectionType = /*@__PURE__*/ S.String;
+
 export type SearchCollectionTypeList = SearchCollectionType[];
 export const SearchCollectionTypeList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(SearchCollectionType);
+  /*@__PURE__*/ S.Array(SearchCollectionType);
+export type LongType = number;
 export interface LongRangeType {
   StartValue?: number;
   EndValue?: number;
 }
-export const LongRangeType = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const LongRangeType = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     StartValue: S.optional(S.Number),
     EndValue: S.optional(S.Number),
@@ -2389,7 +2531,7 @@ export interface DateRangeType {
   StartValue?: Date;
   EndValue?: Date;
 }
-export const DateRangeType = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DateRangeType = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     StartValue: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
     EndValue: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
@@ -2407,7 +2549,7 @@ export interface Filters {
   CreatedRange?: DateRangeType;
   ModifiedRange?: DateRangeType;
 }
-export const Filters = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Filters = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     TextLocales: S.optional(TextLocaleTypeList),
     ContentCategories: S.optional(SearchContentCategoryTypeList),
@@ -2428,14 +2570,16 @@ export type OrderByFieldType =
   | "CREATED_TIMESTAMP"
   | "MODIFIED_TIMESTAMP"
   | (string & {});
-export const OrderByFieldType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const OrderByFieldType = /*@__PURE__*/ S.String;
+
 export type SortOrder = "ASC" | "DESC" | (string & {});
-export const SortOrder = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SortOrder = /*@__PURE__*/ S.String;
+
 export interface SearchSortResult {
   Field?: OrderByFieldType;
   Order?: SortOrder;
 }
-export const SearchSortResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SearchSortResult = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Field: S.optional(OrderByFieldType),
     Order: S.optional(SortOrder),
@@ -2444,8 +2588,9 @@ export const SearchSortResult = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "SearchSortResult",
 }) as any as S.Schema<SearchSortResult>;
 export type SearchResultSortList = SearchSortResult[];
-export const SearchResultSortList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(SearchSortResult);
+export const SearchResultSortList = /*@__PURE__*/ S.Array(SearchSortResult);
+export type SearchResultsLimitType = number;
+export type NextMarkerType = string;
 export interface SearchResourcesRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   QueryText?: string | redacted.Redacted<string>;
@@ -2457,31 +2602,30 @@ export interface SearchResourcesRequest {
   Limit?: number;
   Marker?: string;
 }
-export const SearchResourcesRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      QueryText: S.optional(SensitiveString),
-      QueryScopes: S.optional(SearchQueryScopeTypeList),
-      OrganizationId: S.optional(S.String),
-      AdditionalResponseFields: S.optional(AdditionalResponseFieldsList),
-      Filters: S.optional(Filters),
-      OrderBy: S.optional(SearchResultSortList),
-      Limit: S.optional(S.Number),
-      Marker: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/api/v1/search" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const SearchResourcesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
+    QueryText: S.optional(SensitiveString),
+    QueryScopes: S.optional(SearchQueryScopeTypeList),
+    OrganizationId: S.optional(S.String),
+    AdditionalResponseFields: S.optional(AdditionalResponseFieldsList),
+    Filters: S.optional(Filters),
+    OrderBy: S.optional(SearchResultSortList),
+    Limit: S.optional(S.Number),
+    Marker: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/api/v1/search" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
 ).annotate({
   identifier: "SearchResourcesRequest",
 }) as any as S.Schema<SearchResourcesRequest>;
@@ -2491,7 +2635,9 @@ export type ResponseItemType =
   | "COMMENT"
   | "DOCUMENT_VERSION"
   | (string & {});
-export const ResponseItemType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ResponseItemType = /*@__PURE__*/ S.String;
+
+export type ResponseItemWebUrl = string | redacted.Redacted<string>;
 export interface ResponseItem {
   ResourceType?: ResponseItemType;
   WebUrl?: string | redacted.Redacted<string>;
@@ -2500,7 +2646,7 @@ export interface ResponseItem {
   CommentMetadata?: CommentMetadata;
   DocumentVersionMetadata?: DocumentVersionMetadata;
 }
-export const ResponseItem = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ResponseItem = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ResourceType: S.optional(ResponseItemType),
     WebUrl: S.optional(SensitiveString),
@@ -2511,18 +2657,16 @@ export const ResponseItem = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "ResponseItem" }) as any as S.Schema<ResponseItem>;
 export type ResponseItemsList = ResponseItem[];
-export const ResponseItemsList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ResponseItem);
+export const ResponseItemsList = /*@__PURE__*/ S.Array(ResponseItem);
 export interface SearchResourcesResponse {
   Items?: ResponseItem[];
   Marker?: string;
 }
-export const SearchResourcesResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      Items: S.optional(ResponseItemsList),
-      Marker: S.optional(S.String),
-    }).pipe(ns),
+export const SearchResourcesResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Items: S.optional(ResponseItemsList),
+    Marker: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "SearchResourcesResponse",
 }) as any as S.Schema<SearchResourcesResponse>;
@@ -2533,7 +2677,7 @@ export interface UpdateDocumentRequest {
   ParentFolderId?: string;
   ResourceState?: ResourceStateType;
 }
-export const UpdateDocumentRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateDocumentRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -2557,50 +2701,51 @@ export const UpdateDocumentRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "UpdateDocumentRequest",
 }) as any as S.Schema<UpdateDocumentRequest>;
 export interface UpdateDocumentResponse {}
-export const UpdateDocumentResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}).pipe(ns),
+export const UpdateDocumentResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "UpdateDocumentResponse",
 }) as any as S.Schema<UpdateDocumentResponse>;
 export type DocumentVersionStatus = "ACTIVE" | (string & {});
-export const DocumentVersionStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const DocumentVersionStatus = /*@__PURE__*/ S.String;
+
 export interface UpdateDocumentVersionRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   DocumentId: string;
   VersionId: string;
   VersionStatus?: DocumentVersionStatus;
 }
-export const UpdateDocumentVersionRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      AuthenticationToken: S.optional(SensitiveString).pipe(
-        T.HttpHeader("Authentication"),
-      ),
-      DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
-      VersionId: S.String.pipe(T.HttpLabel("VersionId")),
-      VersionStatus: S.optional(DocumentVersionStatus),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({
-          method: "PATCH",
-          uri: "/api/v1/documents/{DocumentId}/versions/{VersionId}",
-        }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdateDocumentVersionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    AuthenticationToken: S.optional(SensitiveString).pipe(
+      T.HttpHeader("Authentication"),
     ),
-  ).annotate({
-    identifier: "UpdateDocumentVersionRequest",
-  }) as any as S.Schema<UpdateDocumentVersionRequest>;
+    DocumentId: S.String.pipe(T.HttpLabel("DocumentId")),
+    VersionId: S.String.pipe(T.HttpLabel("VersionId")),
+    VersionStatus: S.optional(DocumentVersionStatus),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({
+        method: "PATCH",
+        uri: "/api/v1/documents/{DocumentId}/versions/{VersionId}",
+      }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
+    ),
+  ),
+).annotate({
+  identifier: "UpdateDocumentVersionRequest",
+}) as any as S.Schema<UpdateDocumentVersionRequest>;
 export interface UpdateDocumentVersionResponse {}
-export const UpdateDocumentVersionResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "UpdateDocumentVersionResponse",
-  }) as any as S.Schema<UpdateDocumentVersionResponse>;
+export const UpdateDocumentVersionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "UpdateDocumentVersionResponse",
+}) as any as S.Schema<UpdateDocumentVersionResponse>;
 export interface UpdateFolderRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   FolderId: string;
@@ -2608,7 +2753,7 @@ export interface UpdateFolderRequest {
   ParentFolderId?: string;
   ResourceState?: ResourceStateType;
 }
-export const UpdateFolderRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateFolderRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -2632,13 +2777,14 @@ export const UpdateFolderRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "UpdateFolderRequest",
 }) as any as S.Schema<UpdateFolderRequest>;
 export interface UpdateFolderResponse {}
-export const UpdateFolderResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateFolderResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "UpdateFolderResponse",
 }) as any as S.Schema<UpdateFolderResponse>;
 export type BooleanEnumType = "TRUE" | "FALSE" | (string & {});
-export const BooleanEnumType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const BooleanEnumType = /*@__PURE__*/ S.String;
+
 export interface UpdateUserRequest {
   AuthenticationToken?: string | redacted.Redacted<string>;
   UserId: string;
@@ -2650,7 +2796,7 @@ export interface UpdateUserRequest {
   Locale?: LocaleType;
   GrantPoweruserPrivileges?: BooleanEnumType;
 }
-export const UpdateUserRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateUserRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     AuthenticationToken: S.optional(SensitiveString).pipe(
       T.HttpHeader("Authentication"),
@@ -2680,115 +2826,15 @@ export const UpdateUserRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface UpdateUserResponse {
   User?: User;
 }
-export const UpdateUserResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateUserResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ User: S.optional(User) }).pipe(ns),
 ).annotate({
   identifier: "UpdateUserResponse",
 }) as any as S.Schema<UpdateUserResponse>;
-
-//# Errors
-export class ConcurrentModificationException extends S.TaggedErrorClass<ConcurrentModificationException>()(
-  "ConcurrentModificationException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class EntityNotExistsException extends S.TaggedErrorClass<EntityNotExistsException>()(
-  "EntityNotExistsException",
-  { Message: S.optional(S.String), EntityIds: S.optional(EntityIdList) },
-).pipe(C.withBadRequestError) {}
-export class FailedDependencyException extends S.TaggedErrorClass<FailedDependencyException>()(
-  "FailedDependencyException",
-  { Message: S.optional(S.String) },
-) {}
-export class ProhibitedStateException extends S.TaggedErrorClass<ProhibitedStateException>()(
-  "ProhibitedStateException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class ServiceUnavailableException extends S.TaggedErrorClass<ServiceUnavailableException>()(
-  "ServiceUnavailableException",
-  { Message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class UnauthorizedOperationException extends S.TaggedErrorClass<UnauthorizedOperationException>()(
-  "UnauthorizedOperationException",
-  { Message: S.optional(S.String), Code: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class UnauthorizedResourceAccessException extends S.TaggedErrorClass<UnauthorizedResourceAccessException>()(
-  "UnauthorizedResourceAccessException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError, C.withAuthError) {}
-export class DocumentLockedForCommentsException extends S.TaggedErrorClass<DocumentLockedForCommentsException>()(
-  "DocumentLockedForCommentsException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class InvalidCommentOperationException extends S.TaggedErrorClass<InvalidCommentOperationException>()(
-  "InvalidCommentOperationException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class CustomMetadataLimitExceededException extends S.TaggedErrorClass<CustomMetadataLimitExceededException>()(
-  "CustomMetadataLimitExceededException",
-  { Message: S.optional(S.String) },
-).pipe(C.withThrottlingError) {}
-export class ConflictingOperationException extends S.TaggedErrorClass<ConflictingOperationException>()(
-  "ConflictingOperationException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class EntityAlreadyExistsException extends S.TaggedErrorClass<EntityAlreadyExistsException>()(
-  "EntityAlreadyExistsException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError, C.withAlreadyExistsError) {}
-export class LimitExceededException extends S.TaggedErrorClass<LimitExceededException>()(
-  "LimitExceededException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class TooManyLabelsException extends S.TaggedErrorClass<TooManyLabelsException>()(
-  "TooManyLabelsException",
-  { Message: S.optional(S.String) },
-).pipe(C.withThrottlingError) {}
-export class InvalidArgumentException extends S.TaggedErrorClass<InvalidArgumentException>()(
-  "InvalidArgumentException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class TooManySubscriptionsException extends S.TaggedErrorClass<TooManySubscriptionsException>()(
-  "TooManySubscriptionsException",
-  { Message: S.optional(S.String) },
-).pipe(C.withThrottlingError) {}
-export class InvalidOperationException extends S.TaggedErrorClass<InvalidOperationException>()(
-  "InvalidOperationException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InvalidPasswordException extends S.TaggedErrorClass<InvalidPasswordException>()(
-  "InvalidPasswordException",
-  { Message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class RequestedEntityTooLargeException extends S.TaggedErrorClass<RequestedEntityTooLargeException>()(
-  "RequestedEntityTooLargeException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class DraftUploadOutOfSyncException extends S.TaggedErrorClass<DraftUploadOutOfSyncException>()(
-  "DraftUploadOutOfSyncException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class ResourceAlreadyCheckedOutException extends S.TaggedErrorClass<ResourceAlreadyCheckedOutException>()(
-  "ResourceAlreadyCheckedOutException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class StorageLimitExceededException extends S.TaggedErrorClass<StorageLimitExceededException>()(
-  "StorageLimitExceededException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class StorageLimitWillExceedException extends S.TaggedErrorClass<StorageLimitWillExceedException>()(
-  "StorageLimitWillExceedException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class DeactivatingLastSystemUserException extends S.TaggedErrorClass<DeactivatingLastSystemUserException>()(
-  "DeactivatingLastSystemUserException",
-  { Message: S.optional(S.String), Code: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class IllegalUserStateException extends S.TaggedErrorClass<IllegalUserStateException>()(
-  "IllegalUserStateException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-
-//# Operations
+export type ErrorMessageType = string;
+export type EntityIdList = string[];
+export const EntityIdList = /*@__PURE__*/ S.Array(S.String);
+export type ExceptionCodeType = string;
 export type AbortDocumentVersionUploadError =
   | ConcurrentModificationException
   | EntityNotExistsException
@@ -2808,8 +2854,8 @@ export const abortDocumentVersionUpload: API.OperationMethod<
   AbortDocumentVersionUploadRequest,
   AbortDocumentVersionUploadResponse,
   AbortDocumentVersionUploadError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: AbortDocumentVersionUploadRequest,
   output: AbortDocumentVersionUploadResponse,
   errors: [
@@ -2821,7 +2867,11 @@ export const abortDocumentVersionUpload: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "AbortDocumentVersionUpload",
 }));
+
 export type ActivateUserError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -2837,8 +2887,8 @@ export const activateUser: API.OperationMethod<
   ActivateUserRequest,
   ActivateUserResponse,
   ActivateUserError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ActivateUserRequest,
   output: ActivateUserResponse,
   errors: [
@@ -2848,7 +2898,11 @@ export const activateUser: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ActivateUser",
 }));
+
 export type AddResourcePermissionsError =
   | FailedDependencyException
   | ProhibitedStateException
@@ -2865,8 +2919,8 @@ export const addResourcePermissions: API.OperationMethod<
   AddResourcePermissionsRequest,
   AddResourcePermissionsResponse,
   AddResourcePermissionsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: AddResourcePermissionsRequest,
   output: AddResourcePermissionsResponse,
   errors: [
@@ -2876,7 +2930,11 @@ export const addResourcePermissions: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "AddResourcePermissions",
 }));
+
 export type CreateCommentError =
   | DocumentLockedForCommentsException
   | EntityNotExistsException
@@ -2894,8 +2952,8 @@ export const createComment: API.OperationMethod<
   CreateCommentRequest,
   CreateCommentResponse,
   CreateCommentError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateCommentRequest,
   output: CreateCommentResponse,
   errors: [
@@ -2908,7 +2966,11 @@ export const createComment: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateComment",
 }));
+
 export type CreateCustomMetadataError =
   | CustomMetadataLimitExceededException
   | EntityNotExistsException
@@ -2926,8 +2988,8 @@ export const createCustomMetadata: API.OperationMethod<
   CreateCustomMetadataRequest,
   CreateCustomMetadataResponse,
   CreateCustomMetadataError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateCustomMetadataRequest,
   output: CreateCustomMetadataResponse,
   errors: [
@@ -2939,7 +3001,11 @@ export const createCustomMetadata: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateCustomMetadata",
 }));
+
 export type CreateFolderError =
   | ConcurrentModificationException
   | ConflictingOperationException
@@ -2959,8 +3025,8 @@ export const createFolder: API.OperationMethod<
   CreateFolderRequest,
   CreateFolderResponse,
   CreateFolderError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateFolderRequest,
   output: CreateFolderResponse,
   errors: [
@@ -2975,7 +3041,11 @@ export const createFolder: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateFolder",
 }));
+
 export type CreateLabelsError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -2992,8 +3062,8 @@ export const createLabels: API.OperationMethod<
   CreateLabelsRequest,
   CreateLabelsResponse,
   CreateLabelsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateLabelsRequest,
   output: CreateLabelsResponse,
   errors: [
@@ -3004,7 +3074,11 @@ export const createLabels: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateLabels",
 }));
+
 export type CreateNotificationSubscriptionError =
   | InvalidArgumentException
   | ServiceUnavailableException
@@ -3022,8 +3096,8 @@ export const createNotificationSubscription: API.OperationMethod<
   CreateNotificationSubscriptionRequest,
   CreateNotificationSubscriptionResponse,
   CreateNotificationSubscriptionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateNotificationSubscriptionRequest,
   output: CreateNotificationSubscriptionResponse,
   errors: [
@@ -3032,7 +3106,11 @@ export const createNotificationSubscription: API.OperationMethod<
     TooManySubscriptionsException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateNotificationSubscription",
 }));
+
 export type CreateUserError =
   | EntityAlreadyExistsException
   | FailedDependencyException
@@ -3048,8 +3126,8 @@ export const createUser: API.OperationMethod<
   CreateUserRequest,
   CreateUserResponse,
   CreateUserError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateUserRequest,
   output: CreateUserResponse,
   errors: [
@@ -3059,7 +3137,11 @@ export const createUser: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateUser",
 }));
+
 export type DeactivateUserError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3075,8 +3157,8 @@ export const deactivateUser: API.OperationMethod<
   DeactivateUserRequest,
   DeactivateUserResponse,
   DeactivateUserError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeactivateUserRequest,
   output: DeactivateUserResponse,
   errors: [
@@ -3086,7 +3168,11 @@ export const deactivateUser: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeactivateUser",
 }));
+
 export type DeleteCommentError =
   | DocumentLockedForCommentsException
   | EntityNotExistsException
@@ -3103,8 +3189,8 @@ export const deleteComment: API.OperationMethod<
   DeleteCommentRequest,
   DeleteCommentResponse,
   DeleteCommentError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteCommentRequest,
   output: DeleteCommentResponse,
   errors: [
@@ -3116,7 +3202,11 @@ export const deleteComment: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteComment",
 }));
+
 export type DeleteCustomMetadataError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3132,8 +3222,8 @@ export const deleteCustomMetadata: API.OperationMethod<
   DeleteCustomMetadataRequest,
   DeleteCustomMetadataResponse,
   DeleteCustomMetadataError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteCustomMetadataRequest,
   output: DeleteCustomMetadataResponse,
   errors: [
@@ -3144,7 +3234,11 @@ export const deleteCustomMetadata: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteCustomMetadata",
 }));
+
 export type DeleteDocumentError =
   | ConcurrentModificationException
   | ConflictingOperationException
@@ -3163,8 +3257,8 @@ export const deleteDocument: API.OperationMethod<
   DeleteDocumentRequest,
   DeleteDocumentResponse,
   DeleteDocumentError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteDocumentRequest,
   output: DeleteDocumentResponse,
   errors: [
@@ -3178,7 +3272,11 @@ export const deleteDocument: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteDocument",
 }));
+
 export type DeleteDocumentVersionError =
   | ConcurrentModificationException
   | ConflictingOperationException
@@ -3196,8 +3294,8 @@ export const deleteDocumentVersion: API.OperationMethod<
   DeleteDocumentVersionRequest,
   DeleteDocumentVersionResponse,
   DeleteDocumentVersionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteDocumentVersionRequest,
   output: DeleteDocumentVersionResponse,
   errors: [
@@ -3210,7 +3308,11 @@ export const deleteDocumentVersion: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteDocumentVersion",
 }));
+
 export type DeleteFolderError =
   | ConcurrentModificationException
   | ConflictingOperationException
@@ -3229,8 +3331,8 @@ export const deleteFolder: API.OperationMethod<
   DeleteFolderRequest,
   DeleteFolderResponse,
   DeleteFolderError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteFolderRequest,
   output: DeleteFolderResponse,
   errors: [
@@ -3244,7 +3346,11 @@ export const deleteFolder: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteFolder",
 }));
+
 export type DeleteFolderContentsError =
   | ConflictingOperationException
   | EntityNotExistsException
@@ -3261,8 +3367,8 @@ export const deleteFolderContents: API.OperationMethod<
   DeleteFolderContentsRequest,
   DeleteFolderContentsResponse,
   DeleteFolderContentsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteFolderContentsRequest,
   output: DeleteFolderContentsResponse,
   errors: [
@@ -3274,7 +3380,11 @@ export const deleteFolderContents: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteFolderContents",
 }));
+
 export type DeleteLabelsError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3290,8 +3400,8 @@ export const deleteLabels: API.OperationMethod<
   DeleteLabelsRequest,
   DeleteLabelsResponse,
   DeleteLabelsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteLabelsRequest,
   output: DeleteLabelsResponse,
   errors: [
@@ -3302,7 +3412,11 @@ export const deleteLabels: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteLabels",
 }));
+
 export type DeleteNotificationSubscriptionError =
   | EntityNotExistsException
   | ProhibitedStateException
@@ -3316,8 +3430,8 @@ export const deleteNotificationSubscription: API.OperationMethod<
   DeleteNotificationSubscriptionRequest,
   DeleteNotificationSubscriptionResponse,
   DeleteNotificationSubscriptionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteNotificationSubscriptionRequest,
   output: DeleteNotificationSubscriptionResponse,
   errors: [
@@ -3326,7 +3440,11 @@ export const deleteNotificationSubscription: API.OperationMethod<
     ServiceUnavailableException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteNotificationSubscription",
 }));
+
 export type DeleteUserError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3343,8 +3461,8 @@ export const deleteUser: API.OperationMethod<
   DeleteUserRequest,
   DeleteUserResponse,
   DeleteUserError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteUserRequest,
   output: DeleteUserResponse,
   errors: [
@@ -3354,7 +3472,11 @@ export const deleteUser: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteUser",
 }));
+
 export type DescribeActivitiesError =
   | FailedDependencyException
   | InvalidArgumentException
@@ -3365,27 +3487,13 @@ export type DescribeActivitiesError =
 /**
  * Describes the user activities in a specified time period.
  */
-export const describeActivities: API.OperationMethod<
+export const describeActivities: API.PaginatedOperationMethod<
   DescribeActivitiesRequest,
   DescribeActivitiesResponse,
   DescribeActivitiesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeActivitiesRequest,
-  ) => stream.Stream<
-    DescribeActivitiesResponse,
-    DescribeActivitiesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeActivitiesRequest,
-  ) => stream.Stream<
-    Activity,
-    DescribeActivitiesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Activity
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeActivitiesRequest,
   output: DescribeActivitiesResponse,
   errors: [
@@ -3395,13 +3503,17 @@ export const describeActivities: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeActivities",
   pagination: {
     inputToken: "Marker",
     outputToken: "Marker",
     items: "UserActivities",
     pageSize: "Limit",
   } as const,
-}));
+})) as any;
+
 export type DescribeCommentsError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3413,27 +3525,13 @@ export type DescribeCommentsError =
 /**
  * List all the comments for the specified document version.
  */
-export const describeComments: API.OperationMethod<
+export const describeComments: API.PaginatedOperationMethod<
   DescribeCommentsRequest,
   DescribeCommentsResponse,
   DescribeCommentsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeCommentsRequest,
-  ) => stream.Stream<
-    DescribeCommentsResponse,
-    DescribeCommentsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeCommentsRequest,
-  ) => stream.Stream<
-    Comment,
-    DescribeCommentsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Comment
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeCommentsRequest,
   output: DescribeCommentsResponse,
   errors: [
@@ -3444,13 +3542,17 @@ export const describeComments: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeComments",
   pagination: {
     inputToken: "Marker",
     outputToken: "Marker",
     items: "Comments",
     pageSize: "Limit",
   } as const,
-}));
+})) as any;
+
 export type DescribeDocumentVersionsError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3466,27 +3568,13 @@ export type DescribeDocumentVersionsError =
  *
  * By default, only active versions are returned.
  */
-export const describeDocumentVersions: API.OperationMethod<
+export const describeDocumentVersions: API.PaginatedOperationMethod<
   DescribeDocumentVersionsRequest,
   DescribeDocumentVersionsResponse,
   DescribeDocumentVersionsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeDocumentVersionsRequest,
-  ) => stream.Stream<
-    DescribeDocumentVersionsResponse,
-    DescribeDocumentVersionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeDocumentVersionsRequest,
-  ) => stream.Stream<
-    DocumentVersionMetadata,
-    DescribeDocumentVersionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  DocumentVersionMetadata
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeDocumentVersionsRequest,
   output: DescribeDocumentVersionsResponse,
   errors: [
@@ -3499,13 +3587,17 @@ export const describeDocumentVersions: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeDocumentVersions",
   pagination: {
     inputToken: "Marker",
     outputToken: "Marker",
     items: "DocumentVersions",
     pageSize: "Limit",
   } as const,
-}));
+})) as any;
+
 export type DescribeFolderContentsError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3523,27 +3615,13 @@ export type DescribeFolderContentsError =
  * use to request the next set of results. You can also request initialized
  * documents.
  */
-export const describeFolderContents: API.OperationMethod<
+export const describeFolderContents: API.PaginatedOperationMethod<
   DescribeFolderContentsRequest,
   DescribeFolderContentsResponse,
   DescribeFolderContentsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeFolderContentsRequest,
-  ) => stream.Stream<
-    DescribeFolderContentsResponse,
-    DescribeFolderContentsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeFolderContentsRequest,
-  ) => stream.Stream<
-    unknown,
-    DescribeFolderContentsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeFolderContentsRequest,
   output: DescribeFolderContentsResponse,
   errors: [
@@ -3554,12 +3632,16 @@ export const describeFolderContents: API.OperationMethod<
     ServiceUnavailableException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeFolderContents",
   pagination: {
     inputToken: "Marker",
     outputToken: "Marker",
     pageSize: "Limit",
   } as const,
-}));
+})) as any;
+
 export type DescribeGroupsError =
   | FailedDependencyException
   | ServiceUnavailableException
@@ -3570,27 +3652,13 @@ export type DescribeGroupsError =
  * Describes the groups specified by the query. Groups are defined by the underlying
  * Active Directory.
  */
-export const describeGroups: API.OperationMethod<
+export const describeGroups: API.PaginatedOperationMethod<
   DescribeGroupsRequest,
   DescribeGroupsResponse,
   DescribeGroupsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeGroupsRequest,
-  ) => stream.Stream<
-    DescribeGroupsResponse,
-    DescribeGroupsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeGroupsRequest,
-  ) => stream.Stream<
-    GroupMetadata,
-    DescribeGroupsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  GroupMetadata
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeGroupsRequest,
   output: DescribeGroupsResponse,
   errors: [
@@ -3599,13 +3667,17 @@ export const describeGroups: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeGroups",
   pagination: {
     inputToken: "Marker",
     outputToken: "Marker",
     items: "Groups",
     pageSize: "Limit",
   } as const,
-}));
+})) as any;
+
 export type DescribeNotificationSubscriptionsError =
   | EntityNotExistsException
   | ServiceUnavailableException
@@ -3614,27 +3686,13 @@ export type DescribeNotificationSubscriptionsError =
 /**
  * Lists the specified notification subscriptions.
  */
-export const describeNotificationSubscriptions: API.OperationMethod<
+export const describeNotificationSubscriptions: API.PaginatedOperationMethod<
   DescribeNotificationSubscriptionsRequest,
   DescribeNotificationSubscriptionsResponse,
   DescribeNotificationSubscriptionsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeNotificationSubscriptionsRequest,
-  ) => stream.Stream<
-    DescribeNotificationSubscriptionsResponse,
-    DescribeNotificationSubscriptionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeNotificationSubscriptionsRequest,
-  ) => stream.Stream<
-    Subscription,
-    DescribeNotificationSubscriptionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Subscription
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeNotificationSubscriptionsRequest,
   output: DescribeNotificationSubscriptionsResponse,
   errors: [
@@ -3642,13 +3700,17 @@ export const describeNotificationSubscriptions: API.OperationMethod<
     ServiceUnavailableException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeNotificationSubscriptions",
   pagination: {
     inputToken: "Marker",
     outputToken: "Marker",
     items: "Subscriptions",
     pageSize: "Limit",
   } as const,
-}));
+})) as any;
+
 export type DescribeResourcePermissionsError =
   | FailedDependencyException
   | InvalidArgumentException
@@ -3659,27 +3721,13 @@ export type DescribeResourcePermissionsError =
 /**
  * Describes the permissions of a specified resource.
  */
-export const describeResourcePermissions: API.OperationMethod<
+export const describeResourcePermissions: API.PaginatedOperationMethod<
   DescribeResourcePermissionsRequest,
   DescribeResourcePermissionsResponse,
   DescribeResourcePermissionsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeResourcePermissionsRequest,
-  ) => stream.Stream<
-    DescribeResourcePermissionsResponse,
-    DescribeResourcePermissionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeResourcePermissionsRequest,
-  ) => stream.Stream<
-    Principal,
-    DescribeResourcePermissionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Principal
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeResourcePermissionsRequest,
   output: DescribeResourcePermissionsResponse,
   errors: [
@@ -3689,13 +3737,17 @@ export const describeResourcePermissions: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeResourcePermissions",
   pagination: {
     inputToken: "Marker",
     outputToken: "Marker",
     items: "Principals",
     pageSize: "Limit",
   } as const,
-}));
+})) as any;
+
 export type DescribeRootFoldersError =
   | FailedDependencyException
   | InvalidArgumentException
@@ -3715,27 +3767,13 @@ export type DescribeRootFoldersError =
  * Amazon
  * WorkDocs Developer Guide.
  */
-export const describeRootFolders: API.OperationMethod<
+export const describeRootFolders: API.PaginatedOperationMethod<
   DescribeRootFoldersRequest,
   DescribeRootFoldersResponse,
   DescribeRootFoldersError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeRootFoldersRequest,
-  ) => stream.Stream<
-    DescribeRootFoldersResponse,
-    DescribeRootFoldersError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeRootFoldersRequest,
-  ) => stream.Stream<
-    FolderMetadata,
-    DescribeRootFoldersError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  FolderMetadata
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeRootFoldersRequest,
   output: DescribeRootFoldersResponse,
   errors: [
@@ -3745,13 +3783,17 @@ export const describeRootFolders: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeRootFolders",
   pagination: {
     inputToken: "Marker",
     outputToken: "Marker",
     items: "Folders",
     pageSize: "Limit",
   } as const,
-}));
+})) as any;
+
 export type DescribeUsersError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3769,27 +3811,13 @@ export type DescribeUsersError =
  * are more results, the response includes a marker that you can use to request the next
  * set of results.
  */
-export const describeUsers: API.OperationMethod<
+export const describeUsers: API.PaginatedOperationMethod<
   DescribeUsersRequest,
   DescribeUsersResponse,
   DescribeUsersError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeUsersRequest,
-  ) => stream.Stream<
-    DescribeUsersResponse,
-    DescribeUsersError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeUsersRequest,
-  ) => stream.Stream<
-    User,
-    DescribeUsersError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  User
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeUsersRequest,
   output: DescribeUsersResponse,
   errors: [
@@ -3801,13 +3829,17 @@ export const describeUsers: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeUsers",
   pagination: {
     inputToken: "Marker",
     outputToken: "Marker",
     items: "Users",
     pageSize: "Limit",
   } as const,
-}));
+})) as any;
+
 export type GetCurrentUserError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3829,8 +3861,8 @@ export const getCurrentUser: API.OperationMethod<
   GetCurrentUserRequest,
   GetCurrentUserResponse,
   GetCurrentUserError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetCurrentUserRequest,
   output: GetCurrentUserResponse,
   errors: [
@@ -3840,7 +3872,11 @@ export const getCurrentUser: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetCurrentUser",
 }));
+
 export type GetDocumentError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3857,8 +3893,8 @@ export const getDocument: API.OperationMethod<
   GetDocumentRequest,
   GetDocumentResponse,
   GetDocumentError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetDocumentRequest,
   output: GetDocumentResponse,
   errors: [
@@ -3870,7 +3906,11 @@ export const getDocument: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetDocument",
 }));
+
 export type GetDocumentPathError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3891,8 +3931,8 @@ export const getDocumentPath: API.OperationMethod<
   GetDocumentPathRequest,
   GetDocumentPathResponse,
   GetDocumentPathError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetDocumentPathRequest,
   output: GetDocumentPathResponse,
   errors: [
@@ -3902,7 +3942,11 @@ export const getDocumentPath: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetDocumentPath",
 }));
+
 export type GetDocumentVersionError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3919,8 +3963,8 @@ export const getDocumentVersion: API.OperationMethod<
   GetDocumentVersionRequest,
   GetDocumentVersionResponse,
   GetDocumentVersionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetDocumentVersionRequest,
   output: GetDocumentVersionResponse,
   errors: [
@@ -3932,7 +3976,11 @@ export const getDocumentVersion: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetDocumentVersion",
 }));
+
 export type GetFolderError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3949,8 +3997,8 @@ export const getFolder: API.OperationMethod<
   GetFolderRequest,
   GetFolderResponse,
   GetFolderError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetFolderRequest,
   output: GetFolderResponse,
   errors: [
@@ -3962,7 +4010,11 @@ export const getFolder: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetFolder",
 }));
+
 export type GetFolderPathError =
   | EntityNotExistsException
   | FailedDependencyException
@@ -3983,8 +4035,8 @@ export const getFolderPath: API.OperationMethod<
   GetFolderPathRequest,
   GetFolderPathResponse,
   GetFolderPathError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetFolderPathRequest,
   output: GetFolderPathResponse,
   errors: [
@@ -3994,7 +4046,11 @@ export const getFolderPath: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetFolderPath",
 }));
+
 export type GetResourcesError =
   | FailedDependencyException
   | InvalidArgumentException
@@ -4010,8 +4066,8 @@ export const getResources: API.OperationMethod<
   GetResourcesRequest,
   GetResourcesResponse,
   GetResourcesError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetResourcesRequest,
   output: GetResourcesResponse,
   errors: [
@@ -4021,7 +4077,11 @@ export const getResources: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetResources",
 }));
+
 export type InitiateDocumentVersionUploadError =
   | DraftUploadOutOfSyncException
   | EntityAlreadyExistsException
@@ -4052,8 +4112,8 @@ export const initiateDocumentVersionUpload: API.OperationMethod<
   InitiateDocumentVersionUploadRequest,
   InitiateDocumentVersionUploadResponse,
   InitiateDocumentVersionUploadError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: InitiateDocumentVersionUploadRequest,
   output: InitiateDocumentVersionUploadResponse,
   errors: [
@@ -4072,7 +4132,11 @@ export const initiateDocumentVersionUpload: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "InitiateDocumentVersionUpload",
 }));
+
 export type RemoveAllResourcePermissionsError =
   | FailedDependencyException
   | ServiceUnavailableException
@@ -4086,8 +4150,8 @@ export const removeAllResourcePermissions: API.OperationMethod<
   RemoveAllResourcePermissionsRequest,
   RemoveAllResourcePermissionsResponse,
   RemoveAllResourcePermissionsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: RemoveAllResourcePermissionsRequest,
   output: RemoveAllResourcePermissionsResponse,
   errors: [
@@ -4096,7 +4160,11 @@ export const removeAllResourcePermissions: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "RemoveAllResourcePermissions",
 }));
+
 export type RemoveResourcePermissionError =
   | FailedDependencyException
   | ServiceUnavailableException
@@ -4111,8 +4179,8 @@ export const removeResourcePermission: API.OperationMethod<
   RemoveResourcePermissionRequest,
   RemoveResourcePermissionResponse,
   RemoveResourcePermissionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: RemoveResourcePermissionRequest,
   output: RemoveResourcePermissionResponse,
   errors: [
@@ -4121,7 +4189,11 @@ export const removeResourcePermission: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "RemoveResourcePermission",
 }));
+
 export type RestoreDocumentVersionsError =
   | ConcurrentModificationException
   | ConflictingOperationException
@@ -4139,8 +4211,8 @@ export const restoreDocumentVersions: API.OperationMethod<
   RestoreDocumentVersionsRequest,
   RestoreDocumentVersionsResponse,
   RestoreDocumentVersionsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: RestoreDocumentVersionsRequest,
   output: RestoreDocumentVersionsResponse,
   errors: [
@@ -4153,7 +4225,11 @@ export const restoreDocumentVersions: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "RestoreDocumentVersions",
 }));
+
 export type SearchResourcesError =
   | InvalidArgumentException
   | ServiceUnavailableException
@@ -4163,27 +4239,13 @@ export type SearchResourcesError =
 /**
  * Searches metadata and the content of folders, documents, document versions, and comments.
  */
-export const searchResources: API.OperationMethod<
+export const searchResources: API.PaginatedOperationMethod<
   SearchResourcesRequest,
   SearchResourcesResponse,
   SearchResourcesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: SearchResourcesRequest,
-  ) => stream.Stream<
-    SearchResourcesResponse,
-    SearchResourcesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: SearchResourcesRequest,
-  ) => stream.Stream<
-    ResponseItem,
-    SearchResourcesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  ResponseItem
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: SearchResourcesRequest,
   output: SearchResourcesResponse,
   errors: [
@@ -4192,13 +4254,17 @@ export const searchResources: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "SearchResources",
   pagination: {
     inputToken: "Marker",
     outputToken: "Marker",
     items: "Items",
     pageSize: "Limit",
   } as const,
-}));
+})) as any;
+
 export type UpdateDocumentError =
   | ConcurrentModificationException
   | ConflictingOperationException
@@ -4219,8 +4285,8 @@ export const updateDocument: API.OperationMethod<
   UpdateDocumentRequest,
   UpdateDocumentResponse,
   UpdateDocumentError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateDocumentRequest,
   output: UpdateDocumentResponse,
   errors: [
@@ -4235,7 +4301,11 @@ export const updateDocument: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateDocument",
 }));
+
 export type UpdateDocumentVersionError =
   | ConcurrentModificationException
   | EntityNotExistsException
@@ -4257,8 +4327,8 @@ export const updateDocumentVersion: API.OperationMethod<
   UpdateDocumentVersionRequest,
   UpdateDocumentVersionResponse,
   UpdateDocumentVersionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateDocumentVersionRequest,
   output: UpdateDocumentVersionResponse,
   errors: [
@@ -4271,7 +4341,11 @@ export const updateDocumentVersion: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateDocumentVersion",
 }));
+
 export type UpdateFolderError =
   | ConcurrentModificationException
   | ConflictingOperationException
@@ -4292,8 +4366,8 @@ export const updateFolder: API.OperationMethod<
   UpdateFolderRequest,
   UpdateFolderResponse,
   UpdateFolderError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateFolderRequest,
   output: UpdateFolderResponse,
   errors: [
@@ -4308,7 +4382,11 @@ export const updateFolder: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateFolder",
 }));
+
 export type UpdateUserError =
   | DeactivatingLastSystemUserException
   | EntityNotExistsException
@@ -4328,8 +4406,8 @@ export const updateUser: API.OperationMethod<
   UpdateUserRequest,
   UpdateUserResponse,
   UpdateUserError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateUserRequest,
   output: UpdateUserResponse,
   errors: [
@@ -4343,4 +4421,7 @@ export const updateUser: API.OperationMethod<
     UnauthorizedOperationException,
     UnauthorizedResourceAccessException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateUser",
 }));

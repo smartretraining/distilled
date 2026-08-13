@@ -80,6 +80,15 @@
       "members": {
         "Marker": {
           "optional": true
+        },
+        "IsTruncated": {
+          "optional": true
+        },
+        "MaxItems": {
+          "optional": true
+        },
+        "Quantity": {
+          "optional": true
         }
       }
     },
@@ -93,6 +102,20 @@
     "S3OriginConfig": {
       "members": {
         "OriginAccessIdentity": {
+          "optional": true
+        }
+      }
+    },
+    "FunctionConfig": {
+      "members": {
+        "Comment": {
+          "optional": true
+        }
+      }
+    },
+    "OriginAccessControlSummary": {
+      "members": {
+        "Description": {
           "optional": true
         }
       }

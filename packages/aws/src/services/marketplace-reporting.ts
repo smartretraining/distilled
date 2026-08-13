@@ -1,11 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const svc = T.AwsApiService({
   sdkId: "Marketplace Reporting",
   serviceShapeName: "AWSMarketplaceReporting",
@@ -82,32 +83,52 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class BadRequestException
+  extends /*@__PURE__*/ S.TaggedError<BadRequestException>()(
+    "BadRequestException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class InternalServerException
+  extends /*@__PURE__*/ S.TaggedError<InternalServerException>()(
+    "InternalServerException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class UnauthorizedException
+  extends /*@__PURE__*/ S.TaggedError<UnauthorizedException>()(
+    "UnauthorizedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(401),
+  ).pipe(C.withAuthError) {}
 export type DashboardIdentifier = string;
 export type EmbeddingDomain = string;
-
-//# Schemas
 export type EmbeddingDomains = string[];
-export const EmbeddingDomains = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const EmbeddingDomains = /*@__PURE__*/ S.Array(S.String);
 export interface GetBuyerDashboardInput {
   dashboardIdentifier: string;
   embeddingDomains: string[];
 }
-export const GetBuyerDashboardInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      dashboardIdentifier: S.String,
-      embeddingDomains: EmbeddingDomains,
-    }).pipe(
-      T.all(
-        T.Http({ method: "POST", uri: "/getBuyerDashboard" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetBuyerDashboardInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    dashboardIdentifier: S.String,
+    embeddingDomains: EmbeddingDomains,
+  }).pipe(
+    T.all(
+      T.Http({ method: "POST", uri: "/getBuyerDashboard" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetBuyerDashboardInput",
 }) as any as S.Schema<GetBuyerDashboardInput>;
@@ -116,36 +137,15 @@ export interface GetBuyerDashboardOutput {
   dashboardIdentifier: string;
   embeddingDomains: string[];
 }
-export const GetBuyerDashboardOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      embedUrl: S.String,
-      dashboardIdentifier: S.String,
-      embeddingDomains: EmbeddingDomains,
-    }),
+export const GetBuyerDashboardOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    embedUrl: S.String,
+    dashboardIdentifier: S.String,
+    embeddingDomains: EmbeddingDomains,
+  }),
 ).annotate({
   identifier: "GetBuyerDashboardOutput",
 }) as any as S.Schema<GetBuyerDashboardOutput>;
-
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class BadRequestException extends S.TaggedErrorClass<BadRequestException>()(
-  "BadRequestException",
-  { message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class InternalServerException extends S.TaggedErrorClass<InternalServerException>()(
-  "InternalServerException",
-  { message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class UnauthorizedException extends S.TaggedErrorClass<UnauthorizedException>()(
-  "UnauthorizedException",
-  { message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-
-//# Operations
 export type GetBuyerDashboardError =
   | AccessDeniedException
   | BadRequestException
@@ -169,8 +169,8 @@ export const getBuyerDashboard: API.OperationMethod<
   GetBuyerDashboardInput,
   GetBuyerDashboardOutput,
   GetBuyerDashboardError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetBuyerDashboardInput,
   output: GetBuyerDashboardOutput,
   errors: [
@@ -179,4 +179,7 @@ export const getBuyerDashboard: API.OperationMethod<
     InternalServerException,
     UnauthorizedException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetBuyerDashboard",
 }));

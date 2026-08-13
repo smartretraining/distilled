@@ -1,0 +1,2214 @@
+{
+  "getListings": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "listings": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "id": {
+              "kind": "string"
+            },
+            "externalId": {
+              "kind": "string"
+            },
+            "officeId": {
+              "kind": "string"
+            },
+            "officeName": {
+              "kind": "string"
+            },
+            "type": {
+              "kind": "string"
+            },
+            "status": {
+              "kind": "string"
+            },
+            "marketingStatus": {
+              "kind": "string"
+            },
+            "hiddenListing": {
+              "kind": "boolean"
+            },
+            "offMarketListing": {
+              "kind": "boolean"
+            },
+            "method": {
+              "kind": "string"
+            },
+            "webLink": {
+              "kind": "string"
+            },
+            "listedDate": {
+              "kind": "string"
+            },
+            "expiryDate": {
+              "kind": "string"
+            },
+            "auctionDate": {
+              "kind": "string"
+            },
+            "timezone": {
+              "kind": "string"
+            },
+            "auctionVenue": {
+              "kind": "string"
+            },
+            "eoiClosingDate": {
+              "kind": "string"
+            },
+            "availableDate": {
+              "kind": "string"
+            },
+            "onMarketDate": {
+              "kind": "string"
+            },
+            "expectedOnMarketDate": {
+              "kind": "string"
+            },
+            "leasedDate": {
+              "kind": "string"
+            },
+            "bond": {
+              "kind": "string"
+            },
+            "displayPrice": {
+              "kind": "string"
+            },
+            "soldDate": {
+              "kind": "string"
+            },
+            "property": {
+              "kind": "object",
+              "properties": {
+                "id": {
+                  "kind": "string"
+                },
+                "type": {
+                  "kind": "string"
+                },
+                "category": {
+                  "kind": "string"
+                },
+                "name": {
+                  "kind": "string"
+                },
+                "newConstruction": {
+                  "kind": "boolean"
+                },
+                "address": {
+                  "kind": "object",
+                  "properties": {
+                    "streetAddress": {
+                      "kind": "string"
+                    },
+                    "levelNum": {
+                      "kind": "string"
+                    },
+                    "lotNum": {
+                      "kind": "string"
+                    },
+                    "unitNum": {
+                      "kind": "string"
+                    },
+                    "streetNum": {
+                      "kind": "string"
+                    },
+                    "streetName": {
+                      "kind": "string"
+                    },
+                    "streetType": {
+                      "kind": "string"
+                    },
+                    "suburb": {
+                      "kind": "string"
+                    },
+                    "state": {
+                      "kind": "string"
+                    },
+                    "postcode": {
+                      "kind": "string"
+                    },
+                    "country": {
+                      "kind": "string"
+                    },
+                    "region": {
+                      "kind": "string"
+                    },
+                    "hideAddress": {
+                      "kind": "boolean"
+                    }
+                  },
+                  "optional": []
+                },
+                "location": {
+                  "kind": "object",
+                  "properties": {
+                    "lat": {
+                      "kind": "string"
+                    },
+                    "long": {
+                      "kind": "string"
+                    }
+                  },
+                  "optional": []
+                },
+                "bedrooms": {
+                  "kind": "string"
+                },
+                "bathrooms": {
+                  "kind": "string"
+                },
+                "totalParking": {
+                  "kind": "string"
+                },
+                "landArea": {
+                  "kind": "object",
+                  "properties": {
+                    "value": {
+                      "kind": "string"
+                    },
+                    "unit": {
+                      "kind": "string"
+                    }
+                  },
+                  "optional": []
+                },
+                "landSizeText": {
+                  "kind": "string"
+                },
+                "buildingArea": {
+                  "kind": "object",
+                  "properties": {
+                    "value": {
+                      "kind": "string"
+                    },
+                    "unit": {
+                      "kind": "string"
+                    }
+                  },
+                  "optional": []
+                }
+              },
+              "optional": []
+            },
+            "mainHeadline": {
+              "kind": "string"
+            },
+            "firstCreated": {
+              "kind": "string"
+            },
+            "lastModified": {
+              "kind": "string"
+            },
+            "links": {
+              "kind": "object",
+              "properties": {
+                "self": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            },
+            "inspectionType": {
+              "kind": "string"
+            },
+            "outgoings": {
+              "kind": "object",
+              "properties": {
+                "landTax": {
+                  "kind": "object",
+                  "properties": {
+                    "value": {
+                      "kind": "string"
+                    },
+                    "period": {
+                      "kind": "string"
+                    }
+                  },
+                  "optional": []
+                },
+                "councilRates": {
+                  "kind": "object",
+                  "properties": {
+                    "value": {
+                      "kind": "string"
+                    },
+                    "period": {
+                      "kind": "string"
+                    }
+                  },
+                  "optional": []
+                },
+                "waterRates": {
+                  "kind": "object",
+                  "properties": {
+                    "value": {
+                      "kind": "string"
+                    },
+                    "period": {
+                      "kind": "string"
+                    }
+                  },
+                  "optional": []
+                },
+                "strataAdmin": {
+                  "kind": "object",
+                  "properties": {
+                    "value": {
+                      "kind": "string"
+                    },
+                    "period": {
+                      "kind": "string"
+                    }
+                  },
+                  "optional": []
+                },
+                "strataSinking": {
+                  "kind": "object",
+                  "properties": {
+                    "value": {
+                      "kind": "string"
+                    },
+                    "period": {
+                      "kind": "string"
+                    }
+                  },
+                  "optional": []
+                },
+                "strataTotal": {
+                  "kind": "object",
+                  "properties": {
+                    "value": {
+                      "kind": "string"
+                    },
+                    "period": {
+                      "kind": "string"
+                    }
+                  },
+                  "optional": []
+                },
+                "otherOutgoings": {
+                  "kind": "object",
+                  "properties": {
+                    "value": {
+                      "kind": "string"
+                    },
+                    "period": {
+                      "kind": "string"
+                    }
+                  },
+                  "optional": []
+                },
+                "totalOutgoings": {
+                  "kind": "object",
+                  "properties": {
+                    "value": {
+                      "kind": "string"
+                    },
+                    "period": {
+                      "kind": "string"
+                    }
+                  },
+                  "optional": []
+                }
+              },
+              "optional": []
+            },
+            "auctionVenueDetails": {
+              "kind": "object",
+              "properties": {
+                "name": {
+                  "kind": "string"
+                },
+                "address": {
+                  "kind": "string"
+                },
+                "phone": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            }
+          },
+          "optional": [
+            "auctionVenueDetails",
+            "availableDate",
+            "bond",
+            "leasedDate"
+          ]
+        }
+      }
+    },
+    "optional": []
+  },
+  "getContacts": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "contacts": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "id": {
+              "kind": "string"
+            },
+            "type": {
+              "kind": "string"
+            },
+            "status": {
+              "kind": "string"
+            },
+            "title": {
+              "kind": "string"
+            },
+            "firstName": {
+              "kind": "string"
+            },
+            "lastName": {
+              "kind": "string"
+            },
+            "jobTitle": {
+              "kind": "string"
+            },
+            "website": {
+              "kind": "string"
+            },
+            "salutation": {
+              "kind": "string"
+            },
+            "customSalutation": {
+              "kind": "string"
+            },
+            "companyName": {
+              "kind": "string"
+            },
+            "email": {
+              "kind": "string"
+            },
+            "mobile": {
+              "kind": "string"
+            },
+            "homePhone": {
+              "kind": "string"
+            },
+            "workPhone": {
+              "kind": "string"
+            },
+            "source": {
+              "kind": "string"
+            },
+            "firstCreated": {
+              "kind": "string"
+            },
+            "lastModified": {
+              "kind": "string"
+            },
+            "links": {
+              "kind": "object",
+              "properties": {
+                "self": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            }
+          },
+          "optional": []
+        }
+      }
+    },
+    "optional": []
+  },
+  "getStaff": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "staffMembers": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "id": {
+              "kind": "string"
+            },
+            "status": {
+              "kind": "string"
+            },
+            "officeId": {
+              "kind": "string"
+            },
+            "officeName": {
+              "kind": "string"
+            },
+            "externalMemberId": {
+              "kind": "string"
+            },
+            "firstName": {
+              "kind": "string"
+            },
+            "lastName": {
+              "kind": "string"
+            },
+            "role": {
+              "kind": "string"
+            },
+            "jobTitle": {
+              "kind": "string"
+            },
+            "email": {
+              "kind": "string"
+            },
+            "mobile": {
+              "kind": "string"
+            },
+            "phone": {
+              "kind": "string"
+            },
+            "hideMobileOnWeb": {
+              "kind": "boolean"
+            },
+            "webDisplay": {
+              "kind": "array",
+              "items": {
+                "kind": "object",
+                "properties": {
+                  "name": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              }
+            },
+            "firstCreated": {
+              "kind": "string"
+            },
+            "lastModified": {
+              "kind": "string"
+            },
+            "links": {
+              "kind": "object",
+              "properties": {
+                "self": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            }
+          },
+          "optional": []
+        }
+      }
+    },
+    "optional": []
+  },
+  "getOffices": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "offices": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "id": {
+              "kind": "string"
+            },
+            "name": {
+              "kind": "string"
+            },
+            "status": {
+              "kind": "string"
+            },
+            "externalId": {
+              "kind": "string"
+            },
+            "financeId": {
+              "kind": "string"
+            },
+            "franchiseGroup": {
+              "kind": "string"
+            },
+            "companyName": {
+              "kind": "string"
+            },
+            "tradingName": {
+              "kind": "string"
+            },
+            "address": {
+              "kind": "object",
+              "properties": {
+                "streetAddress": {
+                  "kind": "string"
+                },
+                "suburb": {
+                  "kind": "string"
+                },
+                "state": {
+                  "kind": "string"
+                },
+                "postcode": {
+                  "kind": "string"
+                },
+                "country": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            },
+            "location": {
+              "kind": "object",
+              "properties": {
+                "lat": {
+                  "kind": "string"
+                },
+                "long": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            },
+            "website": {
+              "kind": "string"
+            },
+            "email": {
+              "kind": "string"
+            },
+            "phone": {
+              "kind": "string"
+            },
+            "lastModified": {
+              "kind": "string"
+            },
+            "links": {
+              "kind": "object",
+              "properties": {
+                "self": {
+                  "kind": "string"
+                },
+                "staffMembers": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            }
+          },
+          "optional": []
+        }
+      }
+    },
+    "optional": []
+  },
+  "getSearchRequirements": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "searchRequirements": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "id": {
+              "kind": "string"
+            },
+            "name": {
+              "kind": "string"
+            },
+            "contactId": {
+              "kind": "string"
+            },
+            "listingType": {
+              "kind": "string"
+            },
+            "propertyType": {
+              "kind": "string"
+            },
+            "propertyCategories": {
+              "kind": "array",
+              "items": {
+                "kind": "object",
+                "properties": {
+                  "name": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              }
+            },
+            "price": {
+              "kind": "object",
+              "properties": {
+                "from": {
+                  "kind": "string"
+                },
+                "to": {
+                  "kind": "string"
+                },
+                "unit": {
+                  "kind": "string"
+                }
+              },
+              "optional": [
+                "unit"
+              ]
+            },
+            "bedrooms": {
+              "kind": "object",
+              "properties": {
+                "from": {
+                  "kind": "string"
+                },
+                "to": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            },
+            "bathrooms": {
+              "kind": "object",
+              "properties": {
+                "from": {
+                  "kind": "string"
+                },
+                "to": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            },
+            "parking": {
+              "kind": "object",
+              "properties": {
+                "from": {
+                  "kind": "string"
+                },
+                "to": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            },
+            "landArea": {
+              "kind": "object",
+              "properties": {
+                "from": {
+                  "kind": "string"
+                },
+                "to": {
+                  "kind": "string"
+                },
+                "unit": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            },
+            "buildingArea": {
+              "kind": "object",
+              "properties": {
+                "from": {
+                  "kind": "string"
+                },
+                "to": {
+                  "kind": "string"
+                },
+                "unit": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            },
+            "suburbs": {
+              "kind": "array",
+              "items": {
+                "kind": "object",
+                "properties": {
+                  "name": {
+                    "kind": "string"
+                  },
+                  "postcode": {
+                    "kind": "string"
+                  },
+                  "state": {
+                    "kind": "string"
+                  },
+                  "country": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              }
+            },
+            "surroundingSuburbs": {
+              "kind": "boolean"
+            },
+            "regions": {
+              "kind": "array"
+            },
+            "features": {
+              "kind": "array"
+            },
+            "matchAllFeatures": {
+              "kind": "boolean"
+            },
+            "investment": {
+              "kind": "string"
+            },
+            "completionByDate": {
+              "kind": "string"
+            },
+            "notes": {
+              "kind": "string"
+            },
+            "firstCreated": {
+              "kind": "string"
+            },
+            "lastModified": {
+              "kind": "string"
+            }
+          },
+          "optional": []
+        }
+      }
+    },
+    "optional": []
+  },
+  "getRegions": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "regions": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "name": {
+              "kind": "string"
+            },
+            "group": {
+              "kind": "string"
+            },
+            "state": {
+              "kind": "string"
+            },
+            "country": {
+              "kind": "string"
+            }
+          },
+          "optional": []
+        }
+      }
+    },
+    "optional": []
+  },
+  "getSuburbs": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "suburbs": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "id": {
+              "kind": "string"
+            },
+            "name": {
+              "kind": "string"
+            },
+            "postcode": {
+              "kind": "string"
+            },
+            "state": {
+              "kind": "string"
+            },
+            "country": {
+              "kind": "string"
+            },
+            "region": {
+              "kind": "string"
+            }
+          },
+          "optional": []
+        }
+      }
+    },
+    "optional": []
+  },
+  "getPropertyTypes": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "propertyTypes": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "id": {
+              "kind": "string"
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          "optional": []
+        }
+      }
+    },
+    "optional": []
+  },
+  "getContactClasses": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "contactClasses": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "id": {
+              "kind": "string"
+            },
+            "name": {
+              "kind": "string"
+            },
+            "type": {
+              "kind": "string"
+            },
+            "displayName": {
+              "kind": "string"
+            }
+          },
+          "optional": []
+        }
+      }
+    },
+    "optional": []
+  },
+  "getContactSources": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "contactSources": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "id": {
+              "kind": "string"
+            },
+            "name": {
+              "kind": "string"
+            }
+          },
+          "optional": []
+        }
+      }
+    },
+    "optional": []
+  },
+  "getEnquiryTypes": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "enquiryTypes": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "id": {
+              "kind": "string"
+            },
+            "name": {
+              "kind": "string"
+            }
+          },
+          "optional": []
+        }
+      }
+    },
+    "optional": []
+  },
+  "getEnquirySources": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "enquirySources": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "id": {
+              "kind": "string"
+            },
+            "name": {
+              "kind": "string"
+            }
+          },
+          "optional": []
+        }
+      }
+    },
+    "optional": []
+  },
+  "getEnquiryInterestLevels": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "enquiryInterestLevels": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "id": {
+              "kind": "string"
+            },
+            "name": {
+              "kind": "string"
+            }
+          },
+          "optional": []
+        }
+      }
+    },
+    "optional": []
+  },
+  "getSubscriptions": {
+    "kind": "object",
+    "properties": {
+      "items": {
+        "kind": "string"
+      },
+      "current": {
+        "kind": "string"
+      },
+      "last": {
+        "kind": "string"
+      },
+      "subscriptions": {
+        "kind": "array",
+        "items": {
+          "kind": "object",
+          "properties": {
+            "id": {
+              "kind": "string"
+            },
+            "name": {
+              "kind": "string"
+            },
+            "webDisplay": {
+              "kind": "boolean"
+            }
+          },
+          "optional": []
+        }
+      }
+    },
+    "optional": []
+  },
+  "getListing": {
+    "kind": "object",
+    "properties": {
+      "listing": {
+        "kind": "object",
+        "properties": {
+          "id": {
+            "kind": "string"
+          },
+          "externalId": {
+            "kind": "string"
+          },
+          "subOfficeListingId": {
+            "kind": "string"
+          },
+          "officeId": {
+            "kind": "string"
+          },
+          "officeName": {
+            "kind": "string"
+          },
+          "type": {
+            "kind": "string"
+          },
+          "status": {
+            "kind": "string"
+          },
+          "marketingStatus": {
+            "kind": "string"
+          },
+          "hiddenListing": {
+            "kind": "boolean"
+          },
+          "offMarketListing": {
+            "kind": "boolean"
+          },
+          "projectListingNominated": {
+            "kind": "boolean"
+          },
+          "webLink": {
+            "kind": "string"
+          },
+          "authority": {
+            "kind": "string"
+          },
+          "method": {
+            "kind": "string"
+          },
+          "listedDate": {
+            "kind": "string"
+          },
+          "expiryDate": {
+            "kind": "string"
+          },
+          "auctionDate": {
+            "kind": "string"
+          },
+          "timezone": {
+            "kind": "string"
+          },
+          "auctionVenue": {
+            "kind": "string"
+          },
+          "eoiClosingDate": {
+            "kind": "string"
+          },
+          "availableDate": {
+            "kind": "string"
+          },
+          "onMarketDate": {
+            "kind": "string"
+          },
+          "bond": {
+            "kind": "string"
+          },
+          "leaseDetails": {
+            "kind": "string"
+          },
+          "displayPrice": {
+            "kind": "string"
+          },
+          "displayRent": {
+            "kind": "object",
+            "properties": {
+              "value": {
+                "kind": "string"
+              },
+              "period": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          },
+          "searchPrice": {
+            "kind": "string"
+          },
+          "searchWeeklyRent": {
+            "kind": "string"
+          },
+          "listedRent": {
+            "kind": "object",
+            "properties": {
+              "value": {
+                "kind": "string"
+              },
+              "period": {
+                "kind": "string"
+              },
+              "gst": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          },
+          "expectedOnMarketDate": {
+            "kind": "string"
+          },
+          "leasedDate": {
+            "kind": "string"
+          },
+          "inspectionType": {
+            "kind": "string"
+          },
+          "property": {
+            "kind": "object",
+            "properties": {
+              "id": {
+                "kind": "string"
+              },
+              "type": {
+                "kind": "string"
+              },
+              "category": {
+                "kind": "string"
+              },
+              "name": {
+                "kind": "string"
+              },
+              "newConstruction": {
+                "kind": "boolean"
+              },
+              "address": {
+                "kind": "object",
+                "properties": {
+                  "streetAddress": {
+                    "kind": "string"
+                  },
+                  "levelNum": {
+                    "kind": "string"
+                  },
+                  "lotNum": {
+                    "kind": "string"
+                  },
+                  "unitNum": {
+                    "kind": "string"
+                  },
+                  "streetNum": {
+                    "kind": "string"
+                  },
+                  "streetName": {
+                    "kind": "string"
+                  },
+                  "streetType": {
+                    "kind": "string"
+                  },
+                  "suburb": {
+                    "kind": "string"
+                  },
+                  "state": {
+                    "kind": "string"
+                  },
+                  "postcode": {
+                    "kind": "string"
+                  },
+                  "country": {
+                    "kind": "string"
+                  },
+                  "region": {
+                    "kind": "string"
+                  },
+                  "hideAddress": {
+                    "kind": "boolean"
+                  }
+                },
+                "optional": []
+              },
+              "location": {
+                "kind": "object",
+                "properties": {
+                  "lat": {
+                    "kind": "string"
+                  },
+                  "long": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              },
+              "bedrooms": {
+                "kind": "string"
+              },
+              "bathrooms": {
+                "kind": "string"
+              },
+              "loungeRooms": {
+                "kind": "string"
+              },
+              "toilets": {
+                "kind": "string"
+              },
+              "studies": {
+                "kind": "string"
+              },
+              "pools": {
+                "kind": "string"
+              },
+              "garages": {
+                "kind": "string"
+              },
+              "carPorts": {
+                "kind": "string"
+              },
+              "carSpaces": {
+                "kind": "string"
+              },
+              "totalParking": {
+                "kind": "string"
+              },
+              "landArea": {
+                "kind": "object",
+                "properties": {
+                  "value": {
+                    "kind": "string"
+                  },
+                  "unit": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              },
+              "landSizeText": {
+                "kind": "string"
+              },
+              "buildingArea": {
+                "kind": "object",
+                "properties": {
+                  "value": {
+                    "kind": "string"
+                  },
+                  "unit": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              },
+              "externalArea": {
+                "kind": "object",
+                "properties": {
+                  "value": {
+                    "kind": "string"
+                  },
+                  "unit": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              },
+              "frontage": {
+                "kind": "object",
+                "properties": {
+                  "value": {
+                    "kind": "string"
+                  },
+                  "unit": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              },
+              "aspect": {
+                "kind": "string"
+              },
+              "yearBuilt": {
+                "kind": "string"
+              },
+              "yearRenovated": {
+                "kind": "string"
+              },
+              "construction": {
+                "kind": "string"
+              },
+              "condition": {
+                "kind": "string"
+              },
+              "energyRating": {
+                "kind": "string"
+              },
+              "features": {
+                "kind": "array"
+              },
+              "keyFeature": {
+                "kind": "object",
+                "properties": {
+                  "name": {
+                    "kind": "string"
+                  },
+                  "value": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              },
+              "legalDetails": {
+                "kind": "object",
+                "properties": {
+                  "legalDescription": {
+                    "kind": "string"
+                  },
+                  "lot": {
+                    "kind": "string"
+                  },
+                  "depositedPlan": {
+                    "kind": "string"
+                  },
+                  "volume": {
+                    "kind": "string"
+                  },
+                  "folio": {
+                    "kind": "string"
+                  },
+                  "block": {
+                    "kind": "string"
+                  },
+                  "section": {
+                    "kind": "string"
+                  },
+                  "zoning": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              }
+            },
+            "optional": []
+          },
+          "outgoings": {
+            "kind": "object",
+            "properties": {
+              "landTax": {
+                "kind": "object",
+                "properties": {
+                  "value": {
+                    "kind": "string"
+                  },
+                  "period": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              },
+              "councilRates": {
+                "kind": "object",
+                "properties": {
+                  "value": {
+                    "kind": "string"
+                  },
+                  "period": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              },
+              "waterRates": {
+                "kind": "object",
+                "properties": {
+                  "value": {
+                    "kind": "string"
+                  },
+                  "period": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              },
+              "strataAdmin": {
+                "kind": "object",
+                "properties": {
+                  "value": {
+                    "kind": "string"
+                  },
+                  "period": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              },
+              "strataSinking": {
+                "kind": "object",
+                "properties": {
+                  "value": {
+                    "kind": "string"
+                  },
+                  "period": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              },
+              "strataTotal": {
+                "kind": "object",
+                "properties": {
+                  "value": {
+                    "kind": "string"
+                  },
+                  "period": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              },
+              "otherOutgoings": {
+                "kind": "object",
+                "properties": {
+                  "value": {
+                    "kind": "string"
+                  },
+                  "period": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              },
+              "totalOutgoings": {
+                "kind": "object",
+                "properties": {
+                  "value": {
+                    "kind": "string"
+                  },
+                  "period": {
+                    "kind": "string"
+                  }
+                },
+                "optional": []
+              }
+            },
+            "optional": []
+          },
+          "mainHeadline": {
+            "kind": "string"
+          },
+          "mainDescription": {
+            "kind": "string"
+          },
+          "firstCreated": {
+            "kind": "string"
+          },
+          "lastModified": {
+            "kind": "string"
+          },
+          "statusComment": {
+            "kind": "string"
+          },
+          "rateableValue": {
+            "kind": "object",
+            "properties": {
+              "value": {
+                "kind": "string"
+              },
+              "year": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          }
+        },
+        "optional": []
+      }
+    },
+    "optional": []
+  },
+  "getContact": {
+    "kind": "object",
+    "properties": {
+      "contact": {
+        "kind": "object",
+        "properties": {
+          "id": {
+            "kind": "string"
+          },
+          "clientRef": {
+            "kind": "string"
+          },
+          "type": {
+            "kind": "string"
+          },
+          "status": {
+            "kind": "string"
+          },
+          "title": {
+            "kind": "string"
+          },
+          "firstName": {
+            "kind": "string"
+          },
+          "lastName": {
+            "kind": "string"
+          },
+          "website": {
+            "kind": "string"
+          },
+          "salutation": {
+            "kind": "string"
+          },
+          "customSalutation": {
+            "kind": "string"
+          },
+          "addressTo": {
+            "kind": "string"
+          },
+          "legalName": {
+            "kind": "string"
+          },
+          "companyName": {
+            "kind": "string"
+          },
+          "jobTitle": {
+            "kind": "string"
+          },
+          "email": {
+            "kind": "string"
+          },
+          "mobile": {
+            "kind": "string"
+          },
+          "homePhone": {
+            "kind": "string"
+          },
+          "workPhone": {
+            "kind": "string"
+          },
+          "fax": {
+            "kind": "string"
+          },
+          "streetAddress": {
+            "kind": "object",
+            "properties": {
+              "address": {
+                "kind": "string"
+              },
+              "suburb": {
+                "kind": "string"
+              },
+              "state": {
+                "kind": "string"
+              },
+              "country": {
+                "kind": "string"
+              },
+              "postcode": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          },
+          "postalAddress": {
+            "kind": "object",
+            "properties": {
+              "address": {
+                "kind": "string"
+              },
+              "suburb": {
+                "kind": "string"
+              },
+              "state": {
+                "kind": "string"
+              },
+              "country": {
+                "kind": "string"
+              },
+              "postcode": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          },
+          "letterAddressBlock": {
+            "kind": "string"
+          },
+          "prefContactMethod": {
+            "kind": "string"
+          },
+          "source": {
+            "kind": "string"
+          },
+          "comments": {
+            "kind": "string"
+          },
+          "firstCreated": {
+            "kind": "string"
+          },
+          "lastModified": {
+            "kind": "string"
+          },
+          "lastContacted": {
+            "kind": "string"
+          },
+          "attachedRelatedStaffMembers": {
+            "kind": "array",
+            "items": {
+              "kind": "object",
+              "properties": {
+                "role": {
+                  "kind": "string"
+                },
+                "id": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            }
+          },
+          "contactClasses": {
+            "kind": "array",
+            "items": {
+              "kind": "object",
+              "properties": {
+                "id": {
+                  "kind": "string"
+                },
+                "name": {
+                  "kind": "string"
+                },
+                "type": {
+                  "kind": "string"
+                },
+                "displayName": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            }
+          },
+          "subscriptions": {
+            "kind": "array",
+            "items": {
+              "kind": "object",
+              "properties": {
+                "name": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            }
+          },
+          "keyDates": {
+            "kind": "array"
+          },
+          "communicationRestrictions": {
+            "kind": "object",
+            "properties": {
+              "doNotCall": {
+                "kind": "boolean"
+              },
+              "doNotSMS": {
+                "kind": "boolean"
+              },
+              "doNotEmail": {
+                "kind": "boolean"
+              },
+              "doNotMail": {
+                "kind": "boolean"
+              }
+            },
+            "optional": []
+          }
+        },
+        "optional": []
+      }
+    },
+    "optional": []
+  },
+  "getOffice": {
+    "kind": "object",
+    "properties": {
+      "office": {
+        "kind": "object",
+        "properties": {
+          "id": {
+            "kind": "string"
+          },
+          "name": {
+            "kind": "string"
+          },
+          "status": {
+            "kind": "string"
+          },
+          "externalId": {
+            "kind": "string"
+          },
+          "financeId": {
+            "kind": "string"
+          },
+          "franchiseGroup": {
+            "kind": "string"
+          },
+          "companyName": {
+            "kind": "string"
+          },
+          "tradingName": {
+            "kind": "string"
+          },
+          "address": {
+            "kind": "object",
+            "properties": {
+              "streetAddress": {
+                "kind": "string"
+              },
+              "suburb": {
+                "kind": "string"
+              },
+              "state": {
+                "kind": "string"
+              },
+              "postcode": {
+                "kind": "string"
+              },
+              "country": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          },
+          "postalAddress": {
+            "kind": "object",
+            "properties": {
+              "streetAddress": {
+                "kind": "string"
+              },
+              "suburb": {
+                "kind": "string"
+              },
+              "state": {
+                "kind": "string"
+              },
+              "postcode": {
+                "kind": "string"
+              },
+              "country": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          },
+          "location": {
+            "kind": "object",
+            "properties": {
+              "lat": {
+                "kind": "string"
+              },
+              "long": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          },
+          "website": {
+            "kind": "string"
+          },
+          "email": {
+            "kind": "string"
+          },
+          "phone": {
+            "kind": "string"
+          },
+          "phone2": {
+            "kind": "string"
+          },
+          "fax": {
+            "kind": "string"
+          },
+          "mobile": {
+            "kind": "string"
+          },
+          "abn": {
+            "kind": "string"
+          },
+          "licensee": {
+            "kind": "string"
+          },
+          "licenceNo": {
+            "kind": "string"
+          },
+          "corporateLicenceNo": {
+            "kind": "string"
+          },
+          "principalName": {
+            "kind": "string"
+          },
+          "principalPhone": {
+            "kind": "string"
+          },
+          "principalEmail": {
+            "kind": "string"
+          },
+          "profile": {
+            "kind": "string"
+          },
+          "externalLinks": {
+            "kind": "array",
+            "items": {
+              "kind": "object",
+              "properties": {
+                "type": {
+                  "kind": "string"
+                },
+                "link": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            }
+          },
+          "timezone": {
+            "kind": "string"
+          },
+          "lastModified": {
+            "kind": "string"
+          },
+          "links": {
+            "kind": "object",
+            "properties": {
+              "staffMembers": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          }
+        },
+        "optional": []
+      }
+    },
+    "optional": []
+  },
+  "getStaffMember": {
+    "kind": "object",
+    "properties": {
+      "staffMember": {
+        "kind": "object",
+        "properties": {
+          "id": {
+            "kind": "string"
+          },
+          "status": {
+            "kind": "string"
+          },
+          "officeId": {
+            "kind": "string"
+          },
+          "officeName": {
+            "kind": "string"
+          },
+          "externalMemberId": {
+            "kind": "string"
+          },
+          "firstName": {
+            "kind": "string"
+          },
+          "lastName": {
+            "kind": "string"
+          },
+          "role": {
+            "kind": "string"
+          },
+          "jobTitle": {
+            "kind": "string"
+          },
+          "qualification": {
+            "kind": "string"
+          },
+          "email": {
+            "kind": "string"
+          },
+          "mobile": {
+            "kind": "string"
+          },
+          "phone": {
+            "kind": "string"
+          },
+          "profile": {
+            "kind": "string"
+          },
+          "profileVideo": {
+            "kind": "string"
+          },
+          "externalLinks": {
+            "kind": "array"
+          },
+          "awards": {
+            "kind": "string"
+          },
+          "homeAddress": {
+            "kind": "string"
+          },
+          "employeeType": {
+            "kind": "string"
+          },
+          "companyName": {
+            "kind": "string"
+          },
+          "startDate": {
+            "kind": "string"
+          },
+          "dateOfBirth": {
+            "kind": "string"
+          },
+          "licenceNumber": {
+            "kind": "string"
+          },
+          "licenceExpiryDate": {
+            "kind": "string"
+          },
+          "corporateLicenceNumber": {
+            "kind": "string"
+          },
+          "corporateLicenceExpiryDate": {
+            "kind": "string"
+          },
+          "hideMobileOnWeb": {
+            "kind": "boolean"
+          },
+          "webDisplay": {
+            "kind": "array"
+          },
+          "teams": {
+            "kind": "array"
+          },
+          "specialistAreas": {
+            "kind": "array"
+          },
+          "firstCreated": {
+            "kind": "string"
+          },
+          "lastModified": {
+            "kind": "string"
+          }
+        },
+        "optional": []
+      }
+    },
+    "optional": []
+  },
+  "getSearchRequirement": {
+    "kind": "object",
+    "properties": {
+      "searchRequirement": {
+        "kind": "object",
+        "properties": {
+          "id": {
+            "kind": "string"
+          },
+          "name": {
+            "kind": "string"
+          },
+          "contactId": {
+            "kind": "string"
+          },
+          "listingType": {
+            "kind": "string"
+          },
+          "propertyType": {
+            "kind": "string"
+          },
+          "propertyCategories": {
+            "kind": "array",
+            "items": {
+              "kind": "object",
+              "properties": {
+                "name": {
+                  "kind": "string"
+                }
+              },
+              "optional": []
+            }
+          },
+          "price": {
+            "kind": "object",
+            "properties": {
+              "from": {
+                "kind": "string"
+              },
+              "to": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          },
+          "bedrooms": {
+            "kind": "object",
+            "properties": {
+              "from": {
+                "kind": "string"
+              },
+              "to": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          },
+          "bathrooms": {
+            "kind": "object",
+            "properties": {
+              "from": {
+                "kind": "string"
+              },
+              "to": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          },
+          "parking": {
+            "kind": "object",
+            "properties": {
+              "from": {
+                "kind": "string"
+              },
+              "to": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          },
+          "landArea": {
+            "kind": "object",
+            "properties": {
+              "from": {
+                "kind": "string"
+              },
+              "to": {
+                "kind": "string"
+              },
+              "unit": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          },
+          "buildingArea": {
+            "kind": "object",
+            "properties": {
+              "from": {
+                "kind": "string"
+              },
+              "to": {
+                "kind": "string"
+              },
+              "unit": {
+                "kind": "string"
+              }
+            },
+            "optional": []
+          },
+          "suburbs": {
+            "kind": "array"
+          },
+          "surroundingSuburbs": {
+            "kind": "boolean"
+          },
+          "regions": {
+            "kind": "array"
+          },
+          "features": {
+            "kind": "array"
+          },
+          "matchAllFeatures": {
+            "kind": "boolean"
+          },
+          "investment": {
+            "kind": "string"
+          },
+          "completionByDate": {
+            "kind": "string"
+          },
+          "notes": {
+            "kind": "string"
+          },
+          "firstCreated": {
+            "kind": "string"
+          },
+          "lastModified": {
+            "kind": "string"
+          }
+        },
+        "optional": []
+      }
+    },
+    "optional": []
+  }
+}

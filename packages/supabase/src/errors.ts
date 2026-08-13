@@ -1,8 +1,8 @@
 /**
  * Supabase-specific error types.
  *
- * Re-exports common HTTP errors from sdk-core and adds Supabase-specific
- * error matching and API error types.
+ * Re-exports the common HTTP errors from core and adds the Supabase-specific
+ * error classes (ported verbatim from the distilled repo's supabase SDK).
  */
 export {
   BadGateway,
@@ -22,13 +22,13 @@ export {
   DEFAULT_ERRORS,
   API_ERRORS,
 } from "@distilled.cloud/core/errors";
-export type { DefaultErrors } from "@distilled.cloud/core/errors";
+import type { DefaultErrors as CoreDefaultErrors } from "@distilled.cloud/core/errors";
 
 import * as Schema from "effect/Schema";
 import * as Category from "@distilled.cloud/core/category";
 
 // Unknown Supabase error - returned when an error code is not recognized
-export class UnknownSupabaseError extends Schema.TaggedErrorClass<UnknownSupabaseError>()(
+export class UnknownSupabaseError extends Schema.TaggedError<UnknownSupabaseError>()(
   "UnknownSupabaseError",
   {
     code: Schema.optional(Schema.String),
@@ -45,7 +45,7 @@ export class UnknownSupabaseError extends Schema.TaggedErrorClass<UnknownSupabas
 //    they are an administrator or owner: <email> (<n> project limit)..."
 // We tag it explicitly so tests can detect it, clean up stale projects,
 // and retry — and so callers can distinguish it from a real BadRequest.
-export class FreeProjectLimitReached extends Schema.TaggedErrorClass<FreeProjectLimitReached>()(
+export class FreeProjectLimitReached extends Schema.TaggedError<FreeProjectLimitReached>()(
   "FreeProjectLimitReached",
   {
     message: Schema.String,
@@ -53,10 +53,26 @@ export class FreeProjectLimitReached extends Schema.TaggedErrorClass<FreeProject
 ).pipe(Category.withQuotaError) {}
 
 // Schema parse error wrapper
-export class SupabaseParseError extends Schema.TaggedErrorClass<SupabaseParseError>()(
+export class SupabaseParseError extends Schema.TaggedError<SupabaseParseError>()(
   "SupabaseParseError",
   {
     body: Schema.Unknown,
     cause: Schema.Unknown,
   },
 ).pipe(Category.withParseError) {}
+
+/**
+ * Errors that any Supabase operation may surface in addition to the
+ * status-matched API errors declared per endpoint.
+ */
+export type ClientErrors =
+  | FreeProjectLimitReached
+  | SupabaseParseError
+  | UnknownSupabaseError;
+
+/**
+ * Default Supabase operation errors: the shared HTTP status errors from core
+ * plus the client-level fallback/decode errors the Supabase client can emit
+ * at runtime.
+ */
+export type DefaultErrors = CoreDefaultErrors | ClientErrors;

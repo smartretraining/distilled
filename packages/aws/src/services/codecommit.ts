@@ -1,12 +1,12 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region } from "../region.ts";
 const ns = T.XmlNamespace("http://codecommit.amazonaws.com/doc/2015-04-13");
 const svc = T.AwsApiService({
   sdkId: "CodeCommit",
@@ -84,89 +84,959 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
+export class ActorDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<ActorDoesNotExistException>()(
+    "ActorDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ApprovalRuleContentRequiredException
+  extends /*@__PURE__*/ S.TaggedError<ApprovalRuleContentRequiredException>()(
+    "ApprovalRuleContentRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ApprovalRuleDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<ApprovalRuleDoesNotExistException>()(
+    "ApprovalRuleDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ApprovalRuleNameAlreadyExistsException
+  extends /*@__PURE__*/ S.TaggedError<ApprovalRuleNameAlreadyExistsException>()(
+    "ApprovalRuleNameAlreadyExistsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ).pipe(C.withAlreadyExistsError) {}
+export class ApprovalRuleNameRequiredException
+  extends /*@__PURE__*/ S.TaggedError<ApprovalRuleNameRequiredException>()(
+    "ApprovalRuleNameRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ApprovalRuleTemplateContentRequiredException
+  extends /*@__PURE__*/ S.TaggedError<ApprovalRuleTemplateContentRequiredException>()(
+    "ApprovalRuleTemplateContentRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ApprovalRuleTemplateDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<ApprovalRuleTemplateDoesNotExistException>()(
+    "ApprovalRuleTemplateDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ApprovalRuleTemplateInUseException
+  extends /*@__PURE__*/ S.TaggedError<ApprovalRuleTemplateInUseException>()(
+    "ApprovalRuleTemplateInUseException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ApprovalRuleTemplateNameAlreadyExistsException
+  extends /*@__PURE__*/ S.TaggedError<ApprovalRuleTemplateNameAlreadyExistsException>()(
+    "ApprovalRuleTemplateNameAlreadyExistsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ).pipe(C.withAlreadyExistsError) {}
+export class ApprovalRuleTemplateNameRequiredException
+  extends /*@__PURE__*/ S.TaggedError<ApprovalRuleTemplateNameRequiredException>()(
+    "ApprovalRuleTemplateNameRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ApprovalStateRequiredException
+  extends /*@__PURE__*/ S.TaggedError<ApprovalStateRequiredException>()(
+    "ApprovalStateRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class AuthorDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<AuthorDoesNotExistException>()(
+    "AuthorDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class BeforeCommitIdAndAfterCommitIdAreSameException
+  extends /*@__PURE__*/ S.TaggedError<BeforeCommitIdAndAfterCommitIdAreSameException>()(
+    "BeforeCommitIdAndAfterCommitIdAreSameException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class BlobIdDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<BlobIdDoesNotExistException>()(
+    "BlobIdDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class BlobIdRequiredException
+  extends /*@__PURE__*/ S.TaggedError<BlobIdRequiredException>()(
+    "BlobIdRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class BranchDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<BranchDoesNotExistException>()(
+    "BranchDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class BranchNameExistsException
+  extends /*@__PURE__*/ S.TaggedError<BranchNameExistsException>()(
+    "BranchNameExistsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class BranchNameIsTagNameException
+  extends /*@__PURE__*/ S.TaggedError<BranchNameIsTagNameException>()(
+    "BranchNameIsTagNameException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class BranchNameRequiredException
+  extends /*@__PURE__*/ S.TaggedError<BranchNameRequiredException>()(
+    "BranchNameRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CannotDeleteApprovalRuleFromTemplateException
+  extends /*@__PURE__*/ S.TaggedError<CannotDeleteApprovalRuleFromTemplateException>()(
+    "CannotDeleteApprovalRuleFromTemplateException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CannotModifyApprovalRuleFromTemplateException
+  extends /*@__PURE__*/ S.TaggedError<CannotModifyApprovalRuleFromTemplateException>()(
+    "CannotModifyApprovalRuleFromTemplateException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ClientRequestTokenRequiredException
+  extends /*@__PURE__*/ S.TaggedError<ClientRequestTokenRequiredException>()(
+    "ClientRequestTokenRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CommentContentRequiredException
+  extends /*@__PURE__*/ S.TaggedError<CommentContentRequiredException>()(
+    "CommentContentRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CommentContentSizeLimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<CommentContentSizeLimitExceededException>()(
+    "CommentContentSizeLimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CommentDeletedException
+  extends /*@__PURE__*/ S.TaggedError<CommentDeletedException>()(
+    "CommentDeletedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CommentDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<CommentDoesNotExistException>()(
+    "CommentDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CommentIdRequiredException
+  extends /*@__PURE__*/ S.TaggedError<CommentIdRequiredException>()(
+    "CommentIdRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CommentNotCreatedByCallerException
+  extends /*@__PURE__*/ S.TaggedError<CommentNotCreatedByCallerException>()(
+    "CommentNotCreatedByCallerException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CommitDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<CommitDoesNotExistException>()(
+    "CommitDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CommitIdDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<CommitIdDoesNotExistException>()(
+    "CommitIdDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CommitIdRequiredException
+  extends /*@__PURE__*/ S.TaggedError<CommitIdRequiredException>()(
+    "CommitIdRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CommitIdsLimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<CommitIdsLimitExceededException>()(
+    "CommitIdsLimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CommitIdsListRequiredException
+  extends /*@__PURE__*/ S.TaggedError<CommitIdsListRequiredException>()(
+    "CommitIdsListRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CommitMessageLengthExceededException
+  extends /*@__PURE__*/ S.TaggedError<CommitMessageLengthExceededException>()(
+    "CommitMessageLengthExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class CommitRequiredException
+  extends /*@__PURE__*/ S.TaggedError<CommitRequiredException>()(
+    "CommitRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ConcurrentReferenceUpdateException
+  extends /*@__PURE__*/ S.TaggedError<ConcurrentReferenceUpdateException>()(
+    "ConcurrentReferenceUpdateException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class DefaultBranchCannotBeDeletedException
+  extends /*@__PURE__*/ S.TaggedError<DefaultBranchCannotBeDeletedException>()(
+    "DefaultBranchCannotBeDeletedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class DirectoryNameConflictsWithFileNameException
+  extends /*@__PURE__*/ S.TaggedError<DirectoryNameConflictsWithFileNameException>()(
+    "DirectoryNameConflictsWithFileNameException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class EncryptionIntegrityChecksFailedException
+  extends /*@__PURE__*/ S.TaggedError<EncryptionIntegrityChecksFailedException>()(
+    "EncryptionIntegrityChecksFailedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class EncryptionKeyAccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<EncryptionKeyAccessDeniedException>()(
+    "EncryptionKeyAccessDeniedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ).pipe(C.withAuthError) {}
+export class EncryptionKeyDisabledException
+  extends /*@__PURE__*/ S.TaggedError<EncryptionKeyDisabledException>()(
+    "EncryptionKeyDisabledException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class EncryptionKeyInvalidIdException
+  extends /*@__PURE__*/ S.TaggedError<EncryptionKeyInvalidIdException>()(
+    "EncryptionKeyInvalidIdException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class EncryptionKeyInvalidUsageException
+  extends /*@__PURE__*/ S.TaggedError<EncryptionKeyInvalidUsageException>()(
+    "EncryptionKeyInvalidUsageException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class EncryptionKeyNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<EncryptionKeyNotFoundException>()(
+    "EncryptionKeyNotFoundException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class EncryptionKeyRequiredException
+  extends /*@__PURE__*/ S.TaggedError<EncryptionKeyRequiredException>()(
+    "EncryptionKeyRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class EncryptionKeyUnavailableException
+  extends /*@__PURE__*/ S.TaggedError<EncryptionKeyUnavailableException>()(
+    "EncryptionKeyUnavailableException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class FileContentAndSourceFileSpecifiedException
+  extends /*@__PURE__*/ S.TaggedError<FileContentAndSourceFileSpecifiedException>()(
+    "FileContentAndSourceFileSpecifiedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class FileContentRequiredException
+  extends /*@__PURE__*/ S.TaggedError<FileContentRequiredException>()(
+    "FileContentRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class FileContentSizeLimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<FileContentSizeLimitExceededException>()(
+    "FileContentSizeLimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class FileDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<FileDoesNotExistException>()(
+    "FileDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class FileEntryRequiredException
+  extends /*@__PURE__*/ S.TaggedError<FileEntryRequiredException>()(
+    "FileEntryRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class FileModeRequiredException
+  extends /*@__PURE__*/ S.TaggedError<FileModeRequiredException>()(
+    "FileModeRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class FileNameConflictsWithDirectoryNameException
+  extends /*@__PURE__*/ S.TaggedError<FileNameConflictsWithDirectoryNameException>()(
+    "FileNameConflictsWithDirectoryNameException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class FilePathConflictsWithSubmodulePathException
+  extends /*@__PURE__*/ S.TaggedError<FilePathConflictsWithSubmodulePathException>()(
+    "FilePathConflictsWithSubmodulePathException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class FileTooLargeException
+  extends /*@__PURE__*/ S.TaggedError<FileTooLargeException>()(
+    "FileTooLargeException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class FolderContentSizeLimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<FolderContentSizeLimitExceededException>()(
+    "FolderContentSizeLimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class FolderDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<FolderDoesNotExistException>()(
+    "FolderDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class IdempotencyParameterMismatchException
+  extends /*@__PURE__*/ S.TaggedError<IdempotencyParameterMismatchException>()(
+    "IdempotencyParameterMismatchException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidActorArnException
+  extends /*@__PURE__*/ S.TaggedError<InvalidActorArnException>()(
+    "InvalidActorArnException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidApprovalRuleContentException
+  extends /*@__PURE__*/ S.TaggedError<InvalidApprovalRuleContentException>()(
+    "InvalidApprovalRuleContentException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidApprovalRuleNameException
+  extends /*@__PURE__*/ S.TaggedError<InvalidApprovalRuleNameException>()(
+    "InvalidApprovalRuleNameException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidApprovalRuleTemplateContentException
+  extends /*@__PURE__*/ S.TaggedError<InvalidApprovalRuleTemplateContentException>()(
+    "InvalidApprovalRuleTemplateContentException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidApprovalRuleTemplateDescriptionException
+  extends /*@__PURE__*/ S.TaggedError<InvalidApprovalRuleTemplateDescriptionException>()(
+    "InvalidApprovalRuleTemplateDescriptionException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidApprovalRuleTemplateNameException
+  extends /*@__PURE__*/ S.TaggedError<InvalidApprovalRuleTemplateNameException>()(
+    "InvalidApprovalRuleTemplateNameException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidApprovalStateException
+  extends /*@__PURE__*/ S.TaggedError<InvalidApprovalStateException>()(
+    "InvalidApprovalStateException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidAuthorArnException
+  extends /*@__PURE__*/ S.TaggedError<InvalidAuthorArnException>()(
+    "InvalidAuthorArnException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidBlobIdException
+  extends /*@__PURE__*/ S.TaggedError<InvalidBlobIdException>()(
+    "InvalidBlobIdException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidBranchNameException
+  extends /*@__PURE__*/ S.TaggedError<InvalidBranchNameException>()(
+    "InvalidBranchNameException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidClientRequestTokenException
+  extends /*@__PURE__*/ S.TaggedError<InvalidClientRequestTokenException>()(
+    "InvalidClientRequestTokenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidCommentIdException
+  extends /*@__PURE__*/ S.TaggedError<InvalidCommentIdException>()(
+    "InvalidCommentIdException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidCommitException
+  extends /*@__PURE__*/ S.TaggedError<InvalidCommitException>()(
+    "InvalidCommitException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidCommitIdException
+  extends /*@__PURE__*/ S.TaggedError<InvalidCommitIdException>()(
+    "InvalidCommitIdException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidConflictDetailLevelException
+  extends /*@__PURE__*/ S.TaggedError<InvalidConflictDetailLevelException>()(
+    "InvalidConflictDetailLevelException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidConflictResolutionException
+  extends /*@__PURE__*/ S.TaggedError<InvalidConflictResolutionException>()(
+    "InvalidConflictResolutionException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidConflictResolutionStrategyException
+  extends /*@__PURE__*/ S.TaggedError<InvalidConflictResolutionStrategyException>()(
+    "InvalidConflictResolutionStrategyException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidContinuationTokenException
+  extends /*@__PURE__*/ S.TaggedError<InvalidContinuationTokenException>()(
+    "InvalidContinuationTokenException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidDeletionParameterException
+  extends /*@__PURE__*/ S.TaggedError<InvalidDeletionParameterException>()(
+    "InvalidDeletionParameterException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidDescriptionException
+  extends /*@__PURE__*/ S.TaggedError<InvalidDescriptionException>()(
+    "InvalidDescriptionException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidDestinationCommitSpecifierException
+  extends /*@__PURE__*/ S.TaggedError<InvalidDestinationCommitSpecifierException>()(
+    "InvalidDestinationCommitSpecifierException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidEmailException
+  extends /*@__PURE__*/ S.TaggedError<InvalidEmailException>()(
+    "InvalidEmailException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidFileLocationException
+  extends /*@__PURE__*/ S.TaggedError<InvalidFileLocationException>()(
+    "InvalidFileLocationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidFileModeException
+  extends /*@__PURE__*/ S.TaggedError<InvalidFileModeException>()(
+    "InvalidFileModeException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidFilePositionException
+  extends /*@__PURE__*/ S.TaggedError<InvalidFilePositionException>()(
+    "InvalidFilePositionException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidMaxConflictFilesException
+  extends /*@__PURE__*/ S.TaggedError<InvalidMaxConflictFilesException>()(
+    "InvalidMaxConflictFilesException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidMaxMergeHunksException
+  extends /*@__PURE__*/ S.TaggedError<InvalidMaxMergeHunksException>()(
+    "InvalidMaxMergeHunksException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidMaxResultsException
+  extends /*@__PURE__*/ S.TaggedError<InvalidMaxResultsException>()(
+    "InvalidMaxResultsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidMergeOptionException
+  extends /*@__PURE__*/ S.TaggedError<InvalidMergeOptionException>()(
+    "InvalidMergeOptionException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidOrderException
+  extends /*@__PURE__*/ S.TaggedError<InvalidOrderException>()(
+    "InvalidOrderException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidOverrideStatusException
+  extends /*@__PURE__*/ S.TaggedError<InvalidOverrideStatusException>()(
+    "InvalidOverrideStatusException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidParentCommitIdException
+  extends /*@__PURE__*/ S.TaggedError<InvalidParentCommitIdException>()(
+    "InvalidParentCommitIdException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidPathException
+  extends /*@__PURE__*/ S.TaggedError<InvalidPathException>()(
+    "InvalidPathException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidPullRequestEventTypeException
+  extends /*@__PURE__*/ S.TaggedError<InvalidPullRequestEventTypeException>()(
+    "InvalidPullRequestEventTypeException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidPullRequestIdException
+  extends /*@__PURE__*/ S.TaggedError<InvalidPullRequestIdException>()(
+    "InvalidPullRequestIdException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidPullRequestStatusException
+  extends /*@__PURE__*/ S.TaggedError<InvalidPullRequestStatusException>()(
+    "InvalidPullRequestStatusException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidPullRequestStatusUpdateException
+  extends /*@__PURE__*/ S.TaggedError<InvalidPullRequestStatusUpdateException>()(
+    "InvalidPullRequestStatusUpdateException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidReactionUserArnException
+  extends /*@__PURE__*/ S.TaggedError<InvalidReactionUserArnException>()(
+    "InvalidReactionUserArnException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidReactionValueException
+  extends /*@__PURE__*/ S.TaggedError<InvalidReactionValueException>()(
+    "InvalidReactionValueException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidReferenceNameException
+  extends /*@__PURE__*/ S.TaggedError<InvalidReferenceNameException>()(
+    "InvalidReferenceNameException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidRelativeFileVersionEnumException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRelativeFileVersionEnumException>()(
+    "InvalidRelativeFileVersionEnumException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidReplacementContentException
+  extends /*@__PURE__*/ S.TaggedError<InvalidReplacementContentException>()(
+    "InvalidReplacementContentException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidReplacementTypeException
+  extends /*@__PURE__*/ S.TaggedError<InvalidReplacementTypeException>()(
+    "InvalidReplacementTypeException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidRepositoryDescriptionException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRepositoryDescriptionException>()(
+    "InvalidRepositoryDescriptionException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidRepositoryNameException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRepositoryNameException>()(
+    "InvalidRepositoryNameException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidRepositoryTriggerBranchNameException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRepositoryTriggerBranchNameException>()(
+    "InvalidRepositoryTriggerBranchNameException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidRepositoryTriggerCustomDataException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRepositoryTriggerCustomDataException>()(
+    "InvalidRepositoryTriggerCustomDataException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidRepositoryTriggerDestinationArnException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRepositoryTriggerDestinationArnException>()(
+    "InvalidRepositoryTriggerDestinationArnException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidRepositoryTriggerEventsException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRepositoryTriggerEventsException>()(
+    "InvalidRepositoryTriggerEventsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidRepositoryTriggerNameException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRepositoryTriggerNameException>()(
+    "InvalidRepositoryTriggerNameException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidRepositoryTriggerRegionException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRepositoryTriggerRegionException>()(
+    "InvalidRepositoryTriggerRegionException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidResourceArnException
+  extends /*@__PURE__*/ S.TaggedError<InvalidResourceArnException>()(
+    "InvalidResourceArnException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidRevisionIdException
+  extends /*@__PURE__*/ S.TaggedError<InvalidRevisionIdException>()(
+    "InvalidRevisionIdException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidRuleContentSha256Exception
+  extends /*@__PURE__*/ S.TaggedError<InvalidRuleContentSha256Exception>()(
+    "InvalidRuleContentSha256Exception",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidSortByException
+  extends /*@__PURE__*/ S.TaggedError<InvalidSortByException>()(
+    "InvalidSortByException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidSourceCommitSpecifierException
+  extends /*@__PURE__*/ S.TaggedError<InvalidSourceCommitSpecifierException>()(
+    "InvalidSourceCommitSpecifierException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidSystemTagUsageException
+  extends /*@__PURE__*/ S.TaggedError<InvalidSystemTagUsageException>()(
+    "InvalidSystemTagUsageException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidTagKeysListException
+  extends /*@__PURE__*/ S.TaggedError<InvalidTagKeysListException>()(
+    "InvalidTagKeysListException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidTagsMapException
+  extends /*@__PURE__*/ S.TaggedError<InvalidTagsMapException>()(
+    "InvalidTagsMapException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidTargetBranchException
+  extends /*@__PURE__*/ S.TaggedError<InvalidTargetBranchException>()(
+    "InvalidTargetBranchException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidTargetException
+  extends /*@__PURE__*/ S.TaggedError<InvalidTargetException>()(
+    "InvalidTargetException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidTargetsException
+  extends /*@__PURE__*/ S.TaggedError<InvalidTargetsException>()(
+    "InvalidTargetsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class InvalidTitleException
+  extends /*@__PURE__*/ S.TaggedError<InvalidTitleException>()(
+    "InvalidTitleException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ManualMergeRequiredException
+  extends /*@__PURE__*/ S.TaggedError<ManualMergeRequiredException>()(
+    "ManualMergeRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class MaximumBranchesExceededException
+  extends /*@__PURE__*/ S.TaggedError<MaximumBranchesExceededException>()(
+    "MaximumBranchesExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class MaximumConflictResolutionEntriesExceededException
+  extends /*@__PURE__*/ S.TaggedError<MaximumConflictResolutionEntriesExceededException>()(
+    "MaximumConflictResolutionEntriesExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class MaximumFileContentToLoadExceededException
+  extends /*@__PURE__*/ S.TaggedError<MaximumFileContentToLoadExceededException>()(
+    "MaximumFileContentToLoadExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class MaximumFileEntriesExceededException
+  extends /*@__PURE__*/ S.TaggedError<MaximumFileEntriesExceededException>()(
+    "MaximumFileEntriesExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class MaximumItemsToCompareExceededException
+  extends /*@__PURE__*/ S.TaggedError<MaximumItemsToCompareExceededException>()(
+    "MaximumItemsToCompareExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class MaximumNumberOfApprovalsExceededException
+  extends /*@__PURE__*/ S.TaggedError<MaximumNumberOfApprovalsExceededException>()(
+    "MaximumNumberOfApprovalsExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class MaximumOpenPullRequestsExceededException
+  extends /*@__PURE__*/ S.TaggedError<MaximumOpenPullRequestsExceededException>()(
+    "MaximumOpenPullRequestsExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class MaximumRepositoryNamesExceededException
+  extends /*@__PURE__*/ S.TaggedError<MaximumRepositoryNamesExceededException>()(
+    "MaximumRepositoryNamesExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class MaximumRepositoryTriggersExceededException
+  extends /*@__PURE__*/ S.TaggedError<MaximumRepositoryTriggersExceededException>()(
+    "MaximumRepositoryTriggersExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class MaximumRuleTemplatesAssociatedWithRepositoryException
+  extends /*@__PURE__*/ S.TaggedError<MaximumRuleTemplatesAssociatedWithRepositoryException>()(
+    "MaximumRuleTemplatesAssociatedWithRepositoryException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class MergeOptionRequiredException
+  extends /*@__PURE__*/ S.TaggedError<MergeOptionRequiredException>()(
+    "MergeOptionRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class MultipleConflictResolutionEntriesException
+  extends /*@__PURE__*/ S.TaggedError<MultipleConflictResolutionEntriesException>()(
+    "MultipleConflictResolutionEntriesException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class MultipleRepositoriesInPullRequestException
+  extends /*@__PURE__*/ S.TaggedError<MultipleRepositoriesInPullRequestException>()(
+    "MultipleRepositoriesInPullRequestException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class NameLengthExceededException
+  extends /*@__PURE__*/ S.TaggedError<NameLengthExceededException>()(
+    "NameLengthExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class NoChangeException
+  extends /*@__PURE__*/ S.TaggedError<NoChangeException>()(
+    "NoChangeException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class NumberOfRulesExceededException
+  extends /*@__PURE__*/ S.TaggedError<NumberOfRulesExceededException>()(
+    "NumberOfRulesExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class NumberOfRuleTemplatesExceededException
+  extends /*@__PURE__*/ S.TaggedError<NumberOfRuleTemplatesExceededException>()(
+    "NumberOfRuleTemplatesExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class OperationNotAllowedException
+  extends /*@__PURE__*/ S.TaggedError<OperationNotAllowedException>()(
+    "OperationNotAllowedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class OverrideAlreadySetException
+  extends /*@__PURE__*/ S.TaggedError<OverrideAlreadySetException>()(
+    "OverrideAlreadySetException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class OverrideStatusRequiredException
+  extends /*@__PURE__*/ S.TaggedError<OverrideStatusRequiredException>()(
+    "OverrideStatusRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ParentCommitDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<ParentCommitDoesNotExistException>()(
+    "ParentCommitDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ParentCommitIdOutdatedException
+  extends /*@__PURE__*/ S.TaggedError<ParentCommitIdOutdatedException>()(
+    "ParentCommitIdOutdatedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ParentCommitIdRequiredException
+  extends /*@__PURE__*/ S.TaggedError<ParentCommitIdRequiredException>()(
+    "ParentCommitIdRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class PathDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<PathDoesNotExistException>()(
+    "PathDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class PathRequiredException
+  extends /*@__PURE__*/ S.TaggedError<PathRequiredException>()(
+    "PathRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class PullRequestAlreadyClosedException
+  extends /*@__PURE__*/ S.TaggedError<PullRequestAlreadyClosedException>()(
+    "PullRequestAlreadyClosedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class PullRequestApprovalRulesNotSatisfiedException
+  extends /*@__PURE__*/ S.TaggedError<PullRequestApprovalRulesNotSatisfiedException>()(
+    "PullRequestApprovalRulesNotSatisfiedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class PullRequestCannotBeApprovedByAuthorException
+  extends /*@__PURE__*/ S.TaggedError<PullRequestCannotBeApprovedByAuthorException>()(
+    "PullRequestCannotBeApprovedByAuthorException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class PullRequestDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<PullRequestDoesNotExistException>()(
+    "PullRequestDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class PullRequestIdRequiredException
+  extends /*@__PURE__*/ S.TaggedError<PullRequestIdRequiredException>()(
+    "PullRequestIdRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class PullRequestStatusRequiredException
+  extends /*@__PURE__*/ S.TaggedError<PullRequestStatusRequiredException>()(
+    "PullRequestStatusRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class PutFileEntryConflictException
+  extends /*@__PURE__*/ S.TaggedError<PutFileEntryConflictException>()(
+    "PutFileEntryConflictException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ReactionLimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<ReactionLimitExceededException>()(
+    "ReactionLimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ReactionValueRequiredException
+  extends /*@__PURE__*/ S.TaggedError<ReactionValueRequiredException>()(
+    "ReactionValueRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ReferenceDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<ReferenceDoesNotExistException>()(
+    "ReferenceDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ReferenceNameRequiredException
+  extends /*@__PURE__*/ S.TaggedError<ReferenceNameRequiredException>()(
+    "ReferenceNameRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ReferenceTypeNotSupportedException
+  extends /*@__PURE__*/ S.TaggedError<ReferenceTypeNotSupportedException>()(
+    "ReferenceTypeNotSupportedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ReplacementContentRequiredException
+  extends /*@__PURE__*/ S.TaggedError<ReplacementContentRequiredException>()(
+    "ReplacementContentRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ReplacementTypeRequiredException
+  extends /*@__PURE__*/ S.TaggedError<ReplacementTypeRequiredException>()(
+    "ReplacementTypeRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RepositoryDoesNotExistException
+  extends /*@__PURE__*/ S.TaggedError<RepositoryDoesNotExistException>()(
+    "RepositoryDoesNotExistException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RepositoryLimitExceededException
+  extends /*@__PURE__*/ S.TaggedError<RepositoryLimitExceededException>()(
+    "RepositoryLimitExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RepositoryNameExistsException
+  extends /*@__PURE__*/ S.TaggedError<RepositoryNameExistsException>()(
+    "RepositoryNameExistsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RepositoryNameRequiredException
+  extends /*@__PURE__*/ S.TaggedError<RepositoryNameRequiredException>()(
+    "RepositoryNameRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RepositoryNamesRequiredException
+  extends /*@__PURE__*/ S.TaggedError<RepositoryNamesRequiredException>()(
+    "RepositoryNamesRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RepositoryNotAssociatedWithPullRequestException
+  extends /*@__PURE__*/ S.TaggedError<RepositoryNotAssociatedWithPullRequestException>()(
+    "RepositoryNotAssociatedWithPullRequestException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RepositoryTriggerBranchNameListRequiredException
+  extends /*@__PURE__*/ S.TaggedError<RepositoryTriggerBranchNameListRequiredException>()(
+    "RepositoryTriggerBranchNameListRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RepositoryTriggerDestinationArnRequiredException
+  extends /*@__PURE__*/ S.TaggedError<RepositoryTriggerDestinationArnRequiredException>()(
+    "RepositoryTriggerDestinationArnRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RepositoryTriggerEventsListRequiredException
+  extends /*@__PURE__*/ S.TaggedError<RepositoryTriggerEventsListRequiredException>()(
+    "RepositoryTriggerEventsListRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RepositoryTriggerNameRequiredException
+  extends /*@__PURE__*/ S.TaggedError<RepositoryTriggerNameRequiredException>()(
+    "RepositoryTriggerNameRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RepositoryTriggersListRequiredException
+  extends /*@__PURE__*/ S.TaggedError<RepositoryTriggersListRequiredException>()(
+    "RepositoryTriggersListRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class ResourceArnRequiredException
+  extends /*@__PURE__*/ S.TaggedError<ResourceArnRequiredException>()(
+    "ResourceArnRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RestrictedSourceFileException
+  extends /*@__PURE__*/ S.TaggedError<RestrictedSourceFileException>()(
+    "RestrictedSourceFileException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RevisionIdRequiredException
+  extends /*@__PURE__*/ S.TaggedError<RevisionIdRequiredException>()(
+    "RevisionIdRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class RevisionNotCurrentException
+  extends /*@__PURE__*/ S.TaggedError<RevisionNotCurrentException>()(
+    "RevisionNotCurrentException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class SameFileContentException
+  extends /*@__PURE__*/ S.TaggedError<SameFileContentException>()(
+    "SameFileContentException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class SamePathRequestException
+  extends /*@__PURE__*/ S.TaggedError<SamePathRequestException>()(
+    "SamePathRequestException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class SourceAndDestinationAreSameException
+  extends /*@__PURE__*/ S.TaggedError<SourceAndDestinationAreSameException>()(
+    "SourceAndDestinationAreSameException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class SourceFileOrContentRequiredException
+  extends /*@__PURE__*/ S.TaggedError<SourceFileOrContentRequiredException>()(
+    "SourceFileOrContentRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class TagKeysListRequiredException
+  extends /*@__PURE__*/ S.TaggedError<TagKeysListRequiredException>()(
+    "TagKeysListRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class TagPolicyException
+  extends /*@__PURE__*/ S.TaggedError<TagPolicyException>()(
+    "TagPolicyException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class TagsMapRequiredException
+  extends /*@__PURE__*/ S.TaggedError<TagsMapRequiredException>()(
+    "TagsMapRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class TargetRequiredException
+  extends /*@__PURE__*/ S.TaggedError<TargetRequiredException>()(
+    "TargetRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class TargetsRequiredException
+  extends /*@__PURE__*/ S.TaggedError<TargetsRequiredException>()(
+    "TargetsRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class TipOfSourceReferenceIsDifferentException
+  extends /*@__PURE__*/ S.TaggedError<TipOfSourceReferenceIsDifferentException>()(
+    "TipOfSourceReferenceIsDifferentException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class TipsDivergenceExceededException
+  extends /*@__PURE__*/ S.TaggedError<TipsDivergenceExceededException>()(
+    "TipsDivergenceExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class TitleRequiredException
+  extends /*@__PURE__*/ S.TaggedError<TitleRequiredException>()(
+    "TitleRequiredException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
+export class TooManyTagsException
+  extends /*@__PURE__*/ S.TaggedError<TooManyTagsException>()(
+    "TooManyTagsException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+  ) {}
 export type ApprovalRuleTemplateName = string;
 export type RepositoryName = string;
-export type Message = string;
-export type ErrorCode = string;
-export type ErrorMessage = string;
-export type CommitName = string;
-export type MaxResults = number;
-export type Path = string;
-export type NextToken = string;
-export type FileSize = number;
-export type NumberOfConflicts = number;
-export type CapitalBoolean = boolean;
-export type IsContentConflict = boolean;
-export type IsFileModeConflict = boolean;
-export type IsObjectTypeConflict = boolean;
-export type IsHunkConflict = boolean;
-export type LineNumber = number;
-export type HunkContent = string;
-export type ExceptionName = string;
-export type ObjectId = string;
-export type Name = string;
-export type Email = string;
-export type AdditionalData = string;
-export type AccountId = string;
-export type RepositoryId = string;
-export type RepositoryDescription = string;
-export type BranchName = string;
-export type LastModifiedDate = Date;
-export type CreationDate = Date;
-export type CloneUrlHttp = string;
-export type CloneUrlSsh = string;
-export type Arn = string;
-export type KmsKeyId = string;
-export type ApprovalRuleTemplateContent = string;
-export type ApprovalRuleTemplateDescription = string;
-export type ApprovalRuleTemplateId = string;
-export type RuleContentSha256 = string;
-export type CommitId = string;
-export type KeepEmptyFolders = boolean;
-export type FileContent = Uint8Array;
-export type IsMove = boolean;
-export type Title = string;
-export type Description = string;
-export type ReferenceName = string;
-export type ClientRequestToken = string;
-export type PullRequestId = string;
-export type IsMerged = boolean;
-export type RevisionId = string;
-export type ApprovalRuleId = string;
-export type ApprovalRuleName = string;
-export type ApprovalRuleContent = string;
-export type TagKey = string;
-export type TagValue = string;
-export type CommentId = string;
-export type Content = string;
-export type IsCommentDeleted = boolean;
-export type ReactionValue = string;
-export type Count = number;
-export type EventDate = Date;
-export type Approved = boolean;
-export type Overridden = boolean;
-export type ReactionEmoji = string;
-export type ReactionShortCode = string;
-export type ReactionUnicode = string;
-export type Position = number;
-export type Limit = number;
-export type Mode = string;
-export type ObjectSize = number;
-export type IsMergeable = boolean;
-export type RepositoryTriggersConfigurationId = string;
-export type RepositoryTriggerName = string;
-export type RepositoryTriggerCustomData = string;
-export type ResourceArn = string;
-export type RepositoryTriggerExecutionFailureMessage = string;
-
-//# Schemas
 export interface AssociateApprovalRuleTemplateWithRepositoryInput {
   approvalRuleTemplateName: string;
   repositoryName: string;
 }
 export const AssociateApprovalRuleTemplateWithRepositoryInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       approvalRuleTemplateName: S.String,
       repositoryName: S.String,
@@ -186,17 +1056,17 @@ export const AssociateApprovalRuleTemplateWithRepositoryInput =
   }) as any as S.Schema<AssociateApprovalRuleTemplateWithRepositoryInput>;
 export interface AssociateApprovalRuleTemplateWithRepositoryResponse {}
 export const AssociateApprovalRuleTemplateWithRepositoryResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
+  /*@__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
     identifier: "AssociateApprovalRuleTemplateWithRepositoryResponse",
   }) as any as S.Schema<AssociateApprovalRuleTemplateWithRepositoryResponse>;
 export type RepositoryNameList = string[];
-export const RepositoryNameList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const RepositoryNameList = /*@__PURE__*/ S.Array(S.String);
 export interface BatchAssociateApprovalRuleTemplateWithRepositoriesInput {
   approvalRuleTemplateName: string;
   repositoryNames: string[];
 }
 export const BatchAssociateApprovalRuleTemplateWithRepositoriesInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       approvalRuleTemplateName: S.String,
       repositoryNames: RepositoryNameList,
@@ -214,13 +1084,15 @@ export const BatchAssociateApprovalRuleTemplateWithRepositoriesInput =
   ).annotate({
     identifier: "BatchAssociateApprovalRuleTemplateWithRepositoriesInput",
   }) as any as S.Schema<BatchAssociateApprovalRuleTemplateWithRepositoriesInput>;
+export type ErrorCode = string;
+export type ErrorMessage = string;
 export interface BatchAssociateApprovalRuleTemplateWithRepositoriesError_ {
   repositoryName?: string;
   errorCode?: string;
   errorMessage?: string;
 }
 export const BatchAssociateApprovalRuleTemplateWithRepositoriesError_ =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       repositoryName: S.optional(S.String),
       errorCode: S.optional(S.String),
@@ -232,7 +1104,7 @@ export const BatchAssociateApprovalRuleTemplateWithRepositoriesError_ =
 export type BatchAssociateApprovalRuleTemplateWithRepositoriesErrorsList =
   BatchAssociateApprovalRuleTemplateWithRepositoriesError_[];
 export const BatchAssociateApprovalRuleTemplateWithRepositoriesErrorsList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(
+  /*@__PURE__*/ S.Array(
     BatchAssociateApprovalRuleTemplateWithRepositoriesError_,
   );
 export interface BatchAssociateApprovalRuleTemplateWithRepositoriesOutput {
@@ -240,7 +1112,7 @@ export interface BatchAssociateApprovalRuleTemplateWithRepositoriesOutput {
   errors: BatchAssociateApprovalRuleTemplateWithRepositoriesError_[];
 }
 export const BatchAssociateApprovalRuleTemplateWithRepositoriesOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       associatedRepositoryNames: RepositoryNameList,
       errors: BatchAssociateApprovalRuleTemplateWithRepositoriesErrorsList,
@@ -248,27 +1120,33 @@ export const BatchAssociateApprovalRuleTemplateWithRepositoriesOutput =
   ).annotate({
     identifier: "BatchAssociateApprovalRuleTemplateWithRepositoriesOutput",
   }) as any as S.Schema<BatchAssociateApprovalRuleTemplateWithRepositoriesOutput>;
+export type CommitName = string;
 export type MergeOptionTypeEnum =
   | "FAST_FORWARD_MERGE"
   | "SQUASH_MERGE"
   | "THREE_WAY_MERGE"
   | (string & {});
-export const MergeOptionTypeEnum = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const MergeOptionTypeEnum = /*@__PURE__*/ S.String;
+
+export type MaxResults = number;
+export type Path = string;
 export type FilePaths = string[];
-export const FilePaths = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const FilePaths = /*@__PURE__*/ S.Array(S.String);
 export type ConflictDetailLevelTypeEnum =
   | "FILE_LEVEL"
   | "LINE_LEVEL"
   | (string & {});
-export const ConflictDetailLevelTypeEnum = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ConflictDetailLevelTypeEnum = /*@__PURE__*/ S.String;
+
 export type ConflictResolutionStrategyTypeEnum =
   | "NONE"
   | "ACCEPT_SOURCE"
   | "ACCEPT_DESTINATION"
   | "AUTOMERGE"
   | (string & {});
-export const ConflictResolutionStrategyTypeEnum =
-  /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ConflictResolutionStrategyTypeEnum = /*@__PURE__*/ S.String;
+
+export type NextToken = string;
 export interface BatchDescribeMergeConflictsInput {
   repositoryName: string;
   destinationCommitSpecifier: string;
@@ -281,41 +1159,39 @@ export interface BatchDescribeMergeConflictsInput {
   conflictResolutionStrategy?: ConflictResolutionStrategyTypeEnum;
   nextToken?: string;
 }
-export const BatchDescribeMergeConflictsInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryName: S.String,
-      destinationCommitSpecifier: S.String,
-      sourceCommitSpecifier: S.String,
-      mergeOption: MergeOptionTypeEnum,
-      maxMergeHunks: S.optional(S.Number),
-      maxConflictFiles: S.optional(S.Number),
-      filePaths: S.optional(FilePaths),
-      conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
-      conflictResolutionStrategy: S.optional(
-        ConflictResolutionStrategyTypeEnum,
-      ),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const BatchDescribeMergeConflictsInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.String,
+    destinationCommitSpecifier: S.String,
+    sourceCommitSpecifier: S.String,
+    mergeOption: MergeOptionTypeEnum,
+    maxMergeHunks: S.optional(S.Number),
+    maxConflictFiles: S.optional(S.Number),
+    filePaths: S.optional(FilePaths),
+    conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
+    conflictResolutionStrategy: S.optional(ConflictResolutionStrategyTypeEnum),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "BatchDescribeMergeConflictsInput",
-  }) as any as S.Schema<BatchDescribeMergeConflictsInput>;
+  ),
+).annotate({
+  identifier: "BatchDescribeMergeConflictsInput",
+}) as any as S.Schema<BatchDescribeMergeConflictsInput>;
+export type FileSize = number;
 export interface FileSizes {
   source?: number;
   destination?: number;
   base?: number;
 }
-export const FileSizes = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const FileSizes = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     source: S.optional(S.Number),
     destination: S.optional(S.Number),
@@ -327,13 +1203,14 @@ export type FileModeTypeEnum =
   | "NORMAL"
   | "SYMLINK"
   | (string & {});
-export const FileModeTypeEnum = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const FileModeTypeEnum = /*@__PURE__*/ S.String;
+
 export interface FileModes {
   source?: FileModeTypeEnum;
   destination?: FileModeTypeEnum;
   base?: FileModeTypeEnum;
 }
-export const FileModes = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const FileModes = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     source: S.optional(FileModeTypeEnum),
     destination: S.optional(FileModeTypeEnum),
@@ -346,38 +1223,45 @@ export type ObjectTypeEnum =
   | "GIT_LINK"
   | "SYMBOLIC_LINK"
   | (string & {});
-export const ObjectTypeEnum = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ObjectTypeEnum = /*@__PURE__*/ S.String;
+
 export interface ObjectTypes {
   source?: ObjectTypeEnum;
   destination?: ObjectTypeEnum;
   base?: ObjectTypeEnum;
 }
-export const ObjectTypes = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ObjectTypes = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     source: S.optional(ObjectTypeEnum),
     destination: S.optional(ObjectTypeEnum),
     base: S.optional(ObjectTypeEnum),
   }),
 ).annotate({ identifier: "ObjectTypes" }) as any as S.Schema<ObjectTypes>;
+export type NumberOfConflicts = number;
+export type CapitalBoolean = boolean;
 export interface IsBinaryFile {
   source?: boolean;
   destination?: boolean;
   base?: boolean;
 }
-export const IsBinaryFile = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const IsBinaryFile = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     source: S.optional(S.Boolean),
     destination: S.optional(S.Boolean),
     base: S.optional(S.Boolean),
   }),
 ).annotate({ identifier: "IsBinaryFile" }) as any as S.Schema<IsBinaryFile>;
+export type IsContentConflict = boolean;
+export type IsFileModeConflict = boolean;
+export type IsObjectTypeConflict = boolean;
 export type ChangeTypeEnum = "A" | "M" | "D" | (string & {});
-export const ChangeTypeEnum = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ChangeTypeEnum = /*@__PURE__*/ S.String;
+
 export interface MergeOperations {
   source?: ChangeTypeEnum;
   destination?: ChangeTypeEnum;
 }
-export const MergeOperations = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const MergeOperations = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     source: S.optional(ChangeTypeEnum),
     destination: S.optional(ChangeTypeEnum),
@@ -397,7 +1281,7 @@ export interface ConflictMetadata {
   objectTypeConflict?: boolean;
   mergeOperations?: MergeOperations;
 }
-export const ConflictMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ConflictMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     filePath: S.optional(S.String),
     fileSizes: S.optional(FileSizes),
@@ -413,12 +1297,15 @@ export const ConflictMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ConflictMetadata",
 }) as any as S.Schema<ConflictMetadata>;
+export type IsHunkConflict = boolean;
+export type LineNumber = number;
+export type HunkContent = string;
 export interface MergeHunkDetail {
   startLine?: number;
   endLine?: number;
   hunkContent?: string;
 }
-export const MergeHunkDetail = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const MergeHunkDetail = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     startLine: S.optional(S.Number),
     endLine: S.optional(S.Number),
@@ -433,7 +1320,7 @@ export interface MergeHunk {
   destination?: MergeHunkDetail;
   base?: MergeHunkDetail;
 }
-export const MergeHunk = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const MergeHunk = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     isConflict: S.optional(S.Boolean),
     source: S.optional(MergeHunkDetail),
@@ -442,38 +1329,37 @@ export const MergeHunk = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "MergeHunk" }) as any as S.Schema<MergeHunk>;
 export type MergeHunks = MergeHunk[];
-export const MergeHunks = /*@__PURE__*/ /*#__PURE__*/ S.Array(MergeHunk);
+export const MergeHunks = /*@__PURE__*/ S.Array(MergeHunk);
 export interface Conflict {
   conflictMetadata?: ConflictMetadata;
   mergeHunks?: MergeHunk[];
 }
-export const Conflict = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Conflict = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     conflictMetadata: S.optional(ConflictMetadata),
     mergeHunks: S.optional(MergeHunks),
   }),
 ).annotate({ identifier: "Conflict" }) as any as S.Schema<Conflict>;
 export type Conflicts = Conflict[];
-export const Conflicts = /*@__PURE__*/ /*#__PURE__*/ S.Array(Conflict);
+export const Conflicts = /*@__PURE__*/ S.Array(Conflict);
+export type ExceptionName = string;
+export type Message = string;
 export interface BatchDescribeMergeConflictsError_ {
   filePath: string;
   exceptionName: string;
   message: string;
 }
-export const BatchDescribeMergeConflictsError_ =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      filePath: S.String,
-      exceptionName: S.String,
-      message: S.String,
-    }),
-  ).annotate({
-    identifier: "BatchDescribeMergeConflictsError",
-  }) as any as S.Schema<BatchDescribeMergeConflictsError_>;
+export const BatchDescribeMergeConflictsError_ = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ filePath: S.String, exceptionName: S.String, message: S.String }),
+).annotate({
+  identifier: "BatchDescribeMergeConflictsError",
+}) as any as S.Schema<BatchDescribeMergeConflictsError_>;
 export type BatchDescribeMergeConflictsErrors =
   BatchDescribeMergeConflictsError_[];
-export const BatchDescribeMergeConflictsErrors =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(BatchDescribeMergeConflictsError_);
+export const BatchDescribeMergeConflictsErrors = /*@__PURE__*/ S.Array(
+  BatchDescribeMergeConflictsError_,
+);
+export type ObjectId = string;
 export interface BatchDescribeMergeConflictsOutput {
   conflicts: Conflict[];
   nextToken?: string;
@@ -482,25 +1368,24 @@ export interface BatchDescribeMergeConflictsOutput {
   sourceCommitId: string;
   baseCommitId?: string;
 }
-export const BatchDescribeMergeConflictsOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      conflicts: Conflicts,
-      nextToken: S.optional(S.String),
-      errors: S.optional(BatchDescribeMergeConflictsErrors),
-      destinationCommitId: S.String,
-      sourceCommitId: S.String,
-      baseCommitId: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "BatchDescribeMergeConflictsOutput",
-  }) as any as S.Schema<BatchDescribeMergeConflictsOutput>;
+export const BatchDescribeMergeConflictsOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    conflicts: Conflicts,
+    nextToken: S.optional(S.String),
+    errors: S.optional(BatchDescribeMergeConflictsErrors),
+    destinationCommitId: S.String,
+    sourceCommitId: S.String,
+    baseCommitId: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "BatchDescribeMergeConflictsOutput",
+}) as any as S.Schema<BatchDescribeMergeConflictsOutput>;
 export interface BatchDisassociateApprovalRuleTemplateFromRepositoriesInput {
   approvalRuleTemplateName: string;
   repositoryNames: string[];
 }
 export const BatchDisassociateApprovalRuleTemplateFromRepositoriesInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       approvalRuleTemplateName: S.String,
       repositoryNames: RepositoryNameList,
@@ -524,7 +1409,7 @@ export interface BatchDisassociateApprovalRuleTemplateFromRepositoriesError_ {
   errorMessage?: string;
 }
 export const BatchDisassociateApprovalRuleTemplateFromRepositoriesError_ =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       repositoryName: S.optional(S.String),
       errorCode: S.optional(S.String),
@@ -536,7 +1421,7 @@ export const BatchDisassociateApprovalRuleTemplateFromRepositoriesError_ =
 export type BatchDisassociateApprovalRuleTemplateFromRepositoriesErrorsList =
   BatchDisassociateApprovalRuleTemplateFromRepositoriesError_[];
 export const BatchDisassociateApprovalRuleTemplateFromRepositoriesErrorsList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(
+  /*@__PURE__*/ S.Array(
     BatchDisassociateApprovalRuleTemplateFromRepositoriesError_,
   );
 export interface BatchDisassociateApprovalRuleTemplateFromRepositoriesOutput {
@@ -544,7 +1429,7 @@ export interface BatchDisassociateApprovalRuleTemplateFromRepositoriesOutput {
   errors: BatchDisassociateApprovalRuleTemplateFromRepositoriesError_[];
 }
 export const BatchDisassociateApprovalRuleTemplateFromRepositoriesOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       disassociatedRepositoryNames: RepositoryNameList,
       errors: BatchDisassociateApprovalRuleTemplateFromRepositoriesErrorsList,
@@ -553,12 +1438,12 @@ export const BatchDisassociateApprovalRuleTemplateFromRepositoriesOutput =
     identifier: "BatchDisassociateApprovalRuleTemplateFromRepositoriesOutput",
   }) as any as S.Schema<BatchDisassociateApprovalRuleTemplateFromRepositoriesOutput>;
 export type CommitIdsInputList = string[];
-export const CommitIdsInputList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const CommitIdsInputList = /*@__PURE__*/ S.Array(S.String);
 export interface BatchGetCommitsInput {
   commitIds: string[];
   repositoryName: string;
 }
-export const BatchGetCommitsInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const BatchGetCommitsInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ commitIds: CommitIdsInputList, repositoryName: S.String }).pipe(
     T.all(
       ns,
@@ -574,19 +1459,22 @@ export const BatchGetCommitsInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "BatchGetCommitsInput",
 }) as any as S.Schema<BatchGetCommitsInput>;
 export type ParentList = string[];
-export const ParentList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ParentList = /*@__PURE__*/ S.Array(S.String);
+export type Name = string;
+export type Email = string;
 export interface UserInfo {
   name?: string;
   email?: string;
   date?: string;
 }
-export const UserInfo = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UserInfo = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     name: S.optional(S.String),
     email: S.optional(S.String),
     date: S.optional(S.String),
   }),
 ).annotate({ identifier: "UserInfo" }) as any as S.Schema<UserInfo>;
+export type AdditionalData = string;
 export interface Commit {
   commitId?: string;
   treeId?: string;
@@ -596,7 +1484,7 @@ export interface Commit {
   committer?: UserInfo;
   additionalData?: string;
 }
-export const Commit = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Commit = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     commitId: S.optional(S.String),
     treeId: S.optional(S.String),
@@ -608,13 +1496,13 @@ export const Commit = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Commit" }) as any as S.Schema<Commit>;
 export type CommitObjectsList = Commit[];
-export const CommitObjectsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Commit);
+export const CommitObjectsList = /*@__PURE__*/ S.Array(Commit);
 export interface BatchGetCommitsError_ {
   commitId?: string;
   errorCode?: string;
   errorMessage?: string;
 }
-export const BatchGetCommitsError_ = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const BatchGetCommitsError_ = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     commitId: S.optional(S.String),
     errorCode: S.optional(S.String),
@@ -624,14 +1512,14 @@ export const BatchGetCommitsError_ = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "BatchGetCommitsError",
 }) as any as S.Schema<BatchGetCommitsError_>;
 export type BatchGetCommitsErrorsList = BatchGetCommitsError_[];
-export const BatchGetCommitsErrorsList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const BatchGetCommitsErrorsList = /*@__PURE__*/ S.Array(
   BatchGetCommitsError_,
 );
 export interface BatchGetCommitsOutput {
   commits?: Commit[];
   errors?: BatchGetCommitsError_[];
 }
-export const BatchGetCommitsOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const BatchGetCommitsOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     commits: S.optional(CommitObjectsList),
     errors: S.optional(BatchGetCommitsErrorsList),
@@ -642,22 +1530,31 @@ export const BatchGetCommitsOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface BatchGetRepositoriesInput {
   repositoryNames: string[];
 }
-export const BatchGetRepositoriesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ repositoryNames: RepositoryNameList }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const BatchGetRepositoriesInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ repositoryNames: RepositoryNameList }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "BatchGetRepositoriesInput",
 }) as any as S.Schema<BatchGetRepositoriesInput>;
+export type AccountId = string;
+export type RepositoryId = string;
+export type RepositoryDescription = string;
+export type BranchName = string;
+export type LastModifiedDate = Date;
+export type CreationDate = Date;
+export type CloneUrlHttp = string;
+export type CloneUrlSsh = string;
+export type Arn = string;
+export type KmsKeyId = string;
 export interface RepositoryMetadata {
   accountId?: string;
   repositoryId?: string;
@@ -671,7 +1568,7 @@ export interface RepositoryMetadata {
   Arn?: string;
   kmsKeyId?: string;
 }
-export const RepositoryMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RepositoryMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     accountId: S.optional(S.String),
     repositoryId: S.optional(S.String),
@@ -691,12 +1588,9 @@ export const RepositoryMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "RepositoryMetadata",
 }) as any as S.Schema<RepositoryMetadata>;
 export type RepositoryMetadataList = RepositoryMetadata[];
-export const RepositoryMetadataList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(RepositoryMetadata);
+export const RepositoryMetadataList = /*@__PURE__*/ S.Array(RepositoryMetadata);
 export type RepositoryNotFoundList = string[];
-export const RepositoryNotFoundList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const RepositoryNotFoundList = /*@__PURE__*/ S.Array(S.String);
 export type BatchGetRepositoriesErrorCodeEnum =
   | "EncryptionIntegrityChecksFailedException"
   | "EncryptionKeyAccessDeniedException"
@@ -705,68 +1599,70 @@ export type BatchGetRepositoriesErrorCodeEnum =
   | "EncryptionKeyUnavailableException"
   | "RepositoryDoesNotExistException"
   | (string & {});
-export const BatchGetRepositoriesErrorCodeEnum =
-  /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const BatchGetRepositoriesErrorCodeEnum = /*@__PURE__*/ S.String;
+
 export interface BatchGetRepositoriesError_ {
   repositoryId?: string;
   repositoryName?: string;
   errorCode?: BatchGetRepositoriesErrorCodeEnum;
   errorMessage?: string;
 }
-export const BatchGetRepositoriesError_ = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      repositoryId: S.optional(S.String),
-      repositoryName: S.optional(S.String),
-      errorCode: S.optional(BatchGetRepositoriesErrorCodeEnum),
-      errorMessage: S.optional(S.String),
-    }),
+export const BatchGetRepositoriesError_ = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryId: S.optional(S.String),
+    repositoryName: S.optional(S.String),
+    errorCode: S.optional(BatchGetRepositoriesErrorCodeEnum),
+    errorMessage: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "BatchGetRepositoriesError",
 }) as any as S.Schema<BatchGetRepositoriesError_>;
 export type BatchGetRepositoriesErrorsList = BatchGetRepositoriesError_[];
-export const BatchGetRepositoriesErrorsList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(BatchGetRepositoriesError_);
+export const BatchGetRepositoriesErrorsList = /*@__PURE__*/ S.Array(
+  BatchGetRepositoriesError_,
+);
 export interface BatchGetRepositoriesOutput {
   repositories?: RepositoryMetadata[];
   repositoriesNotFound?: string[];
   errors?: BatchGetRepositoriesError_[];
 }
-export const BatchGetRepositoriesOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      repositories: S.optional(RepositoryMetadataList),
-      repositoriesNotFound: S.optional(RepositoryNotFoundList),
-      errors: S.optional(BatchGetRepositoriesErrorsList),
-    }).pipe(ns),
+export const BatchGetRepositoriesOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositories: S.optional(RepositoryMetadataList),
+    repositoriesNotFound: S.optional(RepositoryNotFoundList),
+    errors: S.optional(BatchGetRepositoriesErrorsList),
+  }).pipe(ns),
 ).annotate({
   identifier: "BatchGetRepositoriesOutput",
 }) as any as S.Schema<BatchGetRepositoriesOutput>;
+export type ApprovalRuleTemplateContent = string;
+export type ApprovalRuleTemplateDescription = string;
 export interface CreateApprovalRuleTemplateInput {
   approvalRuleTemplateName: string;
   approvalRuleTemplateContent: string;
   approvalRuleTemplateDescription?: string;
 }
-export const CreateApprovalRuleTemplateInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      approvalRuleTemplateName: S.String,
-      approvalRuleTemplateContent: S.String,
-      approvalRuleTemplateDescription: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreateApprovalRuleTemplateInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    approvalRuleTemplateName: S.String,
+    approvalRuleTemplateContent: S.String,
+    approvalRuleTemplateDescription: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "CreateApprovalRuleTemplateInput",
-  }) as any as S.Schema<CreateApprovalRuleTemplateInput>;
+  ),
+).annotate({
+  identifier: "CreateApprovalRuleTemplateInput",
+}) as any as S.Schema<CreateApprovalRuleTemplateInput>;
+export type ApprovalRuleTemplateId = string;
+export type RuleContentSha256 = string;
 export interface ApprovalRuleTemplate {
   approvalRuleTemplateId?: string;
   approvalRuleTemplateName?: string;
@@ -777,7 +1673,7 @@ export interface ApprovalRuleTemplate {
   creationDate?: Date;
   lastModifiedUser?: string;
 }
-export const ApprovalRuleTemplate = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ApprovalRuleTemplate = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     approvalRuleTemplateId: S.optional(S.String),
     approvalRuleTemplateName: S.optional(S.String),
@@ -796,18 +1692,18 @@ export const ApprovalRuleTemplate = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateApprovalRuleTemplateOutput {
   approvalRuleTemplate: ApprovalRuleTemplate;
 }
-export const CreateApprovalRuleTemplateOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ approvalRuleTemplate: ApprovalRuleTemplate }).pipe(ns),
-  ).annotate({
-    identifier: "CreateApprovalRuleTemplateOutput",
-  }) as any as S.Schema<CreateApprovalRuleTemplateOutput>;
+export const CreateApprovalRuleTemplateOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ approvalRuleTemplate: ApprovalRuleTemplate }).pipe(ns),
+).annotate({
+  identifier: "CreateApprovalRuleTemplateOutput",
+}) as any as S.Schema<CreateApprovalRuleTemplateOutput>;
+export type CommitId = string;
 export interface CreateBranchInput {
   repositoryName: string;
   branchName: string;
   commitId: string;
 }
-export const CreateBranchInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateBranchInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.String,
     branchName: S.String,
@@ -827,16 +1723,19 @@ export const CreateBranchInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "CreateBranchInput",
 }) as any as S.Schema<CreateBranchInput>;
 export interface CreateBranchResponse {}
-export const CreateBranchResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateBranchResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "CreateBranchResponse",
 }) as any as S.Schema<CreateBranchResponse>;
+export type KeepEmptyFolders = boolean;
+export type FileContent = Uint8Array;
+export type IsMove = boolean;
 export interface SourceFileSpecifier {
   filePath: string;
   isMove?: boolean;
 }
-export const SourceFileSpecifier = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SourceFileSpecifier = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ filePath: S.String, isMove: S.optional(S.Boolean) }),
 ).annotate({
   identifier: "SourceFileSpecifier",
@@ -847,7 +1746,7 @@ export interface PutFileEntry {
   fileContent?: Uint8Array;
   sourceFile?: SourceFileSpecifier;
 }
-export const PutFileEntry = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PutFileEntry = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     filePath: S.String,
     fileMode: S.optional(FileModeTypeEnum),
@@ -856,30 +1755,28 @@ export const PutFileEntry = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "PutFileEntry" }) as any as S.Schema<PutFileEntry>;
 export type PutFileEntries = PutFileEntry[];
-export const PutFileEntries = /*@__PURE__*/ /*#__PURE__*/ S.Array(PutFileEntry);
+export const PutFileEntries = /*@__PURE__*/ S.Array(PutFileEntry);
 export interface DeleteFileEntry {
   filePath: string;
 }
-export const DeleteFileEntry = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteFileEntry = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ filePath: S.String }),
 ).annotate({
   identifier: "DeleteFileEntry",
 }) as any as S.Schema<DeleteFileEntry>;
 export type DeleteFileEntries = DeleteFileEntry[];
-export const DeleteFileEntries =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(DeleteFileEntry);
+export const DeleteFileEntries = /*@__PURE__*/ S.Array(DeleteFileEntry);
 export interface SetFileModeEntry {
   filePath: string;
   fileMode: FileModeTypeEnum;
 }
-export const SetFileModeEntry = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SetFileModeEntry = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ filePath: S.String, fileMode: FileModeTypeEnum }),
 ).annotate({
   identifier: "SetFileModeEntry",
 }) as any as S.Schema<SetFileModeEntry>;
 export type SetFileModeEntries = SetFileModeEntry[];
-export const SetFileModeEntries =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(SetFileModeEntry);
+export const SetFileModeEntries = /*@__PURE__*/ S.Array(SetFileModeEntry);
 export interface CreateCommitInput {
   repositoryName: string;
   branchName: string;
@@ -892,7 +1789,7 @@ export interface CreateCommitInput {
   deleteFiles?: DeleteFileEntry[];
   setFileModes?: SetFileModeEntry[];
 }
-export const CreateCommitInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateCommitInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.String,
     branchName: S.String,
@@ -923,7 +1820,7 @@ export interface FileMetadata {
   blobId?: string;
   fileMode?: FileModeTypeEnum;
 }
-export const FileMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const FileMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     absolutePath: S.optional(S.String),
     blobId: S.optional(S.String),
@@ -931,7 +1828,7 @@ export const FileMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "FileMetadata" }) as any as S.Schema<FileMetadata>;
 export type FilesMetadata = FileMetadata[];
-export const FilesMetadata = /*@__PURE__*/ /*#__PURE__*/ S.Array(FileMetadata);
+export const FilesMetadata = /*@__PURE__*/ S.Array(FileMetadata);
 export interface CreateCommitOutput {
   commitId?: string;
   treeId?: string;
@@ -939,7 +1836,7 @@ export interface CreateCommitOutput {
   filesUpdated?: FileMetadata[];
   filesDeleted?: FileMetadata[];
 }
-export const CreateCommitOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateCommitOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     commitId: S.optional(S.String),
     treeId: S.optional(S.String),
@@ -950,12 +1847,15 @@ export const CreateCommitOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "CreateCommitOutput",
 }) as any as S.Schema<CreateCommitOutput>;
+export type Title = string;
+export type Description = string;
+export type ReferenceName = string;
 export interface Target {
   repositoryName: string;
   sourceReference: string;
   destinationReference?: string;
 }
-export const Target = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Target = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.String,
     sourceReference: S.String,
@@ -963,43 +1863,46 @@ export const Target = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Target" }) as any as S.Schema<Target>;
 export type TargetList = Target[];
-export const TargetList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Target);
+export const TargetList = /*@__PURE__*/ S.Array(Target);
+export type ClientRequestToken = string;
 export interface CreatePullRequestInput {
   title: string;
   description?: string;
   targets: Target[];
   clientRequestToken?: string;
 }
-export const CreatePullRequestInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      title: S.String,
-      description: S.optional(S.String),
-      targets: TargetList,
-      clientRequestToken: S.optional(S.String).pipe(T.IdempotencyToken()),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreatePullRequestInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    title: S.String,
+    description: S.optional(S.String),
+    targets: TargetList,
+    clientRequestToken: S.optional(S.String).pipe(T.IdempotencyToken()),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "CreatePullRequestInput",
 }) as any as S.Schema<CreatePullRequestInput>;
+export type PullRequestId = string;
 export type PullRequestStatusEnum = "OPEN" | "CLOSED" | (string & {});
-export const PullRequestStatusEnum = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const PullRequestStatusEnum = /*@__PURE__*/ S.String;
+
+export type IsMerged = boolean;
 export interface MergeMetadata {
   isMerged?: boolean;
   mergedBy?: string;
   mergeCommitId?: string;
   mergeOption?: MergeOptionTypeEnum;
 }
-export const MergeMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const MergeMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     isMerged: S.optional(S.Boolean),
     mergedBy: S.optional(S.String),
@@ -1016,7 +1919,7 @@ export interface PullRequestTarget {
   mergeBase?: string;
   mergeMetadata?: MergeMetadata;
 }
-export const PullRequestTarget = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PullRequestTarget = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.optional(S.String),
     sourceReference: S.optional(S.String),
@@ -1030,18 +1933,20 @@ export const PullRequestTarget = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "PullRequestTarget",
 }) as any as S.Schema<PullRequestTarget>;
 export type PullRequestTargetList = PullRequestTarget[];
-export const PullRequestTargetList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(PullRequestTarget);
+export const PullRequestTargetList = /*@__PURE__*/ S.Array(PullRequestTarget);
+export type RevisionId = string;
+export type ApprovalRuleId = string;
+export type ApprovalRuleName = string;
+export type ApprovalRuleContent = string;
 export interface OriginApprovalRuleTemplate {
   approvalRuleTemplateId?: string;
   approvalRuleTemplateName?: string;
 }
-export const OriginApprovalRuleTemplate = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      approvalRuleTemplateId: S.optional(S.String),
-      approvalRuleTemplateName: S.optional(S.String),
-    }),
+export const OriginApprovalRuleTemplate = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    approvalRuleTemplateId: S.optional(S.String),
+    approvalRuleTemplateName: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "OriginApprovalRuleTemplate",
 }) as any as S.Schema<OriginApprovalRuleTemplate>;
@@ -1055,7 +1960,7 @@ export interface ApprovalRule {
   lastModifiedUser?: string;
   originApprovalRuleTemplate?: OriginApprovalRuleTemplate;
 }
-export const ApprovalRule = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ApprovalRule = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     approvalRuleId: S.optional(S.String),
     approvalRuleName: S.optional(S.String),
@@ -1070,8 +1975,7 @@ export const ApprovalRule = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "ApprovalRule" }) as any as S.Schema<ApprovalRule>;
 export type ApprovalRulesList = ApprovalRule[];
-export const ApprovalRulesList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ApprovalRule);
+export const ApprovalRulesList = /*@__PURE__*/ S.Array(ApprovalRule);
 export interface PullRequest {
   pullRequestId?: string;
   title?: string;
@@ -1085,7 +1989,7 @@ export interface PullRequest {
   revisionId?: string;
   approvalRules?: ApprovalRule[];
 }
-export const PullRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PullRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     pullRequestId: S.optional(S.String),
     title: S.optional(S.String),
@@ -1105,8 +2009,8 @@ export const PullRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreatePullRequestOutput {
   pullRequest: PullRequest;
 }
-export const CreatePullRequestOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ pullRequest: PullRequest }).pipe(ns),
+export const CreatePullRequestOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ pullRequest: PullRequest }).pipe(ns),
 ).annotate({
   identifier: "CreatePullRequestOutput",
 }) as any as S.Schema<CreatePullRequestOutput>;
@@ -1115,37 +2019,37 @@ export interface CreatePullRequestApprovalRuleInput {
   approvalRuleName: string;
   approvalRuleContent: string;
 }
-export const CreatePullRequestApprovalRuleInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      pullRequestId: S.String,
-      approvalRuleName: S.String,
-      approvalRuleContent: S.String,
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreatePullRequestApprovalRuleInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    pullRequestId: S.String,
+    approvalRuleName: S.String,
+    approvalRuleContent: S.String,
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "CreatePullRequestApprovalRuleInput",
-  }) as any as S.Schema<CreatePullRequestApprovalRuleInput>;
+  ),
+).annotate({
+  identifier: "CreatePullRequestApprovalRuleInput",
+}) as any as S.Schema<CreatePullRequestApprovalRuleInput>;
 export interface CreatePullRequestApprovalRuleOutput {
   approvalRule: ApprovalRule;
 }
-export const CreatePullRequestApprovalRuleOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ approvalRule: ApprovalRule }).pipe(ns),
-  ).annotate({
-    identifier: "CreatePullRequestApprovalRuleOutput",
-  }) as any as S.Schema<CreatePullRequestApprovalRuleOutput>;
+export const CreatePullRequestApprovalRuleOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ approvalRule: ApprovalRule }).pipe(ns),
+).annotate({
+  identifier: "CreatePullRequestApprovalRuleOutput",
+}) as any as S.Schema<CreatePullRequestApprovalRuleOutput>;
+export type TagKey = string;
+export type TagValue = string;
 export type TagsMap = { [key: string]: string | undefined };
-export const TagsMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const TagsMap = /*@__PURE__*/ S.Record(
   S.String,
   S.String.pipe(S.optional),
 );
@@ -1155,7 +2059,7 @@ export interface CreateRepositoryInput {
   tags?: { [key: string]: string | undefined };
   kmsKeyId?: string;
 }
-export const CreateRepositoryInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const CreateRepositoryInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.String,
     repositoryDescription: S.optional(S.String),
@@ -1178,9 +2082,8 @@ export const CreateRepositoryInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface CreateRepositoryOutput {
   repositoryMetadata?: RepositoryMetadata;
 }
-export const CreateRepositoryOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ repositoryMetadata: S.optional(RepositoryMetadata) }).pipe(ns),
+export const CreateRepositoryOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ repositoryMetadata: S.optional(RepositoryMetadata) }).pipe(ns),
 ).annotate({
   identifier: "CreateRepositoryOutput",
 }) as any as S.Schema<CreateRepositoryOutput>;
@@ -1190,14 +2093,15 @@ export type ReplacementTypeEnum =
   | "KEEP_DESTINATION"
   | "USE_NEW_CONTENT"
   | (string & {});
-export const ReplacementTypeEnum = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ReplacementTypeEnum = /*@__PURE__*/ S.String;
+
 export interface ReplaceContentEntry {
   filePath: string;
   replacementType: ReplacementTypeEnum;
   content?: Uint8Array;
   fileMode?: FileModeTypeEnum;
 }
-export const ReplaceContentEntry = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ReplaceContentEntry = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     filePath: S.String,
     replacementType: ReplacementTypeEnum,
@@ -1208,14 +2112,13 @@ export const ReplaceContentEntry = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ReplaceContentEntry",
 }) as any as S.Schema<ReplaceContentEntry>;
 export type ReplaceContentEntries = ReplaceContentEntry[];
-export const ReplaceContentEntries =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ReplaceContentEntry);
+export const ReplaceContentEntries = /*@__PURE__*/ S.Array(ReplaceContentEntry);
 export interface ConflictResolution {
   replaceContents?: ReplaceContentEntry[];
   deleteFiles?: DeleteFileEntry[];
   setFileModes?: SetFileModeEntry[];
 }
-export const ConflictResolution = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ConflictResolution = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     replaceContents: S.optional(ReplaceContentEntries),
     deleteFiles: S.optional(DeleteFileEntries),
@@ -1237,82 +2140,76 @@ export interface CreateUnreferencedMergeCommitInput {
   keepEmptyFolders?: boolean;
   conflictResolution?: ConflictResolution;
 }
-export const CreateUnreferencedMergeCommitInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryName: S.String,
-      sourceCommitSpecifier: S.String,
-      destinationCommitSpecifier: S.String,
-      mergeOption: MergeOptionTypeEnum,
-      conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
-      conflictResolutionStrategy: S.optional(
-        ConflictResolutionStrategyTypeEnum,
-      ),
-      authorName: S.optional(S.String),
-      email: S.optional(S.String),
-      commitMessage: S.optional(S.String),
-      keepEmptyFolders: S.optional(S.Boolean),
-      conflictResolution: S.optional(ConflictResolution),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const CreateUnreferencedMergeCommitInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.String,
+    sourceCommitSpecifier: S.String,
+    destinationCommitSpecifier: S.String,
+    mergeOption: MergeOptionTypeEnum,
+    conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
+    conflictResolutionStrategy: S.optional(ConflictResolutionStrategyTypeEnum),
+    authorName: S.optional(S.String),
+    email: S.optional(S.String),
+    commitMessage: S.optional(S.String),
+    keepEmptyFolders: S.optional(S.Boolean),
+    conflictResolution: S.optional(ConflictResolution),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "CreateUnreferencedMergeCommitInput",
-  }) as any as S.Schema<CreateUnreferencedMergeCommitInput>;
+  ),
+).annotate({
+  identifier: "CreateUnreferencedMergeCommitInput",
+}) as any as S.Schema<CreateUnreferencedMergeCommitInput>;
 export interface CreateUnreferencedMergeCommitOutput {
   commitId?: string;
   treeId?: string;
 }
-export const CreateUnreferencedMergeCommitOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      commitId: S.optional(S.String),
-      treeId: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "CreateUnreferencedMergeCommitOutput",
-  }) as any as S.Schema<CreateUnreferencedMergeCommitOutput>;
+export const CreateUnreferencedMergeCommitOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    commitId: S.optional(S.String),
+    treeId: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "CreateUnreferencedMergeCommitOutput",
+}) as any as S.Schema<CreateUnreferencedMergeCommitOutput>;
 export interface DeleteApprovalRuleTemplateInput {
   approvalRuleTemplateName: string;
 }
-export const DeleteApprovalRuleTemplateInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ approvalRuleTemplateName: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteApprovalRuleTemplateInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ approvalRuleTemplateName: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "DeleteApprovalRuleTemplateInput",
-  }) as any as S.Schema<DeleteApprovalRuleTemplateInput>;
+  ),
+).annotate({
+  identifier: "DeleteApprovalRuleTemplateInput",
+}) as any as S.Schema<DeleteApprovalRuleTemplateInput>;
 export interface DeleteApprovalRuleTemplateOutput {
   approvalRuleTemplateId: string;
 }
-export const DeleteApprovalRuleTemplateOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ approvalRuleTemplateId: S.String }).pipe(ns),
-  ).annotate({
-    identifier: "DeleteApprovalRuleTemplateOutput",
-  }) as any as S.Schema<DeleteApprovalRuleTemplateOutput>;
+export const DeleteApprovalRuleTemplateOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ approvalRuleTemplateId: S.String }).pipe(ns),
+).annotate({
+  identifier: "DeleteApprovalRuleTemplateOutput",
+}) as any as S.Schema<DeleteApprovalRuleTemplateOutput>;
 export interface DeleteBranchInput {
   repositoryName: string;
   branchName: string;
 }
-export const DeleteBranchInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteBranchInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ repositoryName: S.String, branchName: S.String }).pipe(
     T.all(
       ns,
@@ -1331,7 +2228,7 @@ export interface BranchInfo {
   branchName?: string;
   commitId?: string;
 }
-export const BranchInfo = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const BranchInfo = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     branchName: S.optional(S.String),
     commitId: S.optional(S.String),
@@ -1340,34 +2237,38 @@ export const BranchInfo = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DeleteBranchOutput {
   deletedBranch?: BranchInfo;
 }
-export const DeleteBranchOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteBranchOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ deletedBranch: S.optional(BranchInfo) }).pipe(ns),
 ).annotate({
   identifier: "DeleteBranchOutput",
 }) as any as S.Schema<DeleteBranchOutput>;
+export type CommentId = string;
 export interface DeleteCommentContentInput {
   commentId: string;
 }
-export const DeleteCommentContentInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ commentId: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeleteCommentContentInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ commentId: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "DeleteCommentContentInput",
 }) as any as S.Schema<DeleteCommentContentInput>;
+export type Content = string;
+export type IsCommentDeleted = boolean;
+export type ReactionValue = string;
 export type CallerReactions = string[];
-export const CallerReactions = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const CallerReactions = /*@__PURE__*/ S.Array(S.String);
+export type Count = number;
 export type ReactionCountsMap = { [key: string]: number | undefined };
-export const ReactionCountsMap = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const ReactionCountsMap = /*@__PURE__*/ S.Record(
   S.String,
   S.Number.pipe(S.optional),
 );
@@ -1383,7 +2284,7 @@ export interface Comment {
   callerReactions?: string[];
   reactionCounts?: { [key: string]: number | undefined };
 }
-export const Comment = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Comment = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     commentId: S.optional(S.String),
     content: S.optional(S.String),
@@ -1402,8 +2303,8 @@ export const Comment = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DeleteCommentContentOutput {
   comment?: Comment;
 }
-export const DeleteCommentContentOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ comment: S.optional(Comment) }).pipe(ns),
+export const DeleteCommentContentOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ comment: S.optional(Comment) }).pipe(ns),
 ).annotate({
   identifier: "DeleteCommentContentOutput",
 }) as any as S.Schema<DeleteCommentContentOutput>;
@@ -1417,7 +2318,7 @@ export interface DeleteFileInput {
   name?: string;
   email?: string;
 }
-export const DeleteFileInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteFileInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.String,
     branchName: S.String,
@@ -1447,7 +2348,7 @@ export interface DeleteFileOutput {
   treeId: string;
   filePath: string;
 }
-export const DeleteFileOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteFileOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     commitId: S.String,
     blobId: S.String,
@@ -1461,35 +2362,33 @@ export interface DeletePullRequestApprovalRuleInput {
   pullRequestId: string;
   approvalRuleName: string;
 }
-export const DeletePullRequestApprovalRuleInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ pullRequestId: S.String, approvalRuleName: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DeletePullRequestApprovalRuleInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ pullRequestId: S.String, approvalRuleName: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "DeletePullRequestApprovalRuleInput",
-  }) as any as S.Schema<DeletePullRequestApprovalRuleInput>;
+  ),
+).annotate({
+  identifier: "DeletePullRequestApprovalRuleInput",
+}) as any as S.Schema<DeletePullRequestApprovalRuleInput>;
 export interface DeletePullRequestApprovalRuleOutput {
   approvalRuleId: string;
 }
-export const DeletePullRequestApprovalRuleOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ approvalRuleId: S.String }).pipe(ns),
-  ).annotate({
-    identifier: "DeletePullRequestApprovalRuleOutput",
-  }) as any as S.Schema<DeletePullRequestApprovalRuleOutput>;
+export const DeletePullRequestApprovalRuleOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ approvalRuleId: S.String }).pipe(ns),
+).annotate({
+  identifier: "DeletePullRequestApprovalRuleOutput",
+}) as any as S.Schema<DeletePullRequestApprovalRuleOutput>;
 export interface DeleteRepositoryInput {
   repositoryName: string;
 }
-export const DeleteRepositoryInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const DeleteRepositoryInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ repositoryName: S.String }).pipe(
     T.all(
       ns,
@@ -1507,8 +2406,8 @@ export const DeleteRepositoryInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface DeleteRepositoryOutput {
   repositoryId?: string;
 }
-export const DeleteRepositoryOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ repositoryId: S.optional(S.String) }).pipe(ns),
+export const DeleteRepositoryOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ repositoryId: S.optional(S.String) }).pipe(ns),
 ).annotate({
   identifier: "DeleteRepositoryOutput",
 }) as any as S.Schema<DeleteRepositoryOutput>;
@@ -1523,34 +2422,31 @@ export interface DescribeMergeConflictsInput {
   conflictResolutionStrategy?: ConflictResolutionStrategyTypeEnum;
   nextToken?: string;
 }
-export const DescribeMergeConflictsInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryName: S.String,
-      destinationCommitSpecifier: S.String,
-      sourceCommitSpecifier: S.String,
-      mergeOption: MergeOptionTypeEnum,
-      maxMergeHunks: S.optional(S.Number),
-      filePath: S.String,
-      conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
-      conflictResolutionStrategy: S.optional(
-        ConflictResolutionStrategyTypeEnum,
-      ),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DescribeMergeConflictsInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.String,
+    destinationCommitSpecifier: S.String,
+    sourceCommitSpecifier: S.String,
+    mergeOption: MergeOptionTypeEnum,
+    maxMergeHunks: S.optional(S.Number),
+    filePath: S.String,
+    conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
+    conflictResolutionStrategy: S.optional(ConflictResolutionStrategyTypeEnum),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "DescribeMergeConflictsInput",
-  }) as any as S.Schema<DescribeMergeConflictsInput>;
+  ),
+).annotate({
+  identifier: "DescribeMergeConflictsInput",
+}) as any as S.Schema<DescribeMergeConflictsInput>;
 export interface DescribeMergeConflictsOutput {
   conflictMetadata: ConflictMetadata;
   mergeHunks: MergeHunk[];
@@ -1559,19 +2455,18 @@ export interface DescribeMergeConflictsOutput {
   sourceCommitId: string;
   baseCommitId?: string;
 }
-export const DescribeMergeConflictsOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      conflictMetadata: ConflictMetadata,
-      mergeHunks: MergeHunks,
-      nextToken: S.optional(S.String),
-      destinationCommitId: S.String,
-      sourceCommitId: S.String,
-      baseCommitId: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "DescribeMergeConflictsOutput",
-  }) as any as S.Schema<DescribeMergeConflictsOutput>;
+export const DescribeMergeConflictsOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    conflictMetadata: ConflictMetadata,
+    mergeHunks: MergeHunks,
+    nextToken: S.optional(S.String),
+    destinationCommitId: S.String,
+    sourceCommitId: S.String,
+    baseCommitId: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "DescribeMergeConflictsOutput",
+}) as any as S.Schema<DescribeMergeConflictsOutput>;
 export type PullRequestEventType =
   | "PULL_REQUEST_CREATED"
   | "PULL_REQUEST_STATUS_CHANGED"
@@ -1583,7 +2478,8 @@ export type PullRequestEventType =
   | "PULL_REQUEST_APPROVAL_RULE_OVERRIDDEN"
   | "PULL_REQUEST_APPROVAL_STATE_CHANGED"
   | (string & {});
-export const PullRequestEventType = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const PullRequestEventType = /*@__PURE__*/ S.String;
+
 export interface DescribePullRequestEventsInput {
   pullRequestId: string;
   pullRequestEventType?: PullRequestEventType;
@@ -1591,54 +2487,52 @@ export interface DescribePullRequestEventsInput {
   nextToken?: string;
   maxResults?: number;
 }
-export const DescribePullRequestEventsInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      pullRequestId: S.String,
-      pullRequestEventType: S.optional(PullRequestEventType),
-      actorArn: S.optional(S.String),
-      nextToken: S.optional(S.String),
-      maxResults: S.optional(S.Number),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const DescribePullRequestEventsInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    pullRequestId: S.String,
+    pullRequestEventType: S.optional(PullRequestEventType),
+    actorArn: S.optional(S.String),
+    nextToken: S.optional(S.String),
+    maxResults: S.optional(S.Number),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "DescribePullRequestEventsInput",
-  }) as any as S.Schema<DescribePullRequestEventsInput>;
+  ),
+).annotate({
+  identifier: "DescribePullRequestEventsInput",
+}) as any as S.Schema<DescribePullRequestEventsInput>;
+export type EventDate = Date;
 export interface PullRequestCreatedEventMetadata {
   repositoryName?: string;
   sourceCommitId?: string;
   destinationCommitId?: string;
   mergeBase?: string;
 }
-export const PullRequestCreatedEventMetadata =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryName: S.optional(S.String),
-      sourceCommitId: S.optional(S.String),
-      destinationCommitId: S.optional(S.String),
-      mergeBase: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "PullRequestCreatedEventMetadata",
-  }) as any as S.Schema<PullRequestCreatedEventMetadata>;
+export const PullRequestCreatedEventMetadata = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.optional(S.String),
+    sourceCommitId: S.optional(S.String),
+    destinationCommitId: S.optional(S.String),
+    mergeBase: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "PullRequestCreatedEventMetadata",
+}) as any as S.Schema<PullRequestCreatedEventMetadata>;
 export interface PullRequestStatusChangedEventMetadata {
   pullRequestStatus?: PullRequestStatusEnum;
 }
-export const PullRequestStatusChangedEventMetadata =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ pullRequestStatus: S.optional(PullRequestStatusEnum) }),
-  ).annotate({
-    identifier: "PullRequestStatusChangedEventMetadata",
-  }) as any as S.Schema<PullRequestStatusChangedEventMetadata>;
+export const PullRequestStatusChangedEventMetadata = /*@__PURE__*/ S.suspend(
+  () => S.Struct({ pullRequestStatus: S.optional(PullRequestStatusEnum) }),
+).annotate({
+  identifier: "PullRequestStatusChangedEventMetadata",
+}) as any as S.Schema<PullRequestStatusChangedEventMetadata>;
 export interface PullRequestSourceReferenceUpdatedEventMetadata {
   repositoryName?: string;
   beforeCommitId?: string;
@@ -1646,7 +2540,7 @@ export interface PullRequestSourceReferenceUpdatedEventMetadata {
   mergeBase?: string;
 }
 export const PullRequestSourceReferenceUpdatedEventMetadata =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       repositoryName: S.optional(S.String),
       beforeCommitId: S.optional(S.String),
@@ -1662,7 +2556,7 @@ export interface PullRequestMergedStateChangedEventMetadata {
   mergeMetadata?: MergeMetadata;
 }
 export const PullRequestMergedStateChangedEventMetadata =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       repositoryName: S.optional(S.String),
       destinationReference: S.optional(S.String),
@@ -1676,46 +2570,45 @@ export interface ApprovalRuleEventMetadata {
   approvalRuleId?: string;
   approvalRuleContent?: string;
 }
-export const ApprovalRuleEventMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      approvalRuleName: S.optional(S.String),
-      approvalRuleId: S.optional(S.String),
-      approvalRuleContent: S.optional(S.String),
-    }),
+export const ApprovalRuleEventMetadata = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    approvalRuleName: S.optional(S.String),
+    approvalRuleId: S.optional(S.String),
+    approvalRuleContent: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "ApprovalRuleEventMetadata",
 }) as any as S.Schema<ApprovalRuleEventMetadata>;
 export type ApprovalState = "APPROVE" | "REVOKE" | (string & {});
-export const ApprovalState = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const ApprovalState = /*@__PURE__*/ S.String;
+
 export interface ApprovalStateChangedEventMetadata {
   revisionId?: string;
   approvalStatus?: ApprovalState;
 }
-export const ApprovalStateChangedEventMetadata =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      revisionId: S.optional(S.String),
-      approvalStatus: S.optional(ApprovalState),
-    }),
-  ).annotate({
-    identifier: "ApprovalStateChangedEventMetadata",
-  }) as any as S.Schema<ApprovalStateChangedEventMetadata>;
+export const ApprovalStateChangedEventMetadata = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    revisionId: S.optional(S.String),
+    approvalStatus: S.optional(ApprovalState),
+  }),
+).annotate({
+  identifier: "ApprovalStateChangedEventMetadata",
+}) as any as S.Schema<ApprovalStateChangedEventMetadata>;
 export type OverrideStatus = "OVERRIDE" | "REVOKE" | (string & {});
-export const OverrideStatus = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const OverrideStatus = /*@__PURE__*/ S.String;
+
 export interface ApprovalRuleOverriddenEventMetadata {
   revisionId?: string;
   overrideStatus?: OverrideStatus;
 }
-export const ApprovalRuleOverriddenEventMetadata =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      revisionId: S.optional(S.String),
-      overrideStatus: S.optional(OverrideStatus),
-    }),
-  ).annotate({
-    identifier: "ApprovalRuleOverriddenEventMetadata",
-  }) as any as S.Schema<ApprovalRuleOverriddenEventMetadata>;
+export const ApprovalRuleOverriddenEventMetadata = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    revisionId: S.optional(S.String),
+    overrideStatus: S.optional(OverrideStatus),
+  }),
+).annotate({
+  identifier: "ApprovalRuleOverriddenEventMetadata",
+}) as any as S.Schema<ApprovalRuleOverriddenEventMetadata>;
 export interface PullRequestEvent {
   pullRequestId?: string;
   eventDate?: Date;
@@ -1729,7 +2622,7 @@ export interface PullRequestEvent {
   approvalStateChangedEventMetadata?: ApprovalStateChangedEventMetadata;
   approvalRuleOverriddenEventMetadata?: ApprovalRuleOverriddenEventMetadata;
 }
-export const PullRequestEvent = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PullRequestEvent = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     pullRequestId: S.optional(S.String),
     eventDate: S.optional(S.Date.pipe(T.TimestampFormat("epoch-seconds"))),
@@ -1759,27 +2652,25 @@ export const PullRequestEvent = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "PullRequestEvent",
 }) as any as S.Schema<PullRequestEvent>;
 export type PullRequestEventList = PullRequestEvent[];
-export const PullRequestEventList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(PullRequestEvent);
+export const PullRequestEventList = /*@__PURE__*/ S.Array(PullRequestEvent);
 export interface DescribePullRequestEventsOutput {
   pullRequestEvents: PullRequestEvent[];
   nextToken?: string;
 }
-export const DescribePullRequestEventsOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      pullRequestEvents: PullRequestEventList,
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "DescribePullRequestEventsOutput",
-  }) as any as S.Schema<DescribePullRequestEventsOutput>;
+export const DescribePullRequestEventsOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    pullRequestEvents: PullRequestEventList,
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "DescribePullRequestEventsOutput",
+}) as any as S.Schema<DescribePullRequestEventsOutput>;
 export interface DisassociateApprovalRuleTemplateFromRepositoryInput {
   approvalRuleTemplateName: string;
   repositoryName: string;
 }
 export const DisassociateApprovalRuleTemplateFromRepositoryInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       approvalRuleTemplateName: S.String,
       repositoryName: S.String,
@@ -1799,15 +2690,15 @@ export const DisassociateApprovalRuleTemplateFromRepositoryInput =
   }) as any as S.Schema<DisassociateApprovalRuleTemplateFromRepositoryInput>;
 export interface DisassociateApprovalRuleTemplateFromRepositoryResponse {}
 export const DisassociateApprovalRuleTemplateFromRepositoryResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
+  /*@__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
     identifier: "DisassociateApprovalRuleTemplateFromRepositoryResponse",
   }) as any as S.Schema<DisassociateApprovalRuleTemplateFromRepositoryResponse>;
 export interface EvaluatePullRequestApprovalRulesInput {
   pullRequestId: string;
   revisionId: string;
 }
-export const EvaluatePullRequestApprovalRulesInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const EvaluatePullRequestApprovalRulesInput = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({ pullRequestId: S.String, revisionId: S.String }).pipe(
       T.all(
         ns,
@@ -1819,23 +2710,22 @@ export const EvaluatePullRequestApprovalRulesInput =
         rules,
       ),
     ),
-  ).annotate({
-    identifier: "EvaluatePullRequestApprovalRulesInput",
-  }) as any as S.Schema<EvaluatePullRequestApprovalRulesInput>;
+).annotate({
+  identifier: "EvaluatePullRequestApprovalRulesInput",
+}) as any as S.Schema<EvaluatePullRequestApprovalRulesInput>;
+export type Approved = boolean;
+export type Overridden = boolean;
 export type ApprovalRulesSatisfiedList = string[];
-export const ApprovalRulesSatisfiedList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const ApprovalRulesSatisfiedList = /*@__PURE__*/ S.Array(S.String);
 export type ApprovalRulesNotSatisfiedList = string[];
-export const ApprovalRulesNotSatisfiedList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ApprovalRulesNotSatisfiedList = /*@__PURE__*/ S.Array(S.String);
 export interface Evaluation {
   approved?: boolean;
   overridden?: boolean;
   approvalRulesSatisfied?: string[];
   approvalRulesNotSatisfied?: string[];
 }
-export const Evaluation = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Evaluation = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     approved: S.optional(S.Boolean),
     overridden: S.optional(S.Boolean),
@@ -1846,45 +2736,42 @@ export const Evaluation = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface EvaluatePullRequestApprovalRulesOutput {
   evaluation: Evaluation;
 }
-export const EvaluatePullRequestApprovalRulesOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ evaluation: Evaluation }).pipe(ns),
-  ).annotate({
-    identifier: "EvaluatePullRequestApprovalRulesOutput",
-  }) as any as S.Schema<EvaluatePullRequestApprovalRulesOutput>;
+export const EvaluatePullRequestApprovalRulesOutput = /*@__PURE__*/ S.suspend(
+  () => S.Struct({ evaluation: Evaluation }).pipe(ns),
+).annotate({
+  identifier: "EvaluatePullRequestApprovalRulesOutput",
+}) as any as S.Schema<EvaluatePullRequestApprovalRulesOutput>;
 export interface GetApprovalRuleTemplateInput {
   approvalRuleTemplateName: string;
 }
-export const GetApprovalRuleTemplateInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ approvalRuleTemplateName: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetApprovalRuleTemplateInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ approvalRuleTemplateName: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "GetApprovalRuleTemplateInput",
-  }) as any as S.Schema<GetApprovalRuleTemplateInput>;
+  ),
+).annotate({
+  identifier: "GetApprovalRuleTemplateInput",
+}) as any as S.Schema<GetApprovalRuleTemplateInput>;
 export interface GetApprovalRuleTemplateOutput {
   approvalRuleTemplate: ApprovalRuleTemplate;
 }
-export const GetApprovalRuleTemplateOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ approvalRuleTemplate: ApprovalRuleTemplate }).pipe(ns),
-  ).annotate({
-    identifier: "GetApprovalRuleTemplateOutput",
-  }) as any as S.Schema<GetApprovalRuleTemplateOutput>;
+export const GetApprovalRuleTemplateOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ approvalRuleTemplate: ApprovalRuleTemplate }).pipe(ns),
+).annotate({
+  identifier: "GetApprovalRuleTemplateOutput",
+}) as any as S.Schema<GetApprovalRuleTemplateOutput>;
 export interface GetBlobInput {
   repositoryName: string;
   blobId: string;
 }
-export const GetBlobInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetBlobInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ repositoryName: S.String, blobId: S.String }).pipe(
     T.all(
       ns,
@@ -1900,14 +2787,14 @@ export const GetBlobInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetBlobOutput {
   content: Uint8Array;
 }
-export const GetBlobOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetBlobOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ content: T.Blob }).pipe(ns),
 ).annotate({ identifier: "GetBlobOutput" }) as any as S.Schema<GetBlobOutput>;
 export interface GetBranchInput {
   repositoryName?: string;
   branchName?: string;
 }
-export const GetBranchInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetBranchInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.optional(S.String),
     branchName: S.optional(S.String),
@@ -1926,7 +2813,7 @@ export const GetBranchInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetBranchOutput {
   branch?: BranchInfo;
 }
-export const GetBranchOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetBranchOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ branch: S.optional(BranchInfo) }).pipe(ns),
 ).annotate({
   identifier: "GetBranchOutput",
@@ -1934,7 +2821,7 @@ export const GetBranchOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetCommentInput {
   commentId: string;
 }
-export const GetCommentInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetCommentInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ commentId: S.String }).pipe(
     T.all(
       ns,
@@ -1952,7 +2839,7 @@ export const GetCommentInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetCommentOutput {
   comment?: Comment;
 }
-export const GetCommentOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetCommentOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ comment: S.optional(Comment) }).pipe(ns),
 ).annotate({
   identifier: "GetCommentOutput",
@@ -1963,33 +2850,35 @@ export interface GetCommentReactionsInput {
   nextToken?: string;
   maxResults?: number;
 }
-export const GetCommentReactionsInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      commentId: S.String,
-      reactionUserArn: S.optional(S.String),
-      nextToken: S.optional(S.String),
-      maxResults: S.optional(S.Number),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetCommentReactionsInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    commentId: S.String,
+    reactionUserArn: S.optional(S.String),
+    nextToken: S.optional(S.String),
+    maxResults: S.optional(S.Number),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetCommentReactionsInput",
 }) as any as S.Schema<GetCommentReactionsInput>;
+export type ReactionEmoji = string;
+export type ReactionShortCode = string;
+export type ReactionUnicode = string;
 export interface ReactionValueFormats {
   emoji?: string;
   shortCode?: string;
   unicode?: string;
 }
-export const ReactionValueFormats = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ReactionValueFormats = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     emoji: S.optional(S.String),
     shortCode: S.optional(S.String),
@@ -1999,13 +2888,13 @@ export const ReactionValueFormats = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ReactionValueFormats",
 }) as any as S.Schema<ReactionValueFormats>;
 export type ReactionUsersList = string[];
-export const ReactionUsersList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const ReactionUsersList = /*@__PURE__*/ S.Array(S.String);
 export interface ReactionForComment {
   reaction?: ReactionValueFormats;
   reactionUsers?: string[];
   reactionsFromDeletedUsersCount?: number;
 }
-export const ReactionForComment = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ReactionForComment = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     reaction: S.optional(ReactionValueFormats),
     reactionUsers: S.optional(ReactionUsersList),
@@ -2016,17 +2905,16 @@ export const ReactionForComment = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<ReactionForComment>;
 export type ReactionsForCommentList = ReactionForComment[];
 export const ReactionsForCommentList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ReactionForComment);
+  /*@__PURE__*/ S.Array(ReactionForComment);
 export interface GetCommentReactionsOutput {
   reactionsForComment: ReactionForComment[];
   nextToken?: string;
 }
-export const GetCommentReactionsOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      reactionsForComment: ReactionsForCommentList,
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
+export const GetCommentReactionsOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    reactionsForComment: ReactionsForCommentList,
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "GetCommentReactionsOutput",
 }) as any as S.Schema<GetCommentReactionsOutput>;
@@ -2037,36 +2925,37 @@ export interface GetCommentsForComparedCommitInput {
   nextToken?: string;
   maxResults?: number;
 }
-export const GetCommentsForComparedCommitInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryName: S.String,
-      beforeCommitId: S.optional(S.String),
-      afterCommitId: S.String,
-      nextToken: S.optional(S.String),
-      maxResults: S.optional(S.Number),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetCommentsForComparedCommitInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.String,
+    beforeCommitId: S.optional(S.String),
+    afterCommitId: S.String,
+    nextToken: S.optional(S.String),
+    maxResults: S.optional(S.Number),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "GetCommentsForComparedCommitInput",
-  }) as any as S.Schema<GetCommentsForComparedCommitInput>;
+  ),
+).annotate({
+  identifier: "GetCommentsForComparedCommitInput",
+}) as any as S.Schema<GetCommentsForComparedCommitInput>;
+export type Position = number;
 export type RelativeFileVersionEnum = "BEFORE" | "AFTER" | (string & {});
-export const RelativeFileVersionEnum = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const RelativeFileVersionEnum = /*@__PURE__*/ S.String;
+
 export interface Location {
   filePath?: string;
   filePosition?: number;
   relativeFileVersion?: RelativeFileVersionEnum;
 }
-export const Location = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Location = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     filePath: S.optional(S.String),
     filePosition: S.optional(S.Number),
@@ -2074,7 +2963,7 @@ export const Location = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Location" }) as any as S.Schema<Location>;
 export type Comments = Comment[];
-export const Comments = /*@__PURE__*/ /*#__PURE__*/ S.Array(Comment);
+export const Comments = /*@__PURE__*/ S.Array(Comment);
 export interface CommentsForComparedCommit {
   repositoryName?: string;
   beforeCommitId?: string;
@@ -2084,36 +2973,35 @@ export interface CommentsForComparedCommit {
   location?: Location;
   comments?: Comment[];
 }
-export const CommentsForComparedCommit = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      repositoryName: S.optional(S.String),
-      beforeCommitId: S.optional(S.String),
-      afterCommitId: S.optional(S.String),
-      beforeBlobId: S.optional(S.String),
-      afterBlobId: S.optional(S.String),
-      location: S.optional(Location),
-      comments: S.optional(Comments),
-    }),
+export const CommentsForComparedCommit = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.optional(S.String),
+    beforeCommitId: S.optional(S.String),
+    afterCommitId: S.optional(S.String),
+    beforeBlobId: S.optional(S.String),
+    afterBlobId: S.optional(S.String),
+    location: S.optional(Location),
+    comments: S.optional(Comments),
+  }),
 ).annotate({
   identifier: "CommentsForComparedCommit",
 }) as any as S.Schema<CommentsForComparedCommit>;
 export type CommentsForComparedCommitData = CommentsForComparedCommit[];
-export const CommentsForComparedCommitData =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(CommentsForComparedCommit);
+export const CommentsForComparedCommitData = /*@__PURE__*/ S.Array(
+  CommentsForComparedCommit,
+);
 export interface GetCommentsForComparedCommitOutput {
   commentsForComparedCommitData?: CommentsForComparedCommit[];
   nextToken?: string;
 }
-export const GetCommentsForComparedCommitOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      commentsForComparedCommitData: S.optional(CommentsForComparedCommitData),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "GetCommentsForComparedCommitOutput",
-  }) as any as S.Schema<GetCommentsForComparedCommitOutput>;
+export const GetCommentsForComparedCommitOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    commentsForComparedCommitData: S.optional(CommentsForComparedCommitData),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "GetCommentsForComparedCommitOutput",
+}) as any as S.Schema<GetCommentsForComparedCommitOutput>;
 export interface GetCommentsForPullRequestInput {
   pullRequestId: string;
   repositoryName?: string;
@@ -2122,29 +3010,28 @@ export interface GetCommentsForPullRequestInput {
   nextToken?: string;
   maxResults?: number;
 }
-export const GetCommentsForPullRequestInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      pullRequestId: S.String,
-      repositoryName: S.optional(S.String),
-      beforeCommitId: S.optional(S.String),
-      afterCommitId: S.optional(S.String),
-      nextToken: S.optional(S.String),
-      maxResults: S.optional(S.Number),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetCommentsForPullRequestInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    pullRequestId: S.String,
+    repositoryName: S.optional(S.String),
+    beforeCommitId: S.optional(S.String),
+    afterCommitId: S.optional(S.String),
+    nextToken: S.optional(S.String),
+    maxResults: S.optional(S.Number),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "GetCommentsForPullRequestInput",
-  }) as any as S.Schema<GetCommentsForPullRequestInput>;
+  ),
+).annotate({
+  identifier: "GetCommentsForPullRequestInput",
+}) as any as S.Schema<GetCommentsForPullRequestInput>;
 export interface CommentsForPullRequest {
   pullRequestId?: string;
   repositoryName?: string;
@@ -2155,43 +3042,41 @@ export interface CommentsForPullRequest {
   location?: Location;
   comments?: Comment[];
 }
-export const CommentsForPullRequest = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      pullRequestId: S.optional(S.String),
-      repositoryName: S.optional(S.String),
-      beforeCommitId: S.optional(S.String),
-      afterCommitId: S.optional(S.String),
-      beforeBlobId: S.optional(S.String),
-      afterBlobId: S.optional(S.String),
-      location: S.optional(Location),
-      comments: S.optional(Comments),
-    }),
+export const CommentsForPullRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    pullRequestId: S.optional(S.String),
+    repositoryName: S.optional(S.String),
+    beforeCommitId: S.optional(S.String),
+    afterCommitId: S.optional(S.String),
+    beforeBlobId: S.optional(S.String),
+    afterBlobId: S.optional(S.String),
+    location: S.optional(Location),
+    comments: S.optional(Comments),
+  }),
 ).annotate({
   identifier: "CommentsForPullRequest",
 }) as any as S.Schema<CommentsForPullRequest>;
 export type CommentsForPullRequestData = CommentsForPullRequest[];
-export const CommentsForPullRequestData = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const CommentsForPullRequestData = /*@__PURE__*/ S.Array(
   CommentsForPullRequest,
 );
 export interface GetCommentsForPullRequestOutput {
   commentsForPullRequestData?: CommentsForPullRequest[];
   nextToken?: string;
 }
-export const GetCommentsForPullRequestOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      commentsForPullRequestData: S.optional(CommentsForPullRequestData),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "GetCommentsForPullRequestOutput",
-  }) as any as S.Schema<GetCommentsForPullRequestOutput>;
+export const GetCommentsForPullRequestOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    commentsForPullRequestData: S.optional(CommentsForPullRequestData),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "GetCommentsForPullRequestOutput",
+}) as any as S.Schema<GetCommentsForPullRequestOutput>;
 export interface GetCommitInput {
   repositoryName: string;
   commitId: string;
 }
-export const GetCommitInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetCommitInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ repositoryName: S.String, commitId: S.String }).pipe(
     T.all(
       ns,
@@ -2207,11 +3092,12 @@ export const GetCommitInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetCommitOutput {
   commit: Commit;
 }
-export const GetCommitOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetCommitOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ commit: Commit }).pipe(ns),
 ).annotate({
   identifier: "GetCommitOutput",
 }) as any as S.Schema<GetCommitOutput>;
+export type Limit = number;
 export interface GetDifferencesInput {
   repositoryName: string;
   beforeCommitSpecifier?: string;
@@ -2221,7 +3107,7 @@ export interface GetDifferencesInput {
   MaxResults?: number;
   NextToken?: string;
 }
-export const GetDifferencesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetDifferencesInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.String,
     beforeCommitSpecifier: S.optional(S.String),
@@ -2244,12 +3130,13 @@ export const GetDifferencesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "GetDifferencesInput",
 }) as any as S.Schema<GetDifferencesInput>;
+export type Mode = string;
 export interface BlobMetadata {
   blobId?: string;
   path?: string;
   mode?: string;
 }
-export const BlobMetadata = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const BlobMetadata = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     blobId: S.optional(S.String),
     path: S.optional(S.String),
@@ -2261,7 +3148,7 @@ export interface Difference {
   afterBlob?: BlobMetadata;
   changeType?: ChangeTypeEnum;
 }
-export const Difference = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Difference = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     beforeBlob: S.optional(BlobMetadata),
     afterBlob: S.optional(BlobMetadata),
@@ -2269,12 +3156,12 @@ export const Difference = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Difference" }) as any as S.Schema<Difference>;
 export type DifferenceList = Difference[];
-export const DifferenceList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Difference);
+export const DifferenceList = /*@__PURE__*/ S.Array(Difference);
 export interface GetDifferencesOutput {
   differences?: Difference[];
   NextToken?: string;
 }
-export const GetDifferencesOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetDifferencesOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     differences: S.optional(DifferenceList),
     NextToken: S.optional(S.String),
@@ -2287,7 +3174,7 @@ export interface GetFileInput {
   commitSpecifier?: string;
   filePath: string;
 }
-export const GetFileInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetFileInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.String,
     commitSpecifier: S.optional(S.String),
@@ -2304,6 +3191,7 @@ export const GetFileInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
     ),
   ),
 ).annotate({ identifier: "GetFileInput" }) as any as S.Schema<GetFileInput>;
+export type ObjectSize = number;
 export interface GetFileOutput {
   commitId: string;
   blobId: string;
@@ -2312,7 +3200,7 @@ export interface GetFileOutput {
   fileSize: number;
   fileContent: Uint8Array;
 }
-export const GetFileOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetFileOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     commitId: S.String,
     blobId: S.String,
@@ -2327,7 +3215,7 @@ export interface GetFolderInput {
   commitSpecifier?: string;
   folderPath: string;
 }
-export const GetFolderInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetFolderInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.String,
     commitSpecifier: S.optional(S.String),
@@ -2349,7 +3237,7 @@ export interface Folder {
   absolutePath?: string;
   relativePath?: string;
 }
-export const Folder = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Folder = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     treeId: S.optional(S.String),
     absolutePath: S.optional(S.String),
@@ -2357,14 +3245,14 @@ export const Folder = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Folder" }) as any as S.Schema<Folder>;
 export type FolderList = Folder[];
-export const FolderList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Folder);
+export const FolderList = /*@__PURE__*/ S.Array(Folder);
 export interface File {
   blobId?: string;
   absolutePath?: string;
   relativePath?: string;
   fileMode?: FileModeTypeEnum;
 }
-export const File = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const File = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     blobId: S.optional(S.String),
     absolutePath: S.optional(S.String),
@@ -2373,14 +3261,14 @@ export const File = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "File" }) as any as S.Schema<File>;
 export type FileList = File[];
-export const FileList = /*@__PURE__*/ /*#__PURE__*/ S.Array(File);
+export const FileList = /*@__PURE__*/ S.Array(File);
 export interface SymbolicLink {
   blobId?: string;
   absolutePath?: string;
   relativePath?: string;
   fileMode?: FileModeTypeEnum;
 }
-export const SymbolicLink = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SymbolicLink = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     blobId: S.optional(S.String),
     absolutePath: S.optional(S.String),
@@ -2389,14 +3277,13 @@ export const SymbolicLink = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "SymbolicLink" }) as any as S.Schema<SymbolicLink>;
 export type SymbolicLinkList = SymbolicLink[];
-export const SymbolicLinkList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(SymbolicLink);
+export const SymbolicLinkList = /*@__PURE__*/ S.Array(SymbolicLink);
 export interface SubModule {
   commitId?: string;
   absolutePath?: string;
   relativePath?: string;
 }
-export const SubModule = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const SubModule = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     commitId: S.optional(S.String),
     absolutePath: S.optional(S.String),
@@ -2404,7 +3291,7 @@ export const SubModule = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "SubModule" }) as any as S.Schema<SubModule>;
 export type SubModuleList = SubModule[];
-export const SubModuleList = /*@__PURE__*/ /*#__PURE__*/ S.Array(SubModule);
+export const SubModuleList = /*@__PURE__*/ S.Array(SubModule);
 export interface GetFolderOutput {
   commitId: string;
   folderPath: string;
@@ -2414,7 +3301,7 @@ export interface GetFolderOutput {
   symbolicLinks?: SymbolicLink[];
   subModules?: SubModule[];
 }
-export const GetFolderOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetFolderOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     commitId: S.String,
     folderPath: S.String,
@@ -2434,7 +3321,7 @@ export interface GetMergeCommitInput {
   conflictDetailLevel?: ConflictDetailLevelTypeEnum;
   conflictResolutionStrategy?: ConflictResolutionStrategyTypeEnum;
 }
-export const GetMergeCommitInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetMergeCommitInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.String,
     sourceCommitSpecifier: S.String,
@@ -2461,7 +3348,7 @@ export interface GetMergeCommitOutput {
   baseCommitId?: string;
   mergedCommitId?: string;
 }
-export const GetMergeCommitOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetMergeCommitOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     sourceCommitId: S.optional(S.String),
     destinationCommitId: S.optional(S.String),
@@ -2481,36 +3368,33 @@ export interface GetMergeConflictsInput {
   conflictResolutionStrategy?: ConflictResolutionStrategyTypeEnum;
   nextToken?: string;
 }
-export const GetMergeConflictsInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      repositoryName: S.String,
-      destinationCommitSpecifier: S.String,
-      sourceCommitSpecifier: S.String,
-      mergeOption: MergeOptionTypeEnum,
-      conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
-      maxConflictFiles: S.optional(S.Number),
-      conflictResolutionStrategy: S.optional(
-        ConflictResolutionStrategyTypeEnum,
-      ),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetMergeConflictsInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.String,
+    destinationCommitSpecifier: S.String,
+    sourceCommitSpecifier: S.String,
+    mergeOption: MergeOptionTypeEnum,
+    conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
+    maxConflictFiles: S.optional(S.Number),
+    conflictResolutionStrategy: S.optional(ConflictResolutionStrategyTypeEnum),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetMergeConflictsInput",
 }) as any as S.Schema<GetMergeConflictsInput>;
+export type IsMergeable = boolean;
 export type ConflictMetadataList = ConflictMetadata[];
-export const ConflictMetadataList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(ConflictMetadata);
+export const ConflictMetadataList = /*@__PURE__*/ S.Array(ConflictMetadata);
 export interface GetMergeConflictsOutput {
   mergeable: boolean;
   destinationCommitId: string;
@@ -2519,16 +3403,15 @@ export interface GetMergeConflictsOutput {
   conflictMetadataList: ConflictMetadata[];
   nextToken?: string;
 }
-export const GetMergeConflictsOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      mergeable: S.Boolean,
-      destinationCommitId: S.String,
-      sourceCommitId: S.String,
-      baseCommitId: S.optional(S.String),
-      conflictMetadataList: ConflictMetadataList,
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
+export const GetMergeConflictsOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    mergeable: S.Boolean,
+    destinationCommitId: S.String,
+    sourceCommitId: S.String,
+    baseCommitId: S.optional(S.String),
+    conflictMetadataList: ConflictMetadataList,
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "GetMergeConflictsOutput",
 }) as any as S.Schema<GetMergeConflictsOutput>;
@@ -2539,7 +3422,7 @@ export interface GetMergeOptionsInput {
   conflictDetailLevel?: ConflictDetailLevelTypeEnum;
   conflictResolutionStrategy?: ConflictResolutionStrategyTypeEnum;
 }
-export const GetMergeOptionsInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetMergeOptionsInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.String,
     sourceCommitSpecifier: S.String,
@@ -2561,15 +3444,14 @@ export const GetMergeOptionsInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "GetMergeOptionsInput",
 }) as any as S.Schema<GetMergeOptionsInput>;
 export type MergeOptions = MergeOptionTypeEnum[];
-export const MergeOptions =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(MergeOptionTypeEnum);
+export const MergeOptions = /*@__PURE__*/ S.Array(MergeOptionTypeEnum);
 export interface GetMergeOptionsOutput {
   mergeOptions: MergeOptionTypeEnum[];
   sourceCommitId: string;
   destinationCommitId: string;
   baseCommitId: string;
 }
-export const GetMergeOptionsOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetMergeOptionsOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     mergeOptions: MergeOptions,
     sourceCommitId: S.String,
@@ -2582,7 +3464,7 @@ export const GetMergeOptionsOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetPullRequestInput {
   pullRequestId: string;
 }
-export const GetPullRequestInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetPullRequestInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ pullRequestId: S.String }).pipe(
     T.all(
       ns,
@@ -2600,7 +3482,7 @@ export const GetPullRequestInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetPullRequestOutput {
   pullRequest: PullRequest;
 }
-export const GetPullRequestOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetPullRequestOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ pullRequest: PullRequest }).pipe(ns),
 ).annotate({
   identifier: "GetPullRequestOutput",
@@ -2609,80 +3491,76 @@ export interface GetPullRequestApprovalStatesInput {
   pullRequestId: string;
   revisionId: string;
 }
-export const GetPullRequestApprovalStatesInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ pullRequestId: S.String, revisionId: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetPullRequestApprovalStatesInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ pullRequestId: S.String, revisionId: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "GetPullRequestApprovalStatesInput",
-  }) as any as S.Schema<GetPullRequestApprovalStatesInput>;
+  ),
+).annotate({
+  identifier: "GetPullRequestApprovalStatesInput",
+}) as any as S.Schema<GetPullRequestApprovalStatesInput>;
 export interface Approval {
   userArn?: string;
   approvalState?: ApprovalState;
 }
-export const Approval = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const Approval = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     userArn: S.optional(S.String),
     approvalState: S.optional(ApprovalState),
   }),
 ).annotate({ identifier: "Approval" }) as any as S.Schema<Approval>;
 export type ApprovalList = Approval[];
-export const ApprovalList = /*@__PURE__*/ /*#__PURE__*/ S.Array(Approval);
+export const ApprovalList = /*@__PURE__*/ S.Array(Approval);
 export interface GetPullRequestApprovalStatesOutput {
   approvals?: Approval[];
 }
-export const GetPullRequestApprovalStatesOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ approvals: S.optional(ApprovalList) }).pipe(ns),
-  ).annotate({
-    identifier: "GetPullRequestApprovalStatesOutput",
-  }) as any as S.Schema<GetPullRequestApprovalStatesOutput>;
+export const GetPullRequestApprovalStatesOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ approvals: S.optional(ApprovalList) }).pipe(ns),
+).annotate({
+  identifier: "GetPullRequestApprovalStatesOutput",
+}) as any as S.Schema<GetPullRequestApprovalStatesOutput>;
 export interface GetPullRequestOverrideStateInput {
   pullRequestId: string;
   revisionId: string;
 }
-export const GetPullRequestOverrideStateInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ pullRequestId: S.String, revisionId: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetPullRequestOverrideStateInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ pullRequestId: S.String, revisionId: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "GetPullRequestOverrideStateInput",
-  }) as any as S.Schema<GetPullRequestOverrideStateInput>;
+  ),
+).annotate({
+  identifier: "GetPullRequestOverrideStateInput",
+}) as any as S.Schema<GetPullRequestOverrideStateInput>;
 export interface GetPullRequestOverrideStateOutput {
   overridden?: boolean;
   overrider?: string;
 }
-export const GetPullRequestOverrideStateOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      overridden: S.optional(S.Boolean),
-      overrider: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "GetPullRequestOverrideStateOutput",
-  }) as any as S.Schema<GetPullRequestOverrideStateOutput>;
+export const GetPullRequestOverrideStateOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    overridden: S.optional(S.Boolean),
+    overrider: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "GetPullRequestOverrideStateOutput",
+}) as any as S.Schema<GetPullRequestOverrideStateOutput>;
 export interface GetRepositoryInput {
   repositoryName: string;
 }
-export const GetRepositoryInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetRepositoryInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ repositoryName: S.String }).pipe(
     T.all(
       ns,
@@ -2700,7 +3578,7 @@ export const GetRepositoryInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetRepositoryOutput {
   repositoryMetadata?: RepositoryMetadata;
 }
-export const GetRepositoryOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetRepositoryOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ repositoryMetadata: S.optional(RepositoryMetadata) }).pipe(ns),
 ).annotate({
   identifier: "GetRepositoryOutput",
@@ -2708,33 +3586,36 @@ export const GetRepositoryOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface GetRepositoryTriggersInput {
   repositoryName: string;
 }
-export const GetRepositoryTriggersInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ repositoryName: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const GetRepositoryTriggersInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ repositoryName: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "GetRepositoryTriggersInput",
 }) as any as S.Schema<GetRepositoryTriggersInput>;
+export type RepositoryTriggersConfigurationId = string;
+export type RepositoryTriggerName = string;
+export type RepositoryTriggerCustomData = string;
 export type BranchNameList = string[];
-export const BranchNameList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const BranchNameList = /*@__PURE__*/ S.Array(S.String);
 export type RepositoryTriggerEventEnum =
   | "all"
   | "updateReference"
   | "createReference"
   | "deleteReference"
   | (string & {});
-export const RepositoryTriggerEventEnum = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const RepositoryTriggerEventEnum = /*@__PURE__*/ S.String;
+
 export type RepositoryTriggerEventList = RepositoryTriggerEventEnum[];
-export const RepositoryTriggerEventList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
+export const RepositoryTriggerEventList = /*@__PURE__*/ S.Array(
   RepositoryTriggerEventEnum,
 );
 export interface RepositoryTrigger {
@@ -2744,7 +3625,7 @@ export interface RepositoryTrigger {
   branches?: string[];
   events: RepositoryTriggerEventEnum[];
 }
-export const RepositoryTrigger = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RepositoryTrigger = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     name: S.String,
     destinationArn: S.String,
@@ -2756,68 +3637,62 @@ export const RepositoryTrigger = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "RepositoryTrigger",
 }) as any as S.Schema<RepositoryTrigger>;
 export type RepositoryTriggersList = RepositoryTrigger[];
-export const RepositoryTriggersList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(RepositoryTrigger);
+export const RepositoryTriggersList = /*@__PURE__*/ S.Array(RepositoryTrigger);
 export interface GetRepositoryTriggersOutput {
   configurationId?: string;
   triggers?: RepositoryTrigger[];
 }
-export const GetRepositoryTriggersOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      configurationId: S.optional(S.String),
-      triggers: S.optional(RepositoryTriggersList),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "GetRepositoryTriggersOutput",
-  }) as any as S.Schema<GetRepositoryTriggersOutput>;
+export const GetRepositoryTriggersOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    configurationId: S.optional(S.String),
+    triggers: S.optional(RepositoryTriggersList),
+  }).pipe(ns),
+).annotate({
+  identifier: "GetRepositoryTriggersOutput",
+}) as any as S.Schema<GetRepositoryTriggersOutput>;
 export interface ListApprovalRuleTemplatesInput {
   nextToken?: string;
   maxResults?: number;
 }
-export const ListApprovalRuleTemplatesInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      nextToken: S.optional(S.String),
-      maxResults: S.optional(S.Number),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListApprovalRuleTemplatesInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    nextToken: S.optional(S.String),
+    maxResults: S.optional(S.Number),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "ListApprovalRuleTemplatesInput",
-  }) as any as S.Schema<ListApprovalRuleTemplatesInput>;
+  ),
+).annotate({
+  identifier: "ListApprovalRuleTemplatesInput",
+}) as any as S.Schema<ListApprovalRuleTemplatesInput>;
 export type ApprovalRuleTemplateNameList = string[];
-export const ApprovalRuleTemplateNameList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const ApprovalRuleTemplateNameList = /*@__PURE__*/ S.Array(S.String);
 export interface ListApprovalRuleTemplatesOutput {
   approvalRuleTemplateNames?: string[];
   nextToken?: string;
 }
-export const ListApprovalRuleTemplatesOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      approvalRuleTemplateNames: S.optional(ApprovalRuleTemplateNameList),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "ListApprovalRuleTemplatesOutput",
-  }) as any as S.Schema<ListApprovalRuleTemplatesOutput>;
+export const ListApprovalRuleTemplatesOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    approvalRuleTemplateNames: S.optional(ApprovalRuleTemplateNameList),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "ListApprovalRuleTemplatesOutput",
+}) as any as S.Schema<ListApprovalRuleTemplatesOutput>;
 export interface ListAssociatedApprovalRuleTemplatesForRepositoryInput {
   repositoryName: string;
   nextToken?: string;
   maxResults?: number;
 }
 export const ListAssociatedApprovalRuleTemplatesForRepositoryInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       repositoryName: S.String,
       nextToken: S.optional(S.String),
@@ -2841,7 +3716,7 @@ export interface ListAssociatedApprovalRuleTemplatesForRepositoryOutput {
   nextToken?: string;
 }
 export const ListAssociatedApprovalRuleTemplatesForRepositoryOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       approvalRuleTemplateNames: S.optional(ApprovalRuleTemplateNameList),
       nextToken: S.optional(S.String),
@@ -2853,7 +3728,7 @@ export interface ListBranchesInput {
   repositoryName: string;
   nextToken?: string;
 }
-export const ListBranchesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListBranchesInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ repositoryName: S.String, nextToken: S.optional(S.String) }).pipe(
     T.all(
       ns,
@@ -2872,7 +3747,7 @@ export interface ListBranchesOutput {
   branches?: string[];
   nextToken?: string;
 }
-export const ListBranchesOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListBranchesOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     branches: S.optional(BranchNameList),
     nextToken: S.optional(S.String),
@@ -2887,37 +3762,36 @@ export interface ListFileCommitHistoryRequest {
   maxResults?: number;
   nextToken?: string;
 }
-export const ListFileCommitHistoryRequest =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryName: S.String,
-      commitSpecifier: S.optional(S.String),
-      filePath: S.String,
-      maxResults: S.optional(S.Number),
-      nextToken: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListFileCommitHistoryRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.String,
+    commitSpecifier: S.optional(S.String),
+    filePath: S.String,
+    maxResults: S.optional(S.Number),
+    nextToken: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "ListFileCommitHistoryRequest",
-  }) as any as S.Schema<ListFileCommitHistoryRequest>;
+  ),
+).annotate({
+  identifier: "ListFileCommitHistoryRequest",
+}) as any as S.Schema<ListFileCommitHistoryRequest>;
 export type RevisionChildren = string[];
-export const RevisionChildren = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const RevisionChildren = /*@__PURE__*/ S.Array(S.String);
 export interface FileVersion {
   commit?: Commit;
   blobId?: string;
   path?: string;
   revisionChildren?: string[];
 }
-export const FileVersion = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const FileVersion = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     commit: S.optional(Commit),
     blobId: S.optional(S.String),
@@ -2926,20 +3800,18 @@ export const FileVersion = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "FileVersion" }) as any as S.Schema<FileVersion>;
 export type RevisionDag = FileVersion[];
-export const RevisionDag = /*@__PURE__*/ /*#__PURE__*/ S.Array(FileVersion);
+export const RevisionDag = /*@__PURE__*/ S.Array(FileVersion);
 export interface ListFileCommitHistoryResponse {
   revisionDag: FileVersion[];
   nextToken?: string;
 }
-export const ListFileCommitHistoryResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      revisionDag: RevisionDag,
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "ListFileCommitHistoryResponse",
-  }) as any as S.Schema<ListFileCommitHistoryResponse>;
+export const ListFileCommitHistoryResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ revisionDag: RevisionDag, nextToken: S.optional(S.String) }).pipe(
+    ns,
+  ),
+).annotate({
+  identifier: "ListFileCommitHistoryResponse",
+}) as any as S.Schema<ListFileCommitHistoryResponse>;
 export interface ListPullRequestsInput {
   repositoryName: string;
   authorArn?: string;
@@ -2947,7 +3819,7 @@ export interface ListPullRequestsInput {
   nextToken?: string;
   maxResults?: number;
 }
-export const ListPullRequestsInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListPullRequestsInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.String,
     authorArn: S.optional(S.String),
@@ -2969,30 +3841,31 @@ export const ListPullRequestsInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListPullRequestsInput",
 }) as any as S.Schema<ListPullRequestsInput>;
 export type PullRequestIdList = string[];
-export const PullRequestIdList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const PullRequestIdList = /*@__PURE__*/ S.Array(S.String);
 export interface ListPullRequestsOutput {
   pullRequestIds: string[];
   nextToken?: string;
 }
-export const ListPullRequestsOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      pullRequestIds: PullRequestIdList,
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
+export const ListPullRequestsOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    pullRequestIds: PullRequestIdList,
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "ListPullRequestsOutput",
 }) as any as S.Schema<ListPullRequestsOutput>;
 export type SortByEnum = "repositoryName" | "lastModifiedDate" | (string & {});
-export const SortByEnum = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SortByEnum = /*@__PURE__*/ S.String;
+
 export type OrderEnum = "ascending" | "descending" | (string & {});
-export const OrderEnum = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const OrderEnum = /*@__PURE__*/ S.String;
+
 export interface ListRepositoriesInput {
   nextToken?: string;
   sortBy?: SortByEnum;
   order?: OrderEnum;
 }
-export const ListRepositoriesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListRepositoriesInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     nextToken: S.optional(S.String),
     sortBy: S.optional(SortByEnum),
@@ -3015,7 +3888,7 @@ export interface RepositoryNameIdPair {
   repositoryName?: string;
   repositoryId?: string;
 }
-export const RepositoryNameIdPair = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RepositoryNameIdPair = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.optional(S.String),
     repositoryId: S.optional(S.String),
@@ -3025,17 +3898,16 @@ export const RepositoryNameIdPair = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<RepositoryNameIdPair>;
 export type RepositoryNameIdPairList = RepositoryNameIdPair[];
 export const RepositoryNameIdPairList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(RepositoryNameIdPair);
+  /*@__PURE__*/ S.Array(RepositoryNameIdPair);
 export interface ListRepositoriesOutput {
   repositories?: RepositoryNameIdPair[];
   nextToken?: string;
 }
-export const ListRepositoriesOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      repositories: S.optional(RepositoryNameIdPairList),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
+export const ListRepositoriesOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositories: S.optional(RepositoryNameIdPairList),
+    nextToken: S.optional(S.String),
+  }).pipe(ns),
 ).annotate({
   identifier: "ListRepositoriesOutput",
 }) as any as S.Schema<ListRepositoriesOutput>;
@@ -3045,7 +3917,7 @@ export interface ListRepositoriesForApprovalRuleTemplateInput {
   maxResults?: number;
 }
 export const ListRepositoriesForApprovalRuleTemplateInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       approvalRuleTemplateName: S.String,
       nextToken: S.optional(S.String),
@@ -3069,7 +3941,7 @@ export interface ListRepositoriesForApprovalRuleTemplateOutput {
   nextToken?: string;
 }
 export const ListRepositoriesForApprovalRuleTemplateOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       repositoryNames: S.optional(RepositoryNameList),
       nextToken: S.optional(S.String),
@@ -3077,23 +3949,23 @@ export const ListRepositoriesForApprovalRuleTemplateOutput =
   ).annotate({
     identifier: "ListRepositoriesForApprovalRuleTemplateOutput",
   }) as any as S.Schema<ListRepositoriesForApprovalRuleTemplateOutput>;
+export type ResourceArn = string;
 export interface ListTagsForResourceInput {
   resourceArn: string;
   nextToken?: string;
 }
-export const ListTagsForResourceInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ resourceArn: S.String, nextToken: S.optional(S.String) }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const ListTagsForResourceInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ resourceArn: S.String, nextToken: S.optional(S.String) }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "ListTagsForResourceInput",
 }) as any as S.Schema<ListTagsForResourceInput>;
@@ -3101,12 +3973,10 @@ export interface ListTagsForResourceOutput {
   tags?: { [key: string]: string | undefined };
   nextToken?: string;
 }
-export const ListTagsForResourceOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      tags: S.optional(TagsMap),
-      nextToken: S.optional(S.String),
-    }).pipe(ns),
+export const ListTagsForResourceOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ tags: S.optional(TagsMap), nextToken: S.optional(S.String) }).pipe(
+    ns,
+  ),
 ).annotate({
   identifier: "ListTagsForResourceOutput",
 }) as any as S.Schema<ListTagsForResourceOutput>;
@@ -3116,40 +3986,38 @@ export interface MergeBranchesByFastForwardInput {
   destinationCommitSpecifier: string;
   targetBranch?: string;
 }
-export const MergeBranchesByFastForwardInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryName: S.String,
-      sourceCommitSpecifier: S.String,
-      destinationCommitSpecifier: S.String,
-      targetBranch: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const MergeBranchesByFastForwardInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.String,
+    sourceCommitSpecifier: S.String,
+    destinationCommitSpecifier: S.String,
+    targetBranch: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "MergeBranchesByFastForwardInput",
-  }) as any as S.Schema<MergeBranchesByFastForwardInput>;
+  ),
+).annotate({
+  identifier: "MergeBranchesByFastForwardInput",
+}) as any as S.Schema<MergeBranchesByFastForwardInput>;
 export interface MergeBranchesByFastForwardOutput {
   commitId?: string;
   treeId?: string;
 }
-export const MergeBranchesByFastForwardOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      commitId: S.optional(S.String),
-      treeId: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "MergeBranchesByFastForwardOutput",
-  }) as any as S.Schema<MergeBranchesByFastForwardOutput>;
+export const MergeBranchesByFastForwardOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    commitId: S.optional(S.String),
+    treeId: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "MergeBranchesByFastForwardOutput",
+}) as any as S.Schema<MergeBranchesByFastForwardOutput>;
 export interface MergeBranchesBySquashInput {
   repositoryName: string;
   sourceCommitSpecifier: string;
@@ -3163,33 +4031,30 @@ export interface MergeBranchesBySquashInput {
   keepEmptyFolders?: boolean;
   conflictResolution?: ConflictResolution;
 }
-export const MergeBranchesBySquashInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      repositoryName: S.String,
-      sourceCommitSpecifier: S.String,
-      destinationCommitSpecifier: S.String,
-      targetBranch: S.optional(S.String),
-      conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
-      conflictResolutionStrategy: S.optional(
-        ConflictResolutionStrategyTypeEnum,
-      ),
-      authorName: S.optional(S.String),
-      email: S.optional(S.String),
-      commitMessage: S.optional(S.String),
-      keepEmptyFolders: S.optional(S.Boolean),
-      conflictResolution: S.optional(ConflictResolution),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const MergeBranchesBySquashInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.String,
+    sourceCommitSpecifier: S.String,
+    destinationCommitSpecifier: S.String,
+    targetBranch: S.optional(S.String),
+    conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
+    conflictResolutionStrategy: S.optional(ConflictResolutionStrategyTypeEnum),
+    authorName: S.optional(S.String),
+    email: S.optional(S.String),
+    commitMessage: S.optional(S.String),
+    keepEmptyFolders: S.optional(S.Boolean),
+    conflictResolution: S.optional(ConflictResolution),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "MergeBranchesBySquashInput",
 }) as any as S.Schema<MergeBranchesBySquashInput>;
@@ -3197,15 +4062,14 @@ export interface MergeBranchesBySquashOutput {
   commitId?: string;
   treeId?: string;
 }
-export const MergeBranchesBySquashOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      commitId: S.optional(S.String),
-      treeId: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "MergeBranchesBySquashOutput",
-  }) as any as S.Schema<MergeBranchesBySquashOutput>;
+export const MergeBranchesBySquashOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    commitId: S.optional(S.String),
+    treeId: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "MergeBranchesBySquashOutput",
+}) as any as S.Schema<MergeBranchesBySquashOutput>;
 export interface MergeBranchesByThreeWayInput {
   repositoryName: string;
   sourceCommitSpecifier: string;
@@ -3219,83 +4083,77 @@ export interface MergeBranchesByThreeWayInput {
   keepEmptyFolders?: boolean;
   conflictResolution?: ConflictResolution;
 }
-export const MergeBranchesByThreeWayInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryName: S.String,
-      sourceCommitSpecifier: S.String,
-      destinationCommitSpecifier: S.String,
-      targetBranch: S.optional(S.String),
-      conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
-      conflictResolutionStrategy: S.optional(
-        ConflictResolutionStrategyTypeEnum,
-      ),
-      authorName: S.optional(S.String),
-      email: S.optional(S.String),
-      commitMessage: S.optional(S.String),
-      keepEmptyFolders: S.optional(S.Boolean),
-      conflictResolution: S.optional(ConflictResolution),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const MergeBranchesByThreeWayInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.String,
+    sourceCommitSpecifier: S.String,
+    destinationCommitSpecifier: S.String,
+    targetBranch: S.optional(S.String),
+    conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
+    conflictResolutionStrategy: S.optional(ConflictResolutionStrategyTypeEnum),
+    authorName: S.optional(S.String),
+    email: S.optional(S.String),
+    commitMessage: S.optional(S.String),
+    keepEmptyFolders: S.optional(S.Boolean),
+    conflictResolution: S.optional(ConflictResolution),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "MergeBranchesByThreeWayInput",
-  }) as any as S.Schema<MergeBranchesByThreeWayInput>;
+  ),
+).annotate({
+  identifier: "MergeBranchesByThreeWayInput",
+}) as any as S.Schema<MergeBranchesByThreeWayInput>;
 export interface MergeBranchesByThreeWayOutput {
   commitId?: string;
   treeId?: string;
 }
-export const MergeBranchesByThreeWayOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      commitId: S.optional(S.String),
-      treeId: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "MergeBranchesByThreeWayOutput",
-  }) as any as S.Schema<MergeBranchesByThreeWayOutput>;
+export const MergeBranchesByThreeWayOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    commitId: S.optional(S.String),
+    treeId: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "MergeBranchesByThreeWayOutput",
+}) as any as S.Schema<MergeBranchesByThreeWayOutput>;
 export interface MergePullRequestByFastForwardInput {
   pullRequestId: string;
   repositoryName: string;
   sourceCommitId?: string;
 }
-export const MergePullRequestByFastForwardInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      pullRequestId: S.String,
-      repositoryName: S.String,
-      sourceCommitId: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const MergePullRequestByFastForwardInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    pullRequestId: S.String,
+    repositoryName: S.String,
+    sourceCommitId: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "MergePullRequestByFastForwardInput",
-  }) as any as S.Schema<MergePullRequestByFastForwardInput>;
+  ),
+).annotate({
+  identifier: "MergePullRequestByFastForwardInput",
+}) as any as S.Schema<MergePullRequestByFastForwardInput>;
 export interface MergePullRequestByFastForwardOutput {
   pullRequest?: PullRequest;
 }
-export const MergePullRequestByFastForwardOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ pullRequest: S.optional(PullRequest) }).pipe(ns),
-  ).annotate({
-    identifier: "MergePullRequestByFastForwardOutput",
-  }) as any as S.Schema<MergePullRequestByFastForwardOutput>;
+export const MergePullRequestByFastForwardOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ pullRequest: S.optional(PullRequest) }).pipe(ns),
+).annotate({
+  identifier: "MergePullRequestByFastForwardOutput",
+}) as any as S.Schema<MergePullRequestByFastForwardOutput>;
 export interface MergePullRequestBySquashInput {
   pullRequestId: string;
   repositoryName: string;
@@ -3308,44 +4166,40 @@ export interface MergePullRequestBySquashInput {
   keepEmptyFolders?: boolean;
   conflictResolution?: ConflictResolution;
 }
-export const MergePullRequestBySquashInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      pullRequestId: S.String,
-      repositoryName: S.String,
-      sourceCommitId: S.optional(S.String),
-      conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
-      conflictResolutionStrategy: S.optional(
-        ConflictResolutionStrategyTypeEnum,
-      ),
-      commitMessage: S.optional(S.String),
-      authorName: S.optional(S.String),
-      email: S.optional(S.String),
-      keepEmptyFolders: S.optional(S.Boolean),
-      conflictResolution: S.optional(ConflictResolution),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const MergePullRequestBySquashInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    pullRequestId: S.String,
+    repositoryName: S.String,
+    sourceCommitId: S.optional(S.String),
+    conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
+    conflictResolutionStrategy: S.optional(ConflictResolutionStrategyTypeEnum),
+    commitMessage: S.optional(S.String),
+    authorName: S.optional(S.String),
+    email: S.optional(S.String),
+    keepEmptyFolders: S.optional(S.Boolean),
+    conflictResolution: S.optional(ConflictResolution),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "MergePullRequestBySquashInput",
-  }) as any as S.Schema<MergePullRequestBySquashInput>;
+  ),
+).annotate({
+  identifier: "MergePullRequestBySquashInput",
+}) as any as S.Schema<MergePullRequestBySquashInput>;
 export interface MergePullRequestBySquashOutput {
   pullRequest?: PullRequest;
 }
-export const MergePullRequestBySquashOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ pullRequest: S.optional(PullRequest) }).pipe(ns),
-  ).annotate({
-    identifier: "MergePullRequestBySquashOutput",
-  }) as any as S.Schema<MergePullRequestBySquashOutput>;
+export const MergePullRequestBySquashOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ pullRequest: S.optional(PullRequest) }).pipe(ns),
+).annotate({
+  identifier: "MergePullRequestBySquashOutput",
+}) as any as S.Schema<MergePullRequestBySquashOutput>;
 export interface MergePullRequestByThreeWayInput {
   pullRequestId: string;
   repositoryName: string;
@@ -3358,51 +4212,47 @@ export interface MergePullRequestByThreeWayInput {
   keepEmptyFolders?: boolean;
   conflictResolution?: ConflictResolution;
 }
-export const MergePullRequestByThreeWayInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      pullRequestId: S.String,
-      repositoryName: S.String,
-      sourceCommitId: S.optional(S.String),
-      conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
-      conflictResolutionStrategy: S.optional(
-        ConflictResolutionStrategyTypeEnum,
-      ),
-      commitMessage: S.optional(S.String),
-      authorName: S.optional(S.String),
-      email: S.optional(S.String),
-      keepEmptyFolders: S.optional(S.Boolean),
-      conflictResolution: S.optional(ConflictResolution),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const MergePullRequestByThreeWayInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    pullRequestId: S.String,
+    repositoryName: S.String,
+    sourceCommitId: S.optional(S.String),
+    conflictDetailLevel: S.optional(ConflictDetailLevelTypeEnum),
+    conflictResolutionStrategy: S.optional(ConflictResolutionStrategyTypeEnum),
+    commitMessage: S.optional(S.String),
+    authorName: S.optional(S.String),
+    email: S.optional(S.String),
+    keepEmptyFolders: S.optional(S.Boolean),
+    conflictResolution: S.optional(ConflictResolution),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "MergePullRequestByThreeWayInput",
-  }) as any as S.Schema<MergePullRequestByThreeWayInput>;
+  ),
+).annotate({
+  identifier: "MergePullRequestByThreeWayInput",
+}) as any as S.Schema<MergePullRequestByThreeWayInput>;
 export interface MergePullRequestByThreeWayOutput {
   pullRequest?: PullRequest;
 }
-export const MergePullRequestByThreeWayOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ pullRequest: S.optional(PullRequest) }).pipe(ns),
-  ).annotate({
-    identifier: "MergePullRequestByThreeWayOutput",
-  }) as any as S.Schema<MergePullRequestByThreeWayOutput>;
+export const MergePullRequestByThreeWayOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ pullRequest: S.optional(PullRequest) }).pipe(ns),
+).annotate({
+  identifier: "MergePullRequestByThreeWayOutput",
+}) as any as S.Schema<MergePullRequestByThreeWayOutput>;
 export interface OverridePullRequestApprovalRulesInput {
   pullRequestId: string;
   revisionId: string;
   overrideStatus: OverrideStatus;
 }
-export const OverridePullRequestApprovalRulesInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const OverridePullRequestApprovalRulesInput = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       pullRequestId: S.String,
       revisionId: S.String,
@@ -3418,14 +4268,15 @@ export const OverridePullRequestApprovalRulesInput =
         rules,
       ),
     ),
-  ).annotate({
-    identifier: "OverridePullRequestApprovalRulesInput",
-  }) as any as S.Schema<OverridePullRequestApprovalRulesInput>;
+).annotate({
+  identifier: "OverridePullRequestApprovalRulesInput",
+}) as any as S.Schema<OverridePullRequestApprovalRulesInput>;
 export interface OverridePullRequestApprovalRulesResponse {}
-export const OverridePullRequestApprovalRulesResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "OverridePullRequestApprovalRulesResponse",
-  }) as any as S.Schema<OverridePullRequestApprovalRulesResponse>;
+export const OverridePullRequestApprovalRulesResponse = /*@__PURE__*/ S.suspend(
+  () => S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "OverridePullRequestApprovalRulesResponse",
+}) as any as S.Schema<OverridePullRequestApprovalRulesResponse>;
 export interface PostCommentForComparedCommitInput {
   repositoryName: string;
   beforeCommitId?: string;
@@ -3434,29 +4285,28 @@ export interface PostCommentForComparedCommitInput {
   content: string;
   clientRequestToken?: string;
 }
-export const PostCommentForComparedCommitInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryName: S.String,
-      beforeCommitId: S.optional(S.String),
-      afterCommitId: S.String,
-      location: S.optional(Location),
-      content: S.String,
-      clientRequestToken: S.optional(S.String).pipe(T.IdempotencyToken()),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const PostCommentForComparedCommitInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.String,
+    beforeCommitId: S.optional(S.String),
+    afterCommitId: S.String,
+    location: S.optional(Location),
+    content: S.String,
+    clientRequestToken: S.optional(S.String).pipe(T.IdempotencyToken()),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "PostCommentForComparedCommitInput",
-  }) as any as S.Schema<PostCommentForComparedCommitInput>;
+  ),
+).annotate({
+  identifier: "PostCommentForComparedCommitInput",
+}) as any as S.Schema<PostCommentForComparedCommitInput>;
 export interface PostCommentForComparedCommitOutput {
   repositoryName?: string;
   beforeCommitId?: string;
@@ -3466,20 +4316,19 @@ export interface PostCommentForComparedCommitOutput {
   location?: Location;
   comment?: Comment;
 }
-export const PostCommentForComparedCommitOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryName: S.optional(S.String),
-      beforeCommitId: S.optional(S.String),
-      afterCommitId: S.optional(S.String),
-      beforeBlobId: S.optional(S.String),
-      afterBlobId: S.optional(S.String),
-      location: S.optional(Location),
-      comment: S.optional(Comment),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "PostCommentForComparedCommitOutput",
-  }) as any as S.Schema<PostCommentForComparedCommitOutput>;
+export const PostCommentForComparedCommitOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.optional(S.String),
+    beforeCommitId: S.optional(S.String),
+    afterCommitId: S.optional(S.String),
+    beforeBlobId: S.optional(S.String),
+    afterBlobId: S.optional(S.String),
+    location: S.optional(Location),
+    comment: S.optional(Comment),
+  }).pipe(ns),
+).annotate({
+  identifier: "PostCommentForComparedCommitOutput",
+}) as any as S.Schema<PostCommentForComparedCommitOutput>;
 export interface PostCommentForPullRequestInput {
   pullRequestId: string;
   repositoryName: string;
@@ -3489,30 +4338,29 @@ export interface PostCommentForPullRequestInput {
   content: string;
   clientRequestToken?: string;
 }
-export const PostCommentForPullRequestInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      pullRequestId: S.String,
-      repositoryName: S.String,
-      beforeCommitId: S.String,
-      afterCommitId: S.String,
-      location: S.optional(Location),
-      content: S.String,
-      clientRequestToken: S.optional(S.String).pipe(T.IdempotencyToken()),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const PostCommentForPullRequestInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    pullRequestId: S.String,
+    repositoryName: S.String,
+    beforeCommitId: S.String,
+    afterCommitId: S.String,
+    location: S.optional(Location),
+    content: S.String,
+    clientRequestToken: S.optional(S.String).pipe(T.IdempotencyToken()),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "PostCommentForPullRequestInput",
-  }) as any as S.Schema<PostCommentForPullRequestInput>;
+  ),
+).annotate({
+  identifier: "PostCommentForPullRequestInput",
+}) as any as S.Schema<PostCommentForPullRequestInput>;
 export interface PostCommentForPullRequestOutput {
   repositoryName?: string;
   pullRequestId?: string;
@@ -3523,27 +4371,26 @@ export interface PostCommentForPullRequestOutput {
   location?: Location;
   comment?: Comment;
 }
-export const PostCommentForPullRequestOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryName: S.optional(S.String),
-      pullRequestId: S.optional(S.String),
-      beforeCommitId: S.optional(S.String),
-      afterCommitId: S.optional(S.String),
-      beforeBlobId: S.optional(S.String),
-      afterBlobId: S.optional(S.String),
-      location: S.optional(Location),
-      comment: S.optional(Comment),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "PostCommentForPullRequestOutput",
-  }) as any as S.Schema<PostCommentForPullRequestOutput>;
+export const PostCommentForPullRequestOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.optional(S.String),
+    pullRequestId: S.optional(S.String),
+    beforeCommitId: S.optional(S.String),
+    afterCommitId: S.optional(S.String),
+    beforeBlobId: S.optional(S.String),
+    afterBlobId: S.optional(S.String),
+    location: S.optional(Location),
+    comment: S.optional(Comment),
+  }).pipe(ns),
+).annotate({
+  identifier: "PostCommentForPullRequestOutput",
+}) as any as S.Schema<PostCommentForPullRequestOutput>;
 export interface PostCommentReplyInput {
   inReplyTo: string;
   clientRequestToken?: string;
   content: string;
 }
-export const PostCommentReplyInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PostCommentReplyInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     inReplyTo: S.String,
     clientRequestToken: S.optional(S.String).pipe(T.IdempotencyToken()),
@@ -3565,8 +4412,8 @@ export const PostCommentReplyInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface PostCommentReplyOutput {
   comment?: Comment;
 }
-export const PostCommentReplyOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ comment: S.optional(Comment) }).pipe(ns),
+export const PostCommentReplyOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ comment: S.optional(Comment) }).pipe(ns),
 ).annotate({
   identifier: "PostCommentReplyOutput",
 }) as any as S.Schema<PostCommentReplyOutput>;
@@ -3574,25 +4421,24 @@ export interface PutCommentReactionInput {
   commentId: string;
   reactionValue: string;
 }
-export const PutCommentReactionInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ commentId: S.String, reactionValue: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const PutCommentReactionInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ commentId: S.String, reactionValue: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "PutCommentReactionInput",
 }) as any as S.Schema<PutCommentReactionInput>;
 export interface PutCommentReactionResponse {}
-export const PutCommentReactionResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({}).pipe(ns),
+export const PutCommentReactionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "PutCommentReactionResponse",
 }) as any as S.Schema<PutCommentReactionResponse>;
@@ -3607,7 +4453,7 @@ export interface PutFileInput {
   name?: string;
   email?: string;
 }
-export const PutFileInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PutFileInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     repositoryName: S.String,
     branchName: S.String,
@@ -3635,46 +4481,41 @@ export interface PutFileOutput {
   blobId: string;
   treeId: string;
 }
-export const PutFileOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const PutFileOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ commitId: S.String, blobId: S.String, treeId: S.String }).pipe(ns),
 ).annotate({ identifier: "PutFileOutput" }) as any as S.Schema<PutFileOutput>;
 export interface PutRepositoryTriggersInput {
   repositoryName: string;
   triggers: RepositoryTrigger[];
 }
-export const PutRepositoryTriggersInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      repositoryName: S.String,
-      triggers: RepositoryTriggersList,
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const PutRepositoryTriggersInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ repositoryName: S.String, triggers: RepositoryTriggersList }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "PutRepositoryTriggersInput",
 }) as any as S.Schema<PutRepositoryTriggersInput>;
 export interface PutRepositoryTriggersOutput {
   configurationId?: string;
 }
-export const PutRepositoryTriggersOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ configurationId: S.optional(S.String) }).pipe(ns),
-  ).annotate({
-    identifier: "PutRepositoryTriggersOutput",
-  }) as any as S.Schema<PutRepositoryTriggersOutput>;
+export const PutRepositoryTriggersOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ configurationId: S.optional(S.String) }).pipe(ns),
+).annotate({
+  identifier: "PutRepositoryTriggersOutput",
+}) as any as S.Schema<PutRepositoryTriggersOutput>;
 export interface TagResourceInput {
   resourceArn: string;
   tags: { [key: string]: string | undefined };
 }
-export const TagResourceInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ resourceArn: S.String, tags: TagsMap }).pipe(
     T.all(
       ns,
@@ -3690,7 +4531,7 @@ export const TagResourceInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "TagResourceInput",
 }) as any as S.Schema<TagResourceInput>;
 export interface TagResourceResponse {}
-export const TagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const TagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "TagResourceResponse",
@@ -3699,66 +4540,60 @@ export interface TestRepositoryTriggersInput {
   repositoryName: string;
   triggers: RepositoryTrigger[];
 }
-export const TestRepositoryTriggersInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryName: S.String,
-      triggers: RepositoryTriggersList,
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const TestRepositoryTriggersInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ repositoryName: S.String, triggers: RepositoryTriggersList }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "TestRepositoryTriggersInput",
-  }) as any as S.Schema<TestRepositoryTriggersInput>;
+  ),
+).annotate({
+  identifier: "TestRepositoryTriggersInput",
+}) as any as S.Schema<TestRepositoryTriggersInput>;
 export type RepositoryTriggerNameList = string[];
-export const RepositoryTriggerNameList = /*@__PURE__*/ /*#__PURE__*/ S.Array(
-  S.String,
-);
+export const RepositoryTriggerNameList = /*@__PURE__*/ S.Array(S.String);
+export type RepositoryTriggerExecutionFailureMessage = string;
 export interface RepositoryTriggerExecutionFailure {
   trigger?: string;
   failureMessage?: string;
 }
-export const RepositoryTriggerExecutionFailure =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      trigger: S.optional(S.String),
-      failureMessage: S.optional(S.String),
-    }),
-  ).annotate({
-    identifier: "RepositoryTriggerExecutionFailure",
-  }) as any as S.Schema<RepositoryTriggerExecutionFailure>;
+export const RepositoryTriggerExecutionFailure = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    trigger: S.optional(S.String),
+    failureMessage: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "RepositoryTriggerExecutionFailure",
+}) as any as S.Schema<RepositoryTriggerExecutionFailure>;
 export type RepositoryTriggerExecutionFailureList =
   RepositoryTriggerExecutionFailure[];
-export const RepositoryTriggerExecutionFailureList =
-  /*@__PURE__*/ /*#__PURE__*/ S.Array(RepositoryTriggerExecutionFailure);
+export const RepositoryTriggerExecutionFailureList = /*@__PURE__*/ S.Array(
+  RepositoryTriggerExecutionFailure,
+);
 export interface TestRepositoryTriggersOutput {
   successfulExecutions?: string[];
   failedExecutions?: RepositoryTriggerExecutionFailure[];
 }
-export const TestRepositoryTriggersOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      successfulExecutions: S.optional(RepositoryTriggerNameList),
-      failedExecutions: S.optional(RepositoryTriggerExecutionFailureList),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "TestRepositoryTriggersOutput",
-  }) as any as S.Schema<TestRepositoryTriggersOutput>;
+export const TestRepositoryTriggersOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    successfulExecutions: S.optional(RepositoryTriggerNameList),
+    failedExecutions: S.optional(RepositoryTriggerExecutionFailureList),
+  }).pipe(ns),
+).annotate({
+  identifier: "TestRepositoryTriggersOutput",
+}) as any as S.Schema<TestRepositoryTriggersOutput>;
 export type TagKeysList = string[];
-export const TagKeysList = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
+export const TagKeysList = /*@__PURE__*/ S.Array(S.String);
 export interface UntagResourceInput {
   resourceArn: string;
   tagKeys: string[];
 }
-export const UntagResourceInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ resourceArn: S.String, tagKeys: TagKeysList }).pipe(
     T.all(
       ns,
@@ -3774,7 +4609,7 @@ export const UntagResourceInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "UntagResourceInput",
 }) as any as S.Schema<UntagResourceInput>;
 export interface UntagResourceResponse {}
-export const UntagResourceResponse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UntagResourceResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({}).pipe(ns),
 ).annotate({
   identifier: "UntagResourceResponse",
@@ -3784,8 +4619,8 @@ export interface UpdateApprovalRuleTemplateContentInput {
   newRuleContent: string;
   existingRuleContentSha256?: string;
 }
-export const UpdateApprovalRuleTemplateContentInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateApprovalRuleTemplateContentInput = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({
       approvalRuleTemplateName: S.String,
       newRuleContent: S.String,
@@ -3801,24 +4636,23 @@ export const UpdateApprovalRuleTemplateContentInput =
         rules,
       ),
     ),
-  ).annotate({
-    identifier: "UpdateApprovalRuleTemplateContentInput",
-  }) as any as S.Schema<UpdateApprovalRuleTemplateContentInput>;
+).annotate({
+  identifier: "UpdateApprovalRuleTemplateContentInput",
+}) as any as S.Schema<UpdateApprovalRuleTemplateContentInput>;
 export interface UpdateApprovalRuleTemplateContentOutput {
   approvalRuleTemplate: ApprovalRuleTemplate;
 }
-export const UpdateApprovalRuleTemplateContentOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ approvalRuleTemplate: ApprovalRuleTemplate }).pipe(ns),
-  ).annotate({
-    identifier: "UpdateApprovalRuleTemplateContentOutput",
-  }) as any as S.Schema<UpdateApprovalRuleTemplateContentOutput>;
+export const UpdateApprovalRuleTemplateContentOutput = /*@__PURE__*/ S.suspend(
+  () => S.Struct({ approvalRuleTemplate: ApprovalRuleTemplate }).pipe(ns),
+).annotate({
+  identifier: "UpdateApprovalRuleTemplateContentOutput",
+}) as any as S.Schema<UpdateApprovalRuleTemplateContentOutput>;
 export interface UpdateApprovalRuleTemplateDescriptionInput {
   approvalRuleTemplateName: string;
   approvalRuleTemplateDescription: string;
 }
 export const UpdateApprovalRuleTemplateDescriptionInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       approvalRuleTemplateName: S.String,
       approvalRuleTemplateDescription: S.String,
@@ -3840,7 +4674,7 @@ export interface UpdateApprovalRuleTemplateDescriptionOutput {
   approvalRuleTemplate: ApprovalRuleTemplate;
 }
 export const UpdateApprovalRuleTemplateDescriptionOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({ approvalRuleTemplate: ApprovalRuleTemplate }).pipe(ns),
   ).annotate({
     identifier: "UpdateApprovalRuleTemplateDescriptionOutput",
@@ -3849,39 +4683,37 @@ export interface UpdateApprovalRuleTemplateNameInput {
   oldApprovalRuleTemplateName: string;
   newApprovalRuleTemplateName: string;
 }
-export const UpdateApprovalRuleTemplateNameInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      oldApprovalRuleTemplateName: S.String,
-      newApprovalRuleTemplateName: S.String,
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdateApprovalRuleTemplateNameInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    oldApprovalRuleTemplateName: S.String,
+    newApprovalRuleTemplateName: S.String,
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "UpdateApprovalRuleTemplateNameInput",
-  }) as any as S.Schema<UpdateApprovalRuleTemplateNameInput>;
+  ),
+).annotate({
+  identifier: "UpdateApprovalRuleTemplateNameInput",
+}) as any as S.Schema<UpdateApprovalRuleTemplateNameInput>;
 export interface UpdateApprovalRuleTemplateNameOutput {
   approvalRuleTemplate: ApprovalRuleTemplate;
 }
-export const UpdateApprovalRuleTemplateNameOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ approvalRuleTemplate: ApprovalRuleTemplate }).pipe(ns),
-  ).annotate({
-    identifier: "UpdateApprovalRuleTemplateNameOutput",
-  }) as any as S.Schema<UpdateApprovalRuleTemplateNameOutput>;
+export const UpdateApprovalRuleTemplateNameOutput = /*@__PURE__*/ S.suspend(
+  () => S.Struct({ approvalRuleTemplate: ApprovalRuleTemplate }).pipe(ns),
+).annotate({
+  identifier: "UpdateApprovalRuleTemplateNameOutput",
+}) as any as S.Schema<UpdateApprovalRuleTemplateNameOutput>;
 export interface UpdateCommentInput {
   commentId: string;
   content: string;
 }
-export const UpdateCommentInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateCommentInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ commentId: S.String, content: S.String }).pipe(
     T.all(
       ns,
@@ -3899,7 +4731,7 @@ export const UpdateCommentInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface UpdateCommentOutput {
   comment?: Comment;
 }
-export const UpdateCommentOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const UpdateCommentOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ comment: S.optional(Comment) }).pipe(ns),
 ).annotate({
   identifier: "UpdateCommentOutput",
@@ -3908,27 +4740,27 @@ export interface UpdateDefaultBranchInput {
   repositoryName: string;
   defaultBranchName: string;
 }
-export const UpdateDefaultBranchInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ repositoryName: S.String, defaultBranchName: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdateDefaultBranchInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ repositoryName: S.String, defaultBranchName: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "UpdateDefaultBranchInput",
 }) as any as S.Schema<UpdateDefaultBranchInput>;
 export interface UpdateDefaultBranchResponse {}
-export const UpdateDefaultBranchResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "UpdateDefaultBranchResponse",
-  }) as any as S.Schema<UpdateDefaultBranchResponse>;
+export const UpdateDefaultBranchResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "UpdateDefaultBranchResponse",
+}) as any as S.Schema<UpdateDefaultBranchResponse>;
 export interface UpdatePullRequestApprovalRuleContentInput {
   pullRequestId: string;
   approvalRuleName: string;
@@ -3936,7 +4768,7 @@ export interface UpdatePullRequestApprovalRuleContentInput {
   newRuleContent: string;
 }
 export const UpdatePullRequestApprovalRuleContentInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       pullRequestId: S.String,
       approvalRuleName: S.String,
@@ -3960,7 +4792,7 @@ export interface UpdatePullRequestApprovalRuleContentOutput {
   approvalRule: ApprovalRule;
 }
 export const UpdatePullRequestApprovalRuleContentOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+  /*@__PURE__*/ S.suspend(() =>
     S.Struct({ approvalRule: ApprovalRule }).pipe(ns),
   ).annotate({
     identifier: "UpdatePullRequestApprovalRuleContentOutput",
@@ -3970,969 +4802,201 @@ export interface UpdatePullRequestApprovalStateInput {
   revisionId: string;
   approvalState: ApprovalState;
 }
-export const UpdatePullRequestApprovalStateInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      pullRequestId: S.String,
-      revisionId: S.String,
-      approvalState: ApprovalState,
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdatePullRequestApprovalStateInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    pullRequestId: S.String,
+    revisionId: S.String,
+    approvalState: ApprovalState,
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "UpdatePullRequestApprovalStateInput",
-  }) as any as S.Schema<UpdatePullRequestApprovalStateInput>;
+  ),
+).annotate({
+  identifier: "UpdatePullRequestApprovalStateInput",
+}) as any as S.Schema<UpdatePullRequestApprovalStateInput>;
 export interface UpdatePullRequestApprovalStateResponse {}
-export const UpdatePullRequestApprovalStateResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "UpdatePullRequestApprovalStateResponse",
-  }) as any as S.Schema<UpdatePullRequestApprovalStateResponse>;
+export const UpdatePullRequestApprovalStateResponse = /*@__PURE__*/ S.suspend(
+  () => S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "UpdatePullRequestApprovalStateResponse",
+}) as any as S.Schema<UpdatePullRequestApprovalStateResponse>;
 export interface UpdatePullRequestDescriptionInput {
   pullRequestId: string;
   description: string;
 }
-export const UpdatePullRequestDescriptionInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ pullRequestId: S.String, description: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdatePullRequestDescriptionInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ pullRequestId: S.String, description: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "UpdatePullRequestDescriptionInput",
-  }) as any as S.Schema<UpdatePullRequestDescriptionInput>;
+  ),
+).annotate({
+  identifier: "UpdatePullRequestDescriptionInput",
+}) as any as S.Schema<UpdatePullRequestDescriptionInput>;
 export interface UpdatePullRequestDescriptionOutput {
   pullRequest: PullRequest;
 }
-export const UpdatePullRequestDescriptionOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ pullRequest: PullRequest }).pipe(ns),
-  ).annotate({
-    identifier: "UpdatePullRequestDescriptionOutput",
-  }) as any as S.Schema<UpdatePullRequestDescriptionOutput>;
+export const UpdatePullRequestDescriptionOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ pullRequest: PullRequest }).pipe(ns),
+).annotate({
+  identifier: "UpdatePullRequestDescriptionOutput",
+}) as any as S.Schema<UpdatePullRequestDescriptionOutput>;
 export interface UpdatePullRequestStatusInput {
   pullRequestId: string;
   pullRequestStatus: PullRequestStatusEnum;
 }
-export const UpdatePullRequestStatusInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      pullRequestId: S.String,
-      pullRequestStatus: PullRequestStatusEnum,
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdatePullRequestStatusInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    pullRequestId: S.String,
+    pullRequestStatus: PullRequestStatusEnum,
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "UpdatePullRequestStatusInput",
-  }) as any as S.Schema<UpdatePullRequestStatusInput>;
+  ),
+).annotate({
+  identifier: "UpdatePullRequestStatusInput",
+}) as any as S.Schema<UpdatePullRequestStatusInput>;
 export interface UpdatePullRequestStatusOutput {
   pullRequest: PullRequest;
 }
-export const UpdatePullRequestStatusOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ pullRequest: PullRequest }).pipe(ns),
-  ).annotate({
-    identifier: "UpdatePullRequestStatusOutput",
-  }) as any as S.Schema<UpdatePullRequestStatusOutput>;
+export const UpdatePullRequestStatusOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ pullRequest: PullRequest }).pipe(ns),
+).annotate({
+  identifier: "UpdatePullRequestStatusOutput",
+}) as any as S.Schema<UpdatePullRequestStatusOutput>;
 export interface UpdatePullRequestTitleInput {
   pullRequestId: string;
   title: string;
 }
-export const UpdatePullRequestTitleInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ pullRequestId: S.String, title: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdatePullRequestTitleInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ pullRequestId: S.String, title: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "UpdatePullRequestTitleInput",
-  }) as any as S.Schema<UpdatePullRequestTitleInput>;
+  ),
+).annotate({
+  identifier: "UpdatePullRequestTitleInput",
+}) as any as S.Schema<UpdatePullRequestTitleInput>;
 export interface UpdatePullRequestTitleOutput {
   pullRequest: PullRequest;
 }
-export const UpdatePullRequestTitleOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ pullRequest: PullRequest }).pipe(ns),
-  ).annotate({
-    identifier: "UpdatePullRequestTitleOutput",
-  }) as any as S.Schema<UpdatePullRequestTitleOutput>;
+export const UpdatePullRequestTitleOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ pullRequest: PullRequest }).pipe(ns),
+).annotate({
+  identifier: "UpdatePullRequestTitleOutput",
+}) as any as S.Schema<UpdatePullRequestTitleOutput>;
 export interface UpdateRepositoryDescriptionInput {
   repositoryName: string;
   repositoryDescription?: string;
 }
-export const UpdateRepositoryDescriptionInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryName: S.String,
-      repositoryDescription: S.optional(S.String),
-    }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdateRepositoryDescriptionInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryName: S.String,
+    repositoryDescription: S.optional(S.String),
+  }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "UpdateRepositoryDescriptionInput",
-  }) as any as S.Schema<UpdateRepositoryDescriptionInput>;
+  ),
+).annotate({
+  identifier: "UpdateRepositoryDescriptionInput",
+}) as any as S.Schema<UpdateRepositoryDescriptionInput>;
 export interface UpdateRepositoryDescriptionResponse {}
-export const UpdateRepositoryDescriptionResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "UpdateRepositoryDescriptionResponse",
-  }) as any as S.Schema<UpdateRepositoryDescriptionResponse>;
+export const UpdateRepositoryDescriptionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "UpdateRepositoryDescriptionResponse",
+}) as any as S.Schema<UpdateRepositoryDescriptionResponse>;
 export interface UpdateRepositoryEncryptionKeyInput {
   repositoryName: string;
   kmsKeyId: string;
 }
-export const UpdateRepositoryEncryptionKeyInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ repositoryName: S.String, kmsKeyId: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdateRepositoryEncryptionKeyInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ repositoryName: S.String, kmsKeyId: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
-  ).annotate({
-    identifier: "UpdateRepositoryEncryptionKeyInput",
-  }) as any as S.Schema<UpdateRepositoryEncryptionKeyInput>;
+  ),
+).annotate({
+  identifier: "UpdateRepositoryEncryptionKeyInput",
+}) as any as S.Schema<UpdateRepositoryEncryptionKeyInput>;
 export interface UpdateRepositoryEncryptionKeyOutput {
   repositoryId?: string;
   kmsKeyId?: string;
   originalKmsKeyId?: string;
 }
-export const UpdateRepositoryEncryptionKeyOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      repositoryId: S.optional(S.String),
-      kmsKeyId: S.optional(S.String),
-      originalKmsKeyId: S.optional(S.String),
-    }).pipe(ns),
-  ).annotate({
-    identifier: "UpdateRepositoryEncryptionKeyOutput",
-  }) as any as S.Schema<UpdateRepositoryEncryptionKeyOutput>;
+export const UpdateRepositoryEncryptionKeyOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    repositoryId: S.optional(S.String),
+    kmsKeyId: S.optional(S.String),
+    originalKmsKeyId: S.optional(S.String),
+  }).pipe(ns),
+).annotate({
+  identifier: "UpdateRepositoryEncryptionKeyOutput",
+}) as any as S.Schema<UpdateRepositoryEncryptionKeyOutput>;
 export interface UpdateRepositoryNameInput {
   oldName: string;
   newName: string;
 }
-export const UpdateRepositoryNameInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ oldName: S.String, newName: S.String }).pipe(
-      T.all(
-        ns,
-        T.Http({ method: "POST", uri: "/" }),
-        svc,
-        auth,
-        proto,
-        ver,
-        rules,
-      ),
+export const UpdateRepositoryNameInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ oldName: S.String, newName: S.String }).pipe(
+    T.all(
+      ns,
+      T.Http({ method: "POST", uri: "/" }),
+      svc,
+      auth,
+      proto,
+      ver,
+      rules,
     ),
+  ),
 ).annotate({
   identifier: "UpdateRepositoryNameInput",
 }) as any as S.Schema<UpdateRepositoryNameInput>;
 export interface UpdateRepositoryNameResponse {}
-export const UpdateRepositoryNameResponse =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({}).pipe(ns)).annotate({
-    identifier: "UpdateRepositoryNameResponse",
-  }) as any as S.Schema<UpdateRepositoryNameResponse>;
-
-//# Errors
-export class ApprovalRuleTemplateDoesNotExistException extends S.TaggedErrorClass<ApprovalRuleTemplateDoesNotExistException>()(
-  "ApprovalRuleTemplateDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class ApprovalRuleTemplateNameRequiredException extends S.TaggedErrorClass<ApprovalRuleTemplateNameRequiredException>()(
-  "ApprovalRuleTemplateNameRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class EncryptionIntegrityChecksFailedException extends S.TaggedErrorClass<EncryptionIntegrityChecksFailedException>()(
-  "EncryptionIntegrityChecksFailedException",
-  { message: S.optional(S.String) },
-) {}
-export class EncryptionKeyAccessDeniedException extends S.TaggedErrorClass<EncryptionKeyAccessDeniedException>()(
-  "EncryptionKeyAccessDeniedException",
-  { message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class EncryptionKeyDisabledException extends S.TaggedErrorClass<EncryptionKeyDisabledException>()(
-  "EncryptionKeyDisabledException",
-  { message: S.optional(S.String) },
-) {}
-export class EncryptionKeyNotFoundException extends S.TaggedErrorClass<EncryptionKeyNotFoundException>()(
-  "EncryptionKeyNotFoundException",
-  { message: S.optional(S.String) },
-) {}
-export class EncryptionKeyUnavailableException extends S.TaggedErrorClass<EncryptionKeyUnavailableException>()(
-  "EncryptionKeyUnavailableException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidApprovalRuleTemplateNameException extends S.TaggedErrorClass<InvalidApprovalRuleTemplateNameException>()(
-  "InvalidApprovalRuleTemplateNameException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidRepositoryNameException extends S.TaggedErrorClass<InvalidRepositoryNameException>()(
-  "InvalidRepositoryNameException",
-  { message: S.optional(S.String) },
-) {}
-export class MaximumRuleTemplatesAssociatedWithRepositoryException extends S.TaggedErrorClass<MaximumRuleTemplatesAssociatedWithRepositoryException>()(
-  "MaximumRuleTemplatesAssociatedWithRepositoryException",
-  { message: S.optional(S.String) },
-) {}
-export class RepositoryDoesNotExistException extends S.TaggedErrorClass<RepositoryDoesNotExistException>()(
-  "RepositoryDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class RepositoryNameRequiredException extends S.TaggedErrorClass<RepositoryNameRequiredException>()(
-  "RepositoryNameRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class MaximumRepositoryNamesExceededException extends S.TaggedErrorClass<MaximumRepositoryNamesExceededException>()(
-  "MaximumRepositoryNamesExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class RepositoryNamesRequiredException extends S.TaggedErrorClass<RepositoryNamesRequiredException>()(
-  "RepositoryNamesRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class CommitDoesNotExistException extends S.TaggedErrorClass<CommitDoesNotExistException>()(
-  "CommitDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class CommitRequiredException extends S.TaggedErrorClass<CommitRequiredException>()(
-  "CommitRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidCommitException extends S.TaggedErrorClass<InvalidCommitException>()(
-  "InvalidCommitException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidConflictDetailLevelException extends S.TaggedErrorClass<InvalidConflictDetailLevelException>()(
-  "InvalidConflictDetailLevelException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidConflictResolutionStrategyException extends S.TaggedErrorClass<InvalidConflictResolutionStrategyException>()(
-  "InvalidConflictResolutionStrategyException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidContinuationTokenException extends S.TaggedErrorClass<InvalidContinuationTokenException>()(
-  "InvalidContinuationTokenException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidMaxConflictFilesException extends S.TaggedErrorClass<InvalidMaxConflictFilesException>()(
-  "InvalidMaxConflictFilesException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidMaxMergeHunksException extends S.TaggedErrorClass<InvalidMaxMergeHunksException>()(
-  "InvalidMaxMergeHunksException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidMergeOptionException extends S.TaggedErrorClass<InvalidMergeOptionException>()(
-  "InvalidMergeOptionException",
-  { message: S.optional(S.String) },
-) {}
-export class MaximumFileContentToLoadExceededException extends S.TaggedErrorClass<MaximumFileContentToLoadExceededException>()(
-  "MaximumFileContentToLoadExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class MaximumItemsToCompareExceededException extends S.TaggedErrorClass<MaximumItemsToCompareExceededException>()(
-  "MaximumItemsToCompareExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class MergeOptionRequiredException extends S.TaggedErrorClass<MergeOptionRequiredException>()(
-  "MergeOptionRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class TipsDivergenceExceededException extends S.TaggedErrorClass<TipsDivergenceExceededException>()(
-  "TipsDivergenceExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class CommitIdsLimitExceededException extends S.TaggedErrorClass<CommitIdsLimitExceededException>()(
-  "CommitIdsLimitExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class CommitIdsListRequiredException extends S.TaggedErrorClass<CommitIdsListRequiredException>()(
-  "CommitIdsListRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class ApprovalRuleTemplateContentRequiredException extends S.TaggedErrorClass<ApprovalRuleTemplateContentRequiredException>()(
-  "ApprovalRuleTemplateContentRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class ApprovalRuleTemplateNameAlreadyExistsException extends S.TaggedErrorClass<ApprovalRuleTemplateNameAlreadyExistsException>()(
-  "ApprovalRuleTemplateNameAlreadyExistsException",
-  { message: S.optional(S.String) },
-).pipe(C.withAlreadyExistsError) {}
-export class InvalidApprovalRuleTemplateContentException extends S.TaggedErrorClass<InvalidApprovalRuleTemplateContentException>()(
-  "InvalidApprovalRuleTemplateContentException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidApprovalRuleTemplateDescriptionException extends S.TaggedErrorClass<InvalidApprovalRuleTemplateDescriptionException>()(
-  "InvalidApprovalRuleTemplateDescriptionException",
-  { message: S.optional(S.String) },
-) {}
-export class NumberOfRuleTemplatesExceededException extends S.TaggedErrorClass<NumberOfRuleTemplatesExceededException>()(
-  "NumberOfRuleTemplatesExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class BranchNameExistsException extends S.TaggedErrorClass<BranchNameExistsException>()(
-  "BranchNameExistsException",
-  { message: S.optional(S.String) },
-) {}
-export class BranchNameRequiredException extends S.TaggedErrorClass<BranchNameRequiredException>()(
-  "BranchNameRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class CommitIdRequiredException extends S.TaggedErrorClass<CommitIdRequiredException>()(
-  "CommitIdRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidBranchNameException extends S.TaggedErrorClass<InvalidBranchNameException>()(
-  "InvalidBranchNameException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidCommitIdException extends S.TaggedErrorClass<InvalidCommitIdException>()(
-  "InvalidCommitIdException",
-  { message: S.optional(S.String) },
-) {}
-export class BranchDoesNotExistException extends S.TaggedErrorClass<BranchDoesNotExistException>()(
-  "BranchDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class BranchNameIsTagNameException extends S.TaggedErrorClass<BranchNameIsTagNameException>()(
-  "BranchNameIsTagNameException",
-  { message: S.optional(S.String) },
-) {}
-export class CommitMessageLengthExceededException extends S.TaggedErrorClass<CommitMessageLengthExceededException>()(
-  "CommitMessageLengthExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class DirectoryNameConflictsWithFileNameException extends S.TaggedErrorClass<DirectoryNameConflictsWithFileNameException>()(
-  "DirectoryNameConflictsWithFileNameException",
-  { message: S.optional(S.String) },
-) {}
-export class FileContentAndSourceFileSpecifiedException extends S.TaggedErrorClass<FileContentAndSourceFileSpecifiedException>()(
-  "FileContentAndSourceFileSpecifiedException",
-  { message: S.optional(S.String) },
-) {}
-export class FileContentSizeLimitExceededException extends S.TaggedErrorClass<FileContentSizeLimitExceededException>()(
-  "FileContentSizeLimitExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class FileDoesNotExistException extends S.TaggedErrorClass<FileDoesNotExistException>()(
-  "FileDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class FileEntryRequiredException extends S.TaggedErrorClass<FileEntryRequiredException>()(
-  "FileEntryRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class FileModeRequiredException extends S.TaggedErrorClass<FileModeRequiredException>()(
-  "FileModeRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class FileNameConflictsWithDirectoryNameException extends S.TaggedErrorClass<FileNameConflictsWithDirectoryNameException>()(
-  "FileNameConflictsWithDirectoryNameException",
-  { message: S.optional(S.String) },
-) {}
-export class FilePathConflictsWithSubmodulePathException extends S.TaggedErrorClass<FilePathConflictsWithSubmodulePathException>()(
-  "FilePathConflictsWithSubmodulePathException",
-  { message: S.optional(S.String) },
-) {}
-export class FolderContentSizeLimitExceededException extends S.TaggedErrorClass<FolderContentSizeLimitExceededException>()(
-  "FolderContentSizeLimitExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidDeletionParameterException extends S.TaggedErrorClass<InvalidDeletionParameterException>()(
-  "InvalidDeletionParameterException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidEmailException extends S.TaggedErrorClass<InvalidEmailException>()(
-  "InvalidEmailException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidFileModeException extends S.TaggedErrorClass<InvalidFileModeException>()(
-  "InvalidFileModeException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidParentCommitIdException extends S.TaggedErrorClass<InvalidParentCommitIdException>()(
-  "InvalidParentCommitIdException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidPathException extends S.TaggedErrorClass<InvalidPathException>()(
-  "InvalidPathException",
-  { message: S.optional(S.String) },
-) {}
-export class MaximumFileEntriesExceededException extends S.TaggedErrorClass<MaximumFileEntriesExceededException>()(
-  "MaximumFileEntriesExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class NameLengthExceededException extends S.TaggedErrorClass<NameLengthExceededException>()(
-  "NameLengthExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class NoChangeException extends S.TaggedErrorClass<NoChangeException>()(
-  "NoChangeException",
-  { message: S.optional(S.String) },
-) {}
-export class ParentCommitDoesNotExistException extends S.TaggedErrorClass<ParentCommitDoesNotExistException>()(
-  "ParentCommitDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class ParentCommitIdOutdatedException extends S.TaggedErrorClass<ParentCommitIdOutdatedException>()(
-  "ParentCommitIdOutdatedException",
-  { message: S.optional(S.String) },
-) {}
-export class ParentCommitIdRequiredException extends S.TaggedErrorClass<ParentCommitIdRequiredException>()(
-  "ParentCommitIdRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class PathRequiredException extends S.TaggedErrorClass<PathRequiredException>()(
-  "PathRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class PutFileEntryConflictException extends S.TaggedErrorClass<PutFileEntryConflictException>()(
-  "PutFileEntryConflictException",
-  { message: S.optional(S.String) },
-) {}
-export class RestrictedSourceFileException extends S.TaggedErrorClass<RestrictedSourceFileException>()(
-  "RestrictedSourceFileException",
-  { message: S.optional(S.String) },
-) {}
-export class SamePathRequestException extends S.TaggedErrorClass<SamePathRequestException>()(
-  "SamePathRequestException",
-  { message: S.optional(S.String) },
-) {}
-export class SourceFileOrContentRequiredException extends S.TaggedErrorClass<SourceFileOrContentRequiredException>()(
-  "SourceFileOrContentRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class ClientRequestTokenRequiredException extends S.TaggedErrorClass<ClientRequestTokenRequiredException>()(
-  "ClientRequestTokenRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class IdempotencyParameterMismatchException extends S.TaggedErrorClass<IdempotencyParameterMismatchException>()(
-  "IdempotencyParameterMismatchException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidClientRequestTokenException extends S.TaggedErrorClass<InvalidClientRequestTokenException>()(
-  "InvalidClientRequestTokenException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidDescriptionException extends S.TaggedErrorClass<InvalidDescriptionException>()(
-  "InvalidDescriptionException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidReferenceNameException extends S.TaggedErrorClass<InvalidReferenceNameException>()(
-  "InvalidReferenceNameException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidTargetException extends S.TaggedErrorClass<InvalidTargetException>()(
-  "InvalidTargetException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidTargetsException extends S.TaggedErrorClass<InvalidTargetsException>()(
-  "InvalidTargetsException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidTitleException extends S.TaggedErrorClass<InvalidTitleException>()(
-  "InvalidTitleException",
-  { message: S.optional(S.String) },
-) {}
-export class MaximumOpenPullRequestsExceededException extends S.TaggedErrorClass<MaximumOpenPullRequestsExceededException>()(
-  "MaximumOpenPullRequestsExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class MultipleRepositoriesInPullRequestException extends S.TaggedErrorClass<MultipleRepositoriesInPullRequestException>()(
-  "MultipleRepositoriesInPullRequestException",
-  { message: S.optional(S.String) },
-) {}
-export class ReferenceDoesNotExistException extends S.TaggedErrorClass<ReferenceDoesNotExistException>()(
-  "ReferenceDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class ReferenceNameRequiredException extends S.TaggedErrorClass<ReferenceNameRequiredException>()(
-  "ReferenceNameRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class ReferenceTypeNotSupportedException extends S.TaggedErrorClass<ReferenceTypeNotSupportedException>()(
-  "ReferenceTypeNotSupportedException",
-  { message: S.optional(S.String) },
-) {}
-export class SourceAndDestinationAreSameException extends S.TaggedErrorClass<SourceAndDestinationAreSameException>()(
-  "SourceAndDestinationAreSameException",
-  { message: S.optional(S.String) },
-) {}
-export class TargetRequiredException extends S.TaggedErrorClass<TargetRequiredException>()(
-  "TargetRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class TargetsRequiredException extends S.TaggedErrorClass<TargetsRequiredException>()(
-  "TargetsRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class TitleRequiredException extends S.TaggedErrorClass<TitleRequiredException>()(
-  "TitleRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class ApprovalRuleContentRequiredException extends S.TaggedErrorClass<ApprovalRuleContentRequiredException>()(
-  "ApprovalRuleContentRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class ApprovalRuleNameAlreadyExistsException extends S.TaggedErrorClass<ApprovalRuleNameAlreadyExistsException>()(
-  "ApprovalRuleNameAlreadyExistsException",
-  { message: S.optional(S.String) },
-).pipe(C.withAlreadyExistsError) {}
-export class ApprovalRuleNameRequiredException extends S.TaggedErrorClass<ApprovalRuleNameRequiredException>()(
-  "ApprovalRuleNameRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidApprovalRuleContentException extends S.TaggedErrorClass<InvalidApprovalRuleContentException>()(
-  "InvalidApprovalRuleContentException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidApprovalRuleNameException extends S.TaggedErrorClass<InvalidApprovalRuleNameException>()(
-  "InvalidApprovalRuleNameException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidPullRequestIdException extends S.TaggedErrorClass<InvalidPullRequestIdException>()(
-  "InvalidPullRequestIdException",
-  { message: S.optional(S.String) },
-) {}
-export class NumberOfRulesExceededException extends S.TaggedErrorClass<NumberOfRulesExceededException>()(
-  "NumberOfRulesExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class PullRequestAlreadyClosedException extends S.TaggedErrorClass<PullRequestAlreadyClosedException>()(
-  "PullRequestAlreadyClosedException",
-  { message: S.optional(S.String) },
-) {}
-export class PullRequestDoesNotExistException extends S.TaggedErrorClass<PullRequestDoesNotExistException>()(
-  "PullRequestDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class PullRequestIdRequiredException extends S.TaggedErrorClass<PullRequestIdRequiredException>()(
-  "PullRequestIdRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class EncryptionKeyInvalidIdException extends S.TaggedErrorClass<EncryptionKeyInvalidIdException>()(
-  "EncryptionKeyInvalidIdException",
-  { message: S.optional(S.String) },
-) {}
-export class EncryptionKeyInvalidUsageException extends S.TaggedErrorClass<EncryptionKeyInvalidUsageException>()(
-  "EncryptionKeyInvalidUsageException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidRepositoryDescriptionException extends S.TaggedErrorClass<InvalidRepositoryDescriptionException>()(
-  "InvalidRepositoryDescriptionException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidSystemTagUsageException extends S.TaggedErrorClass<InvalidSystemTagUsageException>()(
-  "InvalidSystemTagUsageException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidTagsMapException extends S.TaggedErrorClass<InvalidTagsMapException>()(
-  "InvalidTagsMapException",
-  { message: S.optional(S.String) },
-) {}
-export class OperationNotAllowedException extends S.TaggedErrorClass<OperationNotAllowedException>()(
-  "OperationNotAllowedException",
-  { message: S.optional(S.String) },
-) {}
-export class RepositoryLimitExceededException extends S.TaggedErrorClass<RepositoryLimitExceededException>()(
-  "RepositoryLimitExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class RepositoryNameExistsException extends S.TaggedErrorClass<RepositoryNameExistsException>()(
-  "RepositoryNameExistsException",
-  { message: S.optional(S.String) },
-) {}
-export class TagPolicyException extends S.TaggedErrorClass<TagPolicyException>()(
-  "TagPolicyException",
-  { message: S.optional(S.String) },
-) {}
-export class TooManyTagsException extends S.TaggedErrorClass<TooManyTagsException>()(
-  "TooManyTagsException",
-  { message: S.optional(S.String) },
-) {}
-export class ConcurrentReferenceUpdateException extends S.TaggedErrorClass<ConcurrentReferenceUpdateException>()(
-  "ConcurrentReferenceUpdateException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidConflictResolutionException extends S.TaggedErrorClass<InvalidConflictResolutionException>()(
-  "InvalidConflictResolutionException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidReplacementContentException extends S.TaggedErrorClass<InvalidReplacementContentException>()(
-  "InvalidReplacementContentException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidReplacementTypeException extends S.TaggedErrorClass<InvalidReplacementTypeException>()(
-  "InvalidReplacementTypeException",
-  { message: S.optional(S.String) },
-) {}
-export class ManualMergeRequiredException extends S.TaggedErrorClass<ManualMergeRequiredException>()(
-  "ManualMergeRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class MaximumConflictResolutionEntriesExceededException extends S.TaggedErrorClass<MaximumConflictResolutionEntriesExceededException>()(
-  "MaximumConflictResolutionEntriesExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class MultipleConflictResolutionEntriesException extends S.TaggedErrorClass<MultipleConflictResolutionEntriesException>()(
-  "MultipleConflictResolutionEntriesException",
-  { message: S.optional(S.String) },
-) {}
-export class ReplacementContentRequiredException extends S.TaggedErrorClass<ReplacementContentRequiredException>()(
-  "ReplacementContentRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class ReplacementTypeRequiredException extends S.TaggedErrorClass<ReplacementTypeRequiredException>()(
-  "ReplacementTypeRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class ApprovalRuleTemplateInUseException extends S.TaggedErrorClass<ApprovalRuleTemplateInUseException>()(
-  "ApprovalRuleTemplateInUseException",
-  { message: S.optional(S.String) },
-) {}
-export class DefaultBranchCannotBeDeletedException extends S.TaggedErrorClass<DefaultBranchCannotBeDeletedException>()(
-  "DefaultBranchCannotBeDeletedException",
-  { message: S.optional(S.String) },
-) {}
-export class CommentDeletedException extends S.TaggedErrorClass<CommentDeletedException>()(
-  "CommentDeletedException",
-  { message: S.optional(S.String) },
-) {}
-export class CommentDoesNotExistException extends S.TaggedErrorClass<CommentDoesNotExistException>()(
-  "CommentDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class CommentIdRequiredException extends S.TaggedErrorClass<CommentIdRequiredException>()(
-  "CommentIdRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidCommentIdException extends S.TaggedErrorClass<InvalidCommentIdException>()(
-  "InvalidCommentIdException",
-  { message: S.optional(S.String) },
-) {}
-export class CannotDeleteApprovalRuleFromTemplateException extends S.TaggedErrorClass<CannotDeleteApprovalRuleFromTemplateException>()(
-  "CannotDeleteApprovalRuleFromTemplateException",
-  { message: S.optional(S.String) },
-) {}
-export class ActorDoesNotExistException extends S.TaggedErrorClass<ActorDoesNotExistException>()(
-  "ActorDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidActorArnException extends S.TaggedErrorClass<InvalidActorArnException>()(
-  "InvalidActorArnException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidMaxResultsException extends S.TaggedErrorClass<InvalidMaxResultsException>()(
-  "InvalidMaxResultsException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidPullRequestEventTypeException extends S.TaggedErrorClass<InvalidPullRequestEventTypeException>()(
-  "InvalidPullRequestEventTypeException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidRevisionIdException extends S.TaggedErrorClass<InvalidRevisionIdException>()(
-  "InvalidRevisionIdException",
-  { message: S.optional(S.String) },
-) {}
-export class RevisionIdRequiredException extends S.TaggedErrorClass<RevisionIdRequiredException>()(
-  "RevisionIdRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class RevisionNotCurrentException extends S.TaggedErrorClass<RevisionNotCurrentException>()(
-  "RevisionNotCurrentException",
-  { message: S.optional(S.String) },
-) {}
-export class BlobIdDoesNotExistException extends S.TaggedErrorClass<BlobIdDoesNotExistException>()(
-  "BlobIdDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class BlobIdRequiredException extends S.TaggedErrorClass<BlobIdRequiredException>()(
-  "BlobIdRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class FileTooLargeException extends S.TaggedErrorClass<FileTooLargeException>()(
-  "FileTooLargeException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidBlobIdException extends S.TaggedErrorClass<InvalidBlobIdException>()(
-  "InvalidBlobIdException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidReactionUserArnException extends S.TaggedErrorClass<InvalidReactionUserArnException>()(
-  "InvalidReactionUserArnException",
-  { message: S.optional(S.String) },
-) {}
-export class RepositoryNotAssociatedWithPullRequestException extends S.TaggedErrorClass<RepositoryNotAssociatedWithPullRequestException>()(
-  "RepositoryNotAssociatedWithPullRequestException",
-  { message: S.optional(S.String) },
-) {}
-export class CommitIdDoesNotExistException extends S.TaggedErrorClass<CommitIdDoesNotExistException>()(
-  "CommitIdDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class PathDoesNotExistException extends S.TaggedErrorClass<PathDoesNotExistException>()(
-  "PathDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class FolderDoesNotExistException extends S.TaggedErrorClass<FolderDoesNotExistException>()(
-  "FolderDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidDestinationCommitSpecifierException extends S.TaggedErrorClass<InvalidDestinationCommitSpecifierException>()(
-  "InvalidDestinationCommitSpecifierException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidSourceCommitSpecifierException extends S.TaggedErrorClass<InvalidSourceCommitSpecifierException>()(
-  "InvalidSourceCommitSpecifierException",
-  { message: S.optional(S.String) },
-) {}
-export class AuthorDoesNotExistException extends S.TaggedErrorClass<AuthorDoesNotExistException>()(
-  "AuthorDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidAuthorArnException extends S.TaggedErrorClass<InvalidAuthorArnException>()(
-  "InvalidAuthorArnException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidPullRequestStatusException extends S.TaggedErrorClass<InvalidPullRequestStatusException>()(
-  "InvalidPullRequestStatusException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidOrderException extends S.TaggedErrorClass<InvalidOrderException>()(
-  "InvalidOrderException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidSortByException extends S.TaggedErrorClass<InvalidSortByException>()(
-  "InvalidSortByException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidResourceArnException extends S.TaggedErrorClass<InvalidResourceArnException>()(
-  "InvalidResourceArnException",
-  { message: S.optional(S.String) },
-) {}
-export class ResourceArnRequiredException extends S.TaggedErrorClass<ResourceArnRequiredException>()(
-  "ResourceArnRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidTargetBranchException extends S.TaggedErrorClass<InvalidTargetBranchException>()(
-  "InvalidTargetBranchException",
-  { message: S.optional(S.String) },
-) {}
-export class PullRequestApprovalRulesNotSatisfiedException extends S.TaggedErrorClass<PullRequestApprovalRulesNotSatisfiedException>()(
-  "PullRequestApprovalRulesNotSatisfiedException",
-  { message: S.optional(S.String) },
-) {}
-export class TipOfSourceReferenceIsDifferentException extends S.TaggedErrorClass<TipOfSourceReferenceIsDifferentException>()(
-  "TipOfSourceReferenceIsDifferentException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidOverrideStatusException extends S.TaggedErrorClass<InvalidOverrideStatusException>()(
-  "InvalidOverrideStatusException",
-  { message: S.optional(S.String) },
-) {}
-export class OverrideAlreadySetException extends S.TaggedErrorClass<OverrideAlreadySetException>()(
-  "OverrideAlreadySetException",
-  { message: S.optional(S.String) },
-) {}
-export class OverrideStatusRequiredException extends S.TaggedErrorClass<OverrideStatusRequiredException>()(
-  "OverrideStatusRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class BeforeCommitIdAndAfterCommitIdAreSameException extends S.TaggedErrorClass<BeforeCommitIdAndAfterCommitIdAreSameException>()(
-  "BeforeCommitIdAndAfterCommitIdAreSameException",
-  { message: S.optional(S.String) },
-) {}
-export class CommentContentRequiredException extends S.TaggedErrorClass<CommentContentRequiredException>()(
-  "CommentContentRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class CommentContentSizeLimitExceededException extends S.TaggedErrorClass<CommentContentSizeLimitExceededException>()(
-  "CommentContentSizeLimitExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidFileLocationException extends S.TaggedErrorClass<InvalidFileLocationException>()(
-  "InvalidFileLocationException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidFilePositionException extends S.TaggedErrorClass<InvalidFilePositionException>()(
-  "InvalidFilePositionException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidRelativeFileVersionEnumException extends S.TaggedErrorClass<InvalidRelativeFileVersionEnumException>()(
-  "InvalidRelativeFileVersionEnumException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidReactionValueException extends S.TaggedErrorClass<InvalidReactionValueException>()(
-  "InvalidReactionValueException",
-  { message: S.optional(S.String) },
-) {}
-export class ReactionLimitExceededException extends S.TaggedErrorClass<ReactionLimitExceededException>()(
-  "ReactionLimitExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class ReactionValueRequiredException extends S.TaggedErrorClass<ReactionValueRequiredException>()(
-  "ReactionValueRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class FileContentRequiredException extends S.TaggedErrorClass<FileContentRequiredException>()(
-  "FileContentRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class SameFileContentException extends S.TaggedErrorClass<SameFileContentException>()(
-  "SameFileContentException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidRepositoryTriggerBranchNameException extends S.TaggedErrorClass<InvalidRepositoryTriggerBranchNameException>()(
-  "InvalidRepositoryTriggerBranchNameException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidRepositoryTriggerCustomDataException extends S.TaggedErrorClass<InvalidRepositoryTriggerCustomDataException>()(
-  "InvalidRepositoryTriggerCustomDataException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidRepositoryTriggerDestinationArnException extends S.TaggedErrorClass<InvalidRepositoryTriggerDestinationArnException>()(
-  "InvalidRepositoryTriggerDestinationArnException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidRepositoryTriggerEventsException extends S.TaggedErrorClass<InvalidRepositoryTriggerEventsException>()(
-  "InvalidRepositoryTriggerEventsException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidRepositoryTriggerNameException extends S.TaggedErrorClass<InvalidRepositoryTriggerNameException>()(
-  "InvalidRepositoryTriggerNameException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidRepositoryTriggerRegionException extends S.TaggedErrorClass<InvalidRepositoryTriggerRegionException>()(
-  "InvalidRepositoryTriggerRegionException",
-  { message: S.optional(S.String) },
-) {}
-export class MaximumBranchesExceededException extends S.TaggedErrorClass<MaximumBranchesExceededException>()(
-  "MaximumBranchesExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class MaximumRepositoryTriggersExceededException extends S.TaggedErrorClass<MaximumRepositoryTriggersExceededException>()(
-  "MaximumRepositoryTriggersExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class RepositoryTriggerBranchNameListRequiredException extends S.TaggedErrorClass<RepositoryTriggerBranchNameListRequiredException>()(
-  "RepositoryTriggerBranchNameListRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class RepositoryTriggerDestinationArnRequiredException extends S.TaggedErrorClass<RepositoryTriggerDestinationArnRequiredException>()(
-  "RepositoryTriggerDestinationArnRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class RepositoryTriggerEventsListRequiredException extends S.TaggedErrorClass<RepositoryTriggerEventsListRequiredException>()(
-  "RepositoryTriggerEventsListRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class RepositoryTriggerNameRequiredException extends S.TaggedErrorClass<RepositoryTriggerNameRequiredException>()(
-  "RepositoryTriggerNameRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class RepositoryTriggersListRequiredException extends S.TaggedErrorClass<RepositoryTriggersListRequiredException>()(
-  "RepositoryTriggersListRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class TagsMapRequiredException extends S.TaggedErrorClass<TagsMapRequiredException>()(
-  "TagsMapRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidTagKeysListException extends S.TaggedErrorClass<InvalidTagKeysListException>()(
-  "InvalidTagKeysListException",
-  { message: S.optional(S.String) },
-) {}
-export class TagKeysListRequiredException extends S.TaggedErrorClass<TagKeysListRequiredException>()(
-  "TagKeysListRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidRuleContentSha256Exception extends S.TaggedErrorClass<InvalidRuleContentSha256Exception>()(
-  "InvalidRuleContentSha256Exception",
-  { message: S.optional(S.String) },
-) {}
-export class CommentNotCreatedByCallerException extends S.TaggedErrorClass<CommentNotCreatedByCallerException>()(
-  "CommentNotCreatedByCallerException",
-  { message: S.optional(S.String) },
-) {}
-export class ApprovalRuleDoesNotExistException extends S.TaggedErrorClass<ApprovalRuleDoesNotExistException>()(
-  "ApprovalRuleDoesNotExistException",
-  { message: S.optional(S.String) },
-) {}
-export class CannotModifyApprovalRuleFromTemplateException extends S.TaggedErrorClass<CannotModifyApprovalRuleFromTemplateException>()(
-  "CannotModifyApprovalRuleFromTemplateException",
-  { message: S.optional(S.String) },
-) {}
-export class ApprovalStateRequiredException extends S.TaggedErrorClass<ApprovalStateRequiredException>()(
-  "ApprovalStateRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidApprovalStateException extends S.TaggedErrorClass<InvalidApprovalStateException>()(
-  "InvalidApprovalStateException",
-  { message: S.optional(S.String) },
-) {}
-export class MaximumNumberOfApprovalsExceededException extends S.TaggedErrorClass<MaximumNumberOfApprovalsExceededException>()(
-  "MaximumNumberOfApprovalsExceededException",
-  { message: S.optional(S.String) },
-) {}
-export class PullRequestCannotBeApprovedByAuthorException extends S.TaggedErrorClass<PullRequestCannotBeApprovedByAuthorException>()(
-  "PullRequestCannotBeApprovedByAuthorException",
-  { message: S.optional(S.String) },
-) {}
-export class InvalidPullRequestStatusUpdateException extends S.TaggedErrorClass<InvalidPullRequestStatusUpdateException>()(
-  "InvalidPullRequestStatusUpdateException",
-  { message: S.optional(S.String) },
-) {}
-export class PullRequestStatusRequiredException extends S.TaggedErrorClass<PullRequestStatusRequiredException>()(
-  "PullRequestStatusRequiredException",
-  { message: S.optional(S.String) },
-) {}
-export class EncryptionKeyRequiredException extends S.TaggedErrorClass<EncryptionKeyRequiredException>()(
-  "EncryptionKeyRequiredException",
-  { message: S.optional(S.String) },
-) {}
-
-//# Operations
+export const UpdateRepositoryNameResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(ns),
+).annotate({
+  identifier: "UpdateRepositoryNameResponse",
+}) as any as S.Schema<UpdateRepositoryNameResponse>;
 export type AssociateApprovalRuleTemplateWithRepositoryError =
   | ApprovalRuleTemplateDoesNotExistException
   | ApprovalRuleTemplateNameRequiredException
@@ -4960,8 +5024,8 @@ export const associateApprovalRuleTemplateWithRepository: API.OperationMethod<
   AssociateApprovalRuleTemplateWithRepositoryInput,
   AssociateApprovalRuleTemplateWithRepositoryResponse,
   AssociateApprovalRuleTemplateWithRepositoryError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: AssociateApprovalRuleTemplateWithRepositoryInput,
   output: AssociateApprovalRuleTemplateWithRepositoryResponse,
   errors: [
@@ -4978,7 +5042,11 @@ export const associateApprovalRuleTemplateWithRepository: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "AssociateApprovalRuleTemplateWithRepository",
 }));
+
 export type BatchAssociateApprovalRuleTemplateWithRepositoriesError =
   | ApprovalRuleTemplateDoesNotExistException
   | ApprovalRuleTemplateNameRequiredException
@@ -4998,8 +5066,8 @@ export const batchAssociateApprovalRuleTemplateWithRepositories: API.OperationMe
   BatchAssociateApprovalRuleTemplateWithRepositoriesInput,
   BatchAssociateApprovalRuleTemplateWithRepositoriesOutput,
   BatchAssociateApprovalRuleTemplateWithRepositoriesError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: BatchAssociateApprovalRuleTemplateWithRepositoriesInput,
   output: BatchAssociateApprovalRuleTemplateWithRepositoriesOutput,
   errors: [
@@ -5014,7 +5082,11 @@ export const batchAssociateApprovalRuleTemplateWithRepositories: API.OperationMe
     MaximumRepositoryNamesExceededException,
     RepositoryNamesRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "BatchAssociateApprovalRuleTemplateWithRepositories",
 }));
+
 export type BatchDescribeMergeConflictsError =
   | CommitDoesNotExistException
   | CommitRequiredException
@@ -5045,8 +5117,8 @@ export const batchDescribeMergeConflicts: API.OperationMethod<
   BatchDescribeMergeConflictsInput,
   BatchDescribeMergeConflictsOutput,
   BatchDescribeMergeConflictsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: BatchDescribeMergeConflictsInput,
   output: BatchDescribeMergeConflictsOutput,
   errors: [
@@ -5072,7 +5144,11 @@ export const batchDescribeMergeConflicts: API.OperationMethod<
     RepositoryNameRequiredException,
     TipsDivergenceExceededException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "BatchDescribeMergeConflicts",
 }));
+
 export type BatchDisassociateApprovalRuleTemplateFromRepositoriesError =
   | ApprovalRuleTemplateDoesNotExistException
   | ApprovalRuleTemplateNameRequiredException
@@ -5092,8 +5168,8 @@ export const batchDisassociateApprovalRuleTemplateFromRepositories: API.Operatio
   BatchDisassociateApprovalRuleTemplateFromRepositoriesInput,
   BatchDisassociateApprovalRuleTemplateFromRepositoriesOutput,
   BatchDisassociateApprovalRuleTemplateFromRepositoriesError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: BatchDisassociateApprovalRuleTemplateFromRepositoriesInput,
   output: BatchDisassociateApprovalRuleTemplateFromRepositoriesOutput,
   errors: [
@@ -5108,7 +5184,11 @@ export const batchDisassociateApprovalRuleTemplateFromRepositories: API.Operatio
     MaximumRepositoryNamesExceededException,
     RepositoryNamesRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "BatchDisassociateApprovalRuleTemplateFromRepositories",
 }));
+
 export type BatchGetCommitsError =
   | CommitIdsLimitExceededException
   | CommitIdsListRequiredException
@@ -5128,8 +5208,8 @@ export const batchGetCommits: API.OperationMethod<
   BatchGetCommitsInput,
   BatchGetCommitsOutput,
   BatchGetCommitsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: BatchGetCommitsInput,
   output: BatchGetCommitsOutput,
   errors: [
@@ -5144,7 +5224,11 @@ export const batchGetCommits: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "BatchGetCommits",
 }));
+
 export type BatchGetRepositoriesError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -5168,8 +5252,8 @@ export const batchGetRepositories: API.OperationMethod<
   BatchGetRepositoriesInput,
   BatchGetRepositoriesOutput,
   BatchGetRepositoriesError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: BatchGetRepositoriesInput,
   output: BatchGetRepositoriesOutput,
   errors: [
@@ -5182,7 +5266,11 @@ export const batchGetRepositories: API.OperationMethod<
     MaximumRepositoryNamesExceededException,
     RepositoryNamesRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "BatchGetRepositories",
 }));
+
 export type CreateApprovalRuleTemplateError =
   | ApprovalRuleTemplateContentRequiredException
   | ApprovalRuleTemplateNameAlreadyExistsException
@@ -5203,8 +5291,8 @@ export const createApprovalRuleTemplate: API.OperationMethod<
   CreateApprovalRuleTemplateInput,
   CreateApprovalRuleTemplateOutput,
   CreateApprovalRuleTemplateError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateApprovalRuleTemplateInput,
   output: CreateApprovalRuleTemplateOutput,
   errors: [
@@ -5216,7 +5304,11 @@ export const createApprovalRuleTemplate: API.OperationMethod<
     InvalidApprovalRuleTemplateNameException,
     NumberOfRuleTemplatesExceededException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateApprovalRuleTemplate",
 }));
+
 export type CreateBranchError =
   | BranchNameExistsException
   | BranchNameRequiredException
@@ -5242,8 +5334,8 @@ export const createBranch: API.OperationMethod<
   CreateBranchInput,
   CreateBranchResponse,
   CreateBranchError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateBranchInput,
   output: CreateBranchResponse,
   errors: [
@@ -5262,7 +5354,11 @@ export const createBranch: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateBranch",
 }));
+
 export type CreateCommitError =
   | BranchDoesNotExistException
   | BranchNameIsTagNameException
@@ -5310,8 +5406,8 @@ export const createCommit: API.OperationMethod<
   CreateCommitInput,
   CreateCommitOutput,
   CreateCommitError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateCommitInput,
   output: CreateCommitOutput,
   errors: [
@@ -5354,7 +5450,11 @@ export const createCommit: API.OperationMethod<
     SamePathRequestException,
     SourceFileOrContentRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateCommit",
 }));
+
 export type CreatePullRequestError =
   | ClientRequestTokenRequiredException
   | EncryptionIntegrityChecksFailedException
@@ -5389,8 +5489,8 @@ export const createPullRequest: API.OperationMethod<
   CreatePullRequestInput,
   CreatePullRequestOutput,
   CreatePullRequestError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreatePullRequestInput,
   output: CreatePullRequestOutput,
   errors: [
@@ -5420,7 +5520,11 @@ export const createPullRequest: API.OperationMethod<
     TargetsRequiredException,
     TitleRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreatePullRequest",
 }));
+
 export type CreatePullRequestApprovalRuleError =
   | ApprovalRuleContentRequiredException
   | ApprovalRuleNameAlreadyExistsException
@@ -5445,8 +5549,8 @@ export const createPullRequestApprovalRule: API.OperationMethod<
   CreatePullRequestApprovalRuleInput,
   CreatePullRequestApprovalRuleOutput,
   CreatePullRequestApprovalRuleError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreatePullRequestApprovalRuleInput,
   output: CreatePullRequestApprovalRuleOutput,
   errors: [
@@ -5466,7 +5570,11 @@ export const createPullRequestApprovalRule: API.OperationMethod<
     PullRequestDoesNotExistException,
     PullRequestIdRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreatePullRequestApprovalRule",
 }));
+
 export type CreateRepositoryError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -5493,8 +5601,8 @@ export const createRepository: API.OperationMethod<
   CreateRepositoryInput,
   CreateRepositoryOutput,
   CreateRepositoryError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateRepositoryInput,
   output: CreateRepositoryOutput,
   errors: [
@@ -5516,7 +5624,11 @@ export const createRepository: API.OperationMethod<
     TagPolicyException,
     TooManyTagsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateRepository",
 }));
+
 export type CreateUnreferencedMergeCommitError =
   | CommitDoesNotExistException
   | CommitMessageLengthExceededException
@@ -5568,8 +5680,8 @@ export const createUnreferencedMergeCommit: API.OperationMethod<
   CreateUnreferencedMergeCommitInput,
   CreateUnreferencedMergeCommitOutput,
   CreateUnreferencedMergeCommitError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: CreateUnreferencedMergeCommitInput,
   output: CreateUnreferencedMergeCommitOutput,
   errors: [
@@ -5610,7 +5722,11 @@ export const createUnreferencedMergeCommit: API.OperationMethod<
     RepositoryNameRequiredException,
     TipsDivergenceExceededException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateUnreferencedMergeCommit",
 }));
+
 export type DeleteApprovalRuleTemplateError =
   | ApprovalRuleTemplateInUseException
   | ApprovalRuleTemplateNameRequiredException
@@ -5623,8 +5739,8 @@ export const deleteApprovalRuleTemplate: API.OperationMethod<
   DeleteApprovalRuleTemplateInput,
   DeleteApprovalRuleTemplateOutput,
   DeleteApprovalRuleTemplateError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteApprovalRuleTemplateInput,
   output: DeleteApprovalRuleTemplateOutput,
   errors: [
@@ -5632,7 +5748,11 @@ export const deleteApprovalRuleTemplate: API.OperationMethod<
     ApprovalRuleTemplateNameRequiredException,
     InvalidApprovalRuleTemplateNameException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteApprovalRuleTemplate",
 }));
+
 export type DeleteBranchError =
   | BranchNameRequiredException
   | DefaultBranchCannotBeDeletedException
@@ -5653,8 +5773,8 @@ export const deleteBranch: API.OperationMethod<
   DeleteBranchInput,
   DeleteBranchOutput,
   DeleteBranchError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteBranchInput,
   output: DeleteBranchOutput,
   errors: [
@@ -5670,7 +5790,11 @@ export const deleteBranch: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteBranch",
 }));
+
 export type DeleteCommentContentError =
   | CommentDeletedException
   | CommentDoesNotExistException
@@ -5684,8 +5808,8 @@ export const deleteCommentContent: API.OperationMethod<
   DeleteCommentContentInput,
   DeleteCommentContentOutput,
   DeleteCommentContentError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteCommentContentInput,
   output: DeleteCommentContentOutput,
   errors: [
@@ -5694,7 +5818,11 @@ export const deleteCommentContent: API.OperationMethod<
     CommentIdRequiredException,
     InvalidCommentIdException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteCommentContent",
 }));
+
 export type DeleteFileError =
   | BranchDoesNotExistException
   | BranchNameIsTagNameException
@@ -5728,8 +5856,8 @@ export const deleteFile: API.OperationMethod<
   DeleteFileInput,
   DeleteFileOutput,
   DeleteFileError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteFileInput,
   output: DeleteFileOutput,
   errors: [
@@ -5756,7 +5884,11 @@ export const deleteFile: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteFile",
 }));
+
 export type DeletePullRequestApprovalRuleError =
   | ApprovalRuleNameRequiredException
   | CannotDeleteApprovalRuleFromTemplateException
@@ -5780,8 +5912,8 @@ export const deletePullRequestApprovalRule: API.OperationMethod<
   DeletePullRequestApprovalRuleInput,
   DeletePullRequestApprovalRuleOutput,
   DeletePullRequestApprovalRuleError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeletePullRequestApprovalRuleInput,
   output: DeletePullRequestApprovalRuleOutput,
   errors: [
@@ -5798,7 +5930,11 @@ export const deletePullRequestApprovalRule: API.OperationMethod<
     PullRequestDoesNotExistException,
     PullRequestIdRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeletePullRequestApprovalRule",
 }));
+
 export type DeleteRepositoryError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -5819,8 +5955,8 @@ export const deleteRepository: API.OperationMethod<
   DeleteRepositoryInput,
   DeleteRepositoryOutput,
   DeleteRepositoryError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DeleteRepositoryInput,
   output: DeleteRepositoryOutput,
   errors: [
@@ -5832,7 +5968,11 @@ export const deleteRepository: API.OperationMethod<
     InvalidRepositoryNameException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteRepository",
 }));
+
 export type DescribeMergeConflictsError =
   | CommitDoesNotExistException
   | CommitRequiredException
@@ -5863,27 +6003,13 @@ export type DescribeMergeConflictsError =
  * commit specifiers using the squash or three-way merge strategy. If the merge option for
  * the attempted merge is specified as FAST_FORWARD_MERGE, an exception is thrown.
  */
-export const describeMergeConflicts: API.OperationMethod<
+export const describeMergeConflicts: API.PaginatedOperationMethod<
   DescribeMergeConflictsInput,
   DescribeMergeConflictsOutput,
   DescribeMergeConflictsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribeMergeConflictsInput,
-  ) => stream.Stream<
-    DescribeMergeConflictsOutput,
-    DescribeMergeConflictsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribeMergeConflictsInput,
-  ) => stream.Stream<
-    unknown,
-    DescribeMergeConflictsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribeMergeConflictsInput,
   output: DescribeMergeConflictsOutput,
   errors: [
@@ -5911,12 +6037,16 @@ export const describeMergeConflicts: API.OperationMethod<
     RepositoryNameRequiredException,
     TipsDivergenceExceededException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribeMergeConflicts",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxMergeHunks",
   } as const,
-}));
+})) as any;
+
 export type DescribePullRequestEventsError =
   | ActorDoesNotExistException
   | EncryptionIntegrityChecksFailedException
@@ -5935,27 +6065,13 @@ export type DescribePullRequestEventsError =
 /**
  * Returns information about one or more pull request events.
  */
-export const describePullRequestEvents: API.OperationMethod<
+export const describePullRequestEvents: API.PaginatedOperationMethod<
   DescribePullRequestEventsInput,
   DescribePullRequestEventsOutput,
   DescribePullRequestEventsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: DescribePullRequestEventsInput,
-  ) => stream.Stream<
-    DescribePullRequestEventsOutput,
-    DescribePullRequestEventsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: DescribePullRequestEventsInput,
-  ) => stream.Stream<
-    unknown,
-    DescribePullRequestEventsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: DescribePullRequestEventsInput,
   output: DescribePullRequestEventsOutput,
   errors: [
@@ -5973,12 +6089,16 @@ export const describePullRequestEvents: API.OperationMethod<
     PullRequestDoesNotExistException,
     PullRequestIdRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DescribePullRequestEvents",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type DisassociateApprovalRuleTemplateFromRepositoryError =
   | ApprovalRuleTemplateDoesNotExistException
   | ApprovalRuleTemplateNameRequiredException
@@ -6002,8 +6122,8 @@ export const disassociateApprovalRuleTemplateFromRepository: API.OperationMethod
   DisassociateApprovalRuleTemplateFromRepositoryInput,
   DisassociateApprovalRuleTemplateFromRepositoryResponse,
   DisassociateApprovalRuleTemplateFromRepositoryError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DisassociateApprovalRuleTemplateFromRepositoryInput,
   output: DisassociateApprovalRuleTemplateFromRepositoryResponse,
   errors: [
@@ -6019,7 +6139,11 @@ export const disassociateApprovalRuleTemplateFromRepository: API.OperationMethod
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DisassociateApprovalRuleTemplateFromRepository",
 }));
+
 export type EvaluatePullRequestApprovalRulesError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -6040,8 +6164,8 @@ export const evaluatePullRequestApprovalRules: API.OperationMethod<
   EvaluatePullRequestApprovalRulesInput,
   EvaluatePullRequestApprovalRulesOutput,
   EvaluatePullRequestApprovalRulesError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: EvaluatePullRequestApprovalRulesInput,
   output: EvaluatePullRequestApprovalRulesOutput,
   errors: [
@@ -6057,7 +6181,11 @@ export const evaluatePullRequestApprovalRules: API.OperationMethod<
     RevisionIdRequiredException,
     RevisionNotCurrentException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "EvaluatePullRequestApprovalRules",
 }));
+
 export type GetApprovalRuleTemplateError =
   | ApprovalRuleTemplateDoesNotExistException
   | ApprovalRuleTemplateNameRequiredException
@@ -6070,8 +6198,8 @@ export const getApprovalRuleTemplate: API.OperationMethod<
   GetApprovalRuleTemplateInput,
   GetApprovalRuleTemplateOutput,
   GetApprovalRuleTemplateError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetApprovalRuleTemplateInput,
   output: GetApprovalRuleTemplateOutput,
   errors: [
@@ -6079,7 +6207,11 @@ export const getApprovalRuleTemplate: API.OperationMethod<
     ApprovalRuleTemplateNameRequiredException,
     InvalidApprovalRuleTemplateNameException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetApprovalRuleTemplate",
 }));
+
 export type GetBlobError =
   | BlobIdDoesNotExistException
   | BlobIdRequiredException
@@ -6101,8 +6233,8 @@ export const getBlob: API.OperationMethod<
   GetBlobInput,
   GetBlobOutput,
   GetBlobError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetBlobInput,
   output: GetBlobOutput,
   errors: [
@@ -6119,7 +6251,11 @@ export const getBlob: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetBlob",
 }));
+
 export type GetBranchError =
   | BranchDoesNotExistException
   | BranchNameRequiredException
@@ -6140,8 +6276,8 @@ export const getBranch: API.OperationMethod<
   GetBranchInput,
   GetBranchOutput,
   GetBranchError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetBranchInput,
   output: GetBranchOutput,
   errors: [
@@ -6157,7 +6293,11 @@ export const getBranch: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetBranch",
 }));
+
 export type GetCommentError =
   | CommentDeletedException
   | CommentDoesNotExistException
@@ -6179,8 +6319,8 @@ export const getComment: API.OperationMethod<
   GetCommentInput,
   GetCommentOutput,
   GetCommentError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetCommentInput,
   output: GetCommentOutput,
   errors: [
@@ -6194,7 +6334,11 @@ export const getComment: API.OperationMethod<
     EncryptionKeyUnavailableException,
     InvalidCommentIdException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetComment",
 }));
+
 export type GetCommentReactionsError =
   | CommentDeletedException
   | CommentDoesNotExistException
@@ -6207,27 +6351,13 @@ export type GetCommentReactionsError =
 /**
  * Returns information about reactions to a specified comment ID. Reactions from users who have been deleted will not be included in the count.
  */
-export const getCommentReactions: API.OperationMethod<
+export const getCommentReactions: API.PaginatedOperationMethod<
   GetCommentReactionsInput,
   GetCommentReactionsOutput,
   GetCommentReactionsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: GetCommentReactionsInput,
-  ) => stream.Stream<
-    GetCommentReactionsOutput,
-    GetCommentReactionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: GetCommentReactionsInput,
-  ) => stream.Stream<
-    unknown,
-    GetCommentReactionsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: GetCommentReactionsInput,
   output: GetCommentReactionsOutput,
   errors: [
@@ -6239,12 +6369,16 @@ export const getCommentReactions: API.OperationMethod<
     InvalidMaxResultsException,
     InvalidReactionUserArnException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetCommentReactions",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type GetCommentsForComparedCommitError =
   | CommitDoesNotExistException
   | CommitIdRequiredException
@@ -6266,27 +6400,13 @@ export type GetCommentsForComparedCommitError =
  * Reaction counts might include numbers from user identities who were deleted after the reaction was made. For a count of
  * reactions from active identities, use GetCommentReactions.
  */
-export const getCommentsForComparedCommit: API.OperationMethod<
+export const getCommentsForComparedCommit: API.PaginatedOperationMethod<
   GetCommentsForComparedCommitInput,
   GetCommentsForComparedCommitOutput,
   GetCommentsForComparedCommitError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: GetCommentsForComparedCommitInput,
-  ) => stream.Stream<
-    GetCommentsForComparedCommitOutput,
-    GetCommentsForComparedCommitError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: GetCommentsForComparedCommitInput,
-  ) => stream.Stream<
-    unknown,
-    GetCommentsForComparedCommitError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: GetCommentsForComparedCommitInput,
   output: GetCommentsForComparedCommitOutput,
   errors: [
@@ -6304,12 +6424,16 @@ export const getCommentsForComparedCommit: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetCommentsForComparedCommit",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type GetCommentsForPullRequestError =
   | CommitDoesNotExistException
   | CommitIdRequiredException
@@ -6335,27 +6459,13 @@ export type GetCommentsForPullRequestError =
  * Reaction counts might include numbers from user identities who were deleted after the reaction was made. For a count of
  * reactions from active identities, use GetCommentReactions.
  */
-export const getCommentsForPullRequest: API.OperationMethod<
+export const getCommentsForPullRequest: API.PaginatedOperationMethod<
   GetCommentsForPullRequestInput,
   GetCommentsForPullRequestOutput,
   GetCommentsForPullRequestError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: GetCommentsForPullRequestInput,
-  ) => stream.Stream<
-    GetCommentsForPullRequestOutput,
-    GetCommentsForPullRequestError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: GetCommentsForPullRequestInput,
-  ) => stream.Stream<
-    unknown,
-    GetCommentsForPullRequestError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: GetCommentsForPullRequestInput,
   output: GetCommentsForPullRequestOutput,
   errors: [
@@ -6377,12 +6487,16 @@ export const getCommentsForPullRequest: API.OperationMethod<
     RepositoryNameRequiredException,
     RepositoryNotAssociatedWithPullRequestException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetCommentsForPullRequest",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type GetCommitError =
   | CommitIdDoesNotExistException
   | CommitIdRequiredException
@@ -6403,8 +6517,8 @@ export const getCommit: API.OperationMethod<
   GetCommitInput,
   GetCommitOutput,
   GetCommitError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetCommitInput,
   output: GetCommitOutput,
   errors: [
@@ -6420,7 +6534,11 @@ export const getCommit: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetCommit",
 }));
+
 export type GetDifferencesError =
   | CommitDoesNotExistException
   | CommitRequiredException
@@ -6444,27 +6562,13 @@ export type GetDifferencesError =
  * branch, tag, HEAD, commit ID, or other fully qualified reference). Results can be
  * limited to a specified path.
  */
-export const getDifferences: API.OperationMethod<
+export const getDifferences: API.PaginatedOperationMethod<
   GetDifferencesInput,
   GetDifferencesOutput,
   GetDifferencesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: GetDifferencesInput,
-  ) => stream.Stream<
-    GetDifferencesOutput,
-    GetDifferencesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: GetDifferencesInput,
-  ) => stream.Stream<
-    unknown,
-    GetDifferencesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: GetDifferencesInput,
   output: GetDifferencesOutput,
   errors: [
@@ -6485,12 +6589,16 @@ export const getDifferences: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetDifferences",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     pageSize: "MaxResults",
   } as const,
-}));
+})) as any;
+
 export type GetFileError =
   | CommitDoesNotExistException
   | EncryptionIntegrityChecksFailedException
@@ -6514,8 +6622,8 @@ export const getFile: API.OperationMethod<
   GetFileInput,
   GetFileOutput,
   GetFileError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetFileInput,
   output: GetFileOutput,
   errors: [
@@ -6534,7 +6642,11 @@ export const getFile: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetFile",
 }));
+
 export type GetFolderError =
   | CommitDoesNotExistException
   | EncryptionIntegrityChecksFailedException
@@ -6557,8 +6669,8 @@ export const getFolder: API.OperationMethod<
   GetFolderInput,
   GetFolderOutput,
   GetFolderError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetFolderInput,
   output: GetFolderOutput,
   errors: [
@@ -6576,7 +6688,11 @@ export const getFolder: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetFolder",
 }));
+
 export type GetMergeCommitError =
   | CommitDoesNotExistException
   | CommitRequiredException
@@ -6599,8 +6715,8 @@ export const getMergeCommit: API.OperationMethod<
   GetMergeCommitInput,
   GetMergeCommitOutput,
   GetMergeCommitError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetMergeCommitInput,
   output: GetMergeCommitOutput,
   errors: [
@@ -6618,7 +6734,11 @@ export const getMergeCommit: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetMergeCommit",
 }));
+
 export type GetMergeConflictsError =
   | CommitDoesNotExistException
   | CommitRequiredException
@@ -6646,27 +6766,13 @@ export type GetMergeConflictsError =
 /**
  * Returns information about merge conflicts between the before and after commit IDs for a pull request in a repository.
  */
-export const getMergeConflicts: API.OperationMethod<
+export const getMergeConflicts: API.PaginatedOperationMethod<
   GetMergeConflictsInput,
   GetMergeConflictsOutput,
   GetMergeConflictsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: GetMergeConflictsInput,
-  ) => stream.Stream<
-    GetMergeConflictsOutput,
-    GetMergeConflictsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: GetMergeConflictsInput,
-  ) => stream.Stream<
-    unknown,
-    GetMergeConflictsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: GetMergeConflictsInput,
   output: GetMergeConflictsOutput,
   errors: [
@@ -6693,12 +6799,16 @@ export const getMergeConflicts: API.OperationMethod<
     RepositoryNameRequiredException,
     TipsDivergenceExceededException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetMergeConflicts",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxConflictFiles",
   } as const,
-}));
+})) as any;
+
 export type GetMergeOptionsError =
   | CommitDoesNotExistException
   | CommitRequiredException
@@ -6726,8 +6836,8 @@ export const getMergeOptions: API.OperationMethod<
   GetMergeOptionsInput,
   GetMergeOptionsOutput,
   GetMergeOptionsError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetMergeOptionsInput,
   output: GetMergeOptionsOutput,
   errors: [
@@ -6748,7 +6858,11 @@ export const getMergeOptions: API.OperationMethod<
     RepositoryNameRequiredException,
     TipsDivergenceExceededException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetMergeOptions",
 }));
+
 export type GetPullRequestError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -6766,8 +6880,8 @@ export const getPullRequest: API.OperationMethod<
   GetPullRequestInput,
   GetPullRequestOutput,
   GetPullRequestError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetPullRequestInput,
   output: GetPullRequestOutput,
   errors: [
@@ -6780,7 +6894,11 @@ export const getPullRequest: API.OperationMethod<
     PullRequestDoesNotExistException,
     PullRequestIdRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetPullRequest",
 }));
+
 export type GetPullRequestApprovalStatesError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -6801,8 +6919,8 @@ export const getPullRequestApprovalStates: API.OperationMethod<
   GetPullRequestApprovalStatesInput,
   GetPullRequestApprovalStatesOutput,
   GetPullRequestApprovalStatesError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetPullRequestApprovalStatesInput,
   output: GetPullRequestApprovalStatesOutput,
   errors: [
@@ -6817,7 +6935,11 @@ export const getPullRequestApprovalStates: API.OperationMethod<
     PullRequestIdRequiredException,
     RevisionIdRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetPullRequestApprovalStates",
 }));
+
 export type GetPullRequestOverrideStateError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -6838,8 +6960,8 @@ export const getPullRequestOverrideState: API.OperationMethod<
   GetPullRequestOverrideStateInput,
   GetPullRequestOverrideStateOutput,
   GetPullRequestOverrideStateError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetPullRequestOverrideStateInput,
   output: GetPullRequestOverrideStateOutput,
   errors: [
@@ -6854,7 +6976,11 @@ export const getPullRequestOverrideState: API.OperationMethod<
     PullRequestIdRequiredException,
     RevisionIdRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetPullRequestOverrideState",
 }));
+
 export type GetRepositoryError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -6878,8 +7004,8 @@ export const getRepository: API.OperationMethod<
   GetRepositoryInput,
   GetRepositoryOutput,
   GetRepositoryError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetRepositoryInput,
   output: GetRepositoryOutput,
   errors: [
@@ -6892,7 +7018,11 @@ export const getRepository: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetRepository",
 }));
+
 export type GetRepositoryTriggersError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -6910,8 +7040,8 @@ export const getRepositoryTriggers: API.OperationMethod<
   GetRepositoryTriggersInput,
   GetRepositoryTriggersOutput,
   GetRepositoryTriggersError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetRepositoryTriggersInput,
   output: GetRepositoryTriggersOutput,
   errors: [
@@ -6924,7 +7054,11 @@ export const getRepositoryTriggers: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetRepositoryTriggers",
 }));
+
 export type ListApprovalRuleTemplatesError =
   | InvalidContinuationTokenException
   | InvalidMaxResultsException
@@ -6933,36 +7067,26 @@ export type ListApprovalRuleTemplatesError =
  * Lists all approval rule templates in the specified Amazon Web Services Region in your Amazon Web Services account. If
  * an Amazon Web Services Region is not specified, the Amazon Web Services Region where you are signed in is used.
  */
-export const listApprovalRuleTemplates: API.OperationMethod<
+export const listApprovalRuleTemplates: API.PaginatedOperationMethod<
   ListApprovalRuleTemplatesInput,
   ListApprovalRuleTemplatesOutput,
   ListApprovalRuleTemplatesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListApprovalRuleTemplatesInput,
-  ) => stream.Stream<
-    ListApprovalRuleTemplatesOutput,
-    ListApprovalRuleTemplatesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListApprovalRuleTemplatesInput,
-  ) => stream.Stream<
-    unknown,
-    ListApprovalRuleTemplatesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListApprovalRuleTemplatesInput,
   output: ListApprovalRuleTemplatesOutput,
   errors: [InvalidContinuationTokenException, InvalidMaxResultsException],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListApprovalRuleTemplates",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type ListAssociatedApprovalRuleTemplatesForRepositoryError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -6978,27 +7102,13 @@ export type ListAssociatedApprovalRuleTemplatesForRepositoryError =
 /**
  * Lists all approval rule templates that are associated with a specified repository.
  */
-export const listAssociatedApprovalRuleTemplatesForRepository: API.OperationMethod<
+export const listAssociatedApprovalRuleTemplatesForRepository: API.PaginatedOperationMethod<
   ListAssociatedApprovalRuleTemplatesForRepositoryInput,
   ListAssociatedApprovalRuleTemplatesForRepositoryOutput,
   ListAssociatedApprovalRuleTemplatesForRepositoryError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListAssociatedApprovalRuleTemplatesForRepositoryInput,
-  ) => stream.Stream<
-    ListAssociatedApprovalRuleTemplatesForRepositoryOutput,
-    ListAssociatedApprovalRuleTemplatesForRepositoryError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListAssociatedApprovalRuleTemplatesForRepositoryInput,
-  ) => stream.Stream<
-    unknown,
-    ListAssociatedApprovalRuleTemplatesForRepositoryError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListAssociatedApprovalRuleTemplatesForRepositoryInput,
   output: ListAssociatedApprovalRuleTemplatesForRepositoryOutput,
   errors: [
@@ -7013,12 +7123,16 @@ export const listAssociatedApprovalRuleTemplatesForRepository: API.OperationMeth
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListAssociatedApprovalRuleTemplatesForRepository",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type ListBranchesError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -7033,27 +7147,13 @@ export type ListBranchesError =
 /**
  * Gets information about one or more branches in a repository.
  */
-export const listBranches: API.OperationMethod<
+export const listBranches: API.PaginatedOperationMethod<
   ListBranchesInput,
   ListBranchesOutput,
   ListBranchesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListBranchesInput,
-  ) => stream.Stream<
-    ListBranchesOutput,
-    ListBranchesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListBranchesInput,
-  ) => stream.Stream<
-    BranchName,
-    ListBranchesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  BranchName
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListBranchesInput,
   output: ListBranchesOutput,
   errors: [
@@ -7067,12 +7167,16 @@ export const listBranches: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListBranches",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "branches",
   } as const,
-}));
+})) as any;
+
 export type ListFileCommitHistoryError =
   | CommitDoesNotExistException
   | CommitRequiredException
@@ -7092,27 +7196,13 @@ export type ListFileCommitHistoryError =
 /**
  * Retrieves a list of commits and changes to a specified file.
  */
-export const listFileCommitHistory: API.OperationMethod<
+export const listFileCommitHistory: API.PaginatedOperationMethod<
   ListFileCommitHistoryRequest,
   ListFileCommitHistoryResponse,
   ListFileCommitHistoryError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListFileCommitHistoryRequest,
-  ) => stream.Stream<
-    ListFileCommitHistoryResponse,
-    ListFileCommitHistoryError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListFileCommitHistoryRequest,
-  ) => stream.Stream<
-    unknown,
-    ListFileCommitHistoryError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListFileCommitHistoryRequest,
   output: ListFileCommitHistoryResponse,
   errors: [
@@ -7131,12 +7221,16 @@ export const listFileCommitHistory: API.OperationMethod<
     RepositoryNameRequiredException,
     TipsDivergenceExceededException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListFileCommitHistory",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type ListPullRequestsError =
   | AuthorDoesNotExistException
   | EncryptionIntegrityChecksFailedException
@@ -7156,27 +7250,13 @@ export type ListPullRequestsError =
  * Returns a list of pull requests for a specified repository. The return list can be refined by pull request
  * status or pull request author ARN.
  */
-export const listPullRequests: API.OperationMethod<
+export const listPullRequests: API.PaginatedOperationMethod<
   ListPullRequestsInput,
   ListPullRequestsOutput,
   ListPullRequestsError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListPullRequestsInput,
-  ) => stream.Stream<
-    ListPullRequestsOutput,
-    ListPullRequestsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListPullRequestsInput,
-  ) => stream.Stream<
-    unknown,
-    ListPullRequestsError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListPullRequestsInput,
   output: ListPullRequestsOutput,
   errors: [
@@ -7194,12 +7274,16 @@ export const listPullRequests: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListPullRequests",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type ListRepositoriesError =
   | InvalidContinuationTokenException
   | InvalidOrderException
@@ -7208,27 +7292,13 @@ export type ListRepositoriesError =
 /**
  * Gets information about one or more repositories.
  */
-export const listRepositories: API.OperationMethod<
+export const listRepositories: API.PaginatedOperationMethod<
   ListRepositoriesInput,
   ListRepositoriesOutput,
   ListRepositoriesError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListRepositoriesInput,
-  ) => stream.Stream<
-    ListRepositoriesOutput,
-    ListRepositoriesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListRepositoriesInput,
-  ) => stream.Stream<
-    RepositoryNameIdPair,
-    ListRepositoriesError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  RepositoryNameIdPair
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListRepositoriesInput,
   output: ListRepositoriesOutput,
   errors: [
@@ -7236,12 +7306,16 @@ export const listRepositories: API.OperationMethod<
     InvalidOrderException,
     InvalidSortByException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListRepositories",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     items: "repositories",
   } as const,
-}));
+})) as any;
+
 export type ListRepositoriesForApprovalRuleTemplateError =
   | ApprovalRuleTemplateDoesNotExistException
   | ApprovalRuleTemplateNameRequiredException
@@ -7257,27 +7331,13 @@ export type ListRepositoriesForApprovalRuleTemplateError =
 /**
  * Lists all repositories associated with the specified approval rule template.
  */
-export const listRepositoriesForApprovalRuleTemplate: API.OperationMethod<
+export const listRepositoriesForApprovalRuleTemplate: API.PaginatedOperationMethod<
   ListRepositoriesForApprovalRuleTemplateInput,
   ListRepositoriesForApprovalRuleTemplateOutput,
   ListRepositoriesForApprovalRuleTemplateError,
-  Credentials | Region | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListRepositoriesForApprovalRuleTemplateInput,
-  ) => stream.Stream<
-    ListRepositoriesForApprovalRuleTemplateOutput,
-    ListRepositoriesForApprovalRuleTemplateError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListRepositoriesForApprovalRuleTemplateInput,
-  ) => stream.Stream<
-    unknown,
-    ListRepositoriesForApprovalRuleTemplateError,
-    Credentials | Region | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  unknown
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListRepositoriesForApprovalRuleTemplateInput,
   output: ListRepositoriesForApprovalRuleTemplateOutput,
   errors: [
@@ -7292,12 +7352,16 @@ export const listRepositoriesForApprovalRuleTemplate: API.OperationMethod<
     InvalidContinuationTokenException,
     InvalidMaxResultsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListRepositoriesForApprovalRuleTemplate",
   pagination: {
     inputToken: "nextToken",
     outputToken: "nextToken",
     pageSize: "maxResults",
   } as const,
-}));
+})) as any;
+
 export type ListTagsForResourceError =
   | InvalidRepositoryNameException
   | InvalidResourceArnException
@@ -7312,8 +7376,8 @@ export const listTagsForResource: API.OperationMethod<
   ListTagsForResourceInput,
   ListTagsForResourceOutput,
   ListTagsForResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ListTagsForResourceInput,
   output: ListTagsForResourceOutput,
   errors: [
@@ -7322,7 +7386,11 @@ export const listTagsForResource: API.OperationMethod<
     RepositoryDoesNotExistException,
     ResourceArnRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTagsForResource",
 }));
+
 export type MergeBranchesByFastForwardError =
   | BranchDoesNotExistException
   | BranchNameIsTagNameException
@@ -7351,8 +7419,8 @@ export const mergeBranchesByFastForward: API.OperationMethod<
   MergeBranchesByFastForwardInput,
   MergeBranchesByFastForwardOutput,
   MergeBranchesByFastForwardError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: MergeBranchesByFastForwardInput,
   output: MergeBranchesByFastForwardOutput,
   errors: [
@@ -7376,7 +7444,11 @@ export const mergeBranchesByFastForward: API.OperationMethod<
     RepositoryNameRequiredException,
     TipsDivergenceExceededException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "MergeBranchesByFastForward",
 }));
+
 export type MergeBranchesBySquashError =
   | BranchDoesNotExistException
   | BranchNameIsTagNameException
@@ -7425,8 +7497,8 @@ export const mergeBranchesBySquash: API.OperationMethod<
   MergeBranchesBySquashInput,
   MergeBranchesBySquashOutput,
   MergeBranchesBySquashError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: MergeBranchesBySquashInput,
   output: MergeBranchesBySquashOutput,
   errors: [
@@ -7470,7 +7542,11 @@ export const mergeBranchesBySquash: API.OperationMethod<
     RepositoryNameRequiredException,
     TipsDivergenceExceededException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "MergeBranchesBySquash",
 }));
+
 export type MergeBranchesByThreeWayError =
   | BranchDoesNotExistException
   | BranchNameIsTagNameException
@@ -7519,8 +7595,8 @@ export const mergeBranchesByThreeWay: API.OperationMethod<
   MergeBranchesByThreeWayInput,
   MergeBranchesByThreeWayOutput,
   MergeBranchesByThreeWayError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: MergeBranchesByThreeWayInput,
   output: MergeBranchesByThreeWayOutput,
   errors: [
@@ -7564,7 +7640,11 @@ export const mergeBranchesByThreeWay: API.OperationMethod<
     RepositoryNameRequiredException,
     TipsDivergenceExceededException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "MergeBranchesByThreeWay",
 }));
+
 export type MergePullRequestByFastForwardError =
   | ConcurrentReferenceUpdateException
   | EncryptionIntegrityChecksFailedException
@@ -7594,8 +7674,8 @@ export const mergePullRequestByFastForward: API.OperationMethod<
   MergePullRequestByFastForwardInput,
   MergePullRequestByFastForwardOutput,
   MergePullRequestByFastForwardError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: MergePullRequestByFastForwardInput,
   output: MergePullRequestByFastForwardOutput,
   errors: [
@@ -7619,7 +7699,11 @@ export const mergePullRequestByFastForward: API.OperationMethod<
     RepositoryNotAssociatedWithPullRequestException,
     TipOfSourceReferenceIsDifferentException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "MergePullRequestByFastForward",
 }));
+
 export type MergePullRequestBySquashError =
   | CommitMessageLengthExceededException
   | ConcurrentReferenceUpdateException
@@ -7668,8 +7752,8 @@ export const mergePullRequestBySquash: API.OperationMethod<
   MergePullRequestBySquashInput,
   MergePullRequestBySquashOutput,
   MergePullRequestBySquashError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: MergePullRequestBySquashInput,
   output: MergePullRequestBySquashOutput,
   errors: [
@@ -7712,7 +7796,11 @@ export const mergePullRequestBySquash: API.OperationMethod<
     TipOfSourceReferenceIsDifferentException,
     TipsDivergenceExceededException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "MergePullRequestBySquash",
 }));
+
 export type MergePullRequestByThreeWayError =
   | CommitMessageLengthExceededException
   | ConcurrentReferenceUpdateException
@@ -7761,8 +7849,8 @@ export const mergePullRequestByThreeWay: API.OperationMethod<
   MergePullRequestByThreeWayInput,
   MergePullRequestByThreeWayOutput,
   MergePullRequestByThreeWayError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: MergePullRequestByThreeWayInput,
   output: MergePullRequestByThreeWayOutput,
   errors: [
@@ -7805,7 +7893,11 @@ export const mergePullRequestByThreeWay: API.OperationMethod<
     TipOfSourceReferenceIsDifferentException,
     TipsDivergenceExceededException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "MergePullRequestByThreeWay",
 }));
+
 export type OverridePullRequestApprovalRulesError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -7830,8 +7922,8 @@ export const overridePullRequestApprovalRules: API.OperationMethod<
   OverridePullRequestApprovalRulesInput,
   OverridePullRequestApprovalRulesResponse,
   OverridePullRequestApprovalRulesError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: OverridePullRequestApprovalRulesInput,
   output: OverridePullRequestApprovalRulesResponse,
   errors: [
@@ -7851,7 +7943,11 @@ export const overridePullRequestApprovalRules: API.OperationMethod<
     RevisionIdRequiredException,
     RevisionNotCurrentException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "OverridePullRequestApprovalRules",
 }));
+
 export type PostCommentForComparedCommitError =
   | BeforeCommitIdAndAfterCommitIdAreSameException
   | ClientRequestTokenRequiredException
@@ -7884,8 +7980,8 @@ export const postCommentForComparedCommit: API.OperationMethod<
   PostCommentForComparedCommitInput,
   PostCommentForComparedCommitOutput,
   PostCommentForComparedCommitError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PostCommentForComparedCommitInput,
   output: PostCommentForComparedCommitOutput,
   errors: [
@@ -7913,7 +8009,11 @@ export const postCommentForComparedCommit: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PostCommentForComparedCommit",
 }));
+
 export type PostCommentForPullRequestError =
   | BeforeCommitIdAndAfterCommitIdAreSameException
   | ClientRequestTokenRequiredException
@@ -7950,8 +8050,8 @@ export const postCommentForPullRequest: API.OperationMethod<
   PostCommentForPullRequestInput,
   PostCommentForPullRequestOutput,
   PostCommentForPullRequestError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PostCommentForPullRequestInput,
   output: PostCommentForPullRequestOutput,
   errors: [
@@ -7983,7 +8083,11 @@ export const postCommentForPullRequest: API.OperationMethod<
     RepositoryNameRequiredException,
     RepositoryNotAssociatedWithPullRequestException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PostCommentForPullRequest",
 }));
+
 export type PostCommentReplyError =
   | ClientRequestTokenRequiredException
   | CommentContentRequiredException
@@ -8001,8 +8105,8 @@ export const postCommentReply: API.OperationMethod<
   PostCommentReplyInput,
   PostCommentReplyOutput,
   PostCommentReplyError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PostCommentReplyInput,
   output: PostCommentReplyOutput,
   errors: [
@@ -8015,7 +8119,11 @@ export const postCommentReply: API.OperationMethod<
     InvalidClientRequestTokenException,
     InvalidCommentIdException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PostCommentReply",
 }));
+
 export type PutCommentReactionError =
   | CommentDeletedException
   | CommentDoesNotExistException
@@ -8033,8 +8141,8 @@ export const putCommentReaction: API.OperationMethod<
   PutCommentReactionInput,
   PutCommentReactionResponse,
   PutCommentReactionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PutCommentReactionInput,
   output: PutCommentReactionResponse,
   errors: [
@@ -8046,7 +8154,11 @@ export const putCommentReaction: API.OperationMethod<
     ReactionLimitExceededException,
     ReactionValueRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PutCommentReaction",
 }));
+
 export type PutFileError =
   | BranchDoesNotExistException
   | BranchNameIsTagNameException
@@ -8086,8 +8198,8 @@ export const putFile: API.OperationMethod<
   PutFileInput,
   PutFileOutput,
   PutFileError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PutFileInput,
   output: PutFileOutput,
   errors: [
@@ -8122,7 +8234,11 @@ export const putFile: API.OperationMethod<
     RepositoryNameRequiredException,
     SameFileContentException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PutFile",
 }));
+
 export type PutRepositoryTriggersError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -8153,8 +8269,8 @@ export const putRepositoryTriggers: API.OperationMethod<
   PutRepositoryTriggersInput,
   PutRepositoryTriggersOutput,
   PutRepositoryTriggersError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: PutRepositoryTriggersInput,
   output: PutRepositoryTriggersOutput,
   errors: [
@@ -8180,7 +8296,11 @@ export const putRepositoryTriggers: API.OperationMethod<
     RepositoryTriggerNameRequiredException,
     RepositoryTriggersListRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PutRepositoryTriggers",
 }));
+
 export type TagResourceError =
   | InvalidRepositoryNameException
   | InvalidResourceArnException
@@ -8201,8 +8321,8 @@ export const tagResource: API.OperationMethod<
   TagResourceInput,
   TagResourceResponse,
   TagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TagResourceInput,
   output: TagResourceResponse,
   errors: [
@@ -8216,7 +8336,11 @@ export const tagResource: API.OperationMethod<
     TagsMapRequiredException,
     TooManyTagsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TagResource",
 }));
+
 export type TestRepositoryTriggersError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -8249,8 +8373,8 @@ export const testRepositoryTriggers: API.OperationMethod<
   TestRepositoryTriggersInput,
   TestRepositoryTriggersOutput,
   TestRepositoryTriggersError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TestRepositoryTriggersInput,
   output: TestRepositoryTriggersOutput,
   errors: [
@@ -8276,7 +8400,11 @@ export const testRepositoryTriggers: API.OperationMethod<
     RepositoryTriggerNameRequiredException,
     RepositoryTriggersListRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TestRepositoryTriggers",
 }));
+
 export type UntagResourceError =
   | InvalidRepositoryNameException
   | InvalidResourceArnException
@@ -8296,8 +8424,8 @@ export const untagResource: API.OperationMethod<
   UntagResourceInput,
   UntagResourceResponse,
   UntagResourceError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UntagResourceInput,
   output: UntagResourceResponse,
   errors: [
@@ -8311,7 +8439,11 @@ export const untagResource: API.OperationMethod<
     TagPolicyException,
     TooManyTagsException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UntagResource",
 }));
+
 export type UpdateApprovalRuleTemplateContentError =
   | ApprovalRuleTemplateContentRequiredException
   | ApprovalRuleTemplateDoesNotExistException
@@ -8329,8 +8461,8 @@ export const updateApprovalRuleTemplateContent: API.OperationMethod<
   UpdateApprovalRuleTemplateContentInput,
   UpdateApprovalRuleTemplateContentOutput,
   UpdateApprovalRuleTemplateContentError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateApprovalRuleTemplateContentInput,
   output: UpdateApprovalRuleTemplateContentOutput,
   errors: [
@@ -8341,7 +8473,11 @@ export const updateApprovalRuleTemplateContent: API.OperationMethod<
     InvalidApprovalRuleTemplateNameException,
     InvalidRuleContentSha256Exception,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateApprovalRuleTemplateContent",
 }));
+
 export type UpdateApprovalRuleTemplateDescriptionError =
   | ApprovalRuleTemplateDoesNotExistException
   | ApprovalRuleTemplateNameRequiredException
@@ -8355,8 +8491,8 @@ export const updateApprovalRuleTemplateDescription: API.OperationMethod<
   UpdateApprovalRuleTemplateDescriptionInput,
   UpdateApprovalRuleTemplateDescriptionOutput,
   UpdateApprovalRuleTemplateDescriptionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateApprovalRuleTemplateDescriptionInput,
   output: UpdateApprovalRuleTemplateDescriptionOutput,
   errors: [
@@ -8365,7 +8501,11 @@ export const updateApprovalRuleTemplateDescription: API.OperationMethod<
     InvalidApprovalRuleTemplateDescriptionException,
     InvalidApprovalRuleTemplateNameException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateApprovalRuleTemplateDescription",
 }));
+
 export type UpdateApprovalRuleTemplateNameError =
   | ApprovalRuleTemplateDoesNotExistException
   | ApprovalRuleTemplateNameAlreadyExistsException
@@ -8379,8 +8519,8 @@ export const updateApprovalRuleTemplateName: API.OperationMethod<
   UpdateApprovalRuleTemplateNameInput,
   UpdateApprovalRuleTemplateNameOutput,
   UpdateApprovalRuleTemplateNameError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateApprovalRuleTemplateNameInput,
   output: UpdateApprovalRuleTemplateNameOutput,
   errors: [
@@ -8389,7 +8529,11 @@ export const updateApprovalRuleTemplateName: API.OperationMethod<
     ApprovalRuleTemplateNameRequiredException,
     InvalidApprovalRuleTemplateNameException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateApprovalRuleTemplateName",
 }));
+
 export type UpdateCommentError =
   | CommentContentRequiredException
   | CommentContentSizeLimitExceededException
@@ -8406,8 +8550,8 @@ export const updateComment: API.OperationMethod<
   UpdateCommentInput,
   UpdateCommentOutput,
   UpdateCommentError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateCommentInput,
   output: UpdateCommentOutput,
   errors: [
@@ -8419,7 +8563,11 @@ export const updateComment: API.OperationMethod<
     CommentNotCreatedByCallerException,
     InvalidCommentIdException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateComment",
 }));
+
 export type UpdateDefaultBranchError =
   | BranchDoesNotExistException
   | BranchNameRequiredException
@@ -8442,8 +8590,8 @@ export const updateDefaultBranch: API.OperationMethod<
   UpdateDefaultBranchInput,
   UpdateDefaultBranchResponse,
   UpdateDefaultBranchError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateDefaultBranchInput,
   output: UpdateDefaultBranchResponse,
   errors: [
@@ -8459,7 +8607,11 @@ export const updateDefaultBranch: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateDefaultBranch",
 }));
+
 export type UpdatePullRequestApprovalRuleContentError =
   | ApprovalRuleContentRequiredException
   | ApprovalRuleDoesNotExistException
@@ -8486,8 +8638,8 @@ export const updatePullRequestApprovalRuleContent: API.OperationMethod<
   UpdatePullRequestApprovalRuleContentInput,
   UpdatePullRequestApprovalRuleContentOutput,
   UpdatePullRequestApprovalRuleContentError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdatePullRequestApprovalRuleContentInput,
   output: UpdatePullRequestApprovalRuleContentOutput,
   errors: [
@@ -8508,7 +8660,11 @@ export const updatePullRequestApprovalRuleContent: API.OperationMethod<
     PullRequestDoesNotExistException,
     PullRequestIdRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdatePullRequestApprovalRuleContent",
 }));
+
 export type UpdatePullRequestApprovalStateError =
   | ApprovalStateRequiredException
   | EncryptionIntegrityChecksFailedException
@@ -8534,8 +8690,8 @@ export const updatePullRequestApprovalState: API.OperationMethod<
   UpdatePullRequestApprovalStateInput,
   UpdatePullRequestApprovalStateResponse,
   UpdatePullRequestApprovalStateError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdatePullRequestApprovalStateInput,
   output: UpdatePullRequestApprovalStateResponse,
   errors: [
@@ -8556,7 +8712,11 @@ export const updatePullRequestApprovalState: API.OperationMethod<
     RevisionIdRequiredException,
     RevisionNotCurrentException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdatePullRequestApprovalState",
 }));
+
 export type UpdatePullRequestDescriptionError =
   | InvalidDescriptionException
   | InvalidPullRequestIdException
@@ -8571,8 +8731,8 @@ export const updatePullRequestDescription: API.OperationMethod<
   UpdatePullRequestDescriptionInput,
   UpdatePullRequestDescriptionOutput,
   UpdatePullRequestDescriptionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdatePullRequestDescriptionInput,
   output: UpdatePullRequestDescriptionOutput,
   errors: [
@@ -8582,7 +8742,11 @@ export const updatePullRequestDescription: API.OperationMethod<
     PullRequestDoesNotExistException,
     PullRequestIdRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdatePullRequestDescription",
 }));
+
 export type UpdatePullRequestStatusError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -8603,8 +8767,8 @@ export const updatePullRequestStatus: API.OperationMethod<
   UpdatePullRequestStatusInput,
   UpdatePullRequestStatusOutput,
   UpdatePullRequestStatusError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdatePullRequestStatusInput,
   output: UpdatePullRequestStatusOutput,
   errors: [
@@ -8620,7 +8784,11 @@ export const updatePullRequestStatus: API.OperationMethod<
     PullRequestIdRequiredException,
     PullRequestStatusRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdatePullRequestStatus",
 }));
+
 export type UpdatePullRequestTitleError =
   | InvalidPullRequestIdException
   | InvalidTitleException
@@ -8636,8 +8804,8 @@ export const updatePullRequestTitle: API.OperationMethod<
   UpdatePullRequestTitleInput,
   UpdatePullRequestTitleOutput,
   UpdatePullRequestTitleError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdatePullRequestTitleInput,
   output: UpdatePullRequestTitleOutput,
   errors: [
@@ -8648,7 +8816,11 @@ export const updatePullRequestTitle: API.OperationMethod<
     PullRequestIdRequiredException,
     TitleRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdatePullRequestTitle",
 }));
+
 export type UpdateRepositoryDescriptionError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -8673,8 +8845,8 @@ export const updateRepositoryDescription: API.OperationMethod<
   UpdateRepositoryDescriptionInput,
   UpdateRepositoryDescriptionResponse,
   UpdateRepositoryDescriptionError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateRepositoryDescriptionInput,
   output: UpdateRepositoryDescriptionResponse,
   errors: [
@@ -8688,7 +8860,11 @@ export const updateRepositoryDescription: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateRepositoryDescription",
 }));
+
 export type UpdateRepositoryEncryptionKeyError =
   | EncryptionIntegrityChecksFailedException
   | EncryptionKeyAccessDeniedException
@@ -8709,8 +8885,8 @@ export const updateRepositoryEncryptionKey: API.OperationMethod<
   UpdateRepositoryEncryptionKeyInput,
   UpdateRepositoryEncryptionKeyOutput,
   UpdateRepositoryEncryptionKeyError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateRepositoryEncryptionKeyInput,
   output: UpdateRepositoryEncryptionKeyOutput,
   errors: [
@@ -8726,7 +8902,11 @@ export const updateRepositoryEncryptionKey: API.OperationMethod<
     RepositoryDoesNotExistException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateRepositoryEncryptionKey",
 }));
+
 export type UpdateRepositoryNameError =
   | InvalidRepositoryNameException
   | RepositoryDoesNotExistException
@@ -8744,8 +8924,8 @@ export const updateRepositoryName: API.OperationMethod<
   UpdateRepositoryNameInput,
   UpdateRepositoryNameResponse,
   UpdateRepositoryNameError,
-  Credentials | Region | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateRepositoryNameInput,
   output: UpdateRepositoryNameResponse,
   errors: [
@@ -8754,4 +8934,7 @@ export const updateRepositoryName: API.OperationMethod<
     RepositoryNameExistsException,
     RepositoryNameRequiredException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateRepositoryName",
 }));

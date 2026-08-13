@@ -1,17 +1,38 @@
 {
-  "errors": {
-    "MethodNotAllowed": [
-      { "code": 10405, "message": { "includes": "not allowed" } },
-      { "code": 10000, "message": { "includes": "not allowed" } }
-    ],
-    "FeatureNotEnabled": [
-      { "code": 1002, "message": { "includes": "address_maps_not_enabled" } }
-    ],
-    "InvalidAccountId": [
-      { "code": 7003, "message": { "includes": "Could not route" } }
-    ],
-    "AddressMapNotFound": [
-      { "code": 1000, "message": { "includes": "not_found" } }
-    ]
-  }
+  "description": "Align addressing#AddressMapsIpsUpdate with distilled cloudflare/addressing putAddressMapIp",
+  "patches": [
+    {
+      "op": "move",
+      "from": "/shapes/com.cloudflare.addressing#AddressMapsIpsUpdate",
+      "path": "/shapes/com.cloudflare.addressing#PutAddressMapIp"
+    },
+    {
+      "op": "move",
+      "from": "/shapes/com.cloudflare.addressing#AddressMapsIpsUpdateRequest",
+      "path": "/shapes/com.cloudflare.addressing#PutAddressMapIpRequest"
+    },
+    {
+      "op": "replace",
+      "path": "/shapes/com.cloudflare.addressing#PutAddressMapIp/input/target",
+      "value": "com.cloudflare.addressing#PutAddressMapIpRequest"
+    },
+    {
+      "op": "add",
+      "path": "/shapes/com.cloudflare.addressing#PutAddressMapIp/errors",
+      "value": [
+        {
+          "target": "com.cloudflare.addressing#MethodNotAllowed"
+        },
+        {
+          "target": "com.cloudflare.addressing#FeatureNotEnabled"
+        },
+        {
+          "target": "com.cloudflare.addressing#InvalidAccountId"
+        },
+        {
+          "target": "com.cloudflare.addressing#AddressMapNotFound"
+        }
+      ]
+    }
+  ]
 }

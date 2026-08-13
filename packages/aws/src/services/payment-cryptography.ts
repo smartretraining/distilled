@@ -1,13 +1,13 @@
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as redacted from "effect/Redacted";
-import * as S from "effect/Schema";
-import * as stream from "effect/Stream";
-import * as API from "../client/api.ts";
+import * as S from "@distilled.cloud/core/schema";
+import * as API from "@distilled.cloud/core/api";
+import { AwsProtocol } from "../protocol.ts";
+import { Retry } from "../retry.ts";
 import * as T from "../traits.ts";
 import * as C from "../category.ts";
 import type { Credentials } from "../credentials.ts";
 import type { CommonErrors } from "../errors.ts";
-import type { Region as Rgn } from "../region.ts";
 import { SensitiveString } from "../sensitive.ts";
 const svc = T.AwsApiService({
   sdkId: "Payment Cryptography",
@@ -85,90 +85,82 @@ const rules = T.EndpointResolver((p, _) => {
   return err("Invalid Configuration: Missing Region");
 });
 
-//# Newtypes
-export type Region = string;
+export class AccessDeniedException
+  extends /*@__PURE__*/ S.TaggedError<AccessDeniedException>()(
+    "AccessDeniedException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(403),
+  ).pipe(C.withAuthError) {}
+export class ConflictException
+  extends /*@__PURE__*/ S.TaggedError<ConflictException>()(
+    "ConflictException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(409),
+  ).pipe(C.withConflictError) {}
+export class InternalServerException
+  extends /*@__PURE__*/ S.TaggedError<InternalServerException>()(
+    "InternalServerException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(500),
+  ).pipe(C.withServerError) {}
+export class PublicPolicyException
+  extends /*@__PURE__*/ S.TaggedError<PublicPolicyException>()(
+    "PublicPolicyException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
+export class ResourceNotFoundException
+  extends /*@__PURE__*/ S.TaggedError<ResourceNotFoundException>()(
+    "ResourceNotFoundException",
+    {
+      ResourceId: S.optional(S.String),
+      message: S.optional(S.String).pipe(T.ErrorMessage()),
+    },
+    T.HttpError(404),
+  ).pipe(C.withBadRequestError) {}
+export class ServiceQuotaExceededException
+  extends /*@__PURE__*/ S.TaggedError<ServiceQuotaExceededException>()(
+    "ServiceQuotaExceededException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(402),
+  ).pipe(C.withQuotaError) {}
+export class ServiceUnavailableException
+  extends /*@__PURE__*/ S.TaggedError<ServiceUnavailableException>()(
+    "ServiceUnavailableException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(503),
+  ).pipe(C.withServerError) {}
+export class ThrottlingException
+  extends /*@__PURE__*/ S.TaggedError<ThrottlingException>()(
+    "ThrottlingException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(429),
+  ).pipe(C.withThrottlingError) {}
+export class ValidationException
+  extends /*@__PURE__*/ S.TaggedError<ValidationException>()(
+    "ValidationException",
+    { message: S.optional(S.String).pipe(T.ErrorMessage()) },
+    T.HttpError(400),
+  ).pipe(C.withBadRequestError) {}
 export type KeyArnOrKeyAliasType = string;
-export type KeyExportability = string;
-export type KeyVersion = string;
-export type OptionalBlockId = string | redacted.Redacted<string>;
-export type OptionalBlockValue = string | redacted.Redacted<string>;
-export type CertificateType = string;
-export type ExportTokenId = string;
-export type Tr34KeyBlockFormat = string;
-export type EvenHexLengthBetween16And32 = string;
-export type WrappingKeySpec = string;
-export type SharedInformation = string;
-export type HexLength20Or24 = string;
-export type KeyCheckValueAlgorithm = string;
+export type Region = string;
+export type Regions = string[];
+export const Regions = /*@__PURE__*/ S.Array(S.String);
+export interface AddKeyReplicationRegionsInput {
+  KeyIdentifier: string;
+  ReplicationRegions: string[];
+}
+export const AddKeyReplicationRegionsInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ KeyIdentifier: S.String, ReplicationRegions: Regions }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "AddKeyReplicationRegionsInput",
+}) as any as S.Schema<AddKeyReplicationRegionsInput>;
 export type KeyArn = string;
-export type WrappedKeyMaterialFormat = string;
-export type KeyMaterial = string | redacted.Redacted<string>;
-export type KeyCheckValue = string;
-export type SigningAlgorithmType = string;
-export type CertificateSigningRequestType = string | redacted.Redacted<string>;
-export type KeyMaterialType = string;
-export type KeyAlgorithm = string;
-export type ImportTokenId = string;
 export type KeyUsage = string;
 export type KeyClass = string;
-export type Tr31WrappedKeyBlock = string | redacted.Redacted<string>;
-export type Tr34WrappedKeyBlock = string | redacted.Redacted<string>;
-export type WrappedKeyCryptogram = string | redacted.Redacted<string>;
-export type TagKey = string;
-export type TagValue = string;
-export type KeyState = string;
-export type KeyOrigin = string;
-export type DeriveKeyUsage = string;
-export type MultiRegionKeyType = string;
-export type KeyReplicationState = string;
-export type ResourceArn = string;
-export type NextToken = string;
-export type MaxResults = number;
-export type AliasName = string;
-
-//# Schemas
-export type Regions = string[];
-export const Regions = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
-export interface DisableDefaultKeyReplicationRegionsInput {
-  ReplicationRegions: string[];
-}
-export const DisableDefaultKeyReplicationRegionsInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ ReplicationRegions: Regions }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "DisableDefaultKeyReplicationRegionsInput",
-  }) as any as S.Schema<DisableDefaultKeyReplicationRegionsInput>;
-export interface DisableDefaultKeyReplicationRegionsOutput {
-  EnabledReplicationRegions: string[];
-}
-export const DisableDefaultKeyReplicationRegionsOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ EnabledReplicationRegions: Regions }),
-  ).annotate({
-    identifier: "DisableDefaultKeyReplicationRegionsOutput",
-  }) as any as S.Schema<DisableDefaultKeyReplicationRegionsOutput>;
-export interface EnableDefaultKeyReplicationRegionsInput {
-  ReplicationRegions: string[];
-}
-export const EnableDefaultKeyReplicationRegionsInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ ReplicationRegions: Regions }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "EnableDefaultKeyReplicationRegionsInput",
-  }) as any as S.Schema<EnableDefaultKeyReplicationRegionsInput>;
-export interface EnableDefaultKeyReplicationRegionsOutput {
-  EnabledReplicationRegions: string[];
-}
-export const EnableDefaultKeyReplicationRegionsOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ EnabledReplicationRegions: Regions }),
-  ).annotate({
-    identifier: "EnableDefaultKeyReplicationRegionsOutput",
-  }) as any as S.Schema<EnableDefaultKeyReplicationRegionsOutput>;
+export type KeyAlgorithm = string;
 export interface KeyModesOfUse {
   Encrypt?: boolean;
   Decrypt?: boolean;
@@ -180,7 +172,7 @@ export interface KeyModesOfUse {
   DeriveKey?: boolean;
   NoRestrictions?: boolean;
 }
-export const KeyModesOfUse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const KeyModesOfUse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     Encrypt: S.optional(S.Boolean),
     Decrypt: S.optional(S.Boolean),
@@ -193,10 +185,354 @@ export const KeyModesOfUse = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
     NoRestrictions: S.optional(S.Boolean),
   }),
 ).annotate({ identifier: "KeyModesOfUse" }) as any as S.Schema<KeyModesOfUse>;
+export interface KeyAttributes {
+  KeyUsage: string;
+  KeyClass: string;
+  KeyAlgorithm: string;
+  KeyModesOfUse: KeyModesOfUse;
+}
+export const KeyAttributes = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    KeyUsage: S.String,
+    KeyClass: S.String,
+    KeyAlgorithm: S.String,
+    KeyModesOfUse: KeyModesOfUse,
+  }),
+).annotate({ identifier: "KeyAttributes" }) as any as S.Schema<KeyAttributes>;
+export type KeyCheckValue = string;
+export type KeyCheckValueAlgorithm = string;
+export type KeyState = string;
+export type KeyOrigin = string;
+export type DeriveKeyUsage = string;
+export type MultiRegionKeyType = string;
+export type KeyReplicationState = string;
+export interface ReplicationStatusType {
+  Status: string;
+  StatusMessage?: string;
+}
+export const ReplicationStatusType = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Status: S.String, StatusMessage: S.optional(S.String) }),
+).annotate({
+  identifier: "ReplicationStatusType",
+}) as any as S.Schema<ReplicationStatusType>;
+export type ReplicationStatus = {
+  [key: string]: ReplicationStatusType | undefined;
+};
+export const ReplicationStatus = /*@__PURE__*/ S.Record(
+  S.String,
+  ReplicationStatusType.pipe(S.optional),
+);
+export type MpaSessionArn = string;
+export type SessionStatus = string;
+export type MpaStatusMessage = string;
+export interface MpaStatus {
+  MpaSessionArn: string;
+  Status: string;
+  InitiationDate: Date;
+  StatusMessage?: string;
+}
+export const MpaStatus = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    MpaSessionArn: S.String,
+    Status: S.String,
+    InitiationDate: S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    StatusMessage: S.optional(S.String),
+  }),
+).annotate({ identifier: "MpaStatus" }) as any as S.Schema<MpaStatus>;
+export interface Key {
+  KeyArn: string;
+  KeyAttributes: KeyAttributes;
+  KeyCheckValue: string;
+  KeyCheckValueAlgorithm: string;
+  Enabled: boolean;
+  Exportable: boolean;
+  KeyState: string;
+  KeyOrigin: string;
+  CreateTimestamp: Date;
+  UsageStartTimestamp?: Date;
+  UsageStopTimestamp?: Date;
+  DeletePendingTimestamp?: Date;
+  DeleteTimestamp?: Date;
+  DeriveKeyUsage?: string;
+  MultiRegionKeyType?: string;
+  PrimaryRegion?: string;
+  ReplicationStatus?: { [key: string]: ReplicationStatusType | undefined };
+  UsingDefaultReplicationRegions?: boolean;
+  MpaStatus?: MpaStatus;
+}
+export const Key = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    KeyArn: S.String,
+    KeyAttributes: KeyAttributes,
+    KeyCheckValue: S.String,
+    KeyCheckValueAlgorithm: S.String,
+    Enabled: S.Boolean,
+    Exportable: S.Boolean,
+    KeyState: S.String,
+    KeyOrigin: S.String,
+    CreateTimestamp: S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    UsageStartTimestamp: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+    UsageStopTimestamp: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+    DeletePendingTimestamp: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+    DeleteTimestamp: S.optional(
+      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
+    ),
+    DeriveKeyUsage: S.optional(S.String),
+    MultiRegionKeyType: S.optional(S.String),
+    PrimaryRegion: S.optional(S.String),
+    ReplicationStatus: S.optional(ReplicationStatus),
+    UsingDefaultReplicationRegions: S.optional(S.Boolean),
+    MpaStatus: S.optional(MpaStatus),
+  }),
+).annotate({ identifier: "Key" }) as any as S.Schema<Key>;
+export interface AddKeyReplicationRegionsOutput {
+  Key: Key;
+}
+export const AddKeyReplicationRegionsOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Key: Key }),
+).annotate({
+  identifier: "AddKeyReplicationRegionsOutput",
+}) as any as S.Schema<AddKeyReplicationRegionsOutput>;
+export type MpaOperation = string;
+export type MpaTeamArn = string;
+export type MpaRequesterComment = string | redacted.Redacted<string>;
+export interface AssociateMpaTeamInput {
+  Action: string;
+  MpaTeamArn: string;
+  RequesterComment?: string | redacted.Redacted<string>;
+}
+export const AssociateMpaTeamInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Action: S.String,
+    MpaTeamArn: S.String,
+    RequesterComment: S.optional(SensitiveString),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "AssociateMpaTeamInput",
+}) as any as S.Schema<AssociateMpaTeamInput>;
+export type AssociationState = string;
+export interface MpaTeamAssociation {
+  Action: string;
+  MpaTeamArn: string;
+  AssociationState: string;
+  MpaStatus?: MpaStatus;
+}
+export const MpaTeamAssociation = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Action: S.String,
+    MpaTeamArn: S.String,
+    AssociationState: S.String,
+    MpaStatus: S.optional(MpaStatus),
+  }),
+).annotate({
+  identifier: "MpaTeamAssociation",
+}) as any as S.Schema<MpaTeamAssociation>;
+export interface AssociateMpaTeamOutput {
+  MpaTeamAssociation: MpaTeamAssociation;
+}
+export const AssociateMpaTeamOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ MpaTeamAssociation: MpaTeamAssociation }),
+).annotate({
+  identifier: "AssociateMpaTeamOutput",
+}) as any as S.Schema<AssociateMpaTeamOutput>;
+export type AliasName = string;
+export interface CreateAliasInput {
+  AliasName: string;
+  KeyArn?: string;
+}
+export const CreateAliasInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ AliasName: S.String, KeyArn: S.optional(S.String) }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "CreateAliasInput",
+}) as any as S.Schema<CreateAliasInput>;
+export interface Alias {
+  AliasName: string;
+  KeyArn?: string;
+}
+export const Alias = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ AliasName: S.String, KeyArn: S.optional(S.String) }),
+).annotate({ identifier: "Alias" }) as any as S.Schema<Alias>;
+export interface CreateAliasOutput {
+  Alias: Alias;
+}
+export const CreateAliasOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Alias: Alias }),
+).annotate({
+  identifier: "CreateAliasOutput",
+}) as any as S.Schema<CreateAliasOutput>;
+export type TagKey = string;
+export type TagValue = string;
+export interface Tag {
+  Key: string;
+  Value?: string;
+}
+export const Tag = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Key: S.String, Value: S.optional(S.String) }),
+).annotate({ identifier: "Tag" }) as any as S.Schema<Tag>;
+export type Tags = Tag[];
+export const Tags = /*@__PURE__*/ S.Array(Tag);
+export interface CreateKeyInput {
+  KeyAttributes: KeyAttributes;
+  KeyCheckValueAlgorithm?: string;
+  Exportable: boolean;
+  Enabled?: boolean;
+  Tags?: Tag[];
+  DeriveKeyUsage?: string;
+  ReplicationRegions?: string[];
+}
+export const CreateKeyInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    KeyAttributes: KeyAttributes,
+    KeyCheckValueAlgorithm: S.optional(S.String),
+    Exportable: S.Boolean,
+    Enabled: S.optional(S.Boolean),
+    Tags: S.optional(Tags),
+    DeriveKeyUsage: S.optional(S.String),
+    ReplicationRegions: S.optional(Regions),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({ identifier: "CreateKeyInput" }) as any as S.Schema<CreateKeyInput>;
+export interface CreateKeyOutput {
+  Key: Key;
+}
+export const CreateKeyOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Key: Key }),
+).annotate({
+  identifier: "CreateKeyOutput",
+}) as any as S.Schema<CreateKeyOutput>;
+export interface DeleteAliasInput {
+  AliasName: string;
+}
+export const DeleteAliasInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ AliasName: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "DeleteAliasInput",
+}) as any as S.Schema<DeleteAliasInput>;
+export interface DeleteAliasOutput {}
+export const DeleteAliasOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
+).annotate({
+  identifier: "DeleteAliasOutput",
+}) as any as S.Schema<DeleteAliasOutput>;
+export interface DeleteKeyInput {
+  KeyIdentifier: string;
+  DeleteKeyInDays?: number;
+}
+export const DeleteKeyInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    KeyIdentifier: S.String,
+    DeleteKeyInDays: S.optional(S.Number),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({ identifier: "DeleteKeyInput" }) as any as S.Schema<DeleteKeyInput>;
+export interface DeleteKeyOutput {
+  Key: Key;
+}
+export const DeleteKeyOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Key: Key }),
+).annotate({
+  identifier: "DeleteKeyOutput",
+}) as any as S.Schema<DeleteKeyOutput>;
+export type ResourceArn = string;
+export interface DeleteResourcePolicyInput {
+  ResourceArn: string;
+}
+export const DeleteResourcePolicyInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "DeleteResourcePolicyInput",
+}) as any as S.Schema<DeleteResourcePolicyInput>;
+export interface DeleteResourcePolicyOutput {}
+export const DeleteResourcePolicyOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
+).annotate({
+  identifier: "DeleteResourcePolicyOutput",
+}) as any as S.Schema<DeleteResourcePolicyOutput>;
+export interface DisableDefaultKeyReplicationRegionsInput {
+  ReplicationRegions: string[];
+}
+export const DisableDefaultKeyReplicationRegionsInput = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({ ReplicationRegions: Regions }).pipe(
+      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+    ),
+).annotate({
+  identifier: "DisableDefaultKeyReplicationRegionsInput",
+}) as any as S.Schema<DisableDefaultKeyReplicationRegionsInput>;
+export interface DisableDefaultKeyReplicationRegionsOutput {
+  EnabledReplicationRegions: string[];
+}
+export const DisableDefaultKeyReplicationRegionsOutput =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({ EnabledReplicationRegions: Regions }),
+  ).annotate({
+    identifier: "DisableDefaultKeyReplicationRegionsOutput",
+  }) as any as S.Schema<DisableDefaultKeyReplicationRegionsOutput>;
+export interface DisassociateMpaTeamInput {
+  Action: string;
+  RequesterComment?: string | redacted.Redacted<string>;
+}
+export const DisassociateMpaTeamInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    Action: S.String,
+    RequesterComment: S.optional(SensitiveString),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "DisassociateMpaTeamInput",
+}) as any as S.Schema<DisassociateMpaTeamInput>;
+export interface DisassociateMpaTeamOutput {
+  MpaTeamAssociation: MpaTeamAssociation;
+}
+export const DisassociateMpaTeamOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ MpaTeamAssociation: MpaTeamAssociation }),
+).annotate({
+  identifier: "DisassociateMpaTeamOutput",
+}) as any as S.Schema<DisassociateMpaTeamOutput>;
+export interface EnableDefaultKeyReplicationRegionsInput {
+  ReplicationRegions: string[];
+}
+export const EnableDefaultKeyReplicationRegionsInput = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({ ReplicationRegions: Regions }).pipe(
+      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+    ),
+).annotate({
+  identifier: "EnableDefaultKeyReplicationRegionsInput",
+}) as any as S.Schema<EnableDefaultKeyReplicationRegionsInput>;
+export interface EnableDefaultKeyReplicationRegionsOutput {
+  EnabledReplicationRegions: string[];
+}
+export const EnableDefaultKeyReplicationRegionsOutput = /*@__PURE__*/ S.suspend(
+  () => S.Struct({ EnabledReplicationRegions: Regions }),
+).annotate({
+  identifier: "EnableDefaultKeyReplicationRegionsOutput",
+}) as any as S.Schema<EnableDefaultKeyReplicationRegionsOutput>;
+export type KeyExportability = string;
+export type KeyVersion = string;
+export type OptionalBlockId = string | redacted.Redacted<string>;
+export type OptionalBlockValue = string | redacted.Redacted<string>;
 export type OptionalBlocks = {
   [key: string]: string | redacted.Redacted<string> | undefined;
 };
-export const OptionalBlocks = /*@__PURE__*/ /*#__PURE__*/ S.Record(
+export const OptionalBlocks = /*@__PURE__*/ S.Record(
   S.String,
   SensitiveString.pipe(S.optional),
 );
@@ -208,7 +544,7 @@ export interface KeyBlockHeaders {
     [key: string]: string | redacted.Redacted<string> | undefined;
   };
 }
-export const KeyBlockHeaders = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const KeyBlockHeaders = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     KeyModesOfUse: S.optional(KeyModesOfUse),
     KeyExportability: S.optional(S.String),
@@ -222,7 +558,7 @@ export interface ExportTr31KeyBlock {
   WrappingKeyIdentifier: string;
   KeyBlockHeaders?: KeyBlockHeaders;
 }
-export const ExportTr31KeyBlock = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ExportTr31KeyBlock = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     WrappingKeyIdentifier: S.String,
     KeyBlockHeaders: S.optional(KeyBlockHeaders),
@@ -230,6 +566,10 @@ export const ExportTr31KeyBlock = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ExportTr31KeyBlock",
 }) as any as S.Schema<ExportTr31KeyBlock>;
+export type CertificateType = string;
+export type ExportTokenId = string;
+export type Tr34KeyBlockFormat = string;
+export type EvenHexLengthBetween16And32 = string;
 export interface ExportTr34KeyBlock {
   CertificateAuthorityPublicKeyIdentifier: string;
   WrappingKeyCertificate: string;
@@ -240,7 +580,7 @@ export interface ExportTr34KeyBlock {
   RandomNonce?: string;
   KeyBlockHeaders?: KeyBlockHeaders;
 }
-export const ExportTr34KeyBlock = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ExportTr34KeyBlock = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     CertificateAuthorityPublicKeyIdentifier: S.String,
     WrappingKeyCertificate: S.String,
@@ -254,12 +594,13 @@ export const ExportTr34KeyBlock = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ExportTr34KeyBlock",
 }) as any as S.Schema<ExportTr34KeyBlock>;
+export type WrappingKeySpec = string;
 export interface ExportKeyCryptogram {
   CertificateAuthorityPublicKeyIdentifier: string;
   WrappingKeyCertificate: string;
   WrappingSpec?: string;
 }
-export const ExportKeyCryptogram = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ExportKeyCryptogram = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     CertificateAuthorityPublicKeyIdentifier: S.String,
     WrappingKeyCertificate: S.String,
@@ -279,17 +620,21 @@ export type SymmetricKeyAlgorithm =
   | "HMAC_SHA512"
   | "HMAC_SHA224"
   | (string & {});
-export const SymmetricKeyAlgorithm = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const SymmetricKeyAlgorithm = /*@__PURE__*/ S.String;
+
 export type KeyDerivationFunction = "NIST_SP800" | "ANSI_X963" | (string & {});
-export const KeyDerivationFunction = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const KeyDerivationFunction = /*@__PURE__*/ S.String;
+
 export type KeyDerivationHashAlgorithm =
   | "SHA_256"
   | "SHA_384"
   | "SHA_512"
   | (string & {});
-export const KeyDerivationHashAlgorithm = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const KeyDerivationHashAlgorithm = /*@__PURE__*/ S.String;
+
+export type SharedInformation = string;
 export type DiffieHellmanDerivationData = { SharedInformation: string };
-export const DiffieHellmanDerivationData = /*@__PURE__*/ /*#__PURE__*/ S.Union([
+export const DiffieHellmanDerivationData = /*@__PURE__*/ S.Union([
   S.Struct({ SharedInformation: S.String }),
 ]);
 export interface ExportDiffieHellmanTr31KeyBlock {
@@ -302,38 +647,37 @@ export interface ExportDiffieHellmanTr31KeyBlock {
   DerivationData: DiffieHellmanDerivationData;
   KeyBlockHeaders?: KeyBlockHeaders;
 }
-export const ExportDiffieHellmanTr31KeyBlock =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      PrivateKeyIdentifier: S.String,
-      CertificateAuthorityPublicKeyIdentifier: S.String,
-      PublicKeyCertificate: S.String,
-      DeriveKeyAlgorithm: SymmetricKeyAlgorithm,
-      KeyDerivationFunction: KeyDerivationFunction,
-      KeyDerivationHashAlgorithm: KeyDerivationHashAlgorithm,
-      DerivationData: DiffieHellmanDerivationData,
-      KeyBlockHeaders: S.optional(KeyBlockHeaders),
-    }),
-  ).annotate({
-    identifier: "ExportDiffieHellmanTr31KeyBlock",
-  }) as any as S.Schema<ExportDiffieHellmanTr31KeyBlock>;
+export const ExportDiffieHellmanTr31KeyBlock = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    PrivateKeyIdentifier: S.String,
+    CertificateAuthorityPublicKeyIdentifier: S.String,
+    PublicKeyCertificate: S.String,
+    DeriveKeyAlgorithm: SymmetricKeyAlgorithm,
+    KeyDerivationFunction: KeyDerivationFunction,
+    KeyDerivationHashAlgorithm: KeyDerivationHashAlgorithm,
+    DerivationData: DiffieHellmanDerivationData,
+    KeyBlockHeaders: S.optional(KeyBlockHeaders),
+  }),
+).annotate({
+  identifier: "ExportDiffieHellmanTr31KeyBlock",
+}) as any as S.Schema<ExportDiffieHellmanTr31KeyBlock>;
 export type As2805KeyVariant =
   | "TERMINAL_MAJOR_KEY_VARIANT_00"
   | "PIN_ENCRYPTION_KEY_VARIANT_28"
   | "MESSAGE_AUTHENTICATION_KEY_VARIANT_24"
   | "DATA_ENCRYPTION_KEY_VARIANT_22"
   | (string & {});
-export const As2805KeyVariant = /*@__PURE__*/ /*#__PURE__*/ S.String;
+export const As2805KeyVariant = /*@__PURE__*/ S.String;
+
 export interface ExportAs2805KeyCryptogram {
   WrappingKeyIdentifier: string;
   As2805KeyVariant: As2805KeyVariant;
 }
-export const ExportAs2805KeyCryptogram = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      WrappingKeyIdentifier: S.String,
-      As2805KeyVariant: As2805KeyVariant,
-    }),
+export const ExportAs2805KeyCryptogram = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    WrappingKeyIdentifier: S.String,
+    As2805KeyVariant: As2805KeyVariant,
+  }),
 ).annotate({
   identifier: "ExportAs2805KeyCryptogram",
 }) as any as S.Schema<ExportAs2805KeyCryptogram>;
@@ -373,17 +717,18 @@ export type ExportKeyMaterial =
       DiffieHellmanTr31KeyBlock?: never;
       As2805KeyCryptogram: ExportAs2805KeyCryptogram;
     };
-export const ExportKeyMaterial = /*@__PURE__*/ /*#__PURE__*/ S.Union([
+export const ExportKeyMaterial = /*@__PURE__*/ S.Union([
   S.Struct({ Tr31KeyBlock: ExportTr31KeyBlock }),
   S.Struct({ Tr34KeyBlock: ExportTr34KeyBlock }),
   S.Struct({ KeyCryptogram: ExportKeyCryptogram }),
   S.Struct({ DiffieHellmanTr31KeyBlock: ExportDiffieHellmanTr31KeyBlock }),
   S.Struct({ As2805KeyCryptogram: ExportAs2805KeyCryptogram }),
 ]);
+export type HexLength20Or24 = string;
 export interface ExportDukptInitialKey {
   KeySerialNumber: string;
 }
-export const ExportDukptInitialKey = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ExportDukptInitialKey = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ KeySerialNumber: S.String }),
 ).annotate({
   identifier: "ExportDukptInitialKey",
@@ -392,7 +737,7 @@ export interface ExportAttributes {
   ExportDukptInitialKey?: ExportDukptInitialKey;
   KeyCheckValueAlgorithm?: string;
 }
-export const ExportAttributes = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ExportAttributes = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     ExportDukptInitialKey: S.optional(ExportDukptInitialKey),
     KeyCheckValueAlgorithm: S.optional(S.String),
@@ -405,7 +750,7 @@ export interface ExportKeyInput {
   ExportKeyIdentifier: string;
   ExportAttributes?: ExportAttributes;
 }
-export const ExportKeyInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ExportKeyInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     KeyMaterial: ExportKeyMaterial,
     ExportKeyIdentifier: S.String,
@@ -414,6 +759,8 @@ export const ExportKeyInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
 ).annotate({ identifier: "ExportKeyInput" }) as any as S.Schema<ExportKeyInput>;
+export type WrappedKeyMaterialFormat = string;
+export type KeyMaterial = string | redacted.Redacted<string>;
 export interface WrappedKey {
   WrappingKeyArn: string;
   WrappedKeyMaterialFormat: string;
@@ -421,7 +768,7 @@ export interface WrappedKey {
   KeyCheckValue?: string;
   KeyCheckValueAlgorithm?: string;
 }
-export const WrappedKey = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const WrappedKey = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     WrappingKeyArn: S.String,
     WrappedKeyMaterialFormat: S.String,
@@ -433,11 +780,26 @@ export const WrappedKey = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface ExportKeyOutput {
   WrappedKey?: WrappedKey;
 }
-export const ExportKeyOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ExportKeyOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ WrappedKey: S.optional(WrappedKey) }),
 ).annotate({
   identifier: "ExportKeyOutput",
 }) as any as S.Schema<ExportKeyOutput>;
+export interface GetAliasInput {
+  AliasName: string;
+}
+export const GetAliasInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ AliasName: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({ identifier: "GetAliasInput" }) as any as S.Schema<GetAliasInput>;
+export interface GetAliasOutput {
+  Alias: Alias;
+}
+export const GetAliasOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Alias: Alias }),
+).annotate({ identifier: "GetAliasOutput" }) as any as S.Schema<GetAliasOutput>;
+export type SigningAlgorithmType = string;
 export interface CertificateSubjectType {
   CommonName: string;
   OrganizationUnit?: string;
@@ -447,17 +809,16 @@ export interface CertificateSubjectType {
   StateOrProvince?: string;
   EmailAddress?: string;
 }
-export const CertificateSubjectType = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      CommonName: S.String,
-      OrganizationUnit: S.optional(S.String),
-      Organization: S.optional(S.String),
-      City: S.optional(S.String),
-      Country: S.optional(S.String),
-      StateOrProvince: S.optional(S.String),
-      EmailAddress: S.optional(S.String),
-    }),
+export const CertificateSubjectType = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    CommonName: S.String,
+    OrganizationUnit: S.optional(S.String),
+    Organization: S.optional(S.String),
+    City: S.optional(S.String),
+    Country: S.optional(S.String),
+    StateOrProvince: S.optional(S.String),
+    EmailAddress: S.optional(S.String),
+  }),
 ).annotate({
   identifier: "CertificateSubjectType",
 }) as any as S.Schema<CertificateSubjectType>;
@@ -466,62 +827,92 @@ export interface GetCertificateSigningRequestInput {
   SigningAlgorithm: string;
   CertificateSubject: CertificateSubjectType;
 }
-export const GetCertificateSigningRequestInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      KeyIdentifier: S.String,
-      SigningAlgorithm: S.String,
-      CertificateSubject: CertificateSubjectType,
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "GetCertificateSigningRequestInput",
-  }) as any as S.Schema<GetCertificateSigningRequestInput>;
+export const GetCertificateSigningRequestInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    KeyIdentifier: S.String,
+    SigningAlgorithm: S.String,
+    CertificateSubject: CertificateSubjectType,
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "GetCertificateSigningRequestInput",
+}) as any as S.Schema<GetCertificateSigningRequestInput>;
+export type CertificateSigningRequestType = string | redacted.Redacted<string>;
 export interface GetCertificateSigningRequestOutput {
   CertificateSigningRequest: string | redacted.Redacted<string>;
 }
-export const GetCertificateSigningRequestOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ CertificateSigningRequest: SensitiveString }),
-  ).annotate({
-    identifier: "GetCertificateSigningRequestOutput",
-  }) as any as S.Schema<GetCertificateSigningRequestOutput>;
+export const GetCertificateSigningRequestOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ CertificateSigningRequest: SensitiveString }),
+).annotate({
+  identifier: "GetCertificateSigningRequestOutput",
+}) as any as S.Schema<GetCertificateSigningRequestOutput>;
 export interface GetDefaultKeyReplicationRegionsInput {}
-export const GetDefaultKeyReplicationRegionsInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const GetDefaultKeyReplicationRegionsInput = /*@__PURE__*/ S.suspend(
+  () =>
     S.Struct({}).pipe(
       T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
     ),
-  ).annotate({
-    identifier: "GetDefaultKeyReplicationRegionsInput",
-  }) as any as S.Schema<GetDefaultKeyReplicationRegionsInput>;
+).annotate({
+  identifier: "GetDefaultKeyReplicationRegionsInput",
+}) as any as S.Schema<GetDefaultKeyReplicationRegionsInput>;
 export interface GetDefaultKeyReplicationRegionsOutput {
   EnabledReplicationRegions: string[];
 }
-export const GetDefaultKeyReplicationRegionsOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ EnabledReplicationRegions: Regions }),
-  ).annotate({
-    identifier: "GetDefaultKeyReplicationRegionsOutput",
-  }) as any as S.Schema<GetDefaultKeyReplicationRegionsOutput>;
+export const GetDefaultKeyReplicationRegionsOutput = /*@__PURE__*/ S.suspend(
+  () => S.Struct({ EnabledReplicationRegions: Regions }),
+).annotate({
+  identifier: "GetDefaultKeyReplicationRegionsOutput",
+}) as any as S.Schema<GetDefaultKeyReplicationRegionsOutput>;
+export interface GetKeyInput {
+  KeyIdentifier: string;
+}
+export const GetKeyInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ KeyIdentifier: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({ identifier: "GetKeyInput" }) as any as S.Schema<GetKeyInput>;
+export interface GetKeyOutput {
+  Key: Key;
+}
+export const GetKeyOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Key: Key }),
+).annotate({ identifier: "GetKeyOutput" }) as any as S.Schema<GetKeyOutput>;
+export interface GetMpaTeamAssociationInput {
+  Action: string;
+}
+export const GetMpaTeamAssociationInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Action: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "GetMpaTeamAssociationInput",
+}) as any as S.Schema<GetMpaTeamAssociationInput>;
+export interface GetMpaTeamAssociationOutput {
+  MpaTeamAssociation: MpaTeamAssociation;
+}
+export const GetMpaTeamAssociationOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ MpaTeamAssociation: MpaTeamAssociation }),
+).annotate({
+  identifier: "GetMpaTeamAssociationOutput",
+}) as any as S.Schema<GetMpaTeamAssociationOutput>;
+export type KeyMaterialType = string;
 export interface GetParametersForExportInput {
   KeyMaterialType: string;
   SigningKeyAlgorithm: string;
   ReuseLastGeneratedToken?: boolean;
 }
-export const GetParametersForExportInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      KeyMaterialType: S.String,
-      SigningKeyAlgorithm: S.String,
-      ReuseLastGeneratedToken: S.optional(S.Boolean),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "GetParametersForExportInput",
-  }) as any as S.Schema<GetParametersForExportInput>;
+export const GetParametersForExportInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    KeyMaterialType: S.String,
+    SigningKeyAlgorithm: S.String,
+    ReuseLastGeneratedToken: S.optional(S.Boolean),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "GetParametersForExportInput",
+}) as any as S.Schema<GetParametersForExportInput>;
 export interface GetParametersForExportOutput {
   SigningKeyCertificate: string;
   SigningKeyCertificateChain: string;
@@ -529,37 +920,36 @@ export interface GetParametersForExportOutput {
   ExportToken: string;
   ParametersValidUntilTimestamp: Date;
 }
-export const GetParametersForExportOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      SigningKeyCertificate: S.String,
-      SigningKeyCertificateChain: S.String,
-      SigningKeyAlgorithm: S.String,
-      ExportToken: S.String,
-      ParametersValidUntilTimestamp: S.Date.pipe(
-        T.TimestampFormat("epoch-seconds"),
-      ),
-    }),
-  ).annotate({
-    identifier: "GetParametersForExportOutput",
-  }) as any as S.Schema<GetParametersForExportOutput>;
+export const GetParametersForExportOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    SigningKeyCertificate: S.String,
+    SigningKeyCertificateChain: S.String,
+    SigningKeyAlgorithm: S.String,
+    ExportToken: S.String,
+    ParametersValidUntilTimestamp: S.Date.pipe(
+      T.TimestampFormat("epoch-seconds"),
+    ),
+  }),
+).annotate({
+  identifier: "GetParametersForExportOutput",
+}) as any as S.Schema<GetParametersForExportOutput>;
 export interface GetParametersForImportInput {
   KeyMaterialType: string;
   WrappingKeyAlgorithm: string;
   ReuseLastGeneratedToken?: boolean;
 }
-export const GetParametersForImportInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      KeyMaterialType: S.String,
-      WrappingKeyAlgorithm: S.String,
-      ReuseLastGeneratedToken: S.optional(S.Boolean),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "GetParametersForImportInput",
-  }) as any as S.Schema<GetParametersForImportInput>;
+export const GetParametersForImportInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    KeyMaterialType: S.String,
+    WrappingKeyAlgorithm: S.String,
+    ReuseLastGeneratedToken: S.optional(S.Boolean),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "GetParametersForImportInput",
+}) as any as S.Schema<GetParametersForImportInput>;
+export type ImportTokenId = string;
 export interface GetParametersForImportOutput {
   WrappingKeyCertificate: string;
   WrappingKeyCertificateChain: string;
@@ -567,62 +957,64 @@ export interface GetParametersForImportOutput {
   ImportToken: string;
   ParametersValidUntilTimestamp: Date;
 }
-export const GetParametersForImportOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      WrappingKeyCertificate: S.String,
-      WrappingKeyCertificateChain: S.String,
-      WrappingKeyAlgorithm: S.String,
-      ImportToken: S.String,
-      ParametersValidUntilTimestamp: S.Date.pipe(
-        T.TimestampFormat("epoch-seconds"),
-      ),
-    }),
-  ).annotate({
-    identifier: "GetParametersForImportOutput",
-  }) as any as S.Schema<GetParametersForImportOutput>;
+export const GetParametersForImportOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    WrappingKeyCertificate: S.String,
+    WrappingKeyCertificateChain: S.String,
+    WrappingKeyAlgorithm: S.String,
+    ImportToken: S.String,
+    ParametersValidUntilTimestamp: S.Date.pipe(
+      T.TimestampFormat("epoch-seconds"),
+    ),
+  }),
+).annotate({
+  identifier: "GetParametersForImportOutput",
+}) as any as S.Schema<GetParametersForImportOutput>;
 export interface GetPublicKeyCertificateInput {
   KeyIdentifier: string;
 }
-export const GetPublicKeyCertificateInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ KeyIdentifier: S.String }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "GetPublicKeyCertificateInput",
-  }) as any as S.Schema<GetPublicKeyCertificateInput>;
+export const GetPublicKeyCertificateInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ KeyIdentifier: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "GetPublicKeyCertificateInput",
+}) as any as S.Schema<GetPublicKeyCertificateInput>;
 export interface GetPublicKeyCertificateOutput {
   KeyCertificate: string;
   KeyCertificateChain: string;
 }
-export const GetPublicKeyCertificateOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ KeyCertificate: S.String, KeyCertificateChain: S.String }),
-  ).annotate({
-    identifier: "GetPublicKeyCertificateOutput",
-  }) as any as S.Schema<GetPublicKeyCertificateOutput>;
-export interface KeyAttributes {
-  KeyUsage: string;
-  KeyClass: string;
-  KeyAlgorithm: string;
-  KeyModesOfUse: KeyModesOfUse;
+export const GetPublicKeyCertificateOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ KeyCertificate: S.String, KeyCertificateChain: S.String }),
+).annotate({
+  identifier: "GetPublicKeyCertificateOutput",
+}) as any as S.Schema<GetPublicKeyCertificateOutput>;
+export interface GetResourcePolicyInput {
+  ResourceArn: string;
 }
-export const KeyAttributes = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({
-    KeyUsage: S.String,
-    KeyClass: S.String,
-    KeyAlgorithm: S.String,
-    KeyModesOfUse: KeyModesOfUse,
-  }),
-).annotate({ identifier: "KeyAttributes" }) as any as S.Schema<KeyAttributes>;
+export const GetResourcePolicyInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "GetResourcePolicyInput",
+}) as any as S.Schema<GetResourcePolicyInput>;
+export type ResourcePolicy = string;
+export interface GetResourcePolicyOutput {
+  ResourceArn: string;
+  Policy: string;
+}
+export const GetResourcePolicyOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String, Policy: S.String }),
+).annotate({
+  identifier: "GetResourcePolicyOutput",
+}) as any as S.Schema<GetResourcePolicyOutput>;
 export interface RootCertificatePublicKey {
   KeyAttributes: KeyAttributes;
   PublicKeyCertificate: string;
 }
-export const RootCertificatePublicKey = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({ KeyAttributes: KeyAttributes, PublicKeyCertificate: S.String }),
+export const RootCertificatePublicKey = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ KeyAttributes: KeyAttributes, PublicKeyCertificate: S.String }),
 ).annotate({
   identifier: "RootCertificatePublicKey",
 }) as any as S.Schema<RootCertificatePublicKey>;
@@ -631,21 +1023,21 @@ export interface TrustedCertificatePublicKey {
   PublicKeyCertificate: string;
   CertificateAuthorityPublicKeyIdentifier: string;
 }
-export const TrustedCertificatePublicKey =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      KeyAttributes: KeyAttributes,
-      PublicKeyCertificate: S.String,
-      CertificateAuthorityPublicKeyIdentifier: S.String,
-    }),
-  ).annotate({
-    identifier: "TrustedCertificatePublicKey",
-  }) as any as S.Schema<TrustedCertificatePublicKey>;
+export const TrustedCertificatePublicKey = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    KeyAttributes: KeyAttributes,
+    PublicKeyCertificate: S.String,
+    CertificateAuthorityPublicKeyIdentifier: S.String,
+  }),
+).annotate({
+  identifier: "TrustedCertificatePublicKey",
+}) as any as S.Schema<TrustedCertificatePublicKey>;
+export type Tr31WrappedKeyBlock = string | redacted.Redacted<string>;
 export interface ImportTr31KeyBlock {
   WrappingKeyIdentifier: string;
   WrappedKeyBlock: string | redacted.Redacted<string>;
 }
-export const ImportTr31KeyBlock = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ImportTr31KeyBlock = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     WrappingKeyIdentifier: S.String,
     WrappedKeyBlock: SensitiveString,
@@ -653,6 +1045,7 @@ export const ImportTr31KeyBlock = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ImportTr31KeyBlock",
 }) as any as S.Schema<ImportTr31KeyBlock>;
+export type Tr34WrappedKeyBlock = string | redacted.Redacted<string>;
 export interface ImportTr34KeyBlock {
   CertificateAuthorityPublicKeyIdentifier: string;
   SigningKeyCertificate: string;
@@ -663,7 +1056,7 @@ export interface ImportTr34KeyBlock {
   KeyBlockFormat: string;
   RandomNonce?: string;
 }
-export const ImportTr34KeyBlock = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ImportTr34KeyBlock = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     CertificateAuthorityPublicKeyIdentifier: S.String,
     SigningKeyCertificate: S.String,
@@ -677,6 +1070,7 @@ export const ImportTr34KeyBlock = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "ImportTr34KeyBlock",
 }) as any as S.Schema<ImportTr34KeyBlock>;
+export type WrappedKeyCryptogram = string | redacted.Redacted<string>;
 export interface ImportKeyCryptogram {
   KeyAttributes: KeyAttributes;
   Exportable: boolean;
@@ -684,7 +1078,7 @@ export interface ImportKeyCryptogram {
   ImportToken: string;
   WrappingSpec?: string;
 }
-export const ImportKeyCryptogram = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ImportKeyCryptogram = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     KeyAttributes: KeyAttributes,
     Exportable: S.Boolean,
@@ -705,21 +1099,20 @@ export interface ImportDiffieHellmanTr31KeyBlock {
   DerivationData: DiffieHellmanDerivationData;
   WrappedKeyBlock: string | redacted.Redacted<string>;
 }
-export const ImportDiffieHellmanTr31KeyBlock =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({
-      PrivateKeyIdentifier: S.String,
-      CertificateAuthorityPublicKeyIdentifier: S.String,
-      PublicKeyCertificate: S.String,
-      DeriveKeyAlgorithm: SymmetricKeyAlgorithm,
-      KeyDerivationFunction: KeyDerivationFunction,
-      KeyDerivationHashAlgorithm: KeyDerivationHashAlgorithm,
-      DerivationData: DiffieHellmanDerivationData,
-      WrappedKeyBlock: SensitiveString,
-    }),
-  ).annotate({
-    identifier: "ImportDiffieHellmanTr31KeyBlock",
-  }) as any as S.Schema<ImportDiffieHellmanTr31KeyBlock>;
+export const ImportDiffieHellmanTr31KeyBlock = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    PrivateKeyIdentifier: S.String,
+    CertificateAuthorityPublicKeyIdentifier: S.String,
+    PublicKeyCertificate: S.String,
+    DeriveKeyAlgorithm: SymmetricKeyAlgorithm,
+    KeyDerivationFunction: KeyDerivationFunction,
+    KeyDerivationHashAlgorithm: KeyDerivationHashAlgorithm,
+    DerivationData: DiffieHellmanDerivationData,
+    WrappedKeyBlock: SensitiveString,
+  }),
+).annotate({
+  identifier: "ImportDiffieHellmanTr31KeyBlock",
+}) as any as S.Schema<ImportDiffieHellmanTr31KeyBlock>;
 export interface ImportAs2805KeyCryptogram {
   As2805KeyVariant: As2805KeyVariant;
   KeyModesOfUse: KeyModesOfUse;
@@ -728,16 +1121,15 @@ export interface ImportAs2805KeyCryptogram {
   WrappingKeyIdentifier: string;
   WrappedKeyCryptogram: string | redacted.Redacted<string>;
 }
-export const ImportAs2805KeyCryptogram = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      As2805KeyVariant: As2805KeyVariant,
-      KeyModesOfUse: KeyModesOfUse,
-      KeyAlgorithm: S.String,
-      Exportable: S.Boolean,
-      WrappingKeyIdentifier: S.String,
-      WrappedKeyCryptogram: SensitiveString,
-    }),
+export const ImportAs2805KeyCryptogram = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    As2805KeyVariant: As2805KeyVariant,
+    KeyModesOfUse: KeyModesOfUse,
+    KeyAlgorithm: S.String,
+    Exportable: S.Boolean,
+    WrappingKeyIdentifier: S.String,
+    WrappedKeyCryptogram: SensitiveString,
+  }),
 ).annotate({
   identifier: "ImportAs2805KeyCryptogram",
 }) as any as S.Schema<ImportAs2805KeyCryptogram>;
@@ -805,7 +1197,7 @@ export type ImportKeyMaterial =
       DiffieHellmanTr31KeyBlock?: never;
       As2805KeyCryptogram: ImportAs2805KeyCryptogram;
     };
-export const ImportKeyMaterial = /*@__PURE__*/ /*#__PURE__*/ S.Union([
+export const ImportKeyMaterial = /*@__PURE__*/ S.Union([
   S.Struct({ RootCertificatePublicKey: RootCertificatePublicKey }),
   S.Struct({ TrustedCertificatePublicKey: TrustedCertificatePublicKey }),
   S.Struct({ Tr31KeyBlock: ImportTr31KeyBlock }),
@@ -814,250 +1206,42 @@ export const ImportKeyMaterial = /*@__PURE__*/ /*#__PURE__*/ S.Union([
   S.Struct({ DiffieHellmanTr31KeyBlock: ImportDiffieHellmanTr31KeyBlock }),
   S.Struct({ As2805KeyCryptogram: ImportAs2805KeyCryptogram }),
 ]);
-export interface Tag {
-  Key: string;
-  Value?: string;
-}
-export const Tag = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ Key: S.String, Value: S.optional(S.String) }),
-).annotate({ identifier: "Tag" }) as any as S.Schema<Tag>;
-export type Tags = Tag[];
-export const Tags = /*@__PURE__*/ /*#__PURE__*/ S.Array(Tag);
 export interface ImportKeyInput {
   KeyMaterial: ImportKeyMaterial;
   KeyCheckValueAlgorithm?: string;
   Enabled?: boolean;
   Tags?: Tag[];
   ReplicationRegions?: string[];
+  RequesterComment?: string | redacted.Redacted<string>;
 }
-export const ImportKeyInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ImportKeyInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     KeyMaterial: ImportKeyMaterial,
     KeyCheckValueAlgorithm: S.optional(S.String),
     Enabled: S.optional(S.Boolean),
     Tags: S.optional(Tags),
     ReplicationRegions: S.optional(Regions),
+    RequesterComment: S.optional(SensitiveString),
   }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
 ).annotate({ identifier: "ImportKeyInput" }) as any as S.Schema<ImportKeyInput>;
-export interface ReplicationStatusType {
-  Status: string;
-  StatusMessage?: string;
-}
-export const ReplicationStatusType = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ Status: S.String, StatusMessage: S.optional(S.String) }),
-).annotate({
-  identifier: "ReplicationStatusType",
-}) as any as S.Schema<ReplicationStatusType>;
-export type ReplicationStatus = {
-  [key: string]: ReplicationStatusType | undefined;
-};
-export const ReplicationStatus = /*@__PURE__*/ /*#__PURE__*/ S.Record(
-  S.String,
-  ReplicationStatusType.pipe(S.optional),
-);
-export interface Key {
-  KeyArn: string;
-  KeyAttributes: KeyAttributes;
-  KeyCheckValue: string;
-  KeyCheckValueAlgorithm: string;
-  Enabled: boolean;
-  Exportable: boolean;
-  KeyState: string;
-  KeyOrigin: string;
-  CreateTimestamp: Date;
-  UsageStartTimestamp?: Date;
-  UsageStopTimestamp?: Date;
-  DeletePendingTimestamp?: Date;
-  DeleteTimestamp?: Date;
-  DeriveKeyUsage?: string;
-  MultiRegionKeyType?: string;
-  PrimaryRegion?: string;
-  ReplicationStatus?: { [key: string]: ReplicationStatusType | undefined };
-  UsingDefaultReplicationRegions?: boolean;
-}
-export const Key = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({
-    KeyArn: S.String,
-    KeyAttributes: KeyAttributes,
-    KeyCheckValue: S.String,
-    KeyCheckValueAlgorithm: S.String,
-    Enabled: S.Boolean,
-    Exportable: S.Boolean,
-    KeyState: S.String,
-    KeyOrigin: S.String,
-    CreateTimestamp: S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-    UsageStartTimestamp: S.optional(
-      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-    ),
-    UsageStopTimestamp: S.optional(
-      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-    ),
-    DeletePendingTimestamp: S.optional(
-      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-    ),
-    DeleteTimestamp: S.optional(
-      S.Date.pipe(T.TimestampFormat("epoch-seconds")),
-    ),
-    DeriveKeyUsage: S.optional(S.String),
-    MultiRegionKeyType: S.optional(S.String),
-    PrimaryRegion: S.optional(S.String),
-    ReplicationStatus: S.optional(ReplicationStatus),
-    UsingDefaultReplicationRegions: S.optional(S.Boolean),
-  }),
-).annotate({ identifier: "Key" }) as any as S.Schema<Key>;
 export interface ImportKeyOutput {
   Key: Key;
 }
-export const ImportKeyOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ImportKeyOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: Key }),
 ).annotate({
   identifier: "ImportKeyOutput",
 }) as any as S.Schema<ImportKeyOutput>;
-export interface ListTagsForResourceInput {
-  ResourceArn: string;
-  NextToken?: string;
-  MaxResults?: number;
-}
-export const ListTagsForResourceInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      ResourceArn: S.String,
-      NextToken: S.optional(S.String),
-      MaxResults: S.optional(S.Number),
-    }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-).annotate({
-  identifier: "ListTagsForResourceInput",
-}) as any as S.Schema<ListTagsForResourceInput>;
-export interface ListTagsForResourceOutput {
-  Tags: (Tag & { Value: TagValue })[];
-  NextToken?: string;
-}
-export const ListTagsForResourceOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(
-  () => S.Struct({ Tags: Tags, NextToken: S.optional(S.String) }),
-).annotate({
-  identifier: "ListTagsForResourceOutput",
-}) as any as S.Schema<ListTagsForResourceOutput>;
-export interface TagResourceInput {
-  ResourceArn: string;
-  Tags: Tag[];
-}
-export const TagResourceInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ ResourceArn: S.String, Tags: Tags }).pipe(
-    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-  ),
-).annotate({
-  identifier: "TagResourceInput",
-}) as any as S.Schema<TagResourceInput>;
-export interface TagResourceOutput {}
-export const TagResourceOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({}),
-).annotate({
-  identifier: "TagResourceOutput",
-}) as any as S.Schema<TagResourceOutput>;
-export type TagKeys = string[];
-export const TagKeys = /*@__PURE__*/ /*#__PURE__*/ S.Array(S.String);
-export interface UntagResourceInput {
-  ResourceArn: string;
-  TagKeys: string[];
-}
-export const UntagResourceInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ ResourceArn: S.String, TagKeys: TagKeys }).pipe(
-    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-  ),
-).annotate({
-  identifier: "UntagResourceInput",
-}) as any as S.Schema<UntagResourceInput>;
-export interface UntagResourceOutput {}
-export const UntagResourceOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({}),
-).annotate({
-  identifier: "UntagResourceOutput",
-}) as any as S.Schema<UntagResourceOutput>;
-export interface CreateAliasInput {
-  AliasName: string;
-  KeyArn?: string;
-}
-export const CreateAliasInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ AliasName: S.String, KeyArn: S.optional(S.String) }).pipe(
-    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-  ),
-).annotate({
-  identifier: "CreateAliasInput",
-}) as any as S.Schema<CreateAliasInput>;
-export interface Alias {
-  AliasName: string;
-  KeyArn?: string;
-}
-export const Alias = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ AliasName: S.String, KeyArn: S.optional(S.String) }),
-).annotate({ identifier: "Alias" }) as any as S.Schema<Alias>;
-export interface CreateAliasOutput {
-  Alias: Alias;
-}
-export const CreateAliasOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ Alias: Alias }),
-).annotate({
-  identifier: "CreateAliasOutput",
-}) as any as S.Schema<CreateAliasOutput>;
-export interface GetAliasInput {
-  AliasName: string;
-}
-export const GetAliasInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ AliasName: S.String }).pipe(
-    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-  ),
-).annotate({ identifier: "GetAliasInput" }) as any as S.Schema<GetAliasInput>;
-export interface GetAliasOutput {
-  Alias: Alias;
-}
-export const GetAliasOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ Alias: Alias }),
-).annotate({ identifier: "GetAliasOutput" }) as any as S.Schema<GetAliasOutput>;
-export interface UpdateAliasInput {
-  AliasName: string;
-  KeyArn?: string;
-}
-export const UpdateAliasInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ AliasName: S.String, KeyArn: S.optional(S.String) }).pipe(
-    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-  ),
-).annotate({
-  identifier: "UpdateAliasInput",
-}) as any as S.Schema<UpdateAliasInput>;
-export interface UpdateAliasOutput {
-  Alias: Alias;
-}
-export const UpdateAliasOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ Alias: Alias }),
-).annotate({
-  identifier: "UpdateAliasOutput",
-}) as any as S.Schema<UpdateAliasOutput>;
-export interface DeleteAliasInput {
-  AliasName: string;
-}
-export const DeleteAliasInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ AliasName: S.String }).pipe(
-    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-  ),
-).annotate({
-  identifier: "DeleteAliasInput",
-}) as any as S.Schema<DeleteAliasInput>;
-export interface DeleteAliasOutput {}
-export const DeleteAliasOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({}),
-).annotate({
-  identifier: "DeleteAliasOutput",
-}) as any as S.Schema<DeleteAliasOutput>;
+export type NextToken = string;
+export type MaxResults = number;
 export interface ListAliasesInput {
   KeyArn?: string;
   NextToken?: string;
   MaxResults?: number;
 }
-export const ListAliasesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListAliasesInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     KeyArn: S.optional(S.String),
     NextToken: S.optional(S.String),
@@ -1069,86 +1253,22 @@ export const ListAliasesInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   identifier: "ListAliasesInput",
 }) as any as S.Schema<ListAliasesInput>;
 export type Aliases = Alias[];
-export const Aliases = /*@__PURE__*/ /*#__PURE__*/ S.Array(Alias);
+export const Aliases = /*@__PURE__*/ S.Array(Alias);
 export interface ListAliasesOutput {
   Aliases: Alias[];
   NextToken?: string;
 }
-export const ListAliasesOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListAliasesOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Aliases: Aliases, NextToken: S.optional(S.String) }),
 ).annotate({
   identifier: "ListAliasesOutput",
 }) as any as S.Schema<ListAliasesOutput>;
-export interface CreateKeyInput {
-  KeyAttributes: KeyAttributes;
-  KeyCheckValueAlgorithm?: string;
-  Exportable: boolean;
-  Enabled?: boolean;
-  Tags?: Tag[];
-  DeriveKeyUsage?: string;
-  ReplicationRegions?: string[];
-}
-export const CreateKeyInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({
-    KeyAttributes: KeyAttributes,
-    KeyCheckValueAlgorithm: S.optional(S.String),
-    Exportable: S.Boolean,
-    Enabled: S.optional(S.Boolean),
-    Tags: S.optional(Tags),
-    DeriveKeyUsage: S.optional(S.String),
-    ReplicationRegions: S.optional(Regions),
-  }).pipe(
-    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-  ),
-).annotate({ identifier: "CreateKeyInput" }) as any as S.Schema<CreateKeyInput>;
-export interface CreateKeyOutput {
-  Key: Key;
-}
-export const CreateKeyOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ Key: Key }),
-).annotate({
-  identifier: "CreateKeyOutput",
-}) as any as S.Schema<CreateKeyOutput>;
-export interface GetKeyInput {
-  KeyIdentifier: string;
-}
-export const GetKeyInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ KeyIdentifier: S.String }).pipe(
-    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-  ),
-).annotate({ identifier: "GetKeyInput" }) as any as S.Schema<GetKeyInput>;
-export interface GetKeyOutput {
-  Key: Key;
-}
-export const GetKeyOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ Key: Key }),
-).annotate({ identifier: "GetKeyOutput" }) as any as S.Schema<GetKeyOutput>;
-export interface DeleteKeyInput {
-  KeyIdentifier: string;
-  DeleteKeyInDays?: number;
-}
-export const DeleteKeyInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({
-    KeyIdentifier: S.String,
-    DeleteKeyInDays: S.optional(S.Number),
-  }).pipe(
-    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-  ),
-).annotate({ identifier: "DeleteKeyInput" }) as any as S.Schema<DeleteKeyInput>;
-export interface DeleteKeyOutput {
-  Key: Key;
-}
-export const DeleteKeyOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-  S.Struct({ Key: Key }),
-).annotate({
-  identifier: "DeleteKeyOutput",
-}) as any as S.Schema<DeleteKeyOutput>;
 export interface ListKeysInput {
   KeyState?: string;
   NextToken?: string;
   MaxResults?: number;
 }
-export const ListKeysInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListKeysInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     KeyState: S.optional(S.String),
     NextToken: S.optional(S.String),
@@ -1167,7 +1287,7 @@ export interface KeySummary {
   MultiRegionKeyType?: string;
   PrimaryRegion?: string;
 }
-export const KeySummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const KeySummary = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     KeyArn: S.String,
     KeyState: S.String,
@@ -1180,56 +1300,82 @@ export const KeySummary = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "KeySummary" }) as any as S.Schema<KeySummary>;
 export type KeySummaryList = KeySummary[];
-export const KeySummaryList = /*@__PURE__*/ /*#__PURE__*/ S.Array(KeySummary);
+export const KeySummaryList = /*@__PURE__*/ S.Array(KeySummary);
 export interface ListKeysOutput {
   Keys: KeySummary[];
   NextToken?: string;
 }
-export const ListKeysOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const ListKeysOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Keys: KeySummaryList, NextToken: S.optional(S.String) }),
 ).annotate({ identifier: "ListKeysOutput" }) as any as S.Schema<ListKeysOutput>;
-export interface AddKeyReplicationRegionsInput {
-  KeyIdentifier: string;
-  ReplicationRegions: string[];
+export interface ListTagsForResourceInput {
+  ResourceArn: string;
+  NextToken?: string;
+  MaxResults?: number;
 }
-export const AddKeyReplicationRegionsInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ KeyIdentifier: S.String, ReplicationRegions: Regions }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "AddKeyReplicationRegionsInput",
-  }) as any as S.Schema<AddKeyReplicationRegionsInput>;
-export interface AddKeyReplicationRegionsOutput {
-  Key: Key;
+export const ListTagsForResourceInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    ResourceArn: S.String,
+    NextToken: S.optional(S.String),
+    MaxResults: S.optional(S.Number),
+  }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "ListTagsForResourceInput",
+}) as any as S.Schema<ListTagsForResourceInput>;
+export interface ListTagsForResourceOutput {
+  Tags: (Tag & { Value: TagValue })[];
+  NextToken?: string;
 }
-export const AddKeyReplicationRegionsOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({ Key: Key })).annotate({
-    identifier: "AddKeyReplicationRegionsOutput",
-  }) as any as S.Schema<AddKeyReplicationRegionsOutput>;
+export const ListTagsForResourceOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Tags: Tags, NextToken: S.optional(S.String) }),
+).annotate({
+  identifier: "ListTagsForResourceOutput",
+}) as any as S.Schema<ListTagsForResourceOutput>;
+export interface PutResourcePolicyInput {
+  ResourceArn: string;
+  Policy: string;
+}
+export const PutResourcePolicyInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String, Policy: S.String }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "PutResourcePolicyInput",
+}) as any as S.Schema<PutResourcePolicyInput>;
+export interface PutResourcePolicyOutput {
+  ResourceArn: string;
+  Policy: string;
+}
+export const PutResourcePolicyOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String, Policy: S.String }),
+).annotate({
+  identifier: "PutResourcePolicyOutput",
+}) as any as S.Schema<PutResourcePolicyOutput>;
 export interface RemoveKeyReplicationRegionsInput {
   KeyIdentifier: string;
   ReplicationRegions: string[];
 }
-export const RemoveKeyReplicationRegionsInput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
-    S.Struct({ KeyIdentifier: S.String, ReplicationRegions: Regions }).pipe(
-      T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
-    ),
-  ).annotate({
-    identifier: "RemoveKeyReplicationRegionsInput",
-  }) as any as S.Schema<RemoveKeyReplicationRegionsInput>;
+export const RemoveKeyReplicationRegionsInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ KeyIdentifier: S.String, ReplicationRegions: Regions }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "RemoveKeyReplicationRegionsInput",
+}) as any as S.Schema<RemoveKeyReplicationRegionsInput>;
 export interface RemoveKeyReplicationRegionsOutput {
   Key: Key;
 }
-export const RemoveKeyReplicationRegionsOutput =
-  /*@__PURE__*/ /*#__PURE__*/ S.suspend(() => S.Struct({ Key: Key })).annotate({
-    identifier: "RemoveKeyReplicationRegionsOutput",
-  }) as any as S.Schema<RemoveKeyReplicationRegionsOutput>;
+export const RemoveKeyReplicationRegionsOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Key: Key }),
+).annotate({
+  identifier: "RemoveKeyReplicationRegionsOutput",
+}) as any as S.Schema<RemoveKeyReplicationRegionsOutput>;
 export interface RestoreKeyInput {
   KeyIdentifier: string;
 }
-export const RestoreKeyInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RestoreKeyInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ KeyIdentifier: S.String }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -1239,7 +1385,7 @@ export const RestoreKeyInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface RestoreKeyOutput {
   Key: Key;
 }
-export const RestoreKeyOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const RestoreKeyOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: Key }),
 ).annotate({
   identifier: "RestoreKeyOutput",
@@ -1247,7 +1393,7 @@ export const RestoreKeyOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface StartKeyUsageInput {
   KeyIdentifier: string;
 }
-export const StartKeyUsageInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StartKeyUsageInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ KeyIdentifier: S.String }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -1257,7 +1403,7 @@ export const StartKeyUsageInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface StartKeyUsageOutput {
   Key: Key;
 }
-export const StartKeyUsageOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StartKeyUsageOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: Key }),
 ).annotate({
   identifier: "StartKeyUsageOutput",
@@ -1265,7 +1411,7 @@ export const StartKeyUsageOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface StopKeyUsageInput {
   KeyIdentifier: string;
 }
-export const StopKeyUsageInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StopKeyUsageInput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ KeyIdentifier: S.String }).pipe(
     T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
   ),
@@ -1275,47 +1421,404 @@ export const StopKeyUsageInput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
 export interface StopKeyUsageOutput {
   Key: Key;
 }
-export const StopKeyUsageOutput = /*@__PURE__*/ /*#__PURE__*/ S.suspend(() =>
+export const StopKeyUsageOutput = /*@__PURE__*/ S.suspend(() =>
   S.Struct({ Key: Key }),
 ).annotate({
   identifier: "StopKeyUsageOutput",
 }) as any as S.Schema<StopKeyUsageOutput>;
+export interface TagResourceInput {
+  ResourceArn: string;
+  Tags: Tag[];
+}
+export const TagResourceInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String, Tags: Tags }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "TagResourceInput",
+}) as any as S.Schema<TagResourceInput>;
+export interface TagResourceOutput {}
+export const TagResourceOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
+).annotate({
+  identifier: "TagResourceOutput",
+}) as any as S.Schema<TagResourceOutput>;
+export type TagKeys = string[];
+export const TagKeys = /*@__PURE__*/ S.Array(S.String);
+export interface UntagResourceInput {
+  ResourceArn: string;
+  TagKeys: string[];
+}
+export const UntagResourceInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ ResourceArn: S.String, TagKeys: TagKeys }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "UntagResourceInput",
+}) as any as S.Schema<UntagResourceInput>;
+export interface UntagResourceOutput {}
+export const UntagResourceOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}),
+).annotate({
+  identifier: "UntagResourceOutput",
+}) as any as S.Schema<UntagResourceOutput>;
+export interface UpdateAliasInput {
+  AliasName: string;
+  KeyArn?: string;
+}
+export const UpdateAliasInput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ AliasName: S.String, KeyArn: S.optional(S.String) }).pipe(
+    T.all(T.Http({ method: "POST", uri: "/" }), svc, auth, proto, ver, rules),
+  ),
+).annotate({
+  identifier: "UpdateAliasInput",
+}) as any as S.Schema<UpdateAliasInput>;
+export interface UpdateAliasOutput {
+  Alias: Alias;
+}
+export const UpdateAliasOutput = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({ Alias: Alias }),
+).annotate({
+  identifier: "UpdateAliasOutput",
+}) as any as S.Schema<UpdateAliasOutput>;
+export type AddKeyReplicationRegionsError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceQuotaExceededException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Adds replication Amazon Web Services Regions to an existing Amazon Web Services Payment Cryptography key, enabling the key to be used for cryptographic operations in additional Amazon Web Services Regions.
+ *
+ * Multi-Region key replication allow you to use the same key material across multiple Amazon Web Services Regions, providing lower latency for applications distributed across regions. When you add Replication Regions, Amazon Web Services Payment Cryptography securely replicates the key material to the specified Amazon Web Services Regions.
+ *
+ * The key must be in an active state to add Replication Regions. You can add multiple regions in a single operation, and the key will be available for use in those regions once replication is complete.
+ *
+ * **Cross-account use:** This operation supports cross-account use when the key has a resource-based policy that grants access. For more information, see Resource-based policies.
+ *
+ * **Related operations:**
+ *
+ * - RemoveKeyReplicationRegions
+ *
+ * - EnableDefaultKeyReplicationRegions
+ *
+ * - GetDefaultKeyReplicationRegions
+ */
+export const addKeyReplicationRegions: API.OperationMethod<
+  AddKeyReplicationRegionsInput,
+  AddKeyReplicationRegionsOutput,
+  AddKeyReplicationRegionsError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: AddKeyReplicationRegionsInput,
+  output: AddKeyReplicationRegionsOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceQuotaExceededException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "AddKeyReplicationRegions",
+}));
 
-//# Errors
-export class AccessDeniedException extends S.TaggedErrorClass<AccessDeniedException>()(
-  "AccessDeniedException",
-  { Message: S.optional(S.String) },
-).pipe(C.withAuthError) {}
-export class ConflictException extends S.TaggedErrorClass<ConflictException>()(
-  "ConflictException",
-  { Message: S.optional(S.String) },
-).pipe(C.withConflictError) {}
-export class InternalServerException extends S.TaggedErrorClass<InternalServerException>()(
-  "InternalServerException",
-  { Message: S.optional(S.String) },
-).pipe(C.withServerError) {}
-export class ResourceNotFoundException extends S.TaggedErrorClass<ResourceNotFoundException>()(
-  "ResourceNotFoundException",
-  { ResourceId: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ServiceQuotaExceededException extends S.TaggedErrorClass<ServiceQuotaExceededException>()(
-  "ServiceQuotaExceededException",
-  { Message: S.optional(S.String) },
-).pipe(C.withQuotaError) {}
-export class ThrottlingException extends S.TaggedErrorClass<ThrottlingException>()(
-  "ThrottlingException",
-  { Message: S.optional(S.String) },
-).pipe(C.withThrottlingError) {}
-export class ValidationException extends S.TaggedErrorClass<ValidationException>()(
-  "ValidationException",
-  { Message: S.optional(S.String) },
-).pipe(C.withBadRequestError) {}
-export class ServiceUnavailableException extends S.TaggedErrorClass<ServiceUnavailableException>()(
-  "ServiceUnavailableException",
-  { Message: S.optional(S.String) },
-).pipe(C.withServerError) {}
+export type AssociateMpaTeamError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceQuotaExceededException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Associates a Multi-Party Approval (MPA) team with a protected operation. For more information, see Multi-Party Approval in the *Amazon Web Services Payment Cryptography User Guide.*
+ *
+ * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ *
+ * **Related operations:**
+ *
+ * - DisassociateMpaTeam
+ *
+ * - GetMpaTeamAssociation
+ */
+export const associateMpaTeam: API.OperationMethod<
+  AssociateMpaTeamInput,
+  AssociateMpaTeamOutput,
+  AssociateMpaTeamError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: AssociateMpaTeamInput,
+  output: AssociateMpaTeamOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceQuotaExceededException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "AssociateMpaTeam",
+}));
 
-//# Operations
+export type CreateAliasError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceQuotaExceededException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Creates an *alias*, or a friendly name, for an Amazon Web Services Payment Cryptography key. You can use an alias to identify a key in the console and when you call cryptographic operations such as EncryptData or DecryptData.
+ *
+ * You can associate the alias with any key in the same Amazon Web Services Region. Each alias is associated with only one key at a time, but a key can have multiple aliases. You can't create an alias without a key. The alias must be unique in the account and Amazon Web Services Region, but you can create another alias with the same name in a different Amazon Web Services Region.
+ *
+ * To change the key that's associated with the alias, call UpdateAlias. To delete the alias, call DeleteAlias. These operations don't affect the underlying key. To get the alias that you created, call ListAliases.
+ *
+ * **Cross-account use**: This operation can't be used across different Amazon Web Services accounts.
+ *
+ * **Related operations:**
+ *
+ * - DeleteAlias
+ *
+ * - GetAlias
+ *
+ * - ListAliases
+ *
+ * - UpdateAlias
+ */
+export const createAlias: API.OperationMethod<
+  CreateAliasInput,
+  CreateAliasOutput,
+  CreateAliasError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: CreateAliasInput,
+  output: CreateAliasOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceQuotaExceededException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateAlias",
+}));
+
+export type CreateKeyError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceQuotaExceededException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Creates an Amazon Web Services Payment Cryptography key, a logical representation of a cryptographic key, that is unique in your account and Amazon Web Services Region. You use keys for cryptographic functions such as encryption and decryption.
+ *
+ * In addition to the key material used in cryptographic operations, an Amazon Web Services Payment Cryptography key includes metadata such as the key ARN, key usage, key origin, creation date, description, and key state.
+ *
+ * When you create a key, you specify both immutable and mutable data about the key. The immutable data contains key attributes that define the scope and cryptographic operations that you can perform using the key, for example key class (example: `SYMMETRIC_KEY`), key algorithm (example: `TDES_2KEY`), key usage (example: `TR31_P0_PIN_ENCRYPTION_KEY`) and key modes of use (example: `Encrypt`). Amazon Web Services Payment Cryptography binds key attributes to keys using key blocks when you store or export them. Amazon Web Services Payment Cryptography stores the key contents wrapped and never stores or transmits them in the clear.
+ *
+ * For information about valid combinations of key attributes, see Understanding key attributes in the *Amazon Web Services Payment Cryptography User Guide*. The mutable data contained within a key includes usage timestamp and key deletion timestamp and can be modified after creation.
+ *
+ * You can use the `CreateKey` operation to generate an ECC (Elliptic Curve Cryptography) key pair used for establishing an ECDH (Elliptic Curve Diffie-Hellman) key agreement between two parties. In the ECDH key agreement process, both parties generate their own ECC key pair with key usage K3 and exchange the public keys. Each party then use their private key, the received public key from the other party, and the key derivation parameters including key derivation function, hash algorithm, derivation data, and key algorithm to derive a shared key.
+ *
+ * To maintain the single-use principle of cryptographic keys in payments, ECDH derived keys should not be used for multiple purposes, such as a `TR31_P0_PIN_ENCRYPTION_KEY` and `TR31_K1_KEY_BLOCK_PROTECTION_KEY`. When creating ECC key pairs in Amazon Web Services Payment Cryptography you can optionally set the `DeriveKeyUsage` parameter, which defines the key usage bound to the symmetric key that will be derived using the ECC key pair.
+ *
+ * **Cross-account use**: This operation can't be used across different Amazon Web Services accounts.
+ *
+ * **Related operations:**
+ *
+ * - DeleteKey
+ *
+ * - GetKey
+ *
+ * - ListKeys
+ */
+export const createKey: API.OperationMethod<
+  CreateKeyInput,
+  CreateKeyOutput,
+  CreateKeyError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: CreateKeyInput,
+  output: CreateKeyOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceQuotaExceededException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "CreateKey",
+}));
+
+export type DeleteAliasError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Deletes the alias, but doesn't affect the underlying key.
+ *
+ * Each key can have multiple aliases. To get the aliases of all keys, use the UpdateAlias operation. To change the alias of a key, first use DeleteAlias to delete the current alias and then use CreateAlias to create a new alias. To associate an existing alias with a different key, call UpdateAlias.
+ *
+ * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ *
+ * **Related operations:**
+ *
+ * - CreateAlias
+ *
+ * - GetAlias
+ *
+ * - ListAliases
+ *
+ * - UpdateAlias
+ */
+export const deleteAlias: API.OperationMethod<
+  DeleteAliasInput,
+  DeleteAliasOutput,
+  DeleteAliasError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: DeleteAliasInput,
+  output: DeleteAliasOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteAlias",
+}));
+
+export type DeleteKeyError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Deletes the key material and metadata associated with Amazon Web Services Payment Cryptography key.
+ *
+ * Key deletion is irreversible. After a key is deleted, you can't perform cryptographic operations using the key. For example, you can't decrypt data that was encrypted by a deleted Amazon Web Services Payment Cryptography key, and the data may become unrecoverable. Because key deletion is destructive, Amazon Web Services Payment Cryptography has a safety mechanism to prevent accidental deletion of a key. When you call this operation, Amazon Web Services Payment Cryptography disables the specified key but doesn't delete it until after a waiting period set using `DeleteKeyInDays`. The default waiting period is 7 days. During the waiting period, the `KeyState` is `DELETE_PENDING`. After the key is deleted, the `KeyState` is `DELETE_COMPLETE`.
+ *
+ * You should delete a key only when you are sure that you don't need to use it anymore and no other parties are utilizing this key. If you aren't sure, consider deactivating it instead by calling StopKeyUsage.
+ *
+ * **Cross-account use:** This operation supports cross-account use when the key has a resource-based policy that grants access. For more information, see Resource-based policies.
+ *
+ * **Related operations:**
+ *
+ * - RestoreKey
+ *
+ * - StartKeyUsage
+ *
+ * - StopKeyUsage
+ */
+export const deleteKey: API.OperationMethod<
+  DeleteKeyInput,
+  DeleteKeyOutput,
+  DeleteKeyError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: DeleteKeyInput,
+  output: DeleteKeyOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteKey",
+}));
+
+export type DeleteResourcePolicyError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Removes the resource-based policy attached to an Amazon Web Services Payment Cryptography key.
+ *
+ * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ *
+ * **Related operations:**
+ *
+ * - PutResourcePolicy
+ *
+ * - GetResourcePolicy
+ */
+export const deleteResourcePolicy: API.OperationMethod<
+  DeleteResourcePolicyInput,
+  DeleteResourcePolicyOutput,
+  DeleteResourcePolicyError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: DeleteResourcePolicyInput,
+  output: DeleteResourcePolicyOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DeleteResourcePolicy",
+}));
+
 export type DisableDefaultKeyReplicationRegionsError =
   | AccessDeniedException
   | ConflictException
@@ -1344,8 +1847,8 @@ export const disableDefaultKeyReplicationRegions: API.OperationMethod<
   DisableDefaultKeyReplicationRegionsInput,
   DisableDefaultKeyReplicationRegionsOutput,
   DisableDefaultKeyReplicationRegionsError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: DisableDefaultKeyReplicationRegionsInput,
   output: DisableDefaultKeyReplicationRegionsOutput,
   errors: [
@@ -1357,7 +1860,55 @@ export const disableDefaultKeyReplicationRegions: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DisableDefaultKeyReplicationRegions",
 }));
+
+export type DisassociateMpaTeamError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceQuotaExceededException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Removes the association between a Multi-Party Approval (MPA) team and a protected operation.
+ *
+ * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ *
+ * **Related operations:**
+ *
+ * - AssociateMpaTeam
+ *
+ * - GetMpaTeamAssociation
+ */
+export const disassociateMpaTeam: API.OperationMethod<
+  DisassociateMpaTeamInput,
+  DisassociateMpaTeamOutput,
+  DisassociateMpaTeamError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: DisassociateMpaTeamInput,
+  output: DisassociateMpaTeamOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceQuotaExceededException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "DisassociateMpaTeam",
+}));
+
 export type EnableDefaultKeyReplicationRegionsError =
   | AccessDeniedException
   | ConflictException
@@ -1386,8 +1937,8 @@ export const enableDefaultKeyReplicationRegions: API.OperationMethod<
   EnableDefaultKeyReplicationRegionsInput,
   EnableDefaultKeyReplicationRegionsOutput,
   EnableDefaultKeyReplicationRegionsError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: EnableDefaultKeyReplicationRegionsInput,
   output: EnableDefaultKeyReplicationRegionsOutput,
   errors: [
@@ -1399,7 +1950,11 @@ export const enableDefaultKeyReplicationRegions: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "EnableDefaultKeyReplicationRegions",
 }));
+
 export type ExportKeyError =
   | AccessDeniedException
   | ConflictException
@@ -1492,7 +2047,7 @@ export type ExportKeyError =
  *
  * When this operation is successful, Amazon Web Services Payment Cryptography returns the working key as a TR-31 WrappedKeyBlock, where the wrapping key is the ECDH derived key.
  *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ * **Cross-account use:** This operation supports cross-account use when the key has a resource-based policy that grants access. For more information, see Resource-based policies.
  *
  * **Related operations:**
  *
@@ -1504,8 +2059,8 @@ export const exportKey: API.OperationMethod<
   ExportKeyInput,
   ExportKeyOutput,
   ExportKeyError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ExportKeyInput,
   output: ExportKeyOutput,
   errors: [
@@ -1517,7 +2072,55 @@ export const exportKey: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ExportKey",
 }));
+
+export type GetAliasError =
+  | AccessDeniedException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Gets the Amazon Web Services Payment Cryptography key associated with the alias.
+ *
+ * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ *
+ * **Related operations:**
+ *
+ * - CreateAlias
+ *
+ * - DeleteAlias
+ *
+ * - ListAliases
+ *
+ * - UpdateAlias
+ */
+export const getAlias: API.OperationMethod<
+  GetAliasInput,
+  GetAliasOutput,
+  GetAliasError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: GetAliasInput,
+  output: GetAliasOutput,
+  errors: [
+    AccessDeniedException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetAlias",
+}));
+
 export type GetCertificateSigningRequestError =
   | AccessDeniedException
   | InternalServerException
@@ -1533,8 +2136,8 @@ export const getCertificateSigningRequest: API.OperationMethod<
   GetCertificateSigningRequestInput,
   GetCertificateSigningRequestOutput,
   GetCertificateSigningRequestError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetCertificateSigningRequestInput,
   output: GetCertificateSigningRequestOutput,
   errors: [
@@ -1545,7 +2148,11 @@ export const getCertificateSigningRequest: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetCertificateSigningRequest",
 }));
+
 export type GetDefaultKeyReplicationRegionsError =
   | AccessDeniedException
   | ConflictException
@@ -1572,8 +2179,8 @@ export const getDefaultKeyReplicationRegions: API.OperationMethod<
   GetDefaultKeyReplicationRegionsInput,
   GetDefaultKeyReplicationRegionsOutput,
   GetDefaultKeyReplicationRegionsError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetDefaultKeyReplicationRegionsInput,
   output: GetDefaultKeyReplicationRegionsOutput,
   errors: [
@@ -1585,7 +2192,97 @@ export const getDefaultKeyReplicationRegions: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetDefaultKeyReplicationRegions",
 }));
+
+export type GetKeyError =
+  | AccessDeniedException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Gets the key metadata for an Amazon Web Services Payment Cryptography key, including the immutable and mutable attributes specified when the key was created. Returns key metadata including attributes, state, and timestamps, but does not return the actual cryptographic key material.
+ *
+ * **Cross-account use:** This operation supports cross-account use when the key has a resource-based policy that grants access. For more information, see Resource-based policies.
+ *
+ * **Related operations:**
+ *
+ * - CreateKey
+ *
+ * - DeleteKey
+ *
+ * - ListKeys
+ */
+export const getKey: API.OperationMethod<
+  GetKeyInput,
+  GetKeyOutput,
+  GetKeyError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: GetKeyInput,
+  output: GetKeyOutput,
+  errors: [
+    AccessDeniedException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetKey",
+}));
+
+export type GetMpaTeamAssociationError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceQuotaExceededException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Returns the Multi-Party Approval (MPA) team association for a protected operation.
+ *
+ * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ *
+ * **Related operations:**
+ *
+ * - AssociateMpaTeam
+ *
+ * - DisassociateMpaTeam
+ */
+export const getMpaTeamAssociation: API.OperationMethod<
+  GetMpaTeamAssociationInput,
+  GetMpaTeamAssociationOutput,
+  GetMpaTeamAssociationError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: GetMpaTeamAssociationInput,
+  output: GetMpaTeamAssociationOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceQuotaExceededException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetMpaTeamAssociation",
+}));
+
 export type GetParametersForExportError =
   | AccessDeniedException
   | ConflictException
@@ -1615,8 +2312,8 @@ export const getParametersForExport: API.OperationMethod<
   GetParametersForExportInput,
   GetParametersForExportOutput,
   GetParametersForExportError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetParametersForExportInput,
   output: GetParametersForExportOutput,
   errors: [
@@ -1629,7 +2326,11 @@ export const getParametersForExport: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetParametersForExport",
 }));
+
 export type GetParametersForImportError =
   | AccessDeniedException
   | ConflictException
@@ -1659,8 +2360,8 @@ export const getParametersForImport: API.OperationMethod<
   GetParametersForImportInput,
   GetParametersForImportOutput,
   GetParametersForImportError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetParametersForImportInput,
   output: GetParametersForImportOutput,
   errors: [
@@ -1673,7 +2374,11 @@ export const getParametersForImport: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetParametersForImport",
 }));
+
 export type GetPublicKeyCertificateError =
   | AccessDeniedException
   | InternalServerException
@@ -1687,14 +2392,14 @@ export type GetPublicKeyCertificateError =
  *
  * Unlike the private key of an asymmetric key, which never leaves Amazon Web Services Payment Cryptography unencrypted, callers with `GetPublicKeyCertificate` permission can download the public key certificate of the asymmetric key. You can share the public key certificate to allow others to encrypt messages and verify signatures outside of Amazon Web Services Payment Cryptography
  *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ * **Cross-account use:** This operation supports cross-account use when the key has a resource-based policy that grants access. For more information, see Resource-based policies.
  */
 export const getPublicKeyCertificate: API.OperationMethod<
   GetPublicKeyCertificateInput,
   GetPublicKeyCertificateOutput,
   GetPublicKeyCertificateError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: GetPublicKeyCertificateInput,
   output: GetPublicKeyCertificateOutput,
   errors: [
@@ -1705,7 +2410,51 @@ export const getPublicKeyCertificate: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetPublicKeyCertificate",
 }));
+
+export type GetResourcePolicyError =
+  | AccessDeniedException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Returns the resource-based policy attached to an Amazon Web Services Payment Cryptography key.
+ *
+ * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ *
+ * **Related operations:**
+ *
+ * - PutResourcePolicy
+ *
+ * - DeleteResourcePolicy
+ */
+export const getResourcePolicy: API.OperationMethod<
+  GetResourcePolicyInput,
+  GetResourcePolicyOutput,
+  GetResourcePolicyError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: GetResourcePolicyInput,
+  output: GetResourcePolicyOutput,
+  errors: [
+    AccessDeniedException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "GetResourcePolicy",
+}));
+
 export type ImportKeyError =
   | AccessDeniedException
   | ConflictException
@@ -1805,7 +2554,7 @@ export type ImportKeyError =
  *
  * - `CertificateAuthorityPublicKeyIdentifier`: The `keyARN` of the CA that signed the public key certificate of the receiving ECC key pair.
  *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ * **Cross-account use:** This operation supports cross-account use when the key has a resource-based policy that grants access. For more information, see Resource-based policies.
  *
  * **Related operations:**
  *
@@ -1817,8 +2566,8 @@ export const importKey: API.OperationMethod<
   ImportKeyInput,
   ImportKeyOutput,
   ImportKeyError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: ImportKeyInput,
   output: ImportKeyOutput,
   errors: [
@@ -1831,7 +2580,115 @@ export const importKey: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ImportKey",
 }));
+
+export type ListAliasesError =
+  | AccessDeniedException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Lists the aliases for all keys in the caller's Amazon Web Services account and Amazon Web Services Region. You can filter the aliases by `keyARN`. For more information, see Using aliases in the *Amazon Web Services Payment Cryptography User Guide*.
+ *
+ * This is a paginated operation, which means that each response might contain only a subset of all the aliases. When the response contains only a subset of aliases, it includes a `NextToken` value. Use this value in a subsequent `ListAliases` request to get more aliases. When you receive a response with no NextToken (or an empty or null value), that means there are no more aliases to get.
+ *
+ * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ *
+ * **Related operations:**
+ *
+ * - CreateAlias
+ *
+ * - DeleteAlias
+ *
+ * - GetAlias
+ *
+ * - UpdateAlias
+ */
+export const listAliases: API.PaginatedOperationMethod<
+  ListAliasesInput,
+  ListAliasesOutput,
+  ListAliasesError,
+  Credentials | HttpClient.HttpClient,
+  Alias
+> = /*@__PURE__*/ API.makePaginated(() => ({
+  input: ListAliasesInput,
+  output: ListAliasesOutput,
+  errors: [
+    AccessDeniedException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListAliases",
+  pagination: {
+    inputToken: "NextToken",
+    outputToken: "NextToken",
+    items: "Aliases",
+    pageSize: "MaxResults",
+  } as const,
+})) as any;
+
+export type ListKeysError =
+  | AccessDeniedException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Lists the keys in the caller's Amazon Web Services account and Amazon Web Services Region. You can filter the list of keys.
+ *
+ * This is a paginated operation, which means that each response might contain only a subset of all the keys. When the response contains only a subset of keys, it includes a `NextToken` value. Use this value in a subsequent `ListKeys` request to get more keys. When you receive a response with no NextToken (or an empty or null value), that means there are no more keys to get.
+ *
+ * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ *
+ * **Related operations:**
+ *
+ * - CreateKey
+ *
+ * - DeleteKey
+ *
+ * - GetKey
+ */
+export const listKeys: API.PaginatedOperationMethod<
+  ListKeysInput,
+  ListKeysOutput,
+  ListKeysError,
+  Credentials | HttpClient.HttpClient,
+  KeySummary
+> = /*@__PURE__*/ API.makePaginated(() => ({
+  input: ListKeysInput,
+  output: ListKeysOutput,
+  errors: [
+    AccessDeniedException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListKeys",
+  pagination: {
+    inputToken: "NextToken",
+    outputToken: "NextToken",
+    items: "Keys",
+    pageSize: "MaxResults",
+  } as const,
+})) as any;
+
 export type ListTagsForResourceError =
   | AccessDeniedException
   | InternalServerException
@@ -1845,7 +2702,7 @@ export type ListTagsForResourceError =
  *
  * This is a paginated operation, which means that each response might contain only a subset of all the tags. When the response contains only a subset of tags, it includes a `NextToken` value. Use this value in a subsequent `ListTagsForResource` request to get more tags. When you receive a response with no NextToken (or an empty or null value), that means there are no more tags to get.
  *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ * **Cross-account use:** This operation supports cross-account use when the key has a resource-based policy that grants access. For more information, see Resource-based policies.
  *
  * **Related operations:**
  *
@@ -1853,27 +2710,13 @@ export type ListTagsForResourceError =
  *
  * - UntagResource
  */
-export const listTagsForResource: API.OperationMethod<
+export const listTagsForResource: API.PaginatedOperationMethod<
   ListTagsForResourceInput,
   ListTagsForResourceOutput,
   ListTagsForResourceError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListTagsForResourceInput,
-  ) => stream.Stream<
-    ListTagsForResourceOutput,
-    ListTagsForResourceError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListTagsForResourceInput,
-  ) => stream.Stream<
-    Tag,
-    ListTagsForResourceError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
+  Credentials | HttpClient.HttpClient,
+  Tag
+> = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListTagsForResourceInput,
   output: ListTagsForResourceOutput,
   errors: [
@@ -1884,13 +2727,249 @@ export const listTagsForResource: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "ListTagsForResource",
   pagination: {
     inputToken: "NextToken",
     outputToken: "NextToken",
     items: "Tags",
     pageSize: "MaxResults",
   } as const,
+})) as any;
+
+export type PutResourcePolicyError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | PublicPolicyException
+  | ResourceNotFoundException
+  | ServiceQuotaExceededException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Attaches or replaces a resource-based policy on an Amazon Web Services Payment Cryptography key. A resource-based policy can grant cross-account access to your key.
+ *
+ * If the policy would grant public access, the request fails with a `PublicPolicyException`.
+ *
+ * To remove a resource-based policy from a key, use DeleteResourcePolicy.
+ *
+ * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ *
+ * **Related operations:**
+ *
+ * - GetResourcePolicy
+ *
+ * - DeleteResourcePolicy
+ */
+export const putResourcePolicy: API.OperationMethod<
+  PutResourcePolicyInput,
+  PutResourcePolicyOutput,
+  PutResourcePolicyError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: PutResourcePolicyInput,
+  output: PutResourcePolicyOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    PublicPolicyException,
+    ResourceNotFoundException,
+    ServiceQuotaExceededException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "PutResourcePolicy",
 }));
+
+export type RemoveKeyReplicationRegionsError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceQuotaExceededException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Removes Replication Regions from an existing Amazon Web Services Payment Cryptography key, disabling the key's availability for cryptographic operations in the specified Amazon Web Services Regions.
+ *
+ * When you remove Replication Regions, the key material is securely deleted from those regions and can no longer be used for cryptographic operations there. This operation is irreversible for the specified Amazon Web Services Regions. For more information, see Multi-Region key replication.
+ *
+ * Ensure that no active cryptographic operations or applications depend on the key in the regions you're removing before performing this operation.
+ *
+ * **Cross-account use:** This operation supports cross-account use when the key has a resource-based policy that grants access. For more information, see Resource-based policies.
+ *
+ * **Related operations:**
+ *
+ * - AddKeyReplicationRegions
+ *
+ * - DisableDefaultKeyReplicationRegions
+ */
+export const removeKeyReplicationRegions: API.OperationMethod<
+  RemoveKeyReplicationRegionsInput,
+  RemoveKeyReplicationRegionsOutput,
+  RemoveKeyReplicationRegionsError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: RemoveKeyReplicationRegionsInput,
+  output: RemoveKeyReplicationRegionsOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceQuotaExceededException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "RemoveKeyReplicationRegions",
+}));
+
+export type RestoreKeyError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceQuotaExceededException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Cancels a scheduled key deletion during the waiting period. Use this operation to restore a `Key` that is scheduled for deletion.
+ *
+ * During the waiting period, the `KeyState` is `DELETE_PENDING` and `deletePendingTimestamp` contains the date and time after which the `Key` will be deleted. After `Key` is restored, the `KeyState` is `CREATE_COMPLETE`, and the value for `deletePendingTimestamp` is removed.
+ *
+ * **Cross-account use:** This operation supports cross-account use when the key has a resource-based policy that grants access. For more information, see Resource-based policies.
+ *
+ * **Related operations:**
+ *
+ * - DeleteKey
+ *
+ * - StartKeyUsage
+ *
+ * - StopKeyUsage
+ */
+export const restoreKey: API.OperationMethod<
+  RestoreKeyInput,
+  RestoreKeyOutput,
+  RestoreKeyError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: RestoreKeyInput,
+  output: RestoreKeyOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceQuotaExceededException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "RestoreKey",
+}));
+
+export type StartKeyUsageError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceQuotaExceededException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Enables an Amazon Web Services Payment Cryptography key, which makes it active for cryptographic operations within Amazon Web Services Payment Cryptography
+ *
+ * **Cross-account use:** This operation supports cross-account use when the key has a resource-based policy that grants access. For more information, see Resource-based policies.
+ *
+ * **Related operations:**
+ *
+ * - StopKeyUsage
+ */
+export const startKeyUsage: API.OperationMethod<
+  StartKeyUsageInput,
+  StartKeyUsageOutput,
+  StartKeyUsageError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: StartKeyUsageInput,
+  output: StartKeyUsageOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceQuotaExceededException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "StartKeyUsage",
+}));
+
+export type StopKeyUsageError =
+  | AccessDeniedException
+  | ConflictException
+  | InternalServerException
+  | ResourceNotFoundException
+  | ServiceQuotaExceededException
+  | ServiceUnavailableException
+  | ThrottlingException
+  | ValidationException
+  | CommonErrors;
+/**
+ * Disables an Amazon Web Services Payment Cryptography key, which makes it inactive within Amazon Web Services Payment Cryptography.
+ *
+ * You can use this operation instead of DeleteKey to deactivate a key. You can enable the key in the future by calling StartKeyUsage.
+ *
+ * **Cross-account use:** This operation supports cross-account use when the key has a resource-based policy that grants access. For more information, see Resource-based policies.
+ *
+ * **Related operations:**
+ *
+ * - DeleteKey
+ *
+ * - StartKeyUsage
+ */
+export const stopKeyUsage: API.OperationMethod<
+  StopKeyUsageInput,
+  StopKeyUsageOutput,
+  StopKeyUsageError,
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
+  input: StopKeyUsageInput,
+  output: StopKeyUsageOutput,
+  errors: [
+    AccessDeniedException,
+    ConflictException,
+    InternalServerException,
+    ResourceNotFoundException,
+    ServiceQuotaExceededException,
+    ServiceUnavailableException,
+    ThrottlingException,
+    ValidationException,
+  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "StopKeyUsage",
+}));
+
 export type TagResourceError =
   | AccessDeniedException
   | ConflictException
@@ -1908,7 +2987,7 @@ export type TagResourceError =
  *
  * Each tag consists of a tag key and a tag value, both of which are case-sensitive strings. The tag value can be an empty (null) string. To add a tag, specify a new tag key and a tag value. To edit a tag, specify an existing tag key and a new tag value. You can also add tags to an Amazon Web Services Payment Cryptography key when you create it with CreateKey.
  *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ * **Cross-account use:** This operation supports cross-account use when the key has a resource-based policy that grants access. For more information, see Resource-based policies.
  *
  * **Related operations:**
  *
@@ -1920,8 +2999,8 @@ export const tagResource: API.OperationMethod<
   TagResourceInput,
   TagResourceOutput,
   TagResourceError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: TagResourceInput,
   output: TagResourceOutput,
   errors: [
@@ -1934,7 +3013,11 @@ export const tagResource: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "TagResource",
 }));
+
 export type UntagResourceError =
   | AccessDeniedException
   | ConflictException
@@ -1949,7 +3032,7 @@ export type UntagResourceError =
  *
  * Tagging or untagging an Amazon Web Services Payment Cryptography key can allow or deny permission to the key.
  *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
+ * **Cross-account use:** This operation supports cross-account use when the key has a resource-based policy that grants access. For more information, see Resource-based policies.
  *
  * **Related operations:**
  *
@@ -1961,8 +3044,8 @@ export const untagResource: API.OperationMethod<
   UntagResourceInput,
   UntagResourceOutput,
   UntagResourceError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UntagResourceInput,
   output: UntagResourceOutput,
   errors: [
@@ -1974,95 +3057,11 @@ export const untagResource: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UntagResource",
 }));
-export type CreateAliasError =
-  | AccessDeniedException
-  | ConflictException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceQuotaExceededException
-  | ServiceUnavailableException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Creates an *alias*, or a friendly name, for an Amazon Web Services Payment Cryptography key. You can use an alias to identify a key in the console and when you call cryptographic operations such as EncryptData or DecryptData.
- *
- * You can associate the alias with any key in the same Amazon Web Services Region. Each alias is associated with only one key at a time, but a key can have multiple aliases. You can't create an alias without a key. The alias must be unique in the account and Amazon Web Services Region, but you can create another alias with the same name in a different Amazon Web Services Region.
- *
- * To change the key that's associated with the alias, call UpdateAlias. To delete the alias, call DeleteAlias. These operations don't affect the underlying key. To get the alias that you created, call ListAliases.
- *
- * **Cross-account use**: This operation can't be used across different Amazon Web Services accounts.
- *
- * **Related operations:**
- *
- * - DeleteAlias
- *
- * - GetAlias
- *
- * - ListAliases
- *
- * - UpdateAlias
- */
-export const createAlias: API.OperationMethod<
-  CreateAliasInput,
-  CreateAliasOutput,
-  CreateAliasError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: CreateAliasInput,
-  output: CreateAliasOutput,
-  errors: [
-    AccessDeniedException,
-    ConflictException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceQuotaExceededException,
-    ServiceUnavailableException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type GetAliasError =
-  | AccessDeniedException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceUnavailableException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Gets the Amazon Web Services Payment Cryptography key associated with the alias.
- *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
- *
- * **Related operations:**
- *
- * - CreateAlias
- *
- * - DeleteAlias
- *
- * - ListAliases
- *
- * - UpdateAlias
- */
-export const getAlias: API.OperationMethod<
-  GetAliasInput,
-  GetAliasOutput,
-  GetAliasError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: GetAliasInput,
-  output: GetAliasOutput,
-  errors: [
-    AccessDeniedException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceUnavailableException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
+
 export type UpdateAliasError =
   | AccessDeniedException
   | ConflictException
@@ -2091,8 +3090,8 @@ export const updateAlias: API.OperationMethod<
   UpdateAliasInput,
   UpdateAliasOutput,
   UpdateAliasError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
+  Credentials | HttpClient.HttpClient
+> = /*@__PURE__*/ API.make(() => ({
   input: UpdateAliasInput,
   output: UpdateAliasOutput,
   errors: [
@@ -2104,516 +3103,7 @@ export const updateAlias: API.OperationMethod<
     ThrottlingException,
     ValidationException,
   ],
-}));
-export type DeleteAliasError =
-  | AccessDeniedException
-  | ConflictException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceUnavailableException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Deletes the alias, but doesn't affect the underlying key.
- *
- * Each key can have multiple aliases. To get the aliases of all keys, use the UpdateAlias operation. To change the alias of a key, first use DeleteAlias to delete the current alias and then use CreateAlias to create a new alias. To associate an existing alias with a different key, call UpdateAlias.
- *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
- *
- * **Related operations:**
- *
- * - CreateAlias
- *
- * - GetAlias
- *
- * - ListAliases
- *
- * - UpdateAlias
- */
-export const deleteAlias: API.OperationMethod<
-  DeleteAliasInput,
-  DeleteAliasOutput,
-  DeleteAliasError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: DeleteAliasInput,
-  output: DeleteAliasOutput,
-  errors: [
-    AccessDeniedException,
-    ConflictException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceUnavailableException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type ListAliasesError =
-  | AccessDeniedException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceUnavailableException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Lists the aliases for all keys in the caller's Amazon Web Services account and Amazon Web Services Region. You can filter the aliases by `keyARN`. For more information, see Using aliases in the *Amazon Web Services Payment Cryptography User Guide*.
- *
- * This is a paginated operation, which means that each response might contain only a subset of all the aliases. When the response contains only a subset of aliases, it includes a `NextToken` value. Use this value in a subsequent `ListAliases` request to get more aliases. When you receive a response with no NextToken (or an empty or null value), that means there are no more aliases to get.
- *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
- *
- * **Related operations:**
- *
- * - CreateAlias
- *
- * - DeleteAlias
- *
- * - GetAlias
- *
- * - UpdateAlias
- */
-export const listAliases: API.OperationMethod<
-  ListAliasesInput,
-  ListAliasesOutput,
-  ListAliasesError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListAliasesInput,
-  ) => stream.Stream<
-    ListAliasesOutput,
-    ListAliasesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListAliasesInput,
-  ) => stream.Stream<
-    Alias,
-    ListAliasesError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
-  input: ListAliasesInput,
-  output: ListAliasesOutput,
-  errors: [
-    AccessDeniedException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceUnavailableException,
-    ThrottlingException,
-    ValidationException,
-  ],
-  pagination: {
-    inputToken: "NextToken",
-    outputToken: "NextToken",
-    items: "Aliases",
-    pageSize: "MaxResults",
-  } as const,
-}));
-export type CreateKeyError =
-  | AccessDeniedException
-  | ConflictException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceQuotaExceededException
-  | ServiceUnavailableException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Creates an Amazon Web Services Payment Cryptography key, a logical representation of a cryptographic key, that is unique in your account and Amazon Web Services Region. You use keys for cryptographic functions such as encryption and decryption.
- *
- * In addition to the key material used in cryptographic operations, an Amazon Web Services Payment Cryptography key includes metadata such as the key ARN, key usage, key origin, creation date, description, and key state.
- *
- * When you create a key, you specify both immutable and mutable data about the key. The immutable data contains key attributes that define the scope and cryptographic operations that you can perform using the key, for example key class (example: `SYMMETRIC_KEY`), key algorithm (example: `TDES_2KEY`), key usage (example: `TR31_P0_PIN_ENCRYPTION_KEY`) and key modes of use (example: `Encrypt`). Amazon Web Services Payment Cryptography binds key attributes to keys using key blocks when you store or export them. Amazon Web Services Payment Cryptography stores the key contents wrapped and never stores or transmits them in the clear.
- *
- * For information about valid combinations of key attributes, see Understanding key attributes in the *Amazon Web Services Payment Cryptography User Guide*. The mutable data contained within a key includes usage timestamp and key deletion timestamp and can be modified after creation.
- *
- * You can use the `CreateKey` operation to generate an ECC (Elliptic Curve Cryptography) key pair used for establishing an ECDH (Elliptic Curve Diffie-Hellman) key agreement between two parties. In the ECDH key agreement process, both parties generate their own ECC key pair with key usage K3 and exchange the public keys. Each party then use their private key, the received public key from the other party, and the key derivation parameters including key derivation function, hash algorithm, derivation data, and key algorithm to derive a shared key.
- *
- * To maintain the single-use principle of cryptographic keys in payments, ECDH derived keys should not be used for multiple purposes, such as a `TR31_P0_PIN_ENCRYPTION_KEY` and `TR31_K1_KEY_BLOCK_PROTECTION_KEY`. When creating ECC key pairs in Amazon Web Services Payment Cryptography you can optionally set the `DeriveKeyUsage` parameter, which defines the key usage bound to the symmetric key that will be derived using the ECC key pair.
- *
- * **Cross-account use**: This operation can't be used across different Amazon Web Services accounts.
- *
- * **Related operations:**
- *
- * - DeleteKey
- *
- * - GetKey
- *
- * - ListKeys
- */
-export const createKey: API.OperationMethod<
-  CreateKeyInput,
-  CreateKeyOutput,
-  CreateKeyError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: CreateKeyInput,
-  output: CreateKeyOutput,
-  errors: [
-    AccessDeniedException,
-    ConflictException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceQuotaExceededException,
-    ServiceUnavailableException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type GetKeyError =
-  | AccessDeniedException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceUnavailableException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Gets the key metadata for an Amazon Web Services Payment Cryptography key, including the immutable and mutable attributes specified when the key was created. Returns key metadata including attributes, state, and timestamps, but does not return the actual cryptographic key material.
- *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
- *
- * **Related operations:**
- *
- * - CreateKey
- *
- * - DeleteKey
- *
- * - ListKeys
- */
-export const getKey: API.OperationMethod<
-  GetKeyInput,
-  GetKeyOutput,
-  GetKeyError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: GetKeyInput,
-  output: GetKeyOutput,
-  errors: [
-    AccessDeniedException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceUnavailableException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type DeleteKeyError =
-  | AccessDeniedException
-  | ConflictException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceUnavailableException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Deletes the key material and metadata associated with Amazon Web Services Payment Cryptography key.
- *
- * Key deletion is irreversible. After a key is deleted, you can't perform cryptographic operations using the key. For example, you can't decrypt data that was encrypted by a deleted Amazon Web Services Payment Cryptography key, and the data may become unrecoverable. Because key deletion is destructive, Amazon Web Services Payment Cryptography has a safety mechanism to prevent accidental deletion of a key. When you call this operation, Amazon Web Services Payment Cryptography disables the specified key but doesn't delete it until after a waiting period set using `DeleteKeyInDays`. The default waiting period is 7 days. During the waiting period, the `KeyState` is `DELETE_PENDING`. After the key is deleted, the `KeyState` is `DELETE_COMPLETE`.
- *
- * You should delete a key only when you are sure that you don't need to use it anymore and no other parties are utilizing this key. If you aren't sure, consider deactivating it instead by calling StopKeyUsage.
- *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
- *
- * **Related operations:**
- *
- * - RestoreKey
- *
- * - StartKeyUsage
- *
- * - StopKeyUsage
- */
-export const deleteKey: API.OperationMethod<
-  DeleteKeyInput,
-  DeleteKeyOutput,
-  DeleteKeyError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: DeleteKeyInput,
-  output: DeleteKeyOutput,
-  errors: [
-    AccessDeniedException,
-    ConflictException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceUnavailableException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type ListKeysError =
-  | AccessDeniedException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceUnavailableException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Lists the keys in the caller's Amazon Web Services account and Amazon Web Services Region. You can filter the list of keys.
- *
- * This is a paginated operation, which means that each response might contain only a subset of all the keys. When the response contains only a subset of keys, it includes a `NextToken` value. Use this value in a subsequent `ListKeys` request to get more keys. When you receive a response with no NextToken (or an empty or null value), that means there are no more keys to get.
- *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
- *
- * **Related operations:**
- *
- * - CreateKey
- *
- * - DeleteKey
- *
- * - GetKey
- */
-export const listKeys: API.OperationMethod<
-  ListKeysInput,
-  ListKeysOutput,
-  ListKeysError,
-  Credentials | Rgn | HttpClient.HttpClient
-> & {
-  pages: (
-    input: ListKeysInput,
-  ) => stream.Stream<
-    ListKeysOutput,
-    ListKeysError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-  items: (
-    input: ListKeysInput,
-  ) => stream.Stream<
-    KeySummary,
-    ListKeysError,
-    Credentials | Rgn | HttpClient.HttpClient
-  >;
-} = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
-  input: ListKeysInput,
-  output: ListKeysOutput,
-  errors: [
-    AccessDeniedException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceUnavailableException,
-    ThrottlingException,
-    ValidationException,
-  ],
-  pagination: {
-    inputToken: "NextToken",
-    outputToken: "NextToken",
-    items: "Keys",
-    pageSize: "MaxResults",
-  } as const,
-}));
-export type AddKeyReplicationRegionsError =
-  | AccessDeniedException
-  | ConflictException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceQuotaExceededException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Adds replication Amazon Web Services Regions to an existing Amazon Web Services Payment Cryptography key, enabling the key to be used for cryptographic operations in additional Amazon Web Services Regions.
- *
- * Multi-Region key replication allow you to use the same key material across multiple Amazon Web Services Regions, providing lower latency for applications distributed across regions. When you add Replication Regions, Amazon Web Services Payment Cryptography securely replicates the key material to the specified Amazon Web Services Regions.
- *
- * The key must be in an active state to add Replication Regions. You can add multiple regions in a single operation, and the key will be available for use in those regions once replication is complete.
- *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
- *
- * **Related operations:**
- *
- * - RemoveKeyReplicationRegions
- *
- * - EnableDefaultKeyReplicationRegions
- *
- * - GetDefaultKeyReplicationRegions
- */
-export const addKeyReplicationRegions: API.OperationMethod<
-  AddKeyReplicationRegionsInput,
-  AddKeyReplicationRegionsOutput,
-  AddKeyReplicationRegionsError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: AddKeyReplicationRegionsInput,
-  output: AddKeyReplicationRegionsOutput,
-  errors: [
-    AccessDeniedException,
-    ConflictException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceQuotaExceededException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type RemoveKeyReplicationRegionsError =
-  | AccessDeniedException
-  | ConflictException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceQuotaExceededException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Removes Replication Regions from an existing Amazon Web Services Payment Cryptography key, disabling the key's availability for cryptographic operations in the specified Amazon Web Services Regions.
- *
- * When you remove Replication Regions, the key material is securely deleted from those regions and can no longer be used for cryptographic operations there. This operation is irreversible for the specified Amazon Web Services Regions. For more information, see Multi-Region key replication.
- *
- * Ensure that no active cryptographic operations or applications depend on the key in the regions you're removing before performing this operation.
- *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
- *
- * **Related operations:**
- *
- * - AddKeyReplicationRegions
- *
- * - DisableDefaultKeyReplicationRegions
- */
-export const removeKeyReplicationRegions: API.OperationMethod<
-  RemoveKeyReplicationRegionsInput,
-  RemoveKeyReplicationRegionsOutput,
-  RemoveKeyReplicationRegionsError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: RemoveKeyReplicationRegionsInput,
-  output: RemoveKeyReplicationRegionsOutput,
-  errors: [
-    AccessDeniedException,
-    ConflictException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceQuotaExceededException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type RestoreKeyError =
-  | AccessDeniedException
-  | ConflictException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceQuotaExceededException
-  | ServiceUnavailableException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Cancels a scheduled key deletion during the waiting period. Use this operation to restore a `Key` that is scheduled for deletion.
- *
- * During the waiting period, the `KeyState` is `DELETE_PENDING` and `deletePendingTimestamp` contains the date and time after which the `Key` will be deleted. After `Key` is restored, the `KeyState` is `CREATE_COMPLETE`, and the value for `deletePendingTimestamp` is removed.
- *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
- *
- * **Related operations:**
- *
- * - DeleteKey
- *
- * - StartKeyUsage
- *
- * - StopKeyUsage
- */
-export const restoreKey: API.OperationMethod<
-  RestoreKeyInput,
-  RestoreKeyOutput,
-  RestoreKeyError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: RestoreKeyInput,
-  output: RestoreKeyOutput,
-  errors: [
-    AccessDeniedException,
-    ConflictException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceQuotaExceededException,
-    ServiceUnavailableException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type StartKeyUsageError =
-  | AccessDeniedException
-  | ConflictException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceQuotaExceededException
-  | ServiceUnavailableException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Enables an Amazon Web Services Payment Cryptography key, which makes it active for cryptographic operations within Amazon Web Services Payment Cryptography
- *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
- *
- * **Related operations:**
- *
- * - StopKeyUsage
- */
-export const startKeyUsage: API.OperationMethod<
-  StartKeyUsageInput,
-  StartKeyUsageOutput,
-  StartKeyUsageError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: StartKeyUsageInput,
-  output: StartKeyUsageOutput,
-  errors: [
-    AccessDeniedException,
-    ConflictException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceQuotaExceededException,
-    ServiceUnavailableException,
-    ThrottlingException,
-    ValidationException,
-  ],
-}));
-export type StopKeyUsageError =
-  | AccessDeniedException
-  | ConflictException
-  | InternalServerException
-  | ResourceNotFoundException
-  | ServiceQuotaExceededException
-  | ServiceUnavailableException
-  | ThrottlingException
-  | ValidationException
-  | CommonErrors;
-/**
- * Disables an Amazon Web Services Payment Cryptography key, which makes it inactive within Amazon Web Services Payment Cryptography.
- *
- * You can use this operation instead of DeleteKey to deactivate a key. You can enable the key in the future by calling StartKeyUsage.
- *
- * **Cross-account use:** This operation can't be used across different Amazon Web Services accounts.
- *
- * **Related operations:**
- *
- * - DeleteKey
- *
- * - StartKeyUsage
- */
-export const stopKeyUsage: API.OperationMethod<
-  StopKeyUsageInput,
-  StopKeyUsageOutput,
-  StopKeyUsageError,
-  Credentials | Rgn | HttpClient.HttpClient
-> = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
-  input: StopKeyUsageInput,
-  output: StopKeyUsageOutput,
-  errors: [
-    AccessDeniedException,
-    ConflictException,
-    InternalServerException,
-    ResourceNotFoundException,
-    ServiceQuotaExceededException,
-    ServiceUnavailableException,
-    ThrottlingException,
-    ValidationException,
-  ],
+  protocol: AwsProtocol,
+  retry: Retry,
+  operationName: "UpdateAlias",
 }));
