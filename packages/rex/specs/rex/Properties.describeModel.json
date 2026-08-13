@@ -1262,12 +1262,6 @@
         },
         "real_field": true,
         "category": "OABs"
-      },
-      "cf.Properties.25904": {
-        "name": "cf.Properties.25904",
-        "label": "Core: Key Details: Custom Details: City Council",
-        "type": "string",
-        "category": "Custom Field"
       }
     },
     "orderby_fields": [

@@ -1,0 +1,956 @@
+{
+  "result": {
+    "name": "AdminValueLists",
+    "description": "",
+    "service_group": "Admin",
+    "completed": false,
+    "experimental": false,
+    "detail": "",
+    "methods": {
+      "addValueToList": {
+        "description": "Adds a value to a list",
+        "parameters": {
+          "list_name": {
+            "comment": "The name of the list we're getting values for - call getValueLists to retrieve available values",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          },
+          "display_text": {
+            "comment": "The text that should be displayed for the value - will be added if it doesn't already exist",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "array The created record",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Adds a value to a list",
+          "request": {
+            "parameters": {
+              "list_name": {
+                "required": true,
+                "definition": {
+                  "description": "The name of the list we're getting values for - call getValueLists to retrieve available values",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "display_text": {
+                "required": true,
+                "definition": {
+                  "description": "The text that should be displayed for the value - will be added if it doesn't already exist",
+                  "type": "string",
+                  "default": null
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "combineValuesInList": {
+        "description": "Merges a non system values into a single value (system or otherwise)",
+        "parameters": {
+          "list_name": {
+            "comment": "The name of the list we're getting values for - call getValueLists to retrieve available values",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          },
+          "value_source_id": {
+            "comment": "The id of the value list item we are removing",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          },
+          "value_target_id": {
+            "comment": "The id of the value list item we are merging into",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "bool ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Merges a non system values into a single value (system or otherwise)",
+          "request": {
+            "parameters": {
+              "list_name": {
+                "required": true,
+                "definition": {
+                  "description": "The name of the list we're getting values for - call getValueLists to retrieve available values",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "value_source_id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the value list item we are removing",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "value_target_id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the value list item we are merging into",
+                  "type": "string",
+                  "default": null
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "deleteValueInList": {
+        "description": "Delete a value in list",
+        "parameters": {
+          "list_name": {
+            "comment": "List name",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          },
+          "value_id": {
+            "comment": "The value id",
+            "type": "int",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "int ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Delete a value in list",
+          "request": {
+            "parameters": {
+              "list_name": {
+                "required": true,
+                "definition": {
+                  "description": "List name",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "value_id": {
+                "required": true,
+                "definition": {
+                  "description": "The value id",
+                  "type": "int",
+                  "default": null
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "describe": {
+        "description": "Describes the class and its methods - simply or in detail",
+        "parameters": {
+          "include_detail": {
+            "comment": "True if detailed descriptions of each method should be included",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          }
+        },
+        "returns": "array An array describing the class",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": null,
+          "request": {
+            "parameters": {
+              "include_detail": {
+                "required": false,
+                "definition": {
+                  "description": "True if detailed descriptions of each method should be included",
+                  "type": "boolean"
+                }
+              }
+            },
+            "examples": {
+              "Example1": {
+                "include_detail": true
+              }
+            }
+          },
+          "response": {
+            "examples": {
+              "Example1": {
+                "code": "200",
+                "summary": "Object describing the service",
+                "example": {
+                  "result": {
+                    "name": "Service",
+                    "description": "",
+                    "detail": "",
+                    "methods": {
+                      "archive": {
+                        "description": "Archives a record - archived records are omitted from search results but can be restored at any time.",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be archived.",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Archives a record - archived records are omitted from search results but can be restored at any time.",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be archived.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result of the archive"
+                            }
+                          }
+                        }
+                      },
+                      "create": {
+                        "description": "Create a record and return a reference to the id",
+                        "parameters": {
+                          "data": {
+                            "comment": "An array of data to add to the record",
+                            "type": "array",
+                            "default_value": null,
+                            "required": true
+                          },
+                          "return_id": {
+                            "comment": "True if the id should returned only. False if the record should be returned",
+                            "type": "bool",
+                            "default_value": false,
+                            "required": false
+                          }
+                        },
+                        "returns": "int|array Either the id of the newly created record or the newly created record (depends if return_id is specified)",
+                        "openapi": {
+                          "available": true,
+                          "description": "Create a record and return a reference to the id",
+                          "request": {
+                            "parameters": {
+                              "data": [],
+                              "return_id": {
+                                "required": false,
+                                "definition": {
+                                  "description": "True if the id should returned only. False if the record should be returned",
+                                  "type": "boolean",
+                                  "default": false
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": []
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": []
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "Either the id of the newly created record or the newly created record (depends if return_id is specified)"
+                            }
+                          }
+                        }
+                      },
+                      "read": {
+                        "description": "Read a record by id",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record to return",
+                            "type": "int|string",
+                            "default_value": null,
+                            "required": true
+                          },
+                          "fields": {
+                            "comment": "An array of fields to read",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "extra_fields": {
+                            "comment": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                            "type": "array",
+                            "default_value": [
+                              "smart_categories"
+                            ],
+                            "required": false
+                          }
+                        },
+                        "returns": "array ",
+                        "openapi": {
+                          "available": false,
+                          "description": "",
+                          "request": {
+                            "parameters": [],
+                            "examples": []
+                          },
+                          "response": {
+                            "examples": [],
+                            "schema": [],
+                            "statuses": []
+                          }
+                        }
+                      },
+                      "recoverFromArchive": {
+                        "description": "Recovers a record from the archive",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be recovered from the archive",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Recovers a record from the archive",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be recovered from the archive.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result recovered"
+                            }
+                          }
+                        }
+                      },
+                      "recoverFromTrash": {
+                        "description": "Recover a record from the trash",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be recovered from the trash",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Recovers a record from the trash",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be recovered from the trash.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result recovered"
+                            }
+                          }
+                        }
+                      },
+                      "search": {
+                        "description": "Perform a search",
+                        "parameters": {
+                          "criteria": {
+                            "comment": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "order_by": {
+                            "comment": "An array keyed by field name with a value of either ASC|DESC",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "offset": {
+                            "comment": "The number of rows to offset",
+                            "type": "int",
+                            "default_value": 0,
+                            "required": false
+                          },
+                          "limit": {
+                            "comment": "The number of rows to return",
+                            "type": "int",
+                            "default_value": 20,
+                            "required": false
+                          },
+                          "create_viewstate": {
+                            "comment": "True if a viewstate should be created, false to just return the records",
+                            "type": "bool",
+                            "default_value": false,
+                            "required": false
+                          },
+                          "search_state": {
+                            "comment": "(DEPRECATED - provide system_record_state as a criteria instead)",
+                            "type": "string|array",
+                            "default_value": "active",
+                            "required": false
+                          },
+                          "ids_only": {
+                            "comment": "(DEPRECATED - use search_result_format:'ids' instead) If set to true, returns ids of matching records only - no actual rows",
+                            "type": "bool",
+                            "default_value": false,
+                            "required": false
+                          },
+                          "result_format": {
+                            "comment": "Any of the SEARCH_RESULT_FORMAT_* constants (ids, etags, stubs). Default is 'stubs'",
+                            "type": "string",
+                            "default_value": "default",
+                            "required": false
+                          },
+                          "extra_options": {
+                            "comment": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          }
+                        },
+                        "returns": "array ",
+                        "openapi": {
+                          "available": true,
+                          "description": "Perform a search",
+                          "request": {
+                            "parameters": {
+                              "criteria": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value)",
+                                  "type": "object"
+                                }
+                              },
+                              "order_by": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array keyed by field name with a value of either ASC|DESC",
+                                  "type": "string"
+                                }
+                              },
+                              "offset": {
+                                "required": false,
+                                "definition": {
+                                  "description": "The number of rows to offset",
+                                  "type": "number",
+                                  "default": 0
+                                }
+                              },
+                              "limit": {
+                                "required": false,
+                                "definition": {
+                                  "description": "The number of rows to return",
+                                  "type": "number",
+                                  "default": 20
+                                }
+                              },
+                              "create_viewstate": {
+                                "required": false,
+                                "definition": {
+                                  "description": "True if a viewstate should be created, false to just return the records",
+                                  "type": "boolean",
+                                  "default": false
+                                }
+                              },
+                              "result_format": {
+                                "required": false,
+                                "definition": {
+                                  "description": "Any of the SEARCH_RESULT_FORMAT_* constants (ids, etags, stubs).",
+                                  "type": "string",
+                                  "default": "stubs"
+                                }
+                              },
+                              "extra_options": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service.",
+                                  "type": "array"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "limit": 2,
+                                "offset": 10
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": []
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The search results"
+                            }
+                          }
+                        }
+                      },
+                      "trash": {
+                        "description": "Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system).",
+                        "parameters": {
+                          "id": {
+                            "comment": "The id of the record that should be trashed",
+                            "type": "int",
+                            "default_value": null,
+                            "required": true
+                          }
+                        },
+                        "returns": "bool True on success",
+                        "openapi": {
+                          "available": true,
+                          "description": "Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system).",
+                          "request": {
+                            "parameters": {
+                              "id": {
+                                "required": true,
+                                "definition": {
+                                  "description": "The id of the record that should be trashed.",
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": {
+                                "id": 1
+                              }
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": {
+                                "result": 1,
+                                "error": null
+                              }
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The result of the trash"
+                            }
+                          }
+                        }
+                      },
+                      "update": {
+                        "description": "Update the record. To remove sub records include the _destroy flag",
+                        "parameters": {
+                          "data": {
+                            "comment": "An array of data to update. Record must exist to be updated",
+                            "type": "array",
+                            "default_value": null,
+                            "required": true
+                          },
+                          "fields": {
+                            "comment": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          },
+                          "extra_fields": {
+                            "comment": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                            "type": "array",
+                            "default_value": [],
+                            "required": false
+                          }
+                        },
+                        "returns": "array The record after the update is complete",
+                        "openapi": {
+                          "available": true,
+                          "description": "Update the record. To remove sub records include the _destroy flag",
+                          "request": {
+                            "parameters": {
+                              "data": [],
+                              "fields": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields.",
+                                  "type": "object"
+                                }
+                              },
+                              "extra_fields": {
+                                "required": false,
+                                "definition": {
+                                  "description": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
+                                  "type": "object"
+                                }
+                              }
+                            },
+                            "examples": {
+                              "Example1": []
+                            }
+                          },
+                          "response": {
+                            "examples": {
+                              "Example1": []
+                            },
+                            "schema": [],
+                            "statuses": {
+                              "200": "The record after the update is complete"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "getListValues": {
+        "description": "Retrieves an array of list values from the system.",
+        "parameters": {
+          "list_name": {
+            "comment": "The name of the list we're getting values for - call getValueLists to retrieve available values",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          },
+          "include_system_values": {
+            "comment": "Set to true to include all system (non account values - this will retrieve values regardless of omission)",
+            "type": "bool",
+            "default_value": true,
+            "required": false
+          },
+          "include_omitted_values": {
+            "comment": "Set to true to include omitted system values",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          },
+          "retrieve_meta": {
+            "comment": "Set to true to retrieve additional meta data about the tag - usage, creation time, creation user",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          }
+        },
+        "returns": "array An array containing at least the keys: id,display_text",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Retrieves an array of list values from the system.",
+          "request": {
+            "parameters": {
+              "list_name": {
+                "required": true,
+                "definition": {
+                  "description": "The name of the list we're getting values for - call getValueLists to retrieve available values",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "include_system_values": {
+                "required": false,
+                "definition": {
+                  "description": "Set to true to include all system (non account values - this will retrieve values regardless of omission)",
+                  "type": "bool",
+                  "default": true
+                }
+              },
+              "include_omitted_values": {
+                "required": false,
+                "definition": {
+                  "description": "Set to true to include omitted system values",
+                  "type": "bool",
+                  "default": false
+                }
+              },
+              "retrieve_meta": {
+                "required": false,
+                "definition": {
+                  "description": "Set to true to retrieve additional meta data about the tag - usage, creation time, creation user",
+                  "type": "bool",
+                  "default": false
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "getValueListNames": {
+        "description": "Retrieves an array of value list names from the system for use with this end point",
+        "parameters": {
+          "return_objects": {
+            "comment": "When set to true, resulting array will contain objects in the format {'id':'list_name','text':'human list name'}\nrather than just an array of ids",
+            "type": "bool",
+            "default_value": false,
+            "required": false
+          }
+        },
+        "returns": "array An array of value list names",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Retrieves an array of value list names from the system for use with this end point",
+          "request": {
+            "parameters": {
+              "return_objects": {
+                "required": false,
+                "definition": {
+                  "description": "When set to true, resulting array will contain objects in the format {'id':'list_name','text':'human list name'}\nrather than just an array of ids",
+                  "type": "bool",
+                  "default": false
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "hideSystemValueInList": {
+        "description": "Hides a system value from a value list",
+        "parameters": {
+          "list_name": {
+            "comment": "The name of the list we're hiding a system value on",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          },
+          "value_id": {
+            "comment": "The id of the value we're hiding",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "int True if added to database, false if already exists",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Hides a system value from a value list",
+          "request": {
+            "parameters": {
+              "list_name": {
+                "required": true,
+                "definition": {
+                  "description": "The name of the list we're hiding a system value on",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "value_id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the value we're hiding",
+                  "type": "string",
+                  "default": null
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "isGhostSession": {
+        "description": "True when the current session is a \"ghost\" account-user — i.e. a group-app /\nhead-office user who logged into this (child) account via switchToAccount\nrather than being a real member of it. This is a session-TYPE predicate, NOT\nan authorisation check: a ghost account_users row is only ever created once\nthe user's group-app visibility privilege (login_to_sub_accounts on a parent,\nor an account-group privilege-set assignment) has been enforced upstream at\ntoken creation, so a ghost session is proof that privilege already held — do\nnot treat this as a substitute for a privilege check. Used to grant such users\nseat-free access to AI Prospecting (CRM-13865).",
+        "parameters": [],
+        "returns": "bool ",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "True when the current session is a \"ghost\" account-user — i.e. a group-app /\nhead-office user who logged into this (child) account via switchToAccount\nrather than being a real member of it. This is a session-TYPE predicate, NOT\nan authorisation check: a ghost account_users row is only ever created once\nthe user's group-app visibility privilege (login_to_sub_accounts on a parent,\nor an account-group privilege-set assignment) has been enforced upstream at\ntoken creation, so a ghost session is proof that privilege already held — do\nnot treat this as a substitute for a privilege check. Used to grant such users\nseat-free access to AI Prospecting (CRM-13865).",
+          "request": {
+            "parameters": [],
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "renameValueInList": {
+        "description": "Rename a user value in a list",
+        "parameters": {
+          "list_name": {
+            "comment": "The name of the list we're getting values for - call getValueLists to retrieve available values",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          },
+          "value_id": {
+            "comment": "",
+            "type": "",
+            "default_value": null,
+            "required": true
+          },
+          "display_text": {
+            "comment": "",
+            "type": "",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "int The number of affected rows",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Rename a user value in a list",
+          "request": {
+            "parameters": {
+              "list_name": {
+                "required": true,
+                "definition": {
+                  "description": "The name of the list we're getting values for - call getValueLists to retrieve available values",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "value_id": {
+                "required": true,
+                "definition": {
+                  "description": "",
+                  "type": "",
+                  "default": null
+                }
+              },
+              "display_text": {
+                "required": true,
+                "definition": {
+                  "description": "",
+                  "type": "",
+                  "default": null
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      },
+      "showSystemValueInList": {
+        "description": "Show system value on list",
+        "parameters": {
+          "list_name": {
+            "comment": "The name of the list we're showing a system value on",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          },
+          "value_id": {
+            "comment": "The id of the value we're showing",
+            "type": "string",
+            "default_value": null,
+            "required": true
+          }
+        },
+        "returns": "bool True on success, false on failure",
+        "experimental": false,
+        "openapi": {
+          "available": true,
+          "description": "Show system value on list",
+          "request": {
+            "parameters": {
+              "list_name": {
+                "required": true,
+                "definition": {
+                  "description": "The name of the list we're showing a system value on",
+                  "type": "string",
+                  "default": null
+                }
+              },
+              "value_id": {
+                "required": true,
+                "definition": {
+                  "description": "The id of the value we're showing",
+                  "type": "string",
+                  "default": null
+                }
+              }
+            },
+            "examples": []
+          },
+          "response": {
+            "examples": []
+          }
+        }
+      }
+    },
+    "is_internal": false
+  }
+}

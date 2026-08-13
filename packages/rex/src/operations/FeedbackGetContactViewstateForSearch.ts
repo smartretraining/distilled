@@ -6,6 +6,7 @@ import * as T from "../traits.ts";
 export const FeedbackGetContactViewstateForSearchInput =
   /*@__PURE__*/ /*#__PURE__*/ Schema.Struct({
     criteria: Schema.optional(Schema.Array(Schema.Unknown)),
+    include_archived: Schema.optional(Schema.Boolean),
   }).pipe(
     T.Http({
       method: "POST",

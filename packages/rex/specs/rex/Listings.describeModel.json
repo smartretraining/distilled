@@ -2175,108 +2175,59 @@
         "real_field": true,
         "category": "Application Details"
       },
-      "cf.Properties.25904": {
-        "name": "cf.Properties.25904",
-        "label": "Core: Key Details: Custom Details: City Council",
+      "cf.Listings.24956": {
+        "name": "cf.Listings.24956",
+        "label": "Range: Range: $",
         "type": "string",
         "category": "Custom Field"
       },
-      "cf.Listings.22499": {
-        "name": "cf.Listings.22499",
-        "label": "LH Panel: Test: Number",
-        "type": "double",
-        "category": "Custom Field"
-      },
-      "cf.Listings.22599": {
-        "name": "cf.Listings.22599",
-        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Total Visitors",
+      "cf.Listings.3421": {
+        "name": "cf.Listings.3421",
+        "label": "Additional Information: Rental Information: Tenant 1",
         "type": "string",
         "category": "Custom Field"
       },
-      "cf.Listings.22600": {
-        "name": "cf.Listings.22600",
-        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Repeat Visitors",
+      "cf.Listings.2885": {
+        "name": "cf.Listings.2885",
+        "label": "Additional Information: Rental Information: Tenant 2",
         "type": "string",
         "category": "Custom Field"
       },
-      "cf.Listings.22601": {
-        "name": "cf.Listings.22601",
-        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Unique Visitors",
+      "cf.Listings.2891": {
+        "name": "cf.Listings.2891",
+        "label": "Additional Information: Rental Information: Tenant 1 Phone No:",
         "type": "string",
         "category": "Custom Field"
       },
-      "cf.Listings.22602": {
-        "name": "cf.Listings.22602",
-        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Daily Visitors",
+      "cf.Listings.3422": {
+        "name": "cf.Listings.3422",
+        "label": "Additional Information: Rental Information: Tenant 2 Phone No:",
         "type": "string",
         "category": "Custom Field"
       },
-      "cf.Listings.22603": {
-        "name": "cf.Listings.22603",
-        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Average Session Time",
+      "cf.Listings.3423": {
+        "name": "cf.Listings.3423",
+        "label": "Additional Information: Rental Information: Tenant Email:",
         "type": "string",
         "category": "Custom Field"
       },
-      "cf.Listings.22605": {
-        "name": "cf.Listings.22605",
-        "label": "Digital Inspections: Little Hinges Digital Inspection Information: See Full Details",
-        "type": "string",
-        "category": "Custom Field"
-      },
-      "cf.Listings.22606": {
-        "name": "cf.Listings.22606",
-        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Tour Link",
-        "type": "string",
-        "category": "Custom Field"
-      },
-      "cf.Listings.22607": {
-        "name": "cf.Listings.22607",
-        "label": "Digital Inspections: Little Hinges Digital Inspection Information: Last Updated",
-        "type": "string",
-        "category": "Custom Field"
-      },
-      "cf.Listings.24338": {
-        "name": "cf.Listings.24338",
-        "label": "Listing Summary: Marketing Timeline: Styling",
+      "cf.Listings.2886": {
+        "name": "cf.Listings.2886",
+        "label": "Additional Information: Rental Information: Lease Start Date",
         "type": "date",
         "category": "Custom Field"
       },
-      "cf.Listings.24339": {
-        "name": "cf.Listings.24339",
-        "label": "Listing Summary: Marketing Timeline: Photography",
+      "cf.Listings.2887": {
+        "name": "cf.Listings.2887",
+        "label": "Additional Information: Rental Information: Lease End Date",
         "type": "date",
         "category": "Custom Field"
       },
-      "cf.Listings.24340": {
-        "name": "cf.Listings.24340",
-        "label": "Listing Summary: Marketing Timeline: Open For Inspection",
-        "type": "date",
+      "cf.Listings.2890": {
+        "name": "cf.Listings.2890",
+        "label": "Additional Information: Rental Information: Rent/Bond:",
+        "type": "string",
         "category": "Custom Field"
-      },
-      "cf.Listings.24341": {
-        "name": "cf.Listings.24341",
-        "label": "Listing Summary: Marketing Timeline: Auction",
-        "type": "date",
-        "category": "Custom Field"
-      },
-      "cf.Listings.25669": {
-        "name": "cf.Listings.25669",
-        "label": "Core: Key Details: Visibility: Visibilty",
-        "type": "enum",
-        "category": "Custom Field",
-        "options": {
-          "source": "local",
-          "list": [
-            {
-              "id": "Yes",
-              "text": "Yes"
-            },
-            {
-              "id": "No",
-              "text": "No"
-            }
-          ]
-        }
       }
     },
     "orderby_fields": [

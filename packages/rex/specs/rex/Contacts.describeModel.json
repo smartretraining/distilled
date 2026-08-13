@@ -3419,45 +3419,6 @@
           "list": "buyer_position"
         },
         "category": "Buyer Motivation"
-      },
-      "cf.Contacts.19028": {
-        "name": "cf.Contacts.19028",
-        "label": "Livechat: Chat Details: Chat Id",
-        "type": "string",
-        "category": "Custom Field"
-      },
-      "cf.Contacts.25649": {
-        "name": "cf.Contacts.25649",
-        "label": "TEst: Contact Information: What Is Your Relationship With This Property?",
-        "type": "enum",
-        "category": "Custom Field",
-        "options": {
-          "source": "local",
-          "list": [
-            {
-              "id": "Owner Occupier",
-              "text": "Owner Occupier"
-            },
-            {
-              "id": "Owner Investor",
-              "text": "Owner Investor"
-            },
-            {
-              "id": "Buyer",
-              "text": "Buyer"
-            },
-            {
-              "id": "Tenant",
-              "text": "Tenant"
-            }
-          ]
-        }
-      },
-      "cf.Contacts.25216": {
-        "name": "cf.Contacts.25216",
-        "label": "Api: Location",
-        "type": "string",
-        "category": "Custom Field"
       }
     },
     "orderby_fields": [
