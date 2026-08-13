@@ -1,42 +1,50 @@
 name: release-smartretraining
 
-# Publishes the @smartretraining/* packages and cuts a GitHub Release for
-# each one.
+# Publishes the @smartretraining/* packages and cuts one GitHub Release.
 #
-# These are versioned INDEPENDENTLY of the @distilled.cloud/* line that
-# `release.yml` ships: that workflow stamps one shared version across all 22
-# upstream packages, which would drag rex-effect off its own 0.x line. So
-# this workflow reads each package's version straight from its package.json
-# — the file is the source of truth, bumped in a normal reviewed commit —
-# and refuses to publish a version that is already on npm.
+# VERSIONING — the one-version pattern, matching how alchemy-run/actions
+# releases the upstream packages: every @smartretraining package shares a
+# single version line and ships together under one `v<version>` tag. The
+# version lives in each package.json and is bumped in a normal reviewed
+# commit, so a release is always something a human approved. The workflow
+# refuses to run if the packages disagree, or if the version is already on
+# npm.
 #
-# Transparency comes from three things:
-#   * npm provenance (`--provenance`) cryptographically attests which commit
-#     and which workflow run produced the tarball; npm renders it on the
-#     package page. This needs `id-token: write`.
-#   * a package-scoped git tag (`rex-effect@0.4.0`) so history shows exactly
-#     what shipped when.
-#   * a GitHub Release per package with auto-generated notes.
+# This does NOT call `alchemy-run/actions/.github/workflows/release.yml`
+# (which `release.yml` uses for the @distilled.cloud packages). That
+# workflow authenticates its version-bump commit with a GitHub App via
+# `ALCHEMY_VERSION_BOT_ID` / `ALCHEMY_VERSION_BOT_PRIVATE_KEY`, secrets
+# belonging to the alchemy-run org with no GITHUB_TOKEN fallback. Rather
+# than stand up an equivalent app here, the bump is a committed change and
+# this workflow only publishes.
 #
-# Setup required once: an `NPM_TOKEN` repository secret holding an npm
-# automation token with publish rights on the @smartretraining scope.
+# PUBLISHING uses npm TRUSTED PUBLISHING (OIDC), so there is no npm token
+# anywhere — not in a repository secret, not on a developer's machine.
+# GitHub mints a short-lived, cryptographically-signed token scoped to this
+# workflow and npm verifies it. Provenance attestations are generated
+# automatically, tying each tarball to the commit and run that built it.
+#
+# ⚠️ THE FILENAME OF THIS WORKFLOW IS PART OF THE TRUST CONFIGURATION.
+# npm matches releases against `release-smartretraining.yml` by name.
+# Renaming or moving this file silently breaks publishing until the trusted
+# publisher entry is updated on npmjs.com to match.
+#
+# One-time setup per package, on npmjs.com → package → Settings → Trusted
+# Publisher: provider GitHub Actions, org `smartretraining`, repository
+# `distilled`, workflow `release-smartretraining.yml`. A package must exist
+# on the registry before it can be configured, so a brand-new package needs
+# its first version published another way (see the README section on
+# releasing).
+#
+# Requires npm >= 11.5.1 and Node >= 22.14.0; both are pinned below.
 
 on:
   workflow_dispatch:
     inputs:
-      package:
-        description: Which package to release.
-        required: true
-        type: choice
-        options:
-          - rex
-          - reapit
-          - both
-        default: both
       dry-run:
         description: >-
-          Build, typecheck and pack, but do not publish or tag. Use this to
-          rehearse a release.
+          Build, typecheck and pack, but do not publish, tag or release.
+          Use this to rehearse a release.
         required: false
         type: boolean
         default: false
@@ -45,103 +53,115 @@ concurrency:
   group: release-smartretraining
   cancel-in-progress: false
 
-jobs:
-  plan:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.plan.outputs.matrix }}
-    steps:
-      - id: plan
-        run: |
-          case "${{ inputs.package }}" in
-            rex)    matrix='[{"dir":"packages/rex","name":"@smartretraining/rex-effect","tag":"rex-effect"}]' ;;
-            reapit) matrix='[{"dir":"packages/reapit","name":"@smartretraining/reapit-effect","tag":"reapit-effect"}]' ;;
-            both)   matrix='[{"dir":"packages/rex","name":"@smartretraining/rex-effect","tag":"rex-effect"},{"dir":"packages/reapit","name":"@smartretraining/reapit-effect","tag":"reapit-effect"}]' ;;
-          esac
-          echo "matrix={\"include\":$matrix}" >> "$GITHUB_OUTPUT"
+env:
+  PACKAGES: packages/rex packages/reapit
 
+jobs:
   release:
-    needs: plan
     runs-on: ubuntu-latest
-    strategy:
-      # Independent version lines — one package failing should not cancel
-      # the other's release.
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     permissions:
-      contents: write # create the tag and the GitHub Release
-      id-token: write # npm provenance attestation
+      contents: write # push the tag and create the GitHub Release
+      id-token: write # mint the OIDC token npm trusted publishing verifies
     steps:
       - uses: actions/checkout@v4
         with:
           # Full history so release notes can be generated against the
-          # previous tag for this package.
+          # previous tag.
           fetch-depth: 0
 
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
-      # npm (not bun) does the publishing: bun publish has no --provenance.
+      # npm (not bun) does the publishing: trusted publishing is an npm CLI
+      # feature. Node 22 ships npm 10.x, which predates it, so the CLI is
+      # upgraded explicitly.
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: "22.14"
           registry-url: https://registry.npmjs.org
+
+      - name: Upgrade npm for trusted publishing
+        run: |
+          npm install -g npm@^11.5.1
+          npm --version
 
       - run: bun install --frozen-lockfile
 
-      - name: Resolve version
+      - name: Resolve and agree the version
         id: version
         run: |
-          version=$(node -p "require('./${{ matrix.dir }}/package.json').version")
+          version=""
+          for dir in $PACKAGES; do
+            v=$(node -p "require('./$dir/package.json').version")
+            name=$(node -p "require('./$dir/package.json').name")
+            echo "  $name -> $v"
+            if [ -z "$version" ]; then
+              version="$v"
+            elif [ "$v" != "$version" ]; then
+              echo "::error::Packages disagree on the version ($v vs $version). The @smartretraining packages share one version line; bump them together."
+              exit 1
+            fi
+          done
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "tag=${{ matrix.tag }}@$version" >> "$GITHUB_OUTPUT"
-          echo "Releasing ${{ matrix.name }} $version"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
 
       - name: Refuse to republish an existing version
         run: |
-          if npm view "${{ matrix.name }}@${{ steps.version.outputs.version }}" version >/dev/null 2>&1; then
-            echo "::error::${{ matrix.name }}@${{ steps.version.outputs.version }} is already on npm. Bump the version in ${{ matrix.dir }}/package.json first."
-            exit 1
-          fi
+          for dir in $PACKAGES; do
+            name=$(node -p "require('./$dir/package.json').name")
+            if npm view "$name@${{ steps.version.outputs.version }}" version >/dev/null 2>&1; then
+              echo "::error::$name@${{ steps.version.outputs.version }} is already on npm. Bump the version first."
+              exit 1
+            fi
+          done
 
       # `noCheck: true` in tsconfig.base.json means day-to-day builds only
       # emit. Nothing ships without being properly checked first.
       - name: Typecheck (strict)
-        run: bunx tsc -p ${{ matrix.dir }}/tsconfig.json --noEmit --noCheck false
+        run: |
+          for dir in $PACKAGES; do
+            echo "== $dir"
+            bunx tsc -p "$dir/tsconfig.json" --noEmit --noCheck false
+          done
 
       - name: Build
-        run: bunx tsc -b ${{ matrix.dir }}
+        run: |
+          for dir in $PACKAGES; do bunx tsc -b "$dir"; done
 
       - name: Pack
-        working-directory: ${{ matrix.dir }}
-        run: npm pack --dry-run
+        run: |
+          for dir in $PACKAGES; do (cd "$dir" && npm pack --dry-run); done
 
+      # No NODE_AUTH_TOKEN: authentication is the OIDC token minted from the
+      # `id-token: write` permission above, and provenance is generated
+      # automatically under trusted publishing.
       - name: Publish to npm
         if: ${{ !inputs.dry-run }}
-        working-directory: ${{ matrix.dir }}
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          for dir in $PACKAGES; do
+            echo "== publishing $dir"
+            (cd "$dir" && npm publish --access public)
+          done
 
       - name: Tag and create the GitHub Release
         if: ${{ !inputs.dry-run }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git tag "${{ steps.version.outputs.tag }}"
-          git push origin "${{ steps.version.outputs.tag }}"
+          tag="${{ steps.version.outputs.tag }}"
+          git tag "$tag"
+          git push origin "$tag"
 
-          # Notes are generated against the previous tag for THIS package,
-          # so a rex release does not list reapit's commits.
-          previous=$(git tag --list "${{ matrix.tag }}@*" --sort=-v:refname | sed -n '2p')
-          if [ -n "$previous" ]; then
-            gh release create "${{ steps.version.outputs.tag }}" \
-              --title "${{ matrix.name }} ${{ steps.version.outputs.version }}" \
-              --generate-notes \
-              --notes-start-tag "$previous"
-          else
-            gh release create "${{ steps.version.outputs.tag }}" \
-              --title "${{ matrix.name }} ${{ steps.version.outputs.version }}" \
-              --generate-notes
-          fi
+          notes=""
+          for dir in $PACKAGES; do
+            name=$(node -p "require('./$dir/package.json').name")
+            notes="$notes- \`$name@${{ steps.version.outputs.version }}\`"$'\n'
+          done
+
+          gh release create "$tag" \
+            --title "$tag" \
+            --notes "Published to npm with trusted publishing (OIDC) — every tarball carries a provenance attestation linking it to this commit and workflow run.
+
+          $notes" \
+            --generate-notes

@@ -179,6 +179,20 @@ probing writes with deliberately invalid bodies and reading the validation
 errors back. Neither is guesswork-free, so nothing is modelled here rather
 than shipping types nobody has verified.
 
+## Releasing
+
+The `@smartretraining` packages share a single version line and ship together
+under one `v<version>` tag, mirroring how the upstream packages are released.
+That is why this package's first published version is `0.4.0` rather than
+`0.1.0` — it joins `rex-effect` on its existing line.
+
+Releases run from `.github/workflows/release-smartretraining.yml` using npm
+trusted publishing (OIDC), so no npm token exists in the repository or on any
+developer machine, and every tarball carries a provenance attestation linking
+it to the commit and workflow run that produced it. The version is bumped in
+an ordinary reviewed commit; the workflow refuses to publish if the packages
+disagree on it or if it is already on the registry.
+
 ## Testing
 
 The suite runs against a live account:
