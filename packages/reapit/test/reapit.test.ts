@@ -7,6 +7,8 @@ import {
   getOffices,
   getStaff,
   getSuburbs,
+  updateContact,
+  deleteSearchRequirement,
 } from "../src/services/reapit.ts";
 import { runEffect } from "./setup.ts";
 
@@ -80,6 +82,17 @@ describe("Reapit (live)", () => {
     it("decodes with include=all, which adds expanded members", async () => {
       const page = await runEffect(getListings({ limit: 5, include: "all" }));
       expect(page.listings!.length).toBeGreaterThan(0);
+    });
+
+    it("getSuburbs works with the prefixed filter its error message omits", async () => {
+      // The 422 for a bare call says "specify one of postcode, suburbName,
+      // state or region" — but only the prefixed forms are accepted, so
+      // `filterState` is right and a bare `state` is not.
+      const page = await runEffect(
+        getSuburbs({ filterState: "NSW", limit: 5 }),
+      );
+      expect(page.suburbs!.length).toBeGreaterThan(0);
+      expect(page.suburbs![0]!.state).toBe("NSW");
     });
 
     it("decodes a deep page, where other record types appear", async () => {
@@ -158,6 +171,40 @@ describe("Reapit (live)", () => {
             (error.value as { _tag: string })._tag,
           );
         }
+      }
+    });
+
+    it("encodes a write verb with both a body and a path label", async () => {
+      // The write operations cannot be exercised against a real record
+      // without creating data, so this targets an id that does not exist:
+      // the API rejects it before anything is written, which still proves
+      // the PUT encodes its body AND its path label, and that the failure
+      // maps to a typed error rather than a defect.
+      const exit = await runEffect(
+        updateContact({
+          contactId: "definitely-not-a-contact",
+          contact: { firstName: "Test" },
+        }).pipe(Effect.exit),
+      );
+
+      expect(Exit.isFailure(exit)).toBe(true);
+      if (Exit.isFailure(exit)) {
+        expect(Cause.hasDies(exit.cause)).toBe(false);
+        const error = Cause.findErrorOption(exit.cause);
+        expect(error._tag).toBe("Some");
+      }
+    });
+
+    it("encodes a DELETE with a path label", async () => {
+      const exit = await runEffect(
+        deleteSearchRequirement({
+          searchRequirementId: "definitely-not-a-requirement",
+        }).pipe(Effect.exit),
+      );
+
+      expect(Exit.isFailure(exit)).toBe(true);
+      if (Exit.isFailure(exit)) {
+        expect(Cause.hasDies(exit.cause)).toBe(false);
       }
     });
 

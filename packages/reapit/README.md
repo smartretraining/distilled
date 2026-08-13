@@ -153,6 +153,11 @@ them are derived from observed responses; the remaining 7 are the write paths
 `updateContactSubscriptions`), whose schemas come from the vendor document —
 they cannot be observed without creating records.
 
+Their request encoding *is* covered: the tests issue a `PUT` and a `DELETE`
+against ids that do not exist, which proves the body and path label are
+transmitted and the failure maps to a typed error, without writing anything.
+Their **response** schemas remain unverified against a successful call.
+
 The live API also exposes roughly twenty endpoints absent from the vendor
 document entirely (`/tasks`, `/notes`, `/offers`, `/leads`, `/inspections`,
 `/projects`, `/appointments`, `/webhook-subscriptions`, …). They answer
