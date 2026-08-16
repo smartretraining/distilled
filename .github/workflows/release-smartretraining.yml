@@ -119,6 +119,20 @@ jobs:
             fi
           done
 
+      # `--force` matters: `tsc -b` is incremental and trusts .tsbuildinfo, so
+      # if a stale one is ever present it reports success while emitting
+      # nothing — and `files` ships `lib/`, so that publishes an empty
+      # package. A fresh checkout has no .tsbuildinfo today; this makes the
+      # guarantee independent of that.
+      #
+      # Build must run BEFORE the strict typecheck: these packages reach
+      # `@distilled.cloud/core` through TypeScript project references, so a
+      # `tsc -p` on a fresh checkout fails with TS6305 (core's `lib/` not
+      # built) until `tsc -b` has emitted the referenced projects.
+      - name: Build
+        run: |
+          for dir in $PACKAGES; do bunx tsc -b "$dir" --force; done
+
       # `noCheck: true` in tsconfig.base.json means day-to-day builds only
       # emit. Nothing ships without being properly checked first.
       - name: Typecheck (strict)
@@ -127,15 +141,6 @@ jobs:
             echo "== $dir"
             bunx tsc -p "$dir/tsconfig.json" --noEmit --noCheck false
           done
-
-      # `--force` matters: `tsc -b` is incremental and trusts .tsbuildinfo, so
-      # if a stale one is ever present it reports success while emitting
-      # nothing — and `files` ships `lib/`, so that publishes an empty
-      # package. A fresh checkout has no .tsbuildinfo today; this makes the
-      # guarantee independent of that.
-      - name: Build
-        run: |
-          for dir in $PACKAGES; do bunx tsc -b "$dir" --force; done
 
       - name: Verify build output exists
         run: |
