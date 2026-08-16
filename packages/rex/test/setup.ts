@@ -8,7 +8,8 @@ config({ path: resolve(import.meta.dirname, "../../../.env") });
 config({ path: resolve(import.meta.dirname, ".env") });
 
 // Credentials (resolved from REX_API_TOKEN, or REX_EMAIL + REX_PASSWORD via
-// the login exchange) plus the HTTP client, provided to every test.
+// the login exchange, plus the required REX_APP_IDENTIFIER) and the HTTP
+// client, provided to every test.
 export const MainLayer = Layer.merge(CredentialsFromEnv, FetchHttpClient.layer);
 
 /** Run an Effect with the MainLayer provided. */

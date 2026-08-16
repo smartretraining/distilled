@@ -8,10 +8,15 @@
  * `protocol.ts`).
  *
  * Three ways to provide credentials:
- *   - `CredentialsFromToken(token)` — you already have a token.
+ *   - `CredentialsFromToken(token, { appIdentifier })` — you already have a
+ *     token.
  *   - `CredentialsFromEnv` — reads `REX_API_TOKEN`, or falls back to
- *     `REX_EMAIL` + `REX_PASSWORD` and performs the login exchange.
+ *     `REX_EMAIL` + `REX_PASSWORD` and performs the login exchange; always
+ *     requires `REX_APP_IDENTIFIER`.
  *   - construct the `Credentials` service directly.
+ *
+ * All of them require an app identifier (`X-App-Identifier`, sent on every
+ * request) — see {@link Config.appIdentifier}.
  *
  * Following the core convention, the `Credentials` service holds an
  * *effect* resolving the current config; the protocol layer runs it per
@@ -34,6 +39,15 @@ export interface Config {
   readonly token: Redacted.Redacted<string>;
   /** API origin, e.g. `https://api.rexsoftware.com`. */
   readonly apiBaseUrl: string;
+  /**
+   * Sent as `X-App-Identifier` on every request (login included). Rex
+   * mandates that every integration identify itself with a stable value
+   * following the convention `Integration:Company:Service` (see the Rex
+   * "integrations" docs) — a prerequisite for Rex Verified Integrator
+   * status. Required, with no default: a fallback would attribute your
+   * traffic to someone else's integration.
+   */
+  readonly appIdentifier: string;
 }
 
 export class Credentials extends Context.Service<
@@ -51,13 +65,17 @@ export class Credentials extends Context.Service<
 export const login = (
   email: string,
   password: string,
-  apiBaseUrl: string = DEFAULT_API_BASE_URL,
+  options: { appIdentifier: string; apiBaseUrl?: string },
 ): Effect.Effect<string, ConfigError> =>
   Effect.tryPromise({
     try: async () => {
+      const apiBaseUrl = options.apiBaseUrl ?? DEFAULT_API_BASE_URL;
       const res = await fetch(`${apiBaseUrl}/v1/rex/Authentication/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-App-Identifier": options.appIdentifier,
+        },
         body: JSON.stringify({ email, password }),
       });
       const json = (await res.json()) as {
@@ -80,13 +98,14 @@ export const login = (
 /** Build a `Credentials` layer from a token you already hold. */
 export const CredentialsFromToken = (
   token: string,
-  options?: { apiBaseUrl?: string },
+  options: { appIdentifier: string; apiBaseUrl?: string },
 ): Layer.Layer<Credentials> =>
   Layer.succeed(
     Credentials,
     Effect.succeed({
       token: Redacted.make(token),
-      apiBaseUrl: options?.apiBaseUrl ?? DEFAULT_API_BASE_URL,
+      apiBaseUrl: options.apiBaseUrl ?? DEFAULT_API_BASE_URL,
+      appIdentifier: options.appIdentifier,
     }),
   );
 
@@ -97,6 +116,9 @@ const envConfig = EffectConfig.all({
   apiBaseUrl: EffectConfig.string("REX_API_BASE_URL").pipe(
     EffectConfig.withDefault(DEFAULT_API_BASE_URL),
   ),
+  appIdentifier: EffectConfig.string("REX_APP_IDENTIFIER").pipe(
+    EffectConfig.option,
+  ),
 });
 
 const missingCredentials = new ConfigError({
@@ -104,12 +126,18 @@ const missingCredentials = new ConfigError({
     "Rex credentials require either REX_API_TOKEN, or REX_EMAIL + REX_PASSWORD",
 });
 
+const missingAppIdentifier = new ConfigError({
+  message:
+    "Rex requires REX_APP_IDENTIFIER — the X-App-Identifier sent on every " +
+    'request, following Rex\'s "Integration:Company:Service" convention',
+});
+
 /**
  * Resolve credentials from the environment.
  *
  * Prefers `REX_API_TOKEN`. If absent, requires `REX_EMAIL` + `REX_PASSWORD`
- * and performs the login exchange to obtain a token. Resolution happens once,
- * when the layer is built.
+ * and performs the login exchange to obtain a token. `REX_APP_IDENTIFIER`
+ * is always required. Resolution happens once, when the layer is built.
  */
 export const CredentialsFromEnv: Layer.Layer<Credentials> = Layer.effect(
   Credentials,
@@ -118,21 +146,30 @@ export const CredentialsFromEnv: Layer.Layer<Credentials> = Layer.effect(
       Effect.mapError(() => missingCredentials),
     );
 
+    if (cfg.appIdentifier._tag === "None") {
+      return yield* Effect.fail(missingAppIdentifier);
+    }
+    const appIdentifier = cfg.appIdentifier.value;
+
     const tokenValue = cfg.token._tag === "Some" ? cfg.token.value : undefined;
     if (tokenValue !== undefined) {
       return {
         token: Redacted.make(tokenValue),
         apiBaseUrl: cfg.apiBaseUrl,
+        appIdentifier,
       };
     }
 
     if (cfg.email._tag === "Some" && cfg.password._tag === "Some") {
-      const token = yield* login(
-        cfg.email.value,
-        cfg.password.value,
-        cfg.apiBaseUrl,
-      );
-      return { token: Redacted.make(token), apiBaseUrl: cfg.apiBaseUrl };
+      const token = yield* login(cfg.email.value, cfg.password.value, {
+        appIdentifier,
+        apiBaseUrl: cfg.apiBaseUrl,
+      });
+      return {
+        token: Redacted.make(token),
+        apiBaseUrl: cfg.apiBaseUrl,
+        appIdentifier,
+      };
     }
 
     return yield* Effect.fail(missingCredentials);
