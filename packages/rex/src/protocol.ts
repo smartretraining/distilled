@@ -14,7 +14,9 @@
  * body. Generated output schemas describe the *inner* `result` payload —
  * envelope unwrapping happens here, so generated schemas stay clean.
  *
- * Auth: session token (see `credentials.ts`) sent as `Authorization: Bearer`.
+ * Auth: session token (see `credentials.ts`) sent as `Authorization: Bearer`,
+ * plus the mandatory `X-App-Identifier` integration header
+ * (`Integration:Company:Service` — see `credentials.ts`).
  *
  * ─────────────────────────────────────────────────────────────────────────
  * ENVELOPE ERRORS AS TYPED ERRORS:
@@ -121,6 +123,7 @@ const baseProtocol = makeRestProtocol<Config>({
   baseUrl: (creds) => creds.apiBaseUrl,
   headers: (creds) => ({
     Authorization: `Bearer ${Redacted.value(creds.token)}`,
+    "X-App-Identifier": creds.appIdentifier,
   }),
   errorEnvelope: (body) => {
     const env = decodeEnvelope(body);

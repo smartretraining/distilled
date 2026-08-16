@@ -15,7 +15,8 @@
  * `SERVICES`, and writes them to `specs/rex/`. `build-openapi.ts` then
  * transforms them into a standard OpenAPI 3.1 document.
  *
- * Auth: set `REX_API_TOKEN`, or `REX_EMAIL` + `REX_PASSWORD`.
+ * Auth: set `REX_API_TOKEN`, or `REX_EMAIL` + `REX_PASSWORD`. Also set
+ * `REX_APP_IDENTIFIER` (`Integration:Company:Service`).
  *
  * Usage:
  *   bun run scripts/scrape-specs.ts
@@ -25,6 +26,18 @@ import * as path from "path";
 
 const API_BASE_URL =
   process.env.REX_API_BASE_URL ?? "https://api.rexsoftware.com";
+
+// Rex mandates an X-App-Identifier on every request; like the SDK proper,
+// there is deliberately no fallback value.
+function appIdentifier(): string {
+  const value = process.env.REX_APP_IDENTIFIER;
+  if (!value) {
+    throw new Error(
+      'Set REX_APP_IDENTIFIER ("Integration:Company:Service") to identify this integration to Rex.',
+    );
+  }
+  return value;
+}
 
 /** Services to scrape. Extend this list to add more Rex models. */
 const SERVICES = [
@@ -56,6 +69,7 @@ async function rexCall<T>(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "X-App-Identifier": appIdentifier(),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify(body),
@@ -81,7 +95,10 @@ async function resolveToken(): Promise<string> {
   }
   const res = await fetch(`${API_BASE_URL}/v1/rex/Authentication/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "X-App-Identifier": appIdentifier(),
+    },
     body: JSON.stringify({ email, password }),
   });
   const json = (await res.json()) as RexEnvelope<string>;

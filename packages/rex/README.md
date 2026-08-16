@@ -64,12 +64,20 @@ REX_API_TOKEN=your-session-token
 REX_EMAIL=you@example.com
 REX_PASSWORD=your-password
 
+# Required — X-App-Identifier sent on every request, following Rex's
+# "Integration:Company:Service" convention. There is deliberately no
+# default: a stable per-integration value is a prerequisite for Rex
+# Verified Integrator status, and a fallback would misattribute your
+# traffic.
+REX_APP_IDENTIFIER=Integration:YourCompany:your-service
+
 # Optional — override the API origin (defaults to https://api.rexsoftware.com)
 REX_API_BASE_URL=https://api.rexsoftware.com
 ```
 
 - `CredentialsFromEnv` — reads the variables above (prefers `REX_API_TOKEN`).
-- `CredentialsFromToken(token, { apiBaseUrl? })` — build a layer from a token.
+- `CredentialsFromToken(token, { appIdentifier, apiBaseUrl? })` — build a
+  layer from a token.
 - Construct the `Credentials` service directly.
 
 ## Receiving webhooks

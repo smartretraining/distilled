@@ -62,13 +62,17 @@ import { CredentialsFromToken } from "@smartretraining/rex-effect";
 
 export interface Env {
   REX_API_TOKEN: string;
+  // X-App-Identifier, e.g. "Integration:YourCompany:your-service"
+  REX_APP_IDENTIFIER: string;
   // ...your KV / D1 / R2 bindings, etc.
 }
 
 export const makeRexLayer = (env: Env) =>
   Layer.merge(
     FetchHttpClient.layer,
-    CredentialsFromToken(env.REX_API_TOKEN),
+    CredentialsFromToken(env.REX_API_TOKEN, {
+      appIdentifier: env.REX_APP_IDENTIFIER,
+    }),
   );
 ```
 
