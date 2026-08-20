@@ -8335,6 +8335,34 @@
             "com.distilled.openapi#nullable": {}
           }
         },
+        "contact_by_email": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "smithy.api#documentation": "Whether the contact may be contacted by email (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_sms": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "smithy.api#documentation": "Whether the contact may be contacted by SMS (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_phone": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "smithy.api#documentation": "Whether the contact may be contacted by phone (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_letter": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "smithy.api#documentation": "Whether the contact may be contacted by letter (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
         "type": {
           "target": "smithy.api#String",
           "traits": {
@@ -12728,6 +12756,15 @@
         "smithy.api#documentation": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields."
       }
     },
+    "com.rexsoftware.api#ContactsReadRequestOptionsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Document"
+      },
+      "traits": {
+        "smithy.api#documentation": "Internal read options (CRM-14432). Recognised key:\n`skip_discarded_extra_fields` (bool) — when truthy, skip computing the `address_wash`,\n`address_postal_wash`, `smart_categories`, `buyer_motivation` and `buyer_position` blocks.\nImporters pass it on their own throwaway reads (existence/type/current-data lookups whose result\nImport::importOne discards). Defaults to empty, so every normal/external caller — and the\nunrestricted reads that build webhook/event payloads — get the full record unchanged. This never\nalters output for callers that don't opt in."
+      }
+    },
     "com.rexsoftware.api#ContactsReadRequest": {
       "type": "structure",
       "members": {
@@ -12750,6 +12787,12 @@
           "traits": {
             "smithy.api#documentation": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
             "com.distilled.openapi#nullable": {}
+          }
+        },
+        "options": {
+          "target": "com.rexsoftware.api#ContactsReadRequestOptionsList",
+          "traits": {
+            "smithy.api#documentation": "Internal read options (CRM-14432). Recognised key:\n`skip_discarded_extra_fields` (bool) — when truthy, skip computing the `address_wash`,\n`address_postal_wash`, `smart_categories`, `buyer_motivation` and `buyer_position` blocks.\nImporters pass it on their own throwaway reads (existence/type/current-data lookups whose result\nImport::importOne discards). Defaults to empty, so every normal/external caller — and the\nunrestricted reads that build webhook/event payloads — get the full record unchanged. This never\nalters output for callers that don't opt in."
           }
         }
       },
@@ -13187,6 +13230,18 @@
           "target": "smithy.api#Document"
         },
         "is_dnd": {
+          "target": "smithy.api#Document"
+        },
+        "contact_by_email": {
+          "target": "smithy.api#Document"
+        },
+        "contact_by_sms": {
+          "target": "smithy.api#Document"
+        },
+        "contact_by_phone": {
+          "target": "smithy.api#Document"
+        },
+        "contact_by_letter": {
           "target": "smithy.api#Document"
         },
         "type": {
@@ -14027,6 +14082,30 @@
             "com.distilled.openapi#nullable": {}
           }
         },
+        "contact_by_email": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_sms": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_phone": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_letter": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
         "type": {
           "target": "smithy.api#String",
           "traits": {
@@ -14136,7 +14215,7 @@
           "uri": "/v1/rex/Contacts::read",
           "code": 200
         },
-        "smithy.api#documentation": "Read a record by id\n\nRead a record by id"
+        "smithy.api#documentation": "Read a record by id"
       }
     },
     "com.rexsoftware.api#ContactsRecoverFromArchiveRequest": {
@@ -14464,6 +14543,30 @@
           "target": "smithy.api#Document"
         },
         "is_dnd": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_email": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_sms": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_phone": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_letter": {
           "target": "smithy.api#String",
           "traits": {
             "com.distilled.openapi#nullable": {}
@@ -15073,6 +15176,34 @@
             "com.distilled.openapi#nullable": {}
           }
         },
+        "contact_by_email": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "smithy.api#documentation": "Whether the contact may be contacted by email (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_sms": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "smithy.api#documentation": "Whether the contact may be contacted by SMS (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_phone": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "smithy.api#documentation": "Whether the contact may be contacted by phone (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_letter": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "smithy.api#documentation": "Whether the contact may be contacted by letter (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
         "type": {
           "target": "smithy.api#String",
           "traits": {
@@ -15594,6 +15725,18 @@
           "target": "smithy.api#Document"
         },
         "is_dnd": {
+          "target": "smithy.api#Document"
+        },
+        "contact_by_email": {
+          "target": "smithy.api#Document"
+        },
+        "contact_by_sms": {
+          "target": "smithy.api#Document"
+        },
+        "contact_by_phone": {
+          "target": "smithy.api#Document"
+        },
+        "contact_by_letter": {
           "target": "smithy.api#Document"
         },
         "type": {
@@ -16422,6 +16565,30 @@
           "target": "smithy.api#Document"
         },
         "is_dnd": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_email": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_sms": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_phone": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_by_letter": {
           "target": "smithy.api#Boolean",
           "traits": {
             "com.distilled.openapi#nullable": {}

@@ -4793,6 +4793,26 @@
                         "nullable": true,
                         "description": "Whether contact can be contacted for marketing purposes"
                       },
+                      "contact_by_email": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "Whether the contact may be contacted by email (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected."
+                      },
+                      "contact_by_sms": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "Whether the contact may be contacted by SMS (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected."
+                      },
+                      "contact_by_phone": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "Whether the contact may be contacted by phone (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected."
+                      },
+                      "contact_by_letter": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "Whether the contact may be contacted by letter (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected."
+                      },
                       "type": {
                         "type": "string",
                         "description": "Whether contact is person or company (person|company)"
@@ -7444,7 +7464,7 @@
     "/v1/rex/Contacts::read": {
       "post": {
         "operationId": "Contacts_read",
-        "summary": "Read a record by id",
+        "summary": "",
         "description": "Read a record by id",
         "deprecated": false,
         "requestBody": {
@@ -7467,6 +7487,10 @@
                     "type": "array",
                     "nullable": true,
                     "description": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields."
+                  },
+                  "options": {
+                    "type": "array",
+                    "description": "Internal read options (CRM-14432). Recognised key:\n`skip_discarded_extra_fields` (bool) — when truthy, skip computing the `address_wash`,\n`address_postal_wash`, `smart_categories`, `buyer_motivation` and `buyer_position` blocks.\nImporters pass it on their own throwaway reads (existence/type/current-data lookups whose result\nImport::importOne discards). Defaults to empty, so every normal/external caller — and the\nunrestricted reads that build webhook/event payloads — get the full record unchanged. This never\nalters output for callers that don't opt in."
                   }
                 },
                 "additionalProperties": false,
@@ -7479,7 +7503,7 @@
         },
         "responses": {
           "200": {
-            "description": "array ",
+            "description": "void",
             "content": {
               "application/json": {
                 "schema": {
@@ -7532,6 +7556,22 @@
                     "company_size": {},
                     "website_url": {},
                     "is_dnd": {
+                      "type": "boolean",
+                      "nullable": true
+                    },
+                    "contact_by_email": {
+                      "type": "boolean",
+                      "nullable": true
+                    },
+                    "contact_by_sms": {
+                      "type": "boolean",
+                      "nullable": true
+                    },
+                    "contact_by_phone": {
+                      "type": "boolean",
+                      "nullable": true
+                    },
+                    "contact_by_letter": {
                       "type": "boolean",
                       "nullable": true
                     },
@@ -7853,6 +7893,10 @@
                                   },
                                   "fax_number": {},
                                   "is_dnd": {},
+                                  "contact_by_email": {},
+                                  "contact_by_sms": {},
+                                  "contact_by_phone": {},
+                                  "contact_by_letter": {},
                                   "type": {
                                     "type": "string",
                                     "nullable": true
@@ -8469,6 +8513,22 @@
                             "type": "string",
                             "nullable": true
                           },
+                          "contact_by_email": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "contact_by_sms": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "contact_by_phone": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "contact_by_letter": {
+                            "type": "string",
+                            "nullable": true
+                          },
                           "type": {
                             "type": "string",
                             "nullable": true
@@ -8815,6 +8875,26 @@
                         "nullable": true,
                         "description": "Whether contact can be contacted for marketing purposes"
                       },
+                      "contact_by_email": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "Whether the contact may be contacted by email (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected."
+                      },
+                      "contact_by_sms": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "Whether the contact may be contacted by SMS (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected."
+                      },
+                      "contact_by_phone": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "Whether the contact may be contacted by phone (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected."
+                      },
+                      "contact_by_letter": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "Whether the contact may be contacted by letter (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected."
+                      },
                       "type": {
                         "type": "string",
                         "description": "Whether contact is person or company (person|company)"
@@ -9045,6 +9125,22 @@
                     "company_size": {},
                     "website_url": {},
                     "is_dnd": {
+                      "type": "boolean",
+                      "nullable": true
+                    },
+                    "contact_by_email": {
+                      "type": "boolean",
+                      "nullable": true
+                    },
+                    "contact_by_sms": {
+                      "type": "boolean",
+                      "nullable": true
+                    },
+                    "contact_by_phone": {
+                      "type": "boolean",
+                      "nullable": true
+                    },
+                    "contact_by_letter": {
                       "type": "boolean",
                       "nullable": true
                     },
@@ -9366,6 +9462,10 @@
                                   },
                                   "fax_number": {},
                                   "is_dnd": {},
+                                  "contact_by_email": {},
+                                  "contact_by_sms": {},
+                                  "contact_by_phone": {},
+                                  "contact_by_letter": {},
                                   "type": {
                                     "type": "string",
                                     "nullable": true

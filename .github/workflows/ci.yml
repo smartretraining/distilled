@@ -26,9 +26,11 @@ permissions:
 
 jobs:
   typecheck:
-    # Checking aws/azure/gcp together needs more memory than the default
-    # runner has.
-    runs-on: ubuntu-22-large
+    # `ubuntu-22-large` is a leftover from the alchemy-run fork: the label
+    # resolves to nothing here, so every run sat QUEUED forever — not failed,
+    # not skipped, just never picked up. No `ci` run had ever completed on
+    # this repository.
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 

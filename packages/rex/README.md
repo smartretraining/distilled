@@ -157,11 +157,15 @@ Rex has ~272 services. This package generates **Listings**, **Properties**,
 1. Append the service name to the `SERVICES` array in `scripts/scrape-specs.ts`.
 2. Run `bun run specs:scrape` then `bun run generate`.
 
-`describe` output is **privilege-sensitive**: a scrape run by a user without
-write rights on a service gets a stubbed `create`/`update` parameter block
-rather than an error, and re-generating from it silently narrows the types
-everyone else depends on. Diff `specs/rex/` before committing a re-scrape, and
-keep only the service you meant to add.
+**Diff `specs/rex/` before committing a re-scrape.** Rex's introspection
+drifts in both directions and neither direction announces itself. Measured
+against a fully-privileged account in August 2026: `Contacts::create` and
+`::update` had GAINED fields (4.5KB → 6.5KB of typed parameters), while
+`Properties::create` and `::update` had LOST theirs entirely — 13KB of
+definition replaced by `"type": "unknown"`, with no error and no deprecation.
+Committing that blind would have silently reduced `propertiesCreate` to an
+untyped blob for every consumer. Take the additions; leave a service whose
+`data` block collapsed at its committed spec until Rex restores it.
 
 `build-openapi.ts` globs every `specs/rex/*.describe.json` file, so new services
 flow through automatically. Note: removing a service does not delete its stale
