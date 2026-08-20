@@ -19339,6 +19339,3096 @@ export const ListingsUpdateArchivedStateDetailsResponse =
     identifier: "ListingsUpdateArchivedStateDetailsResponse",
   }) as any as S.Schema<ListingsUpdateArchivedStateDetailsResponse>;
 
+export interface NotesAutocompleteRequest {
+  /** The start of the map area name to autocomplete on */
+  search_string: string;
+  /** Maximum number of results to return */
+  limit?: number | null;
+  /** Whether a viewstate id should be returned instead of the matching record ids */
+  return_viewstate?: boolean | null;
+}
+export const NotesAutocompleteRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    search_string: S.String,
+    limit: S.optional(S.NullOr(S.Number)),
+    return_viewstate: S.optional(S.NullOr(S.Boolean)),
+  }).pipe(
+    T.Http({ method: "POST", uri: "/v1/rex/Notes::autocomplete", code: 200 }),
+  ),
+).annotate({
+  identifier: "NotesAutocompleteRequest",
+}) as any as S.Schema<NotesAutocompleteRequest>;
+
+export type NotesAutocompleteResponseBodyList = Array<unknown>;
+export const NotesAutocompleteResponseBodyList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<NotesAutocompleteResponseBodyList>;
+
+export type NotesAutocompleteResponse = NotesAutocompleteResponseBodyList;
+export const NotesAutocompleteResponse = /*@__PURE__*/ S.suspend(() =>
+  NotesAutocompleteResponseBodyList.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "NotesAutocompleteResponse",
+}) as any as S.Schema<NotesAutocompleteResponse>;
+
+export interface NotesCreateRequestDataNoteType {
+  /** Note type ID (valuelist: note_type) */
+  id?: string;
+}
+export const NotesCreateRequestDataNoteType = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "NotesCreateRequestDataNoteType",
+}) as any as S.Schema<NotesCreateRequestDataNoteType>;
+
+export interface NotesCreateRequestDataRelatedNoteContactsItem {
+  /** ID of the contact the note will be associated to */
+  contact_id?: number;
+}
+export const NotesCreateRequestDataRelatedNoteContactsItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      contact_id: S.optional(S.Number),
+    }),
+  ).annotate({
+    identifier: "NotesCreateRequestDataRelatedNoteContactsItem",
+  }) as any as S.Schema<NotesCreateRequestDataRelatedNoteContactsItem>;
+
+/** All contacts that this note is associated to */
+export type NotesCreateRequestDataRelatedNoteContactsList =
+  Array<NotesCreateRequestDataRelatedNoteContactsItem>;
+export const NotesCreateRequestDataRelatedNoteContactsList =
+  /*@__PURE__*/ S.Array(
+    NotesCreateRequestDataRelatedNoteContactsItem,
+  ) as any as S.Schema<NotesCreateRequestDataRelatedNoteContactsList>;
+
+export interface NotesCreateRequestDataRelatedNotePropertiesItem {
+  /** ID of the property the note will be associated to */
+  property_id?: number;
+}
+export const NotesCreateRequestDataRelatedNotePropertiesItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      property_id: S.optional(S.Number),
+    }),
+  ).annotate({
+    identifier: "NotesCreateRequestDataRelatedNotePropertiesItem",
+  }) as any as S.Schema<NotesCreateRequestDataRelatedNotePropertiesItem>;
+
+/** All properties that this note is associated to */
+export type NotesCreateRequestDataRelatedNotePropertiesList =
+  Array<NotesCreateRequestDataRelatedNotePropertiesItem>;
+export const NotesCreateRequestDataRelatedNotePropertiesList =
+  /*@__PURE__*/ S.Array(
+    NotesCreateRequestDataRelatedNotePropertiesItem,
+  ) as any as S.Schema<NotesCreateRequestDataRelatedNotePropertiesList>;
+
+export interface NotesCreateRequestDataRelatedNoteProjectsItem {
+  /** ID of the project the note will be associated to */
+  project_id?: number;
+}
+export const NotesCreateRequestDataRelatedNoteProjectsItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      project_id: S.optional(S.Number),
+    }),
+  ).annotate({
+    identifier: "NotesCreateRequestDataRelatedNoteProjectsItem",
+  }) as any as S.Schema<NotesCreateRequestDataRelatedNoteProjectsItem>;
+
+/** All projects that this note is associated to */
+export type NotesCreateRequestDataRelatedNoteProjectsList =
+  Array<NotesCreateRequestDataRelatedNoteProjectsItem>;
+export const NotesCreateRequestDataRelatedNoteProjectsList =
+  /*@__PURE__*/ S.Array(
+    NotesCreateRequestDataRelatedNoteProjectsItem,
+  ) as any as S.Schema<NotesCreateRequestDataRelatedNoteProjectsList>;
+
+export interface NotesCreateRequestDataRelatedNoteProjectStagesItem {
+  /** ID of the project stage the note will be associated to */
+  project_stage_id?: number;
+}
+export const NotesCreateRequestDataRelatedNoteProjectStagesItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      project_stage_id: S.optional(S.Number),
+    }),
+  ).annotate({
+    identifier: "NotesCreateRequestDataRelatedNoteProjectStagesItem",
+  }) as any as S.Schema<NotesCreateRequestDataRelatedNoteProjectStagesItem>;
+
+/** All project stages that this note is associated to */
+export type NotesCreateRequestDataRelatedNoteProjectStagesList =
+  Array<NotesCreateRequestDataRelatedNoteProjectStagesItem>;
+export const NotesCreateRequestDataRelatedNoteProjectStagesList =
+  /*@__PURE__*/ S.Array(
+    NotesCreateRequestDataRelatedNoteProjectStagesItem,
+  ) as any as S.Schema<NotesCreateRequestDataRelatedNoteProjectStagesList>;
+
+export interface NotesCreateRequestDataRelatedNoteMarketLeadsItem {
+  /** ID of the market lead the note will be associated to */
+  market_lead_id?: number;
+}
+export const NotesCreateRequestDataRelatedNoteMarketLeadsItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      market_lead_id: S.optional(S.Number),
+    }),
+  ).annotate({
+    identifier: "NotesCreateRequestDataRelatedNoteMarketLeadsItem",
+  }) as any as S.Schema<NotesCreateRequestDataRelatedNoteMarketLeadsItem>;
+
+/** All market leads that this note is associated to */
+export type NotesCreateRequestDataRelatedNoteMarketLeadsList =
+  Array<NotesCreateRequestDataRelatedNoteMarketLeadsItem>;
+export const NotesCreateRequestDataRelatedNoteMarketLeadsList =
+  /*@__PURE__*/ S.Array(
+    NotesCreateRequestDataRelatedNoteMarketLeadsItem,
+  ) as any as S.Schema<NotesCreateRequestDataRelatedNoteMarketLeadsList>;
+
+export interface NotesCreateRequestDataRelatedNoteChainLinksItem {
+  /** ID of the chain link the note will be associated to */
+  chain_link_id?: number;
+}
+export const NotesCreateRequestDataRelatedNoteChainLinksItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      chain_link_id: S.optional(S.Number),
+    }),
+  ).annotate({
+    identifier: "NotesCreateRequestDataRelatedNoteChainLinksItem",
+  }) as any as S.Schema<NotesCreateRequestDataRelatedNoteChainLinksItem>;
+
+/** All chain links that this note is associated to */
+export type NotesCreateRequestDataRelatedNoteChainLinksList =
+  Array<NotesCreateRequestDataRelatedNoteChainLinksItem>;
+export const NotesCreateRequestDataRelatedNoteChainLinksList =
+  /*@__PURE__*/ S.Array(
+    NotesCreateRequestDataRelatedNoteChainLinksItem,
+  ) as any as S.Schema<NotesCreateRequestDataRelatedNoteChainLinksList>;
+
+/** Data related to note */
+export interface NotesCreateRequestDataRelated {
+  /** All contacts that this note is associated to */
+  note_contacts?: NotesCreateRequestDataRelatedNoteContactsList | null;
+  /** All properties that this note is associated to */
+  note_properties?: NotesCreateRequestDataRelatedNotePropertiesList | null;
+  /** All projects that this note is associated to */
+  note_projects?: NotesCreateRequestDataRelatedNoteProjectsList;
+  /** All project stages that this note is associated to */
+  note_project_stages?: NotesCreateRequestDataRelatedNoteProjectStagesList;
+  /** All market leads that this note is associated to */
+  note_market_leads?: NotesCreateRequestDataRelatedNoteMarketLeadsList;
+  /** All chain links that this note is associated to */
+  note_chain_links?: NotesCreateRequestDataRelatedNoteChainLinksList;
+}
+export const NotesCreateRequestDataRelated = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    note_contacts: S.optional(
+      S.NullOr(NotesCreateRequestDataRelatedNoteContactsList),
+    ),
+    note_properties: S.optional(
+      S.NullOr(NotesCreateRequestDataRelatedNotePropertiesList),
+    ),
+    note_projects: S.optional(NotesCreateRequestDataRelatedNoteProjectsList),
+    note_project_stages: S.optional(
+      NotesCreateRequestDataRelatedNoteProjectStagesList,
+    ),
+    note_market_leads: S.optional(
+      NotesCreateRequestDataRelatedNoteMarketLeadsList,
+    ),
+    note_chain_links: S.optional(
+      NotesCreateRequestDataRelatedNoteChainLinksList,
+    ),
+  }),
+).annotate({
+  identifier: "NotesCreateRequestDataRelated",
+}) as any as S.Schema<NotesCreateRequestDataRelated>;
+
+/** An array of data to set for the note record */
+export interface NotesCreateRequestData {
+  /** The note description */
+  note?: string;
+  note_type?: NotesCreateRequestDataNoteType | null;
+  /** Whether the contact's last contacted date should be updated */
+  update_last_contacted?: boolean | null;
+  /** Data related to note */
+  related?: NotesCreateRequestDataRelated;
+}
+export const NotesCreateRequestData = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    note: S.optional(S.String),
+    note_type: S.optional(S.NullOr(NotesCreateRequestDataNoteType)),
+    update_last_contacted: S.optional(S.NullOr(S.Boolean)),
+    related: S.optional(NotesCreateRequestDataRelated),
+  }),
+).annotate({
+  identifier: "NotesCreateRequestData",
+}) as any as S.Schema<NotesCreateRequestData>;
+
+export interface NotesCreateRequest {
+  /** An array of data to set for the note record */
+  data: NotesCreateRequestData;
+  /** True if the id should returned only. False if the record should be returned */
+  return_id?: boolean;
+}
+export const NotesCreateRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    data: NotesCreateRequestData,
+    return_id: S.optional(S.Boolean),
+  }).pipe(T.Http({ method: "POST", uri: "/v1/rex/Notes::create", code: 200 })),
+).annotate({
+  identifier: "NotesCreateRequest",
+}) as any as S.Schema<NotesCreateRequest>;
+
+export type NotesCreateResponse = unknown;
+export const NotesCreateResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Unknown.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "NotesCreateResponse",
+}) as any as S.Schema<NotesCreateResponse>;
+
+export interface NotesDescribeRequest {
+  /** True if detailed descriptions of each method should be included */
+  include_detail?: boolean;
+}
+export const NotesDescribeRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    include_detail: S.optional(S.Boolean),
+  }).pipe(
+    T.Http({ method: "POST", uri: "/v1/rex/Notes::describe", code: 200 }),
+  ),
+).annotate({
+  identifier: "NotesDescribeRequest",
+}) as any as S.Schema<NotesDescribeRequest>;
+
+export type NotesDescribeResponseMethodsArchiveParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const NotesDescribeResponseMethodsArchiveParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type NotesDescribeResponseMethodsArchiveParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+export const NotesDescribeResponseMethodsArchiveParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+
+export type NotesDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const NotesDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type NotesDescribeResponseMethodsArchiveOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const NotesDescribeResponseMethodsArchiveOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type NotesDescribeResponseMethodsArchiveOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+export const NotesDescribeResponseMethodsArchiveOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+
+export type NotesDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+export const NotesDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+
+export type NotesDescribeResponseMethodsArchiveOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+export const NotesDescribeResponseMethodsArchiveOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+
+export type NotesDescribeResponseMethodsArchiveOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+export const NotesDescribeResponseMethodsArchiveOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+
+export type NotesDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+export const NotesDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+
+export type NotesDescribeResponseMethodsArchiveOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+export const NotesDescribeResponseMethodsArchiveOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+
+export type NotesDescribeResponseMethodsArchiveOpenapiResponseSchemaList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsArchiveOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsArchiveOpenapiResponseSchemaList>;
+
+export type NotesDescribeResponseMethodsArchiveOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const NotesDescribeResponseMethodsArchiveOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface NotesDescribeResponseMethodsArchiveOpenapiResponse {
+  examples?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples | null;
+  schema?: NotesDescribeResponseMethodsArchiveOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const NotesDescribeResponseMethodsArchiveOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples,
+        ),
+      ),
+      schema: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsArchiveOpenapiResponseSchemaList),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsArchiveOpenapiResponse",
+  }) as any as S.Schema<NotesDescribeResponseMethodsArchiveOpenapiResponse>;
+
+export interface NotesDescribeResponseMethodsArchiveOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest | null;
+  response?: NotesDescribeResponseMethodsArchiveOpenapiResponse | null;
+}
+export const NotesDescribeResponseMethodsArchiveOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsArchiveOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsArchiveOpenapi",
+  }) as any as S.Schema<NotesDescribeResponseMethodsArchiveOpenapi>;
+
+export interface NotesDescribeResponseMethodsArchive {
+  description?: string | null;
+  parameters?: AdminValueListsDescribeResponseMethodsArchiveParameters | null;
+  returns?: string | null;
+  openapi?: NotesDescribeResponseMethodsArchiveOpenapi | null;
+}
+export const NotesDescribeResponseMethodsArchive = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    description: S.optional(S.NullOr(S.String)),
+    parameters: S.optional(
+      S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParameters),
+    ),
+    returns: S.optional(S.NullOr(S.String)),
+    openapi: S.optional(S.NullOr(NotesDescribeResponseMethodsArchiveOpenapi)),
+  }),
+).annotate({
+  identifier: "NotesDescribeResponseMethodsArchive",
+}) as any as S.Schema<NotesDescribeResponseMethodsArchive>;
+
+export type NotesDescribeResponseMethodsCreateParametersData =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const NotesDescribeResponseMethodsCreateParametersData =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type NotesDescribeResponseMethodsCreateParametersReturnId =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+export const NotesDescribeResponseMethodsCreateParametersReturnId =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+
+export type NotesDescribeResponseMethodsCreateParameters =
+  AdminValueListsDescribeResponseMethodsCreateParameters;
+export const NotesDescribeResponseMethodsCreateParameters =
+  AdminValueListsDescribeResponseMethodsCreateParameters;
+
+export type NotesDescribeResponseMethodsCreateOpenapiRequestParametersDataList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsCreateOpenapiRequestParametersDataList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsCreateOpenapiRequestParametersDataList>;
+
+export type NotesDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+export const NotesDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+
+export type NotesDescribeResponseMethodsCreateOpenapiRequestParametersReturnId =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+export const NotesDescribeResponseMethodsCreateOpenapiRequestParametersReturnId =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+
+export interface NotesDescribeResponseMethodsCreateOpenapiRequestParameters {
+  data?: NotesDescribeResponseMethodsCreateOpenapiRequestParametersDataList | null;
+  return_id?: AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId | null;
+}
+export const NotesDescribeResponseMethodsCreateOpenapiRequestParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      data: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsCreateOpenapiRequestParametersDataList,
+        ),
+      ),
+      return_id: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsCreateOpenapiRequestParameters",
+  }) as any as S.Schema<NotesDescribeResponseMethodsCreateOpenapiRequestParameters>;
+
+export type NotesDescribeResponseMethodsCreateOpenapiRequestExamplesExample1List =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsCreateOpenapiRequestExamplesExample1List =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsCreateOpenapiRequestExamplesExample1List>;
+
+export interface NotesDescribeResponseMethodsCreateOpenapiRequestExamples {
+  Example1?: NotesDescribeResponseMethodsCreateOpenapiRequestExamplesExample1List | null;
+}
+export const NotesDescribeResponseMethodsCreateOpenapiRequestExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsCreateOpenapiRequestExamplesExample1List,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsCreateOpenapiRequestExamples",
+  }) as any as S.Schema<NotesDescribeResponseMethodsCreateOpenapiRequestExamples>;
+
+export interface NotesDescribeResponseMethodsCreateOpenapiRequest {
+  parameters?: NotesDescribeResponseMethodsCreateOpenapiRequestParameters | null;
+  examples?: NotesDescribeResponseMethodsCreateOpenapiRequestExamples | null;
+}
+export const NotesDescribeResponseMethodsCreateOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsCreateOpenapiRequestParameters),
+      ),
+      examples: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsCreateOpenapiRequestExamples),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsCreateOpenapiRequest",
+  }) as any as S.Schema<NotesDescribeResponseMethodsCreateOpenapiRequest>;
+
+export type NotesDescribeResponseMethodsCreateOpenapiResponseExamplesExample1List =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsCreateOpenapiResponseExamplesExample1List =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsCreateOpenapiResponseExamplesExample1List>;
+
+export interface NotesDescribeResponseMethodsCreateOpenapiResponseExamples {
+  Example1?: NotesDescribeResponseMethodsCreateOpenapiResponseExamplesExample1List | null;
+}
+export const NotesDescribeResponseMethodsCreateOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsCreateOpenapiResponseExamplesExample1List,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsCreateOpenapiResponseExamples",
+  }) as any as S.Schema<NotesDescribeResponseMethodsCreateOpenapiResponseExamples>;
+
+export type NotesDescribeResponseMethodsCreateOpenapiResponseSchemaList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsCreateOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsCreateOpenapiResponseSchemaList>;
+
+export type NotesDescribeResponseMethodsCreateOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const NotesDescribeResponseMethodsCreateOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface NotesDescribeResponseMethodsCreateOpenapiResponse {
+  examples?: NotesDescribeResponseMethodsCreateOpenapiResponseExamples | null;
+  schema?: NotesDescribeResponseMethodsCreateOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const NotesDescribeResponseMethodsCreateOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsCreateOpenapiResponseExamples),
+      ),
+      schema: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsCreateOpenapiResponseSchemaList),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsCreateOpenapiResponse",
+  }) as any as S.Schema<NotesDescribeResponseMethodsCreateOpenapiResponse>;
+
+export interface NotesDescribeResponseMethodsCreateOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: NotesDescribeResponseMethodsCreateOpenapiRequest | null;
+  response?: NotesDescribeResponseMethodsCreateOpenapiResponse | null;
+}
+export const NotesDescribeResponseMethodsCreateOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsCreateOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsCreateOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsCreateOpenapi",
+  }) as any as S.Schema<NotesDescribeResponseMethodsCreateOpenapi>;
+
+export interface NotesDescribeResponseMethodsCreate {
+  description?: string | null;
+  parameters?: AdminValueListsDescribeResponseMethodsCreateParameters | null;
+  returns?: string | null;
+  openapi?: NotesDescribeResponseMethodsCreateOpenapi | null;
+}
+export const NotesDescribeResponseMethodsCreate = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    description: S.optional(S.NullOr(S.String)),
+    parameters: S.optional(
+      S.NullOr(AdminValueListsDescribeResponseMethodsCreateParameters),
+    ),
+    returns: S.optional(S.NullOr(S.String)),
+    openapi: S.optional(S.NullOr(NotesDescribeResponseMethodsCreateOpenapi)),
+  }),
+).annotate({
+  identifier: "NotesDescribeResponseMethodsCreate",
+}) as any as S.Schema<NotesDescribeResponseMethodsCreate>;
+
+export type NotesDescribeResponseMethodsReadParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const NotesDescribeResponseMethodsReadParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type NotesDescribeResponseMethodsReadParametersFieldsDefaultValueList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsReadParametersFieldsDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsReadParametersFieldsDefaultValueList>;
+
+export interface NotesDescribeResponseMethodsReadParametersFields {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: NotesDescribeResponseMethodsReadParametersFieldsDefaultValueList | null;
+  required?: boolean | null;
+}
+export const NotesDescribeResponseMethodsReadParametersFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsReadParametersFieldsDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsReadParametersFields",
+  }) as any as S.Schema<NotesDescribeResponseMethodsReadParametersFields>;
+
+export type NotesDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
+  Array<string>;
+export const NotesDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<NotesDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList>;
+
+export interface NotesDescribeResponseMethodsReadParametersExtraFields {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: NotesDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList | null;
+  required?: boolean | null;
+}
+export const NotesDescribeResponseMethodsReadParametersExtraFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsReadParametersExtraFields",
+  }) as any as S.Schema<NotesDescribeResponseMethodsReadParametersExtraFields>;
+
+export interface NotesDescribeResponseMethodsReadParameters {
+  id?: AdminValueListsDescribeResponseMethodsArchiveParametersId | null;
+  fields?: NotesDescribeResponseMethodsReadParametersFields | null;
+  extra_fields?: NotesDescribeResponseMethodsReadParametersExtraFields | null;
+}
+export const NotesDescribeResponseMethodsReadParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParametersId),
+      ),
+      fields: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsReadParametersFields),
+      ),
+      extra_fields: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsReadParametersExtraFields),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsReadParameters",
+  }) as any as S.Schema<NotesDescribeResponseMethodsReadParameters>;
+
+export type NotesDescribeResponseMethodsReadOpenapiRequestParametersList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsReadOpenapiRequestParametersList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsReadOpenapiRequestParametersList>;
+
+export type NotesDescribeResponseMethodsReadOpenapiRequestExamplesList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsReadOpenapiRequestExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsReadOpenapiRequestExamplesList>;
+
+export interface NotesDescribeResponseMethodsReadOpenapiRequest {
+  parameters?: NotesDescribeResponseMethodsReadOpenapiRequestParametersList | null;
+  examples?: NotesDescribeResponseMethodsReadOpenapiRequestExamplesList | null;
+}
+export const NotesDescribeResponseMethodsReadOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsReadOpenapiRequestParametersList),
+      ),
+      examples: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsReadOpenapiRequestExamplesList),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsReadOpenapiRequest",
+  }) as any as S.Schema<NotesDescribeResponseMethodsReadOpenapiRequest>;
+
+export type NotesDescribeResponseMethodsReadOpenapiResponseExamplesList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsReadOpenapiResponseExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsReadOpenapiResponseExamplesList>;
+
+export type NotesDescribeResponseMethodsReadOpenapiResponseSchemaList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsReadOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsReadOpenapiResponseSchemaList>;
+
+export type NotesDescribeResponseMethodsReadOpenapiResponseStatusesList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsReadOpenapiResponseStatusesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsReadOpenapiResponseStatusesList>;
+
+export interface NotesDescribeResponseMethodsReadOpenapiResponse {
+  examples?: NotesDescribeResponseMethodsReadOpenapiResponseExamplesList | null;
+  schema?: NotesDescribeResponseMethodsReadOpenapiResponseSchemaList | null;
+  statuses?: NotesDescribeResponseMethodsReadOpenapiResponseStatusesList | null;
+}
+export const NotesDescribeResponseMethodsReadOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsReadOpenapiResponseExamplesList),
+      ),
+      schema: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsReadOpenapiResponseSchemaList),
+      ),
+      statuses: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsReadOpenapiResponseStatusesList),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsReadOpenapiResponse",
+  }) as any as S.Schema<NotesDescribeResponseMethodsReadOpenapiResponse>;
+
+export interface NotesDescribeResponseMethodsReadOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: NotesDescribeResponseMethodsReadOpenapiRequest | null;
+  response?: NotesDescribeResponseMethodsReadOpenapiResponse | null;
+}
+export const NotesDescribeResponseMethodsReadOpenapi = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsReadOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsReadOpenapiResponse),
+      ),
+    }),
+).annotate({
+  identifier: "NotesDescribeResponseMethodsReadOpenapi",
+}) as any as S.Schema<NotesDescribeResponseMethodsReadOpenapi>;
+
+export interface NotesDescribeResponseMethodsRead {
+  description?: string | null;
+  parameters?: NotesDescribeResponseMethodsReadParameters | null;
+  returns?: string | null;
+  openapi?: NotesDescribeResponseMethodsReadOpenapi | null;
+}
+export const NotesDescribeResponseMethodsRead = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    description: S.optional(S.NullOr(S.String)),
+    parameters: S.optional(
+      S.NullOr(NotesDescribeResponseMethodsReadParameters),
+    ),
+    returns: S.optional(S.NullOr(S.String)),
+    openapi: S.optional(S.NullOr(NotesDescribeResponseMethodsReadOpenapi)),
+  }),
+).annotate({
+  identifier: "NotesDescribeResponseMethodsRead",
+}) as any as S.Schema<NotesDescribeResponseMethodsRead>;
+
+export type NotesDescribeResponseMethodsRecoverFromArchiveParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const NotesDescribeResponseMethodsRecoverFromArchiveParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type NotesDescribeResponseMethodsRecoverFromArchiveParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+export const NotesDescribeResponseMethodsRecoverFromArchiveParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+
+export type NotesDescribeResponseMethodsRecoverFromArchiveOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const NotesDescribeResponseMethodsRecoverFromArchiveOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type NotesDescribeResponseMethodsRecoverFromArchiveOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const NotesDescribeResponseMethodsRecoverFromArchiveOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type NotesDescribeResponseMethodsRecoverFromArchiveOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+export const NotesDescribeResponseMethodsRecoverFromArchiveOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+
+export type NotesDescribeResponseMethodsRecoverFromArchiveOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+export const NotesDescribeResponseMethodsRecoverFromArchiveOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+
+export type NotesDescribeResponseMethodsRecoverFromArchiveOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+export const NotesDescribeResponseMethodsRecoverFromArchiveOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+
+export type NotesDescribeResponseMethodsRecoverFromArchiveOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+export const NotesDescribeResponseMethodsRecoverFromArchiveOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+
+export type NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+export const NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+
+export type NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+export const NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+
+export type NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponseSchemaList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponseSchemaList>;
+
+export type NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponse {
+  examples?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples | null;
+  schema?: NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples,
+        ),
+      ),
+      schema: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponseSchemaList,
+        ),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponse",
+  }) as any as S.Schema<NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponse>;
+
+export interface NotesDescribeResponseMethodsRecoverFromArchiveOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest | null;
+  response?: NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponse | null;
+}
+export const NotesDescribeResponseMethodsRecoverFromArchiveOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsRecoverFromArchiveOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsRecoverFromArchiveOpenapi",
+  }) as any as S.Schema<NotesDescribeResponseMethodsRecoverFromArchiveOpenapi>;
+
+export interface NotesDescribeResponseMethodsRecoverFromArchive {
+  description?: string | null;
+  parameters?: AdminValueListsDescribeResponseMethodsArchiveParameters | null;
+  returns?: string | null;
+  openapi?: NotesDescribeResponseMethodsRecoverFromArchiveOpenapi | null;
+}
+export const NotesDescribeResponseMethodsRecoverFromArchive =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsRecoverFromArchiveOpenapi),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsRecoverFromArchive",
+  }) as any as S.Schema<NotesDescribeResponseMethodsRecoverFromArchive>;
+
+export type NotesDescribeResponseMethodsRecoverFromTrashParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const NotesDescribeResponseMethodsRecoverFromTrashParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type NotesDescribeResponseMethodsRecoverFromTrashParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+export const NotesDescribeResponseMethodsRecoverFromTrashParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+
+export type NotesDescribeResponseMethodsRecoverFromTrashOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const NotesDescribeResponseMethodsRecoverFromTrashOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type NotesDescribeResponseMethodsRecoverFromTrashOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const NotesDescribeResponseMethodsRecoverFromTrashOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type NotesDescribeResponseMethodsRecoverFromTrashOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+export const NotesDescribeResponseMethodsRecoverFromTrashOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+
+export type NotesDescribeResponseMethodsRecoverFromTrashOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+export const NotesDescribeResponseMethodsRecoverFromTrashOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+
+export type NotesDescribeResponseMethodsRecoverFromTrashOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+export const NotesDescribeResponseMethodsRecoverFromTrashOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+
+export type NotesDescribeResponseMethodsRecoverFromTrashOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+export const NotesDescribeResponseMethodsRecoverFromTrashOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+
+export type NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+export const NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+
+export type NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+export const NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+
+export type NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponseSchemaList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponseSchemaList>;
+
+export type NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponse {
+  examples?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples | null;
+  schema?: NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples,
+        ),
+      ),
+      schema: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponseSchemaList,
+        ),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponse",
+  }) as any as S.Schema<NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponse>;
+
+export interface NotesDescribeResponseMethodsRecoverFromTrashOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest | null;
+  response?: NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponse | null;
+}
+export const NotesDescribeResponseMethodsRecoverFromTrashOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsRecoverFromTrashOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsRecoverFromTrashOpenapi",
+  }) as any as S.Schema<NotesDescribeResponseMethodsRecoverFromTrashOpenapi>;
+
+export interface NotesDescribeResponseMethodsRecoverFromTrash {
+  description?: string | null;
+  parameters?: AdminValueListsDescribeResponseMethodsArchiveParameters | null;
+  returns?: string | null;
+  openapi?: NotesDescribeResponseMethodsRecoverFromTrashOpenapi | null;
+}
+export const NotesDescribeResponseMethodsRecoverFromTrash =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsRecoverFromTrashOpenapi),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsRecoverFromTrash",
+  }) as any as S.Schema<NotesDescribeResponseMethodsRecoverFromTrash>;
+
+export type NotesDescribeResponseMethodsSearchParametersCriteriaDefaultValueList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsSearchParametersCriteriaDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsSearchParametersCriteriaDefaultValueList>;
+
+export interface NotesDescribeResponseMethodsSearchParametersCriteria {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: NotesDescribeResponseMethodsSearchParametersCriteriaDefaultValueList | null;
+  required?: boolean | null;
+}
+export const NotesDescribeResponseMethodsSearchParametersCriteria =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsSearchParametersCriteriaDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsSearchParametersCriteria",
+  }) as any as S.Schema<NotesDescribeResponseMethodsSearchParametersCriteria>;
+
+export type NotesDescribeResponseMethodsSearchParametersOrderByDefaultValueList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsSearchParametersOrderByDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsSearchParametersOrderByDefaultValueList>;
+
+export interface NotesDescribeResponseMethodsSearchParametersOrderBy {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: NotesDescribeResponseMethodsSearchParametersOrderByDefaultValueList | null;
+  required?: boolean | null;
+}
+export const NotesDescribeResponseMethodsSearchParametersOrderBy =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsSearchParametersOrderByDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsSearchParametersOrderBy",
+  }) as any as S.Schema<NotesDescribeResponseMethodsSearchParametersOrderBy>;
+
+export type NotesDescribeResponseMethodsSearchParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+export const NotesDescribeResponseMethodsSearchParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+
+export type NotesDescribeResponseMethodsSearchParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+export const NotesDescribeResponseMethodsSearchParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+
+export type NotesDescribeResponseMethodsSearchParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+export const NotesDescribeResponseMethodsSearchParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+
+export type NotesDescribeResponseMethodsSearchParametersSearchState =
+  AdminValueListsDescribeResponseMethodsSearchParametersSearchState;
+export const NotesDescribeResponseMethodsSearchParametersSearchState =
+  AdminValueListsDescribeResponseMethodsSearchParametersSearchState;
+
+export type NotesDescribeResponseMethodsSearchParametersIdsOnly =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+export const NotesDescribeResponseMethodsSearchParametersIdsOnly =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+
+export type NotesDescribeResponseMethodsSearchParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchParametersSearchState;
+export const NotesDescribeResponseMethodsSearchParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchParametersSearchState;
+
+export type NotesDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList>;
+
+export interface NotesDescribeResponseMethodsSearchParametersExtraOptions {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: NotesDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList | null;
+  required?: boolean | null;
+}
+export const NotesDescribeResponseMethodsSearchParametersExtraOptions =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsSearchParametersExtraOptions",
+  }) as any as S.Schema<NotesDescribeResponseMethodsSearchParametersExtraOptions>;
+
+export interface NotesDescribeResponseMethodsSearchParameters {
+  criteria?: NotesDescribeResponseMethodsSearchParametersCriteria | null;
+  order_by?: NotesDescribeResponseMethodsSearchParametersOrderBy | null;
+  offset?: AdminValueListsDescribeResponseMethodsSearchParametersOffset | null;
+  limit?: AdminValueListsDescribeResponseMethodsSearchParametersOffset | null;
+  create_viewstate?: AdminValueListsDescribeResponseMethodsCreateParametersReturnId | null;
+  search_state?: AdminValueListsDescribeResponseMethodsSearchParametersSearchState | null;
+  ids_only?: AdminValueListsDescribeResponseMethodsCreateParametersReturnId | null;
+  result_format?: AdminValueListsDescribeResponseMethodsSearchParametersSearchState | null;
+  extra_options?: NotesDescribeResponseMethodsSearchParametersExtraOptions | null;
+}
+export const NotesDescribeResponseMethodsSearchParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      criteria: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsSearchParametersCriteria),
+      ),
+      order_by: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsSearchParametersOrderBy),
+      ),
+      offset: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsSearchParametersOffset),
+      ),
+      limit: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsSearchParametersOffset),
+      ),
+      create_viewstate: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsCreateParametersReturnId,
+        ),
+      ),
+      search_state: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsSearchParametersSearchState,
+        ),
+      ),
+      ids_only: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsCreateParametersReturnId,
+        ),
+      ),
+      result_format: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsSearchParametersSearchState,
+        ),
+      ),
+      extra_options: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsSearchParametersExtraOptions),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsSearchParameters",
+  }) as any as S.Schema<NotesDescribeResponseMethodsSearchParameters>;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersCriteriaDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersCriteriaDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersCriteria =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersCriteria =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersOrderByDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersOrderByDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersOrderBy =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersOrderBy =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersLimitDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersLimitDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersCreateViewstateDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersCreateViewstateDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersExtraOptionsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersExtraOptionsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParametersExtraOptions =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParametersExtraOptions =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParameters;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParameters;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamplesExample1;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamplesExample1;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamples;
+export const NotesDescribeResponseMethodsSearchOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamples;
+
+export type NotesDescribeResponseMethodsSearchOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequest;
+export const NotesDescribeResponseMethodsSearchOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequest;
+
+export type NotesDescribeResponseMethodsSearchOpenapiResponseExamplesExample1List =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsSearchOpenapiResponseExamplesExample1List =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsSearchOpenapiResponseExamplesExample1List>;
+
+export interface NotesDescribeResponseMethodsSearchOpenapiResponseExamples {
+  Example1?: NotesDescribeResponseMethodsSearchOpenapiResponseExamplesExample1List | null;
+}
+export const NotesDescribeResponseMethodsSearchOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsSearchOpenapiResponseExamplesExample1List,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsSearchOpenapiResponseExamples",
+  }) as any as S.Schema<NotesDescribeResponseMethodsSearchOpenapiResponseExamples>;
+
+export type NotesDescribeResponseMethodsSearchOpenapiResponseSchemaList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsSearchOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsSearchOpenapiResponseSchemaList>;
+
+export type NotesDescribeResponseMethodsSearchOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const NotesDescribeResponseMethodsSearchOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface NotesDescribeResponseMethodsSearchOpenapiResponse {
+  examples?: NotesDescribeResponseMethodsSearchOpenapiResponseExamples | null;
+  schema?: NotesDescribeResponseMethodsSearchOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const NotesDescribeResponseMethodsSearchOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsSearchOpenapiResponseExamples),
+      ),
+      schema: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsSearchOpenapiResponseSchemaList),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsSearchOpenapiResponse",
+  }) as any as S.Schema<NotesDescribeResponseMethodsSearchOpenapiResponse>;
+
+export interface NotesDescribeResponseMethodsSearchOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: AdminValueListsDescribeResponseMethodsSearchOpenapiRequest | null;
+  response?: NotesDescribeResponseMethodsSearchOpenapiResponse | null;
+}
+export const NotesDescribeResponseMethodsSearchOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsSearchOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsSearchOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsSearchOpenapi",
+  }) as any as S.Schema<NotesDescribeResponseMethodsSearchOpenapi>;
+
+export interface NotesDescribeResponseMethodsSearch {
+  description?: string | null;
+  parameters?: NotesDescribeResponseMethodsSearchParameters | null;
+  returns?: string | null;
+  openapi?: NotesDescribeResponseMethodsSearchOpenapi | null;
+}
+export const NotesDescribeResponseMethodsSearch = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    description: S.optional(S.NullOr(S.String)),
+    parameters: S.optional(
+      S.NullOr(NotesDescribeResponseMethodsSearchParameters),
+    ),
+    returns: S.optional(S.NullOr(S.String)),
+    openapi: S.optional(S.NullOr(NotesDescribeResponseMethodsSearchOpenapi)),
+  }),
+).annotate({
+  identifier: "NotesDescribeResponseMethodsSearch",
+}) as any as S.Schema<NotesDescribeResponseMethodsSearch>;
+
+export type NotesDescribeResponseMethodsTrashParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const NotesDescribeResponseMethodsTrashParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type NotesDescribeResponseMethodsTrashParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+export const NotesDescribeResponseMethodsTrashParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+
+export type NotesDescribeResponseMethodsTrashOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const NotesDescribeResponseMethodsTrashOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type NotesDescribeResponseMethodsTrashOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const NotesDescribeResponseMethodsTrashOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type NotesDescribeResponseMethodsTrashOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+export const NotesDescribeResponseMethodsTrashOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+
+export type NotesDescribeResponseMethodsTrashOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+export const NotesDescribeResponseMethodsTrashOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+
+export type NotesDescribeResponseMethodsTrashOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+export const NotesDescribeResponseMethodsTrashOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+
+export type NotesDescribeResponseMethodsTrashOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+export const NotesDescribeResponseMethodsTrashOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+
+export type NotesDescribeResponseMethodsTrashOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+export const NotesDescribeResponseMethodsTrashOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+
+export type NotesDescribeResponseMethodsTrashOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+export const NotesDescribeResponseMethodsTrashOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+
+export type NotesDescribeResponseMethodsTrashOpenapiResponseSchemaList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsTrashOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsTrashOpenapiResponseSchemaList>;
+
+export type NotesDescribeResponseMethodsTrashOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const NotesDescribeResponseMethodsTrashOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface NotesDescribeResponseMethodsTrashOpenapiResponse {
+  examples?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples | null;
+  schema?: NotesDescribeResponseMethodsTrashOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const NotesDescribeResponseMethodsTrashOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples,
+        ),
+      ),
+      schema: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsTrashOpenapiResponseSchemaList),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsTrashOpenapiResponse",
+  }) as any as S.Schema<NotesDescribeResponseMethodsTrashOpenapiResponse>;
+
+export interface NotesDescribeResponseMethodsTrashOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest | null;
+  response?: NotesDescribeResponseMethodsTrashOpenapiResponse | null;
+}
+export const NotesDescribeResponseMethodsTrashOpenapi = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsTrashOpenapiResponse),
+      ),
+    }),
+).annotate({
+  identifier: "NotesDescribeResponseMethodsTrashOpenapi",
+}) as any as S.Schema<NotesDescribeResponseMethodsTrashOpenapi>;
+
+export interface NotesDescribeResponseMethodsTrash {
+  description?: string | null;
+  parameters?: AdminValueListsDescribeResponseMethodsArchiveParameters | null;
+  returns?: string | null;
+  openapi?: NotesDescribeResponseMethodsTrashOpenapi | null;
+}
+export const NotesDescribeResponseMethodsTrash = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    description: S.optional(S.NullOr(S.String)),
+    parameters: S.optional(
+      S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParameters),
+    ),
+    returns: S.optional(S.NullOr(S.String)),
+    openapi: S.optional(S.NullOr(NotesDescribeResponseMethodsTrashOpenapi)),
+  }),
+).annotate({
+  identifier: "NotesDescribeResponseMethodsTrash",
+}) as any as S.Schema<NotesDescribeResponseMethodsTrash>;
+
+export type NotesDescribeResponseMethodsUpdateParametersData =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const NotesDescribeResponseMethodsUpdateParametersData =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type NotesDescribeResponseMethodsUpdateParametersFieldsDefaultValueList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsUpdateParametersFieldsDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsUpdateParametersFieldsDefaultValueList>;
+
+export interface NotesDescribeResponseMethodsUpdateParametersFields {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: NotesDescribeResponseMethodsUpdateParametersFieldsDefaultValueList | null;
+  required?: boolean | null;
+}
+export const NotesDescribeResponseMethodsUpdateParametersFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsUpdateParametersFieldsDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsUpdateParametersFields",
+  }) as any as S.Schema<NotesDescribeResponseMethodsUpdateParametersFields>;
+
+export type NotesDescribeResponseMethodsUpdateParametersExtraFieldsDefaultValueList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsUpdateParametersExtraFieldsDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsUpdateParametersExtraFieldsDefaultValueList>;
+
+export interface NotesDescribeResponseMethodsUpdateParametersExtraFields {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: NotesDescribeResponseMethodsUpdateParametersExtraFieldsDefaultValueList | null;
+  required?: boolean | null;
+}
+export const NotesDescribeResponseMethodsUpdateParametersExtraFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsUpdateParametersExtraFieldsDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsUpdateParametersExtraFields",
+  }) as any as S.Schema<NotesDescribeResponseMethodsUpdateParametersExtraFields>;
+
+export interface NotesDescribeResponseMethodsUpdateParameters {
+  data?: AdminValueListsDescribeResponseMethodsArchiveParametersId | null;
+  fields?: NotesDescribeResponseMethodsUpdateParametersFields | null;
+  extra_fields?: NotesDescribeResponseMethodsUpdateParametersExtraFields | null;
+}
+export const NotesDescribeResponseMethodsUpdateParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      data: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParametersId),
+      ),
+      fields: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsUpdateParametersFields),
+      ),
+      extra_fields: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsUpdateParametersExtraFields),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsUpdateParameters",
+  }) as any as S.Schema<NotesDescribeResponseMethodsUpdateParameters>;
+
+export type NotesDescribeResponseMethodsUpdateOpenapiRequestParametersDataList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsUpdateOpenapiRequestParametersDataList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsUpdateOpenapiRequestParametersDataList>;
+
+export type NotesDescribeResponseMethodsUpdateOpenapiRequestParametersFieldsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const NotesDescribeResponseMethodsUpdateOpenapiRequestParametersFieldsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type NotesDescribeResponseMethodsUpdateOpenapiRequestParametersFields =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const NotesDescribeResponseMethodsUpdateOpenapiRequestParametersFields =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type NotesDescribeResponseMethodsUpdateOpenapiRequestParametersExtraFieldsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const NotesDescribeResponseMethodsUpdateOpenapiRequestParametersExtraFieldsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type NotesDescribeResponseMethodsUpdateOpenapiRequestParametersExtraFields =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const NotesDescribeResponseMethodsUpdateOpenapiRequestParametersExtraFields =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export interface NotesDescribeResponseMethodsUpdateOpenapiRequestParameters {
+  data?: NotesDescribeResponseMethodsUpdateOpenapiRequestParametersDataList | null;
+  fields?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId | null;
+  extra_fields?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId | null;
+}
+export const NotesDescribeResponseMethodsUpdateOpenapiRequestParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      data: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsUpdateOpenapiRequestParametersDataList,
+        ),
+      ),
+      fields: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId,
+        ),
+      ),
+      extra_fields: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsUpdateOpenapiRequestParameters",
+  }) as any as S.Schema<NotesDescribeResponseMethodsUpdateOpenapiRequestParameters>;
+
+export type NotesDescribeResponseMethodsUpdateOpenapiRequestExamplesExample1List =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsUpdateOpenapiRequestExamplesExample1List =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsUpdateOpenapiRequestExamplesExample1List>;
+
+export interface NotesDescribeResponseMethodsUpdateOpenapiRequestExamples {
+  Example1?: NotesDescribeResponseMethodsUpdateOpenapiRequestExamplesExample1List | null;
+}
+export const NotesDescribeResponseMethodsUpdateOpenapiRequestExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsUpdateOpenapiRequestExamplesExample1List,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsUpdateOpenapiRequestExamples",
+  }) as any as S.Schema<NotesDescribeResponseMethodsUpdateOpenapiRequestExamples>;
+
+export interface NotesDescribeResponseMethodsUpdateOpenapiRequest {
+  parameters?: NotesDescribeResponseMethodsUpdateOpenapiRequestParameters | null;
+  examples?: NotesDescribeResponseMethodsUpdateOpenapiRequestExamples | null;
+}
+export const NotesDescribeResponseMethodsUpdateOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsUpdateOpenapiRequestParameters),
+      ),
+      examples: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsUpdateOpenapiRequestExamples),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsUpdateOpenapiRequest",
+  }) as any as S.Schema<NotesDescribeResponseMethodsUpdateOpenapiRequest>;
+
+export type NotesDescribeResponseMethodsUpdateOpenapiResponseExamplesExample1List =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsUpdateOpenapiResponseExamplesExample1List =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsUpdateOpenapiResponseExamplesExample1List>;
+
+export interface NotesDescribeResponseMethodsUpdateOpenapiResponseExamples {
+  Example1?: NotesDescribeResponseMethodsUpdateOpenapiResponseExamplesExample1List | null;
+}
+export const NotesDescribeResponseMethodsUpdateOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          NotesDescribeResponseMethodsUpdateOpenapiResponseExamplesExample1List,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsUpdateOpenapiResponseExamples",
+  }) as any as S.Schema<NotesDescribeResponseMethodsUpdateOpenapiResponseExamples>;
+
+export type NotesDescribeResponseMethodsUpdateOpenapiResponseSchemaList =
+  Array<unknown>;
+export const NotesDescribeResponseMethodsUpdateOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeResponseMethodsUpdateOpenapiResponseSchemaList>;
+
+export type NotesDescribeResponseMethodsUpdateOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const NotesDescribeResponseMethodsUpdateOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface NotesDescribeResponseMethodsUpdateOpenapiResponse {
+  examples?: NotesDescribeResponseMethodsUpdateOpenapiResponseExamples | null;
+  schema?: NotesDescribeResponseMethodsUpdateOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const NotesDescribeResponseMethodsUpdateOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsUpdateOpenapiResponseExamples),
+      ),
+      schema: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsUpdateOpenapiResponseSchemaList),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsUpdateOpenapiResponse",
+  }) as any as S.Schema<NotesDescribeResponseMethodsUpdateOpenapiResponse>;
+
+export interface NotesDescribeResponseMethodsUpdateOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: NotesDescribeResponseMethodsUpdateOpenapiRequest | null;
+  response?: NotesDescribeResponseMethodsUpdateOpenapiResponse | null;
+}
+export const NotesDescribeResponseMethodsUpdateOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsUpdateOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(NotesDescribeResponseMethodsUpdateOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "NotesDescribeResponseMethodsUpdateOpenapi",
+  }) as any as S.Schema<NotesDescribeResponseMethodsUpdateOpenapi>;
+
+export interface NotesDescribeResponseMethodsUpdate {
+  description?: string | null;
+  parameters?: NotesDescribeResponseMethodsUpdateParameters | null;
+  returns?: string | null;
+  openapi?: NotesDescribeResponseMethodsUpdateOpenapi | null;
+}
+export const NotesDescribeResponseMethodsUpdate = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    description: S.optional(S.NullOr(S.String)),
+    parameters: S.optional(
+      S.NullOr(NotesDescribeResponseMethodsUpdateParameters),
+    ),
+    returns: S.optional(S.NullOr(S.String)),
+    openapi: S.optional(S.NullOr(NotesDescribeResponseMethodsUpdateOpenapi)),
+  }),
+).annotate({
+  identifier: "NotesDescribeResponseMethodsUpdate",
+}) as any as S.Schema<NotesDescribeResponseMethodsUpdate>;
+
+export interface NotesDescribeResponseMethods {
+  archive?: NotesDescribeResponseMethodsArchive | null;
+  create?: NotesDescribeResponseMethodsCreate | null;
+  read?: NotesDescribeResponseMethodsRead | null;
+  recoverFromArchive?: NotesDescribeResponseMethodsRecoverFromArchive | null;
+  recoverFromTrash?: NotesDescribeResponseMethodsRecoverFromTrash | null;
+  search?: NotesDescribeResponseMethodsSearch | null;
+  trash?: NotesDescribeResponseMethodsTrash | null;
+  update?: NotesDescribeResponseMethodsUpdate | null;
+}
+export const NotesDescribeResponseMethods = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    archive: S.optional(S.NullOr(NotesDescribeResponseMethodsArchive)),
+    create: S.optional(S.NullOr(NotesDescribeResponseMethodsCreate)),
+    read: S.optional(S.NullOr(NotesDescribeResponseMethodsRead)),
+    recoverFromArchive: S.optional(
+      S.NullOr(NotesDescribeResponseMethodsRecoverFromArchive),
+    ),
+    recoverFromTrash: S.optional(
+      S.NullOr(NotesDescribeResponseMethodsRecoverFromTrash),
+    ),
+    search: S.optional(S.NullOr(NotesDescribeResponseMethodsSearch)),
+    trash: S.optional(S.NullOr(NotesDescribeResponseMethodsTrash)),
+    update: S.optional(S.NullOr(NotesDescribeResponseMethodsUpdate)),
+  }),
+).annotate({
+  identifier: "NotesDescribeResponseMethods",
+}) as any as S.Schema<NotesDescribeResponseMethods>;
+
+export interface NotesDescribeResponse {
+  name?: string | null;
+  description?: string | null;
+  detail?: string | null;
+  methods?: NotesDescribeResponseMethods | null;
+}
+export const NotesDescribeResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    name: S.optional(S.NullOr(S.String)),
+    description: S.optional(S.NullOr(S.String)),
+    detail: S.optional(S.NullOr(S.String)),
+    methods: S.optional(S.NullOr(NotesDescribeResponseMethods)),
+  }),
+).annotate({
+  identifier: "NotesDescribeResponse",
+}) as any as S.Schema<NotesDescribeResponse>;
+
+export interface NotesDescribeDeleteModesRequest {}
+export const NotesDescribeDeleteModesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/Notes::describeDeleteModes",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "NotesDescribeDeleteModesRequest",
+}) as any as S.Schema<NotesDescribeDeleteModesRequest>;
+
+export type NotesDescribeDeleteModesResponseBodyList = Array<string>;
+export const NotesDescribeDeleteModesResponseBodyList = /*@__PURE__*/ S.Array(
+  S.String,
+) as any as S.Schema<NotesDescribeDeleteModesResponseBodyList>;
+
+export type NotesDescribeDeleteModesResponse =
+  NotesDescribeDeleteModesResponseBodyList;
+export const NotesDescribeDeleteModesResponse = /*@__PURE__*/ S.suspend(() =>
+  NotesDescribeDeleteModesResponseBodyList.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "NotesDescribeDeleteModesResponse",
+}) as any as S.Schema<NotesDescribeDeleteModesResponse>;
+
+export interface NotesDescribeModelRequest {}
+export const NotesDescribeModelRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(
+    T.Http({ method: "POST", uri: "/v1/rex/Notes::describeModel", code: 200 }),
+  ),
+).annotate({
+  identifier: "NotesDescribeModelRequest",
+}) as any as S.Schema<NotesDescribeModelRequest>;
+
+export type NotesDescribeModelResponseSearchResultFormatsItem =
+  AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
+export const NotesDescribeModelResponseSearchResultFormatsItem =
+  AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
+
+export type NotesDescribeModelResponseSearchResultFormatsList =
+  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
+export const NotesDescribeModelResponseSearchResultFormatsList =
+  /*@__PURE__*/ S.Array(
+    AdminWebhooksDescribeModelResponseSearchResultFormatsItem,
+  ) as any as S.Schema<NotesDescribeModelResponseSearchResultFormatsList>;
+
+export type NotesDescribeModelResponseDeleteModesList = Array<string>;
+export const NotesDescribeModelResponseDeleteModesList = /*@__PURE__*/ S.Array(
+  S.String,
+) as any as S.Schema<NotesDescribeModelResponseDeleteModesList>;
+
+export type NotesDescribeModelResponseDataStructureStructureList =
+  Array<string>;
+export const NotesDescribeModelResponseDataStructureStructureList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<NotesDescribeModelResponseDataStructureStructureList>;
+
+export interface NotesDescribeModelResponseDataStructure {
+  description?: string | null;
+  structure?: NotesDescribeModelResponseDataStructureStructureList | null;
+}
+export const NotesDescribeModelResponseDataStructure = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      structure: S.optional(
+        S.NullOr(NotesDescribeModelResponseDataStructureStructureList),
+      ),
+    }),
+).annotate({
+  identifier: "NotesDescribeModelResponseDataStructure",
+}) as any as S.Schema<NotesDescribeModelResponseDataStructure>;
+
+export type NotesDescribeModelResponseReadFields =
+  AdminWebhooksDescribeModelResponseReadFields;
+export const NotesDescribeModelResponseReadFields =
+  AdminWebhooksDescribeModelResponseReadFields;
+
+export type NotesDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const NotesDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type NotesDescribeModelResponseSearchableFieldsSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const NotesDescribeModelResponseSearchableFieldsSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type NotesDescribeModelResponseSearchableFieldsSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const NotesDescribeModelResponseSearchableFieldsSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type NotesDescribeModelResponseSearchableFieldsSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const NotesDescribeModelResponseSearchableFieldsSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type NotesDescribeModelResponseSearchableFieldsSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const NotesDescribeModelResponseSearchableFieldsSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type NotesDescribeModelResponseSearchableFieldsSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const NotesDescribeModelResponseSearchableFieldsSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type NotesDescribeModelResponseSearchableFieldsSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const NotesDescribeModelResponseSearchableFieldsSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type NotesDescribeModelResponseSearchableFieldsSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const NotesDescribeModelResponseSearchableFieldsSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type NotesDescribeModelResponseSearchableFieldsId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const NotesDescribeModelResponseSearchableFieldsId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type NotesDescribeModelResponseSearchableFieldsSystemRecordStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const NotesDescribeModelResponseSearchableFieldsSystemRecordStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type NotesDescribeModelResponseSearchableFieldsSystemRecordState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const NotesDescribeModelResponseSearchableFieldsSystemRecordState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type NotesDescribeModelResponseSearchableFields =
+  AdminWebhooksDescribeModelResponseSearchableFields;
+export const NotesDescribeModelResponseSearchableFields =
+  AdminWebhooksDescribeModelResponseSearchableFields;
+
+export type NotesDescribeModelResponseOrderbyFieldsList = Array<string>;
+export const NotesDescribeModelResponseOrderbyFieldsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<NotesDescribeModelResponseOrderbyFieldsList>;
+
+export type NotesDescribeModelResponseExportOptionsList = Array<unknown>;
+export const NotesDescribeModelResponseExportOptionsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesDescribeModelResponseExportOptionsList>;
+
+export interface NotesDescribeModelResponse {
+  search_result_formats?: NotesDescribeModelResponseSearchResultFormatsList | null;
+  delete_modes?: NotesDescribeModelResponseDeleteModesList | null;
+  data_structure?: NotesDescribeModelResponseDataStructure | null;
+  read_fields?: AdminWebhooksDescribeModelResponseReadFields | null;
+  read_extra_fields?: unknown | null;
+  searchable_fields?: AdminWebhooksDescribeModelResponseSearchableFields | null;
+  orderby_fields?: NotesDescribeModelResponseOrderbyFieldsList | null;
+  export_options?: NotesDescribeModelResponseExportOptionsList | null;
+}
+export const NotesDescribeModelResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    search_result_formats: S.optional(
+      S.NullOr(NotesDescribeModelResponseSearchResultFormatsList),
+    ),
+    delete_modes: S.optional(
+      S.NullOr(NotesDescribeModelResponseDeleteModesList),
+    ),
+    data_structure: S.optional(
+      S.NullOr(NotesDescribeModelResponseDataStructure),
+    ),
+    read_fields: S.optional(
+      S.NullOr(AdminWebhooksDescribeModelResponseReadFields),
+    ),
+    read_extra_fields: S.optional(S.NullOr(S.Unknown)),
+    searchable_fields: S.optional(
+      S.NullOr(AdminWebhooksDescribeModelResponseSearchableFields),
+    ),
+    orderby_fields: S.optional(
+      S.NullOr(NotesDescribeModelResponseOrderbyFieldsList),
+    ),
+    export_options: S.optional(
+      S.NullOr(NotesDescribeModelResponseExportOptionsList),
+    ),
+  }),
+).annotate({
+  identifier: "NotesDescribeModelResponse",
+}) as any as S.Schema<NotesDescribeModelResponse>;
+
+export interface NotesDescribeSearchFieldsRequest {
+  /** True if detail about the fields should be included */
+  include_detail?: boolean;
+}
+export const NotesDescribeSearchFieldsRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    include_detail: S.optional(S.Boolean),
+  }).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/Notes::describeSearchFields",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "NotesDescribeSearchFieldsRequest",
+}) as any as S.Schema<NotesDescribeSearchFieldsRequest>;
+
+export type NotesDescribeSearchFieldsResponseId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const NotesDescribeSearchFieldsResponseId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type NotesDescribeSearchFieldsResponseSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const NotesDescribeSearchFieldsResponseSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type NotesDescribeSearchFieldsResponseSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const NotesDescribeSearchFieldsResponseSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type NotesDescribeSearchFieldsResponseSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const NotesDescribeSearchFieldsResponseSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type NotesDescribeSearchFieldsResponseSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const NotesDescribeSearchFieldsResponseSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type NotesDescribeSearchFieldsResponseSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const NotesDescribeSearchFieldsResponseSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type NotesDescribeSearchFieldsResponseSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const NotesDescribeSearchFieldsResponseSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type NotesDescribeSearchFieldsResponseSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const NotesDescribeSearchFieldsResponseSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type NotesDescribeSearchFieldsResponseSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const NotesDescribeSearchFieldsResponseSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type NotesDescribeSearchFieldsResponseSystemRecordStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const NotesDescribeSearchFieldsResponseSystemRecordStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type NotesDescribeSearchFieldsResponseSystemRecordState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const NotesDescribeSearchFieldsResponseSystemRecordState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export interface NotesDescribeSearchFieldsResponse {
+  id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  system_owner_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_created_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_modified_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_ctime?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  system_modtime?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  system_record_state?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+}
+export const NotesDescribeSearchFieldsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.optional(
+      S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+    ),
+    system_owner_user_id: S.optional(
+      S.NullOr(
+        AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+      ),
+    ),
+    system_created_user_id: S.optional(
+      S.NullOr(
+        AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+      ),
+    ),
+    system_modified_user_id: S.optional(
+      S.NullOr(
+        AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+      ),
+    ),
+    system_ctime: S.optional(
+      S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+    ),
+    system_modtime: S.optional(
+      S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+    ),
+    system_record_state: S.optional(
+      S.NullOr(
+        AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+      ),
+    ),
+  }),
+).annotate({
+  identifier: "NotesDescribeSearchFieldsResponse",
+}) as any as S.Schema<NotesDescribeSearchFieldsResponse>;
+
+export interface NotesIsGhostSessionRequest {}
+export const NotesIsGhostSessionRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(
+    T.Http({ method: "POST", uri: "/v1/rex/Notes::isGhostSession", code: 200 }),
+  ),
+).annotate({
+  identifier: "NotesIsGhostSessionRequest",
+}) as any as S.Schema<NotesIsGhostSessionRequest>;
+
+export type NotesIsGhostSessionResponse = unknown;
+export const NotesIsGhostSessionResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Unknown.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "NotesIsGhostSessionResponse",
+}) as any as S.Schema<NotesIsGhostSessionResponse>;
+
+export interface NotesReadRequest {
+  /** The record id to read */
+  id: number;
+}
+export const NotesReadRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.Number,
+  }).pipe(T.Http({ method: "POST", uri: "/v1/rex/Notes::read", code: 200 })),
+).annotate({
+  identifier: "NotesReadRequest",
+}) as any as S.Schema<NotesReadRequest>;
+
+export type NotesReadResponseNoteType =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const NotesReadResponseNoteType =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type NotesReadResponseRelatedNoteContactsItemContactSystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+export const NotesReadResponseRelatedNoteContactsItemContactSystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type NotesReadResponseRelatedNoteContactsItemContact =
+  FeedbackReadResponseListingRelatedContactRelnListingItemContact;
+export const NotesReadResponseRelatedNoteContactsItemContact =
+  FeedbackReadResponseListingRelatedContactRelnListingItemContact;
+
+export interface NotesReadResponseRelatedNoteContactsItem {
+  id?: string | null;
+  contact?: FeedbackReadResponseListingRelatedContactRelnListingItemContact | null;
+}
+export const NotesReadResponseRelatedNoteContactsItem = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.String)),
+      contact: S.optional(
+        S.NullOr(
+          FeedbackReadResponseListingRelatedContactRelnListingItemContact,
+        ),
+      ),
+    }),
+).annotate({
+  identifier: "NotesReadResponseRelatedNoteContactsItem",
+}) as any as S.Schema<NotesReadResponseRelatedNoteContactsItem>;
+
+export type NotesReadResponseRelatedNoteContactsList =
+  Array<NotesReadResponseRelatedNoteContactsItem>;
+export const NotesReadResponseRelatedNoteContactsList = /*@__PURE__*/ S.Array(
+  NotesReadResponseRelatedNoteContactsItem,
+) as any as S.Schema<NotesReadResponseRelatedNoteContactsList>;
+
+export type NotesReadResponseRelatedNoteMarketLeadsList = Array<unknown>;
+export const NotesReadResponseRelatedNoteMarketLeadsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesReadResponseRelatedNoteMarketLeadsList>;
+
+export type NotesReadResponseRelatedNotePropertiesItemPropertySystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+export const NotesReadResponseRelatedNotePropertiesItemPropertySystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type NotesReadResponseRelatedNotePropertiesItemPropertyPropertyCategory =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const NotesReadResponseRelatedNotePropertiesItemPropertyPropertyCategory =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type NotesReadResponseRelatedNotePropertiesItemProperty =
+  FeedbackReadResponseListingProperty;
+export const NotesReadResponseRelatedNotePropertiesItemProperty =
+  FeedbackReadResponseListingProperty;
+
+export interface NotesReadResponseRelatedNotePropertiesItem {
+  id?: string | null;
+  property?: FeedbackReadResponseListingProperty | null;
+}
+export const NotesReadResponseRelatedNotePropertiesItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.String)),
+      property: S.optional(S.NullOr(FeedbackReadResponseListingProperty)),
+    }),
+  ).annotate({
+    identifier: "NotesReadResponseRelatedNotePropertiesItem",
+  }) as any as S.Schema<NotesReadResponseRelatedNotePropertiesItem>;
+
+export type NotesReadResponseRelatedNotePropertiesList =
+  Array<NotesReadResponseRelatedNotePropertiesItem>;
+export const NotesReadResponseRelatedNotePropertiesList = /*@__PURE__*/ S.Array(
+  NotesReadResponseRelatedNotePropertiesItem,
+) as any as S.Schema<NotesReadResponseRelatedNotePropertiesList>;
+
+export type NotesReadResponseRelatedNoteProjectsList = Array<unknown>;
+export const NotesReadResponseRelatedNoteProjectsList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<NotesReadResponseRelatedNoteProjectsList>;
+
+export type NotesReadResponseRelatedNoteProjectStagesList = Array<unknown>;
+export const NotesReadResponseRelatedNoteProjectStagesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesReadResponseRelatedNoteProjectStagesList>;
+
+export type NotesReadResponseRelatedNoteChainLinksList = Array<unknown>;
+export const NotesReadResponseRelatedNoteChainLinksList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<NotesReadResponseRelatedNoteChainLinksList>;
+
+export interface NotesReadResponseRelated {
+  note_contacts?: NotesReadResponseRelatedNoteContactsList | null;
+  note_market_leads?: NotesReadResponseRelatedNoteMarketLeadsList | null;
+  note_properties?: NotesReadResponseRelatedNotePropertiesList | null;
+  note_projects?: NotesReadResponseRelatedNoteProjectsList | null;
+  note_project_stages?: NotesReadResponseRelatedNoteProjectStagesList | null;
+  note_chain_links?: NotesReadResponseRelatedNoteChainLinksList | null;
+}
+export const NotesReadResponseRelated = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    note_contacts: S.optional(
+      S.NullOr(NotesReadResponseRelatedNoteContactsList),
+    ),
+    note_market_leads: S.optional(
+      S.NullOr(NotesReadResponseRelatedNoteMarketLeadsList),
+    ),
+    note_properties: S.optional(
+      S.NullOr(NotesReadResponseRelatedNotePropertiesList),
+    ),
+    note_projects: S.optional(
+      S.NullOr(NotesReadResponseRelatedNoteProjectsList),
+    ),
+    note_project_stages: S.optional(
+      S.NullOr(NotesReadResponseRelatedNoteProjectStagesList),
+    ),
+    note_chain_links: S.optional(
+      S.NullOr(NotesReadResponseRelatedNoteChainLinksList),
+    ),
+  }),
+).annotate({
+  identifier: "NotesReadResponseRelated",
+}) as any as S.Schema<NotesReadResponseRelated>;
+
+export type NotesReadResponseSystemModifiedUser =
+  ContactsReadResponseSystemOwnerUser;
+export const NotesReadResponseSystemModifiedUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type NotesReadResponseSystemCreatedUser =
+  ContactsReadResponseSystemOwnerUser;
+export const NotesReadResponseSystemCreatedUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type NotesReadResponseSecurityUserRightsList = Array<string>;
+export const NotesReadResponseSecurityUserRightsList = /*@__PURE__*/ S.Array(
+  S.String,
+) as any as S.Schema<NotesReadResponseSecurityUserRightsList>;
+
+export interface NotesReadResponse {
+  system_record_state?: string | null;
+  system_ctime?: number | null;
+  system_modtime?: number | null;
+  reminder_id?: unknown;
+  etag?: string | null;
+  note?: string | null;
+  note_type?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
+  related?: NotesReadResponseRelated | null;
+  system_modified_user?: ContactsReadResponseSystemOwnerUser | null;
+  system_created_user?: ContactsReadResponseSystemOwnerUser | null;
+  security_user_rights?: NotesReadResponseSecurityUserRightsList | null;
+  id?: number | null;
+}
+export const NotesReadResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    system_record_state: S.optional(S.NullOr(S.String)),
+    system_ctime: S.optional(S.NullOr(S.Number)),
+    system_modtime: S.optional(S.NullOr(S.Number)),
+    reminder_id: S.optional(S.Unknown),
+    etag: S.optional(S.NullOr(S.String)),
+    note: S.optional(S.NullOr(S.String)),
+    note_type: S.optional(
+      S.NullOr(
+        ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+      ),
+    ),
+    related: S.optional(S.NullOr(NotesReadResponseRelated)),
+    system_modified_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    system_created_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    security_user_rights: S.optional(
+      S.NullOr(NotesReadResponseSecurityUserRightsList),
+    ),
+    id: S.optional(S.NullOr(S.Number)),
+  }),
+).annotate({
+  identifier: "NotesReadResponse",
+}) as any as S.Schema<NotesReadResponse>;
+
+export interface NotesRecoverFromTrashRequest {
+  /** The id of the record that should be recovered from the trash. */
+  id: number;
+}
+export const NotesRecoverFromTrashRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.Number,
+  }).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/Notes::recoverFromTrash",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "NotesRecoverFromTrashRequest",
+}) as any as S.Schema<NotesRecoverFromTrashRequest>;
+
+export type NotesRecoverFromTrashResponse = number;
+export const NotesRecoverFromTrashResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Number.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "NotesRecoverFromTrashResponse",
+}) as any as S.Schema<NotesRecoverFromTrashResponse>;
+
+/** An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service. */
+export type NotesSearchRequestExtraOptionsList = Array<unknown>;
+export const NotesSearchRequestExtraOptionsList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<NotesSearchRequestExtraOptionsList>;
+
+export interface NotesSearchRequest {
+  /** An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value) */
+  criteria?: unknown;
+  /** An array keyed by field name with a value of either ASC|DESC */
+  order_by?: string;
+  /** The number of rows to offset */
+  offset?: number;
+  /** The number of rows to return */
+  limit?: number;
+  /** True if a viewstate should be created, false to just return the records */
+  create_viewstate?: boolean;
+  /** Any of the search result formats available for this service */
+  result_format?: string;
+  /** An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service. */
+  extra_options?: NotesSearchRequestExtraOptionsList;
+  /** (DEPRECATED - provide system_record_state as a criteria instead) */
+  search_state?: unknown;
+  /** (DEPRECATED - use search_result_format:'ids' instead) If set to true, returns ids of matching records only - no actual rows */
+  ids_only?: boolean;
+}
+export const NotesSearchRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    criteria: S.optional(S.Unknown),
+    order_by: S.optional(S.String),
+    offset: S.optional(S.Number),
+    limit: S.optional(S.Number),
+    create_viewstate: S.optional(S.Boolean),
+    result_format: S.optional(S.String),
+    extra_options: S.optional(NotesSearchRequestExtraOptionsList),
+    search_state: S.optional(S.Unknown),
+    ids_only: S.optional(S.Boolean),
+  }).pipe(T.Http({ method: "POST", uri: "/v1/rex/Notes::search", code: 200 })),
+).annotate({
+  identifier: "NotesSearchRequest",
+}) as any as S.Schema<NotesSearchRequest>;
+
+export type NotesSearchResponseRowsItemSecurityUserRightsList = Array<string>;
+export const NotesSearchResponseRowsItemSecurityUserRightsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<NotesSearchResponseRowsItemSecurityUserRightsList>;
+
+export type NotesSearchResponseRowsItemNoteType =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const NotesSearchResponseRowsItemNoteType =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type NotesSearchResponseRowsItemRelatedNoteContactsItemContactSystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+export const NotesSearchResponseRowsItemRelatedNoteContactsItemContactSystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type NotesSearchResponseRowsItemRelatedNoteContactsItemContact =
+  FeedbackReadResponseListingRelatedContactRelnListingItemContact;
+export const NotesSearchResponseRowsItemRelatedNoteContactsItemContact =
+  FeedbackReadResponseListingRelatedContactRelnListingItemContact;
+
+export type NotesSearchResponseRowsItemRelatedNoteContactsItem =
+  NotesReadResponseRelatedNoteContactsItem;
+export const NotesSearchResponseRowsItemRelatedNoteContactsItem =
+  NotesReadResponseRelatedNoteContactsItem;
+
+export type NotesSearchResponseRowsItemRelatedNoteContactsList =
+  Array<NotesReadResponseRelatedNoteContactsItem>;
+export const NotesSearchResponseRowsItemRelatedNoteContactsList =
+  /*@__PURE__*/ S.Array(
+    NotesReadResponseRelatedNoteContactsItem,
+  ) as any as S.Schema<NotesSearchResponseRowsItemRelatedNoteContactsList>;
+
+export type NotesSearchResponseRowsItemRelatedNoteMarketLeadsList =
+  Array<unknown>;
+export const NotesSearchResponseRowsItemRelatedNoteMarketLeadsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesSearchResponseRowsItemRelatedNoteMarketLeadsList>;
+
+export type NotesSearchResponseRowsItemRelatedNotePropertiesItemPropertySystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+export const NotesSearchResponseRowsItemRelatedNotePropertiesItemPropertySystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type NotesSearchResponseRowsItemRelatedNotePropertiesItemPropertyPropertyCategory =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const NotesSearchResponseRowsItemRelatedNotePropertiesItemPropertyPropertyCategory =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type NotesSearchResponseRowsItemRelatedNotePropertiesItemProperty =
+  FeedbackReadResponseListingProperty;
+export const NotesSearchResponseRowsItemRelatedNotePropertiesItemProperty =
+  FeedbackReadResponseListingProperty;
+
+export type NotesSearchResponseRowsItemRelatedNotePropertiesItem =
+  NotesReadResponseRelatedNotePropertiesItem;
+export const NotesSearchResponseRowsItemRelatedNotePropertiesItem =
+  NotesReadResponseRelatedNotePropertiesItem;
+
+export type NotesSearchResponseRowsItemRelatedNotePropertiesList =
+  Array<NotesReadResponseRelatedNotePropertiesItem>;
+export const NotesSearchResponseRowsItemRelatedNotePropertiesList =
+  /*@__PURE__*/ S.Array(
+    NotesReadResponseRelatedNotePropertiesItem,
+  ) as any as S.Schema<NotesSearchResponseRowsItemRelatedNotePropertiesList>;
+
+export type NotesSearchResponseRowsItemRelatedNoteProjectsList = Array<unknown>;
+export const NotesSearchResponseRowsItemRelatedNoteProjectsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesSearchResponseRowsItemRelatedNoteProjectsList>;
+
+export type NotesSearchResponseRowsItemRelatedNoteProjectStagesList =
+  Array<unknown>;
+export const NotesSearchResponseRowsItemRelatedNoteProjectStagesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesSearchResponseRowsItemRelatedNoteProjectStagesList>;
+
+export type NotesSearchResponseRowsItemRelatedNoteChainLinksList =
+  Array<unknown>;
+export const NotesSearchResponseRowsItemRelatedNoteChainLinksList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesSearchResponseRowsItemRelatedNoteChainLinksList>;
+
+export interface NotesSearchResponseRowsItemRelated {
+  note_contacts?: NotesSearchResponseRowsItemRelatedNoteContactsList | null;
+  note_market_leads?: NotesSearchResponseRowsItemRelatedNoteMarketLeadsList | null;
+  note_properties?: NotesSearchResponseRowsItemRelatedNotePropertiesList | null;
+  note_projects?: NotesSearchResponseRowsItemRelatedNoteProjectsList | null;
+  note_project_stages?: NotesSearchResponseRowsItemRelatedNoteProjectStagesList | null;
+  note_chain_links?: NotesSearchResponseRowsItemRelatedNoteChainLinksList | null;
+}
+export const NotesSearchResponseRowsItemRelated = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    note_contacts: S.optional(
+      S.NullOr(NotesSearchResponseRowsItemRelatedNoteContactsList),
+    ),
+    note_market_leads: S.optional(
+      S.NullOr(NotesSearchResponseRowsItemRelatedNoteMarketLeadsList),
+    ),
+    note_properties: S.optional(
+      S.NullOr(NotesSearchResponseRowsItemRelatedNotePropertiesList),
+    ),
+    note_projects: S.optional(
+      S.NullOr(NotesSearchResponseRowsItemRelatedNoteProjectsList),
+    ),
+    note_project_stages: S.optional(
+      S.NullOr(NotesSearchResponseRowsItemRelatedNoteProjectStagesList),
+    ),
+    note_chain_links: S.optional(
+      S.NullOr(NotesSearchResponseRowsItemRelatedNoteChainLinksList),
+    ),
+  }),
+).annotate({
+  identifier: "NotesSearchResponseRowsItemRelated",
+}) as any as S.Schema<NotesSearchResponseRowsItemRelated>;
+
+export type NotesSearchResponseRowsItemSystemModifiedUser =
+  ContactsReadResponseSystemOwnerUser;
+export const NotesSearchResponseRowsItemSystemModifiedUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type NotesSearchResponseRowsItemSystemCreatedUser =
+  ContactsReadResponseSystemOwnerUser;
+export const NotesSearchResponseRowsItemSystemCreatedUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export interface NotesSearchResponseRowsItem {
+  system_record_state?: string | null;
+  system_ctime?: number | null;
+  system_modtime?: number | null;
+  reminder_id?: unknown;
+  etag?: string | null;
+  security_user_rights?: NotesSearchResponseRowsItemSecurityUserRightsList | null;
+  note?: string | null;
+  note_type?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
+  related?: NotesSearchResponseRowsItemRelated | null;
+  system_modified_user?: ContactsReadResponseSystemOwnerUser | null;
+  system_created_user?: ContactsReadResponseSystemOwnerUser | null;
+  id?: number | null;
+}
+export const NotesSearchResponseRowsItem = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    system_record_state: S.optional(S.NullOr(S.String)),
+    system_ctime: S.optional(S.NullOr(S.Number)),
+    system_modtime: S.optional(S.NullOr(S.Number)),
+    reminder_id: S.optional(S.Unknown),
+    etag: S.optional(S.NullOr(S.String)),
+    security_user_rights: S.optional(
+      S.NullOr(NotesSearchResponseRowsItemSecurityUserRightsList),
+    ),
+    note: S.optional(S.NullOr(S.String)),
+    note_type: S.optional(
+      S.NullOr(
+        ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+      ),
+    ),
+    related: S.optional(S.NullOr(NotesSearchResponseRowsItemRelated)),
+    system_modified_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    system_created_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    id: S.optional(S.NullOr(S.Number)),
+  }),
+).annotate({
+  identifier: "NotesSearchResponseRowsItem",
+}) as any as S.Schema<NotesSearchResponseRowsItem>;
+
+export type NotesSearchResponseRowsList = Array<NotesSearchResponseRowsItem>;
+export const NotesSearchResponseRowsList = /*@__PURE__*/ S.Array(
+  NotesSearchResponseRowsItem,
+) as any as S.Schema<NotesSearchResponseRowsList>;
+
+export type NotesSearchResponseCriteriaItem =
+  ContactsSearchResponseCriteriaItem;
+export const NotesSearchResponseCriteriaItem =
+  ContactsSearchResponseCriteriaItem;
+
+export type NotesSearchResponseCriteriaList =
+  Array<ContactsSearchResponseCriteriaItem>;
+export const NotesSearchResponseCriteriaList = /*@__PURE__*/ S.Array(
+  ContactsSearchResponseCriteriaItem,
+) as any as S.Schema<NotesSearchResponseCriteriaList>;
+
+export type NotesSearchResponseOrderByList = Array<unknown>;
+export const NotesSearchResponseOrderByList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<NotesSearchResponseOrderByList>;
+
+export interface NotesSearchResponse {
+  rows?: NotesSearchResponseRowsList | null;
+  total?: number | null;
+  viewstate_id?: unknown;
+  criteria?: NotesSearchResponseCriteriaList | null;
+  order_by?: NotesSearchResponseOrderByList | null;
+}
+export const NotesSearchResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    rows: S.optional(S.NullOr(NotesSearchResponseRowsList)),
+    total: S.optional(S.NullOr(S.Number)),
+    viewstate_id: S.optional(S.Unknown),
+    criteria: S.optional(S.NullOr(NotesSearchResponseCriteriaList)),
+    order_by: S.optional(S.NullOr(NotesSearchResponseOrderByList)),
+  }),
+).annotate({
+  identifier: "NotesSearchResponse",
+}) as any as S.Schema<NotesSearchResponse>;
+
+/** An array of valid criteria */
+export type NotesSearchValidateCriteriaRequestCriteriaList = Array<unknown>;
+export const NotesSearchValidateCriteriaRequestCriteriaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesSearchValidateCriteriaRequestCriteriaList>;
+
+export interface NotesSearchValidateCriteriaRequest {
+  /** An array of valid criteria */
+  criteria: NotesSearchValidateCriteriaRequestCriteriaList;
+}
+export const NotesSearchValidateCriteriaRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    criteria: NotesSearchValidateCriteriaRequestCriteriaList,
+  }).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/Notes::searchValidateCriteria",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "NotesSearchValidateCriteriaRequest",
+}) as any as S.Schema<NotesSearchValidateCriteriaRequest>;
+
+export type NotesSearchValidateCriteriaResponse = unknown;
+export const NotesSearchValidateCriteriaResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Unknown.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "NotesSearchValidateCriteriaResponse",
+}) as any as S.Schema<NotesSearchValidateCriteriaResponse>;
+
+/** An array of valid order bys (field=>direction) */
+export type NotesSearchValidateOrderBysRequestOrderBysList = Array<unknown>;
+export const NotesSearchValidateOrderBysRequestOrderBysList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesSearchValidateOrderBysRequestOrderBysList>;
+
+export interface NotesSearchValidateOrderBysRequest {
+  /** An array of valid order bys (field=>direction) */
+  order_bys: NotesSearchValidateOrderBysRequestOrderBysList;
+}
+export const NotesSearchValidateOrderBysRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    order_bys: NotesSearchValidateOrderBysRequestOrderBysList,
+  }).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/Notes::searchValidateOrderBys",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "NotesSearchValidateOrderBysRequest",
+}) as any as S.Schema<NotesSearchValidateOrderBysRequest>;
+
+export type NotesSearchValidateOrderBysResponse = unknown;
+export const NotesSearchValidateOrderBysResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Unknown.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "NotesSearchValidateOrderBysResponse",
+}) as any as S.Schema<NotesSearchValidateOrderBysResponse>;
+
+export interface NotesTrashRequest {
+  /** The id of the record that should be trashed. */
+  id: number;
+}
+export const NotesTrashRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.Number,
+  }).pipe(T.Http({ method: "POST", uri: "/v1/rex/Notes::trash", code: 200 })),
+).annotate({
+  identifier: "NotesTrashRequest",
+}) as any as S.Schema<NotesTrashRequest>;
+
+export type NotesTrashResponse = number;
+export const NotesTrashResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Number.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "NotesTrashResponse",
+}) as any as S.Schema<NotesTrashResponse>;
+
+export type NotesUpdateRequestDataNoteType = NotesCreateRequestDataNoteType;
+export const NotesUpdateRequestDataNoteType = NotesCreateRequestDataNoteType;
+
+export type NotesUpdateRequestDataRelatedNoteContactsItem =
+  NotesCreateRequestDataRelatedNoteContactsItem;
+export const NotesUpdateRequestDataRelatedNoteContactsItem =
+  NotesCreateRequestDataRelatedNoteContactsItem;
+
+/** All contacts that this note is associated to */
+export type NotesUpdateRequestDataRelatedNoteContactsList =
+  Array<NotesCreateRequestDataRelatedNoteContactsItem>;
+export const NotesUpdateRequestDataRelatedNoteContactsList =
+  /*@__PURE__*/ S.Array(
+    NotesCreateRequestDataRelatedNoteContactsItem,
+  ) as any as S.Schema<NotesUpdateRequestDataRelatedNoteContactsList>;
+
+export type NotesUpdateRequestDataRelatedNotePropertiesItem =
+  NotesCreateRequestDataRelatedNotePropertiesItem;
+export const NotesUpdateRequestDataRelatedNotePropertiesItem =
+  NotesCreateRequestDataRelatedNotePropertiesItem;
+
+/** All properties that this note is associated to */
+export type NotesUpdateRequestDataRelatedNotePropertiesList =
+  Array<NotesCreateRequestDataRelatedNotePropertiesItem>;
+export const NotesUpdateRequestDataRelatedNotePropertiesList =
+  /*@__PURE__*/ S.Array(
+    NotesCreateRequestDataRelatedNotePropertiesItem,
+  ) as any as S.Schema<NotesUpdateRequestDataRelatedNotePropertiesList>;
+
+export type NotesUpdateRequestDataRelatedNoteProjectsItem =
+  NotesCreateRequestDataRelatedNoteProjectsItem;
+export const NotesUpdateRequestDataRelatedNoteProjectsItem =
+  NotesCreateRequestDataRelatedNoteProjectsItem;
+
+/** All projects that this note is associated to */
+export type NotesUpdateRequestDataRelatedNoteProjectsList =
+  Array<NotesCreateRequestDataRelatedNoteProjectsItem>;
+export const NotesUpdateRequestDataRelatedNoteProjectsList =
+  /*@__PURE__*/ S.Array(
+    NotesCreateRequestDataRelatedNoteProjectsItem,
+  ) as any as S.Schema<NotesUpdateRequestDataRelatedNoteProjectsList>;
+
+export type NotesUpdateRequestDataRelatedNoteProjectStagesItem =
+  NotesCreateRequestDataRelatedNoteProjectStagesItem;
+export const NotesUpdateRequestDataRelatedNoteProjectStagesItem =
+  NotesCreateRequestDataRelatedNoteProjectStagesItem;
+
+/** All project stages that this note is associated to */
+export type NotesUpdateRequestDataRelatedNoteProjectStagesList =
+  Array<NotesCreateRequestDataRelatedNoteProjectStagesItem>;
+export const NotesUpdateRequestDataRelatedNoteProjectStagesList =
+  /*@__PURE__*/ S.Array(
+    NotesCreateRequestDataRelatedNoteProjectStagesItem,
+  ) as any as S.Schema<NotesUpdateRequestDataRelatedNoteProjectStagesList>;
+
+export type NotesUpdateRequestDataRelatedNoteMarketLeadsItem =
+  NotesCreateRequestDataRelatedNoteMarketLeadsItem;
+export const NotesUpdateRequestDataRelatedNoteMarketLeadsItem =
+  NotesCreateRequestDataRelatedNoteMarketLeadsItem;
+
+/** All market leads that this note is associated to */
+export type NotesUpdateRequestDataRelatedNoteMarketLeadsList =
+  Array<NotesCreateRequestDataRelatedNoteMarketLeadsItem>;
+export const NotesUpdateRequestDataRelatedNoteMarketLeadsList =
+  /*@__PURE__*/ S.Array(
+    NotesCreateRequestDataRelatedNoteMarketLeadsItem,
+  ) as any as S.Schema<NotesUpdateRequestDataRelatedNoteMarketLeadsList>;
+
+export type NotesUpdateRequestDataRelatedNoteChainLinksItem =
+  NotesCreateRequestDataRelatedNoteChainLinksItem;
+export const NotesUpdateRequestDataRelatedNoteChainLinksItem =
+  NotesCreateRequestDataRelatedNoteChainLinksItem;
+
+/** All chain links that this note is associated to */
+export type NotesUpdateRequestDataRelatedNoteChainLinksList =
+  Array<NotesCreateRequestDataRelatedNoteChainLinksItem>;
+export const NotesUpdateRequestDataRelatedNoteChainLinksList =
+  /*@__PURE__*/ S.Array(
+    NotesCreateRequestDataRelatedNoteChainLinksItem,
+  ) as any as S.Schema<NotesUpdateRequestDataRelatedNoteChainLinksList>;
+
+/** Data related to note */
+export interface NotesUpdateRequestDataRelated {
+  /** All contacts that this note is associated to */
+  note_contacts?: NotesUpdateRequestDataRelatedNoteContactsList | null;
+  /** All properties that this note is associated to */
+  note_properties?: NotesUpdateRequestDataRelatedNotePropertiesList | null;
+  /** All projects that this note is associated to */
+  note_projects?: NotesUpdateRequestDataRelatedNoteProjectsList;
+  /** All project stages that this note is associated to */
+  note_project_stages?: NotesUpdateRequestDataRelatedNoteProjectStagesList;
+  /** All market leads that this note is associated to */
+  note_market_leads?: NotesUpdateRequestDataRelatedNoteMarketLeadsList;
+  /** All chain links that this note is associated to */
+  note_chain_links?: NotesUpdateRequestDataRelatedNoteChainLinksList;
+}
+export const NotesUpdateRequestDataRelated = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    note_contacts: S.optional(
+      S.NullOr(NotesUpdateRequestDataRelatedNoteContactsList),
+    ),
+    note_properties: S.optional(
+      S.NullOr(NotesUpdateRequestDataRelatedNotePropertiesList),
+    ),
+    note_projects: S.optional(NotesUpdateRequestDataRelatedNoteProjectsList),
+    note_project_stages: S.optional(
+      NotesUpdateRequestDataRelatedNoteProjectStagesList,
+    ),
+    note_market_leads: S.optional(
+      NotesUpdateRequestDataRelatedNoteMarketLeadsList,
+    ),
+    note_chain_links: S.optional(
+      NotesUpdateRequestDataRelatedNoteChainLinksList,
+    ),
+  }),
+).annotate({
+  identifier: "NotesUpdateRequestDataRelated",
+}) as any as S.Schema<NotesUpdateRequestDataRelated>;
+
+/** An array of data to set for the note record */
+export interface NotesUpdateRequestData {
+  /** ID of the note to update */
+  id?: number;
+  /** The note description */
+  note?: string;
+  note_type?: NotesCreateRequestDataNoteType | null;
+  /** Whether the contact's last contacted date should be updated */
+  update_last_contacted?: boolean | null;
+  /** Data related to note */
+  related?: NotesUpdateRequestDataRelated;
+}
+export const NotesUpdateRequestData = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.optional(S.Number),
+    note: S.optional(S.String),
+    note_type: S.optional(S.NullOr(NotesCreateRequestDataNoteType)),
+    update_last_contacted: S.optional(S.NullOr(S.Boolean)),
+    related: S.optional(NotesUpdateRequestDataRelated),
+  }),
+).annotate({
+  identifier: "NotesUpdateRequestData",
+}) as any as S.Schema<NotesUpdateRequestData>;
+
+export interface NotesUpdateRequest {
+  /** An array of data to set for the note record */
+  data: NotesUpdateRequestData;
+  /** An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields. */
+  fields?: unknown;
+  /** An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields. */
+  extra_fields?: unknown;
+}
+export const NotesUpdateRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    data: NotesUpdateRequestData,
+    fields: S.optional(S.Unknown),
+    extra_fields: S.optional(S.Unknown),
+  }).pipe(T.Http({ method: "POST", uri: "/v1/rex/Notes::update", code: 200 })),
+).annotate({
+  identifier: "NotesUpdateRequest",
+}) as any as S.Schema<NotesUpdateRequest>;
+
+export type NotesUpdateResponseNoteType =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const NotesUpdateResponseNoteType =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type NotesUpdateResponseRelatedNoteContactsItemContactSystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+export const NotesUpdateResponseRelatedNoteContactsItemContactSystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type NotesUpdateResponseRelatedNoteContactsItemContact =
+  FeedbackReadResponseListingRelatedContactRelnListingItemContact;
+export const NotesUpdateResponseRelatedNoteContactsItemContact =
+  FeedbackReadResponseListingRelatedContactRelnListingItemContact;
+
+export type NotesUpdateResponseRelatedNoteContactsItem =
+  NotesReadResponseRelatedNoteContactsItem;
+export const NotesUpdateResponseRelatedNoteContactsItem =
+  NotesReadResponseRelatedNoteContactsItem;
+
+export type NotesUpdateResponseRelatedNoteContactsList =
+  Array<NotesReadResponseRelatedNoteContactsItem>;
+export const NotesUpdateResponseRelatedNoteContactsList = /*@__PURE__*/ S.Array(
+  NotesReadResponseRelatedNoteContactsItem,
+) as any as S.Schema<NotesUpdateResponseRelatedNoteContactsList>;
+
+export type NotesUpdateResponseRelatedNoteMarketLeadsList = Array<unknown>;
+export const NotesUpdateResponseRelatedNoteMarketLeadsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesUpdateResponseRelatedNoteMarketLeadsList>;
+
+export type NotesUpdateResponseRelatedNotePropertiesItemPropertySystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+export const NotesUpdateResponseRelatedNotePropertiesItemPropertySystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type NotesUpdateResponseRelatedNotePropertiesItemPropertyPropertyCategory =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const NotesUpdateResponseRelatedNotePropertiesItemPropertyPropertyCategory =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type NotesUpdateResponseRelatedNotePropertiesItemProperty =
+  FeedbackReadResponseListingProperty;
+export const NotesUpdateResponseRelatedNotePropertiesItemProperty =
+  FeedbackReadResponseListingProperty;
+
+export type NotesUpdateResponseRelatedNotePropertiesItem =
+  NotesReadResponseRelatedNotePropertiesItem;
+export const NotesUpdateResponseRelatedNotePropertiesItem =
+  NotesReadResponseRelatedNotePropertiesItem;
+
+export type NotesUpdateResponseRelatedNotePropertiesList =
+  Array<NotesReadResponseRelatedNotePropertiesItem>;
+export const NotesUpdateResponseRelatedNotePropertiesList =
+  /*@__PURE__*/ S.Array(
+    NotesReadResponseRelatedNotePropertiesItem,
+  ) as any as S.Schema<NotesUpdateResponseRelatedNotePropertiesList>;
+
+export type NotesUpdateResponseRelatedNoteProjectsList = Array<unknown>;
+export const NotesUpdateResponseRelatedNoteProjectsList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<NotesUpdateResponseRelatedNoteProjectsList>;
+
+export type NotesUpdateResponseRelatedNoteProjectStagesList = Array<unknown>;
+export const NotesUpdateResponseRelatedNoteProjectStagesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesUpdateResponseRelatedNoteProjectStagesList>;
+
+export type NotesUpdateResponseRelatedNoteChainLinksList = Array<unknown>;
+export const NotesUpdateResponseRelatedNoteChainLinksList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<NotesUpdateResponseRelatedNoteChainLinksList>;
+
+export interface NotesUpdateResponseRelated {
+  note_contacts?: NotesUpdateResponseRelatedNoteContactsList | null;
+  note_market_leads?: NotesUpdateResponseRelatedNoteMarketLeadsList | null;
+  note_properties?: NotesUpdateResponseRelatedNotePropertiesList | null;
+  note_projects?: NotesUpdateResponseRelatedNoteProjectsList | null;
+  note_project_stages?: NotesUpdateResponseRelatedNoteProjectStagesList | null;
+  note_chain_links?: NotesUpdateResponseRelatedNoteChainLinksList | null;
+}
+export const NotesUpdateResponseRelated = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    note_contacts: S.optional(
+      S.NullOr(NotesUpdateResponseRelatedNoteContactsList),
+    ),
+    note_market_leads: S.optional(
+      S.NullOr(NotesUpdateResponseRelatedNoteMarketLeadsList),
+    ),
+    note_properties: S.optional(
+      S.NullOr(NotesUpdateResponseRelatedNotePropertiesList),
+    ),
+    note_projects: S.optional(
+      S.NullOr(NotesUpdateResponseRelatedNoteProjectsList),
+    ),
+    note_project_stages: S.optional(
+      S.NullOr(NotesUpdateResponseRelatedNoteProjectStagesList),
+    ),
+    note_chain_links: S.optional(
+      S.NullOr(NotesUpdateResponseRelatedNoteChainLinksList),
+    ),
+  }),
+).annotate({
+  identifier: "NotesUpdateResponseRelated",
+}) as any as S.Schema<NotesUpdateResponseRelated>;
+
+export type NotesUpdateResponseSystemModifiedUser =
+  ContactsReadResponseSystemOwnerUser;
+export const NotesUpdateResponseSystemModifiedUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type NotesUpdateResponseSystemCreatedUser =
+  ContactsReadResponseSystemOwnerUser;
+export const NotesUpdateResponseSystemCreatedUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type NotesUpdateResponseSecurityUserRightsList = Array<string>;
+export const NotesUpdateResponseSecurityUserRightsList = /*@__PURE__*/ S.Array(
+  S.String,
+) as any as S.Schema<NotesUpdateResponseSecurityUserRightsList>;
+
+export interface NotesUpdateResponse {
+  system_record_state?: string | null;
+  system_ctime?: number | null;
+  system_modtime?: number | null;
+  reminder_id?: unknown;
+  etag?: string | null;
+  note?: string | null;
+  note_type?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
+  related?: NotesUpdateResponseRelated | null;
+  system_modified_user?: ContactsReadResponseSystemOwnerUser | null;
+  system_created_user?: ContactsReadResponseSystemOwnerUser | null;
+  security_user_rights?: NotesUpdateResponseSecurityUserRightsList | null;
+  id?: number | null;
+}
+export const NotesUpdateResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    system_record_state: S.optional(S.NullOr(S.String)),
+    system_ctime: S.optional(S.NullOr(S.Number)),
+    system_modtime: S.optional(S.NullOr(S.Number)),
+    reminder_id: S.optional(S.Unknown),
+    etag: S.optional(S.NullOr(S.String)),
+    note: S.optional(S.NullOr(S.String)),
+    note_type: S.optional(
+      S.NullOr(
+        ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+      ),
+    ),
+    related: S.optional(S.NullOr(NotesUpdateResponseRelated)),
+    system_modified_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    system_created_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    security_user_rights: S.optional(
+      S.NullOr(NotesUpdateResponseSecurityUserRightsList),
+    ),
+    id: S.optional(S.NullOr(S.Number)),
+  }),
+).annotate({
+  identifier: "NotesUpdateResponse",
+}) as any as S.Schema<NotesUpdateResponse>;
+
 export interface PropertiesArchiveRequest {
   /** The id of the record that should be archived. */
   id: number;
@@ -25167,6 +28257,216 @@ export const listingsUpdateArchivedStateDetails: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: ListingsUpdateArchivedStateDetailsRequest,
   output: ListingsUpdateArchivedStateDetailsResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesAutocompleteError = RexOpError;
+/** Autocomplete a simple search query Autocomplete records on search string */
+export const notesAutocomplete: API.OperationMethod<
+  NotesAutocompleteRequest,
+  NotesAutocompleteResponse,
+  NotesAutocompleteError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesAutocompleteRequest,
+  output: NotesAutocompleteResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesCreateError = RexOpError;
+/** Create a record and return a reference to the id Create a record and return a reference to the id */
+export const notesCreate: API.OperationMethod<
+  NotesCreateRequest,
+  NotesCreateResponse,
+  NotesCreateError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesCreateRequest,
+  output: NotesCreateResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesDescribeError = RexOpError;
+/** Describes the class and its methods - simply or in detail Describes the class and its methods - simply or in detail */
+export const notesDescribe: API.OperationMethod<
+  NotesDescribeRequest,
+  NotesDescribeResponse,
+  NotesDescribeError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesDescribeRequest,
+  output: NotesDescribeResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesDescribeDeleteModesError = RexOpError;
+/** Describes available delete modes Describes available delete modes */
+export const notesDescribeDeleteModes: API.OperationMethod<
+  NotesDescribeDeleteModesRequest,
+  NotesDescribeDeleteModesResponse,
+  NotesDescribeDeleteModesError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesDescribeDeleteModesRequest,
+  output: NotesDescribeDeleteModesResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesDescribeModelError = RexOpError;
+/** Describes certain characteristics of the model including searchable fields, orderby fields and delete modes Describes certain characteristics of the model including searchable fields, orderby fields and delete modes */
+export const notesDescribeModel: API.OperationMethod<
+  NotesDescribeModelRequest,
+  NotesDescribeModelResponse,
+  NotesDescribeModelError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesDescribeModelRequest,
+  output: NotesDescribeModelResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesDescribeSearchFieldsError = RexOpError;
+/** Describes search fields Describes search fields */
+export const notesDescribeSearchFields: API.OperationMethod<
+  NotesDescribeSearchFieldsRequest,
+  NotesDescribeSearchFieldsResponse,
+  NotesDescribeSearchFieldsError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesDescribeSearchFieldsRequest,
+  output: NotesDescribeSearchFieldsResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesIsGhostSessionError = RexOpError;
+/** True when the current session is a "ghost" account-user — i.e. a group-app / head-office user who logged into this (child) account via switchToAccount rather than being a real member of it. This is a session-TYPE predicate, NOT an authorisation check: a ghost account_users row is only ever created once the user's group-app visibility privilege (login_to_sub_accounts on a parent, or an account-group privilege-set assignment) has been enforced upstream at token creation, so a ghost session is proof that privilege already held — do not treat this as a substitute for a privilege check. Used to grant such users seat-free access to AI Prospecting (CRM-13865). True when the current session is a "ghost" account-user — i.e. a group-app / head-office user who logged into this (child) account via switchToAccount rather than being a real member of it. This is a session-TYPE predicate, NOT an authorisation check: a ghost account_users row is only ever created once the user's group-app visibility privilege (login_to_sub_accounts on a parent, or an account-group privilege-set assignment) has been enforced upstream at token creation, so a ghost session is proof that privilege already held — do not treat this as a substitute for a privilege check. Used to grant such users seat-free access to AI Prospecting (CRM-13865). */
+export const notesIsGhostSession: API.OperationMethod<
+  NotesIsGhostSessionRequest,
+  NotesIsGhostSessionResponse,
+  NotesIsGhostSessionError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesIsGhostSessionRequest,
+  output: NotesIsGhostSessionResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesReadError = RexOpError;
+/** Read a record by id Read a record by id */
+export const notesRead: API.OperationMethod<
+  NotesReadRequest,
+  NotesReadResponse,
+  NotesReadError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesReadRequest,
+  output: NotesReadResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesRecoverFromTrashError = RexOpError;
+/** Recover a record from the trash Recovers a record from the trash */
+export const notesRecoverFromTrash: API.OperationMethod<
+  NotesRecoverFromTrashRequest,
+  NotesRecoverFromTrashResponse,
+  NotesRecoverFromTrashError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesRecoverFromTrashRequest,
+  output: NotesRecoverFromTrashResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesSearchError = RexOpError;
+/** Perform a search Perform a search */
+export const notesSearch: API.OperationMethod<
+  NotesSearchRequest,
+  NotesSearchResponse,
+  NotesSearchError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesSearchRequest,
+  output: NotesSearchResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesSearchValidateCriteriaError = RexOpError;
+/** Validates search criteria based on allowable (searchable) fields. If searchable fields provided, uses this, otherwise limited to non restricted search fields. Validates search criteria based on allowable (searchable) fields. If searchable fields provided, uses this, otherwise limited to non restricted search fields. */
+export const notesSearchValidateCriteria: API.OperationMethod<
+  NotesSearchValidateCriteriaRequest,
+  NotesSearchValidateCriteriaResponse,
+  NotesSearchValidateCriteriaError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesSearchValidateCriteriaRequest,
+  output: NotesSearchValidateCriteriaResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesSearchValidateOrderBysError = RexOpError;
+/** Validates orderby based on allowable (orderby) fields. If orderby fields provided, uses this, otherwise limited to non restricted search fields. Validates orderby based on allowable (orderby) fields. If orderby fields provided, uses this, otherwise limited to non restricted search fields. */
+export const notesSearchValidateOrderBys: API.OperationMethod<
+  NotesSearchValidateOrderBysRequest,
+  NotesSearchValidateOrderBysResponse,
+  NotesSearchValidateOrderBysError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesSearchValidateOrderBysRequest,
+  output: NotesSearchValidateOrderBysResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesTrashError = RexOpError;
+/** Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system). Trash a record - trashed records are like archived records but may be recovered for 30 days after deletion (after which they are purged from the system). */
+export const notesTrash: API.OperationMethod<
+  NotesTrashRequest,
+  NotesTrashResponse,
+  NotesTrashError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesTrashRequest,
+  output: NotesTrashResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type NotesUpdateError = RexOpError;
+/** Update the record. To remove sub records include the _destroy flag Update the record. To remove sub records include the _destroy flag */
+export const notesUpdate: API.OperationMethod<
+  NotesUpdateRequest,
+  NotesUpdateResponse,
+  NotesUpdateError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: NotesUpdateRequest,
+  output: NotesUpdateResponse,
   errors: [UnknownRexError, RexApiError],
   protocol: RexProtocol,
   retry: Retry.Retry,
