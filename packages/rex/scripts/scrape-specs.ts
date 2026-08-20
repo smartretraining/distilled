@@ -46,6 +46,12 @@ const SERVICES = [
   "AdminWebhooks",
   "Feedback",
   "Contacts",
+  // The activity write-back surface. Rex has no actor field on a Note, so
+  // the salesperson's name goes in the body — but a Note is the only way a
+  // non-listing prospecting call reaches the CRM at all, Feedback being
+  // listing-bound. Generated rather than hand-modelled because Notes ships a
+  // full `openapi` block, so the types are real.
+  "Notes",
   // The only route to `enquiry_source`, whose valuelist is declared
   // `source: "remote"` — its permitted values are per-account and exist
   // nowhere in the spec, so they can only be read at runtime.
