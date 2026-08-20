@@ -152,6 +152,35 @@ jobs:
             echo "  $dir/lib: $(ls "$dir/lib" | wc -l | tr -d ' ') files"
           done
 
+      # `workspace:` and `catalog:` are BUN protocols. `npm publish` does not
+      # understand them and does not rewrite them — only the package manager
+      # that owns a protocol resolves it at publish time — so a manifest
+      # carrying either publishes VERBATIM and is unresolvable by every
+      # consumer. It fails at THEIR install, not at our release, which is how
+      # 0.5.0 and 0.6.0 both shipped `"@distilled.cloud/core": "workspace:*"`
+      # with a green workflow and nobody noticing until someone tried to
+      # install one.
+      - name: Refuse to publish bun-only dependency protocols
+        run: |
+          for dir in $PACKAGES; do
+            node -e '
+              const pkg = require(`${process.cwd()}/${process.argv[1]}/package.json`);
+              const bad = Object.entries({
+                ...(pkg.dependencies ?? {}),
+                ...(pkg.peerDependencies ?? {}),
+                ...(pkg.optionalDependencies ?? {}),
+              }).filter(([, spec]) => /^(workspace|catalog):/.test(spec));
+              if (bad.length === 0) {
+                console.log(`  ${pkg.name}: dependency specs are resolvable`);
+                process.exit(0);
+              }
+              for (const [name, spec] of bad) {
+                console.log(`::error::${pkg.name} declares "${name}": "${spec}" — a bun-only protocol. npm publish ships it verbatim and no consumer can resolve it. Replace it with a real version range.`);
+              }
+              process.exit(1);
+            ' "$dir"
+          done
+
       - name: Pack
         run: |
           for dir in $PACKAGES; do (cd "$dir" && npm pack --dry-run); done

@@ -1,6 +1,6 @@
 {
   "name": "@smartretraining/rex-effect",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Effect-native SDK for the Rex Software real-estate API, generated from Rex's describe/describeModel introspection.",
   "license": "MIT",
   "repository": {
@@ -80,7 +80,7 @@
     "test": "bunx vitest run test"
   },
   "dependencies": {
-    "@distilled.cloud/core": "workspace:*"
+    "@distilled.cloud/core": "1.0.0-rc.4"
   },
   "devDependencies": {
     "@effect/platform-bun": "catalog:",
@@ -90,6 +90,6 @@
     "vitest": "^3.2.3"
   },
   "peerDependencies": {
-    "effect": "catalog:"
+    "effect": ">=4.0.0-beta.104 || >=4.0.0"
   }
 }
