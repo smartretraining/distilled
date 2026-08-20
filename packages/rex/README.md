@@ -19,12 +19,12 @@ npm install @smartretraining/rex-effect effect
 import { Effect, Layer } from "effect";
 import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
 import { CredentialsFromEnv } from "@smartretraining/rex-effect";
-import { ListingsSearch } from "@smartretraining/rex-effect";
+import { listingsSearch } from "@smartretraining/rex-effect";
 
 const RexLive = Layer.merge(FetchHttpClient.layer, CredentialsFromEnv);
 
 const program = Effect.gen(function* () {
-  const page = yield* ListingsSearch({ limit: 10 });
+  const page = yield* listingsSearch({ limit: 10 });
   return page.rows ?? [];
 });
 
@@ -42,10 +42,10 @@ statically analyse namespace member access, so only the operations you actually
 call are kept:
 
 ```typescript
-import * as rex from "@smartretraining/rex-effect/Operations";
+import * as rex from "@smartretraining/rex-effect/rex";
 
-rex.ListingsSearch({ limit: 10 });
-rex.PropertiesCreate({ /* ... */ });
+rex.listingsSearch({ limit: 10 });
+rex.propertiesCreate({ /* ... */ });
 ```
 
 `import * as rex from "@smartretraining/rex-effect"` works too — same operations, plus
@@ -119,7 +119,7 @@ recommended approach.
 
 ## Regenerating the SDK
 
-Operations in `src/operations/` are generated. To regenerate or extend them:
+Operations in `src/services/` are generated. To regenerate or extend them:
 
 ### 1. Scrape Rex introspection
 
@@ -143,7 +143,7 @@ This chains three steps:
    files into a single OpenAPI 3.1 document at `specs/openapi.generated.json`.
 2. `scripts/generate.ts` — runs the shared `@distilled.cloud/core` OpenAPI
    generator over that document, emitting one module per Rex method into
-   `src/operations/` and rewriting the `index.ts` barrel.
+   `src/services/` and rewriting the `index.ts` barrel.
 3. `oxlint --fix` + `oxfmt` — lint and format the generated code.
 
 Re-running `bun run generate` with unchanged specs is idempotent.
@@ -151,14 +151,25 @@ Re-running `bun run generate` with unchanged specs is idempotent.
 ### Adding more Rex services
 
 Rex has ~272 services. This package generates **Listings**, **Properties**,
-and **AdminWebhooks**. To add another:
+**AdminWebhooks**, **Feedback**, **Contacts**, **Notes** and
+**AdminValueLists**. To add another:
 
 1. Append the service name to the `SERVICES` array in `scripts/scrape-specs.ts`.
 2. Run `bun run specs:scrape` then `bun run generate`.
 
+**Diff `specs/rex/` before committing a re-scrape.** Rex's introspection
+drifts in both directions and neither direction announces itself. Measured
+against a fully-privileged account in August 2026: `Contacts::create` and
+`::update` had GAINED fields (4.5KB → 6.5KB of typed parameters), while
+`Properties::create` and `::update` had LOST theirs entirely — 13KB of
+definition replaced by `"type": "unknown"`, with no error and no deprecation.
+Committing that blind would have silently reduced `propertiesCreate` to an
+untyped blob for every consumer. Take the additions; leave a service whose
+`data` block collapsed at its committed spec until Rex restores it.
+
 `build-openapi.ts` globs every `specs/rex/*.describe.json` file, so new services
 flow through automatically. Note: removing a service does not delete its stale
-`src/operations/*.ts` files — prune those by hand.
+`src/services/*.ts` files — prune those by hand.
 
 ## Known limitations
 

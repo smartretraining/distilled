@@ -1,6 +1,6 @@
 {
   "name": "@smartretraining/rex-effect",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Effect-native SDK for the Rex Software real-estate API, generated from Rex's describe/describeModel introspection.",
   "license": "MIT",
   "repository": {
