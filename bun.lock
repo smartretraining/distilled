@@ -294,9 +294,9 @@
     },
     "packages/reapit": {
       "name": "@smartretraining/reapit-effect",
-      "version": "0.1.0",
+      "version": "0.6.1",
       "dependencies": {
-        "@distilled.cloud/core": "workspace:*",
+        "@distilled.cloud/core": "1.0.0-rc.4",
       },
       "devDependencies": {
         "@effect/platform-bun": "catalog:",
@@ -306,14 +306,14 @@
         "vitest": "^3.2.3",
       },
       "peerDependencies": {
-        "effect": "catalog:",
+        "effect": ">=4.0.0-beta.104 || >=4.0.0",
       },
     },
     "packages/rex": {
       "name": "@smartretraining/rex-effect",
-      "version": "0.4.0",
+      "version": "0.6.1",
       "dependencies": {
-        "@distilled.cloud/core": "workspace:*",
+        "@distilled.cloud/core": "1.0.0-rc.4",
       },
       "devDependencies": {
         "@effect/platform-bun": "catalog:",
@@ -323,7 +323,7 @@
         "vitest": "^3.2.3",
       },
       "peerDependencies": {
-        "effect": "catalog:",
+        "effect": ">=4.0.0-beta.104 || >=4.0.0",
       },
     },
     "packages/stripe": {
