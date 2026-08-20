@@ -278,7 +278,7 @@ for (const endpoint of ENDPOINTS) {
     endpointPath = endpointPath.replace("{id}", encodeURIComponent(String(id)));
   }
 
-  const fetchOne = async (query) => {
+  const fetchOne = async (query: Record<string, string>) => {
     const url = new URL(baseUrl + endpointPath);
     url.searchParams.set("version", "2");
     for (const [k, v] of Object.entries(query)) url.searchParams.set(k, v);

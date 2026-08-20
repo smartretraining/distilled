@@ -4958,6 +4958,14 @@ export interface ContactsCreateRequestData {
   website_url?: string | null;
   /** Whether contact can be contacted for marketing purposes */
   is_dnd?: boolean | null;
+  /** Whether the contact may be contacted by email (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected. */
+  contact_by_email?: boolean | null;
+  /** Whether the contact may be contacted by SMS (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected. */
+  contact_by_sms?: boolean | null;
+  /** Whether the contact may be contacted by phone (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected. */
+  contact_by_phone?: boolean | null;
+  /** Whether the contact may be contacted by letter (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected. */
+  contact_by_letter?: boolean | null;
   /** Whether contact is person or company (person|company) */
   type?: string;
   /** Contact's interest level (cold|warm|hot) */
@@ -4992,6 +5000,10 @@ export const ContactsCreateRequestData = /*@__PURE__*/ S.suspend(() =>
     company_size_id: S.optional(ContactsCreateRequestDataCompanySizeId),
     website_url: S.optional(S.NullOr(S.String)),
     is_dnd: S.optional(S.NullOr(S.Boolean)),
+    contact_by_email: S.optional(S.NullOr(S.Boolean)),
+    contact_by_sms: S.optional(S.NullOr(S.Boolean)),
+    contact_by_phone: S.optional(S.NullOr(S.Boolean)),
+    contact_by_letter: S.optional(S.NullOr(S.Boolean)),
     type: S.optional(S.String),
     interest_level: S.optional(S.NullOr(S.String)),
     last_contacted_date: S.optional(S.NullOr(S.String)),
@@ -7169,6 +7181,12 @@ export const ContactsReadRequestExtraFieldsList = /*@__PURE__*/ S.Array(
   S.Unknown,
 ) as any as S.Schema<ContactsReadRequestExtraFieldsList>;
 
+/** Internal read options (CRM-14432). Recognised key: `skip_discarded_extra_fields` (bool) — when truthy, skip computing the `address_wash`, `address_postal_wash`, `smart_categories`, `buyer_motivation` and `buyer_position` blocks. Importers pass it on their own throwaway reads (existence/type/current-data lookups whose result Import::importOne discards). Defaults to empty, so every normal/external caller — and the unrestricted reads that build webhook/event payloads — get the full record unchanged. This never alters output for callers that don't opt in. */
+export type ContactsReadRequestOptionsList = Array<unknown>;
+export const ContactsReadRequestOptionsList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<ContactsReadRequestOptionsList>;
+
 export interface ContactsReadRequest {
   /** The record id to read */
   id: number;
@@ -7176,12 +7194,15 @@ export interface ContactsReadRequest {
   fields?: ContactsReadRequestFieldsList | null;
   /** An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields. */
   extra_fields?: ContactsReadRequestExtraFieldsList | null;
+  /** Internal read options (CRM-14432). Recognised key: `skip_discarded_extra_fields` (bool) — when truthy, skip computing the `address_wash`, `address_postal_wash`, `smart_categories`, `buyer_motivation` and `buyer_position` blocks. Importers pass it on their own throwaway reads (existence/type/current-data lookups whose result Import::importOne discards). Defaults to empty, so every normal/external caller — and the unrestricted reads that build webhook/event payloads — get the full record unchanged. This never alters output for callers that don't opt in. */
+  options?: ContactsReadRequestOptionsList;
 }
 export const ContactsReadRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     id: S.Number,
     fields: S.optional(S.NullOr(ContactsReadRequestFieldsList)),
     extra_fields: S.optional(S.NullOr(ContactsReadRequestExtraFieldsList)),
+    options: S.optional(ContactsReadRequestOptionsList),
   }).pipe(T.Http({ method: "POST", uri: "/v1/rex/Contacts::read", code: 200 })),
 ).annotate({
   identifier: "ContactsReadRequest",
@@ -7393,6 +7414,10 @@ export interface ContactsReadResponseRelatedContactRelationshipsItemRelatedConta
   phone_number?: string | null;
   fax_number?: unknown;
   is_dnd?: unknown;
+  contact_by_email?: unknown;
+  contact_by_sms?: unknown;
+  contact_by_phone?: unknown;
+  contact_by_letter?: unknown;
   type?: string | null;
   last_contacted_date?: string | null;
   name_last?: string | null;
@@ -7420,6 +7445,10 @@ export const ContactsReadResponseRelatedContactRelationshipsItemRelatedContact =
       phone_number: S.optional(S.NullOr(S.String)),
       fax_number: S.optional(S.Unknown),
       is_dnd: S.optional(S.Unknown),
+      contact_by_email: S.optional(S.Unknown),
+      contact_by_sms: S.optional(S.Unknown),
+      contact_by_phone: S.optional(S.Unknown),
+      contact_by_letter: S.optional(S.Unknown),
       type: S.optional(S.NullOr(S.String)),
       last_contacted_date: S.optional(S.NullOr(S.String)),
       name_last: S.optional(S.NullOr(S.String)),
@@ -7866,6 +7895,10 @@ export interface ContactsReadResponse {
   company_size?: unknown;
   website_url?: unknown;
   is_dnd?: boolean | null;
+  contact_by_email?: boolean | null;
+  contact_by_sms?: boolean | null;
+  contact_by_phone?: boolean | null;
+  contact_by_letter?: boolean | null;
   type?: string | null;
   interest_level?: string | null;
   last_contacted_date?: string | null;
@@ -7902,6 +7935,10 @@ export const ContactsReadResponse = /*@__PURE__*/ S.suspend(() =>
     company_size: S.optional(S.Unknown),
     website_url: S.optional(S.Unknown),
     is_dnd: S.optional(S.NullOr(S.Boolean)),
+    contact_by_email: S.optional(S.NullOr(S.Boolean)),
+    contact_by_sms: S.optional(S.NullOr(S.Boolean)),
+    contact_by_phone: S.optional(S.NullOr(S.Boolean)),
+    contact_by_letter: S.optional(S.NullOr(S.Boolean)),
     type: S.optional(S.NullOr(S.String)),
     interest_level: S.optional(S.NullOr(S.String)),
     last_contacted_date: S.optional(S.NullOr(S.String)),
@@ -8059,6 +8096,10 @@ export interface ContactsSearchResponseRowsItem {
   phone_number?: string | null;
   fax_number?: unknown;
   is_dnd?: string | null;
+  contact_by_email?: string | null;
+  contact_by_sms?: string | null;
+  contact_by_phone?: string | null;
+  contact_by_letter?: string | null;
   type?: string | null;
   last_contacted_date?: string | null;
   name_last?: string | null;
@@ -8088,6 +8129,10 @@ export const ContactsSearchResponseRowsItem = /*@__PURE__*/ S.suspend(() =>
     phone_number: S.optional(S.NullOr(S.String)),
     fax_number: S.optional(S.Unknown),
     is_dnd: S.optional(S.NullOr(S.String)),
+    contact_by_email: S.optional(S.NullOr(S.String)),
+    contact_by_sms: S.optional(S.NullOr(S.String)),
+    contact_by_phone: S.optional(S.NullOr(S.String)),
+    contact_by_letter: S.optional(S.NullOr(S.String)),
     type: S.optional(S.NullOr(S.String)),
     last_contacted_date: S.optional(S.NullOr(S.String)),
     name_last: S.optional(S.NullOr(S.String)),
@@ -8384,6 +8429,14 @@ export interface ContactsUpdateRequestData {
   website_url?: string | null;
   /** Whether contact can be contacted for marketing purposes */
   is_dnd?: boolean | null;
+  /** Whether the contact may be contacted by email (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected. */
+  contact_by_email?: boolean | null;
+  /** Whether the contact may be contacted by SMS (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected. */
+  contact_by_sms?: boolean | null;
+  /** Whether the contact may be contacted by phone (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected. */
+  contact_by_phone?: boolean | null;
+  /** Whether the contact may be contacted by letter (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected. */
+  contact_by_letter?: boolean | null;
   /** Whether contact is person or company (person|company) */
   type?: string;
   /** Contact's interest level (cold|warm|hot) */
@@ -8420,6 +8473,10 @@ export const ContactsUpdateRequestData = /*@__PURE__*/ S.suspend(() =>
     company_size_id: S.optional(ContactsCreateRequestDataCompanySizeId),
     website_url: S.optional(S.NullOr(S.String)),
     is_dnd: S.optional(S.NullOr(S.Boolean)),
+    contact_by_email: S.optional(S.NullOr(S.Boolean)),
+    contact_by_sms: S.optional(S.NullOr(S.Boolean)),
+    contact_by_phone: S.optional(S.NullOr(S.Boolean)),
+    contact_by_letter: S.optional(S.NullOr(S.Boolean)),
     type: S.optional(S.String),
     interest_level: S.optional(S.NullOr(S.String)),
     last_contacted_date: S.optional(S.NullOr(S.String)),
@@ -8748,6 +8805,10 @@ export interface ContactsUpdateResponse {
   company_size?: unknown;
   website_url?: unknown;
   is_dnd?: boolean | null;
+  contact_by_email?: boolean | null;
+  contact_by_sms?: boolean | null;
+  contact_by_phone?: boolean | null;
+  contact_by_letter?: boolean | null;
   type?: string | null;
   interest_level?: string | null;
   last_contacted_date?: string | null;
@@ -8783,6 +8844,10 @@ export const ContactsUpdateResponse = /*@__PURE__*/ S.suspend(() =>
     company_size: S.optional(S.Unknown),
     website_url: S.optional(S.Unknown),
     is_dnd: S.optional(S.NullOr(S.Boolean)),
+    contact_by_email: S.optional(S.NullOr(S.Boolean)),
+    contact_by_sms: S.optional(S.NullOr(S.Boolean)),
+    contact_by_phone: S.optional(S.NullOr(S.Boolean)),
+    contact_by_letter: S.optional(S.NullOr(S.Boolean)),
     type: S.optional(S.NullOr(S.String)),
     interest_level: S.optional(S.NullOr(S.String)),
     last_contacted_date: S.optional(S.NullOr(S.String)),
@@ -27411,7 +27476,7 @@ export const contactsGetMatchSummary: API.OperationMethod<
 }));
 
 export type ContactsReadError = RexOpError;
-/** Read a record by id Read a record by id */
+/** Read a record by id */
 export const contactsRead: API.OperationMethod<
   ContactsReadRequest,
   ContactsReadResponse,

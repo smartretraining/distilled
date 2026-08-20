@@ -85,6 +85,10 @@
         "company_size_id",
         "website_url",
         "is_dnd",
+        "contact_by_email",
+        "contact_by_sms",
+        "contact_by_phone",
+        "contact_by_letter",
         "type",
         "contact_image_uri",
         "interest_level",
@@ -208,6 +212,30 @@
       "contact.is_dnd": {
         "name": "contact.is_dnd",
         "label": "Do Not Contact",
+        "type": "boolean",
+        "category": "Contact Details"
+      },
+      "contact.contact_by_email": {
+        "name": "contact.contact_by_email",
+        "label": "Contact by Email",
+        "type": "boolean",
+        "category": "Contact Details"
+      },
+      "contact.contact_by_sms": {
+        "name": "contact.contact_by_sms",
+        "label": "Contact by SMS",
+        "type": "boolean",
+        "category": "Contact Details"
+      },
+      "contact.contact_by_phone": {
+        "name": "contact.contact_by_phone",
+        "label": "Contact by Phone",
+        "type": "boolean",
+        "category": "Contact Details"
+      },
+      "contact.contact_by_letter": {
+        "name": "contact.contact_by_letter",
+        "label": "Contact by Letter",
         "type": "boolean",
         "category": "Contact Details"
       },
@@ -3419,6 +3447,51 @@
           "list": "buyer_position"
         },
         "category": "Buyer Motivation"
+      },
+      "cf.Contacts.19028": {
+        "name": "cf.Contacts.19028",
+        "label": "Livechat: Chat Details: Chat Id",
+        "type": "string",
+        "category": "Custom Field"
+      },
+      "cf.Contacts.25649": {
+        "name": "cf.Contacts.25649",
+        "label": "TEst: Contact Information: What Is Your Relationship With This Property?",
+        "type": "enum",
+        "category": "Custom Field",
+        "options": {
+          "source": "local",
+          "list": [
+            {
+              "id": "Owner Occupier",
+              "text": "Owner Occupier"
+            },
+            {
+              "id": "Owner Investor",
+              "text": "Owner Investor"
+            },
+            {
+              "id": "Buyer",
+              "text": "Buyer"
+            },
+            {
+              "id": "Tenant",
+              "text": "Tenant"
+            }
+          ]
+        }
+      },
+      "cf.Contacts.32295": {
+        "name": "cf.Contacts.32295",
+        "label": "Core: Contact: Viewing Questions: Referral",
+        "type": "string",
+        "category": "Custom Field"
+      },
+      "cf.Contacts.25216": {
+        "name": "cf.Contacts.25216",
+        "label": "Api: Location",
+        "type": "string",
+        "category": "Custom Field"
       }
     },
     "orderby_fields": [

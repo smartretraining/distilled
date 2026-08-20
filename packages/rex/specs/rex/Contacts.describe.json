@@ -281,6 +281,26 @@
                       "nullable": true,
                       "type": "boolean"
                     },
+                    "contact_by_email": {
+                      "description": "Whether the contact may be contacted by email (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+                      "nullable": true,
+                      "type": "boolean"
+                    },
+                    "contact_by_sms": {
+                      "description": "Whether the contact may be contacted by SMS (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+                      "nullable": true,
+                      "type": "boolean"
+                    },
+                    "contact_by_phone": {
+                      "description": "Whether the contact may be contacted by phone (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+                      "nullable": true,
+                      "type": "boolean"
+                    },
+                    "contact_by_letter": {
+                      "description": "Whether the contact may be contacted by letter (true = allowed, false = blocked). On create an omitted channel is stored as allowed unless is_dnd = true blocks it, so a created record never has a null channel. Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+                      "nullable": true,
+                      "type": "boolean"
+                    },
                     "type": {
                       "description": "Whether contact is person or company (person|company)",
                       "type": "string",
@@ -570,6 +590,10 @@
                     "company_size": null,
                     "website_url": null,
                     "is_dnd": true,
+                    "contact_by_email": false,
+                    "contact_by_sms": false,
+                    "contact_by_phone": false,
+                    "contact_by_letter": false,
                     "type": "person",
                     "interest_level": "warm",
                     "last_contacted_date": "2019-04-25",
@@ -669,6 +693,10 @@
                             "phone_number": "(02) 3536 6439",
                             "fax_number": null,
                             "is_dnd": null,
+                            "contact_by_email": null,
+                            "contact_by_sms": null,
+                            "contact_by_phone": null,
+                            "contact_by_letter": null,
                             "type": "person",
                             "last_contacted_date": "2019-04-26",
                             "name_last": "Dickinson",
@@ -1897,30 +1925,36 @@
         }
       },
       "read": {
-        "description": "Read a record by id",
+        "description": "",
         "parameters": {
           "id": {
-            "comment": "The id of the record to return",
-            "type": "int|string",
+            "comment": "",
+            "type": "unknown",
             "default_value": null,
             "required": true
           },
           "fields": {
-            "comment": "An array of fields to read",
-            "type": "array",
+            "comment": "",
+            "type": "unknown",
             "default_value": [],
             "required": false
           },
           "extra_fields": {
-            "comment": "An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields.",
-            "type": "array",
+            "comment": "",
+            "type": "unknown",
             "default_value": [
               "smart_categories"
             ],
             "required": false
+          },
+          "options": {
+            "comment": "Internal read options (CRM-14432). Recognised key:\n`skip_discarded_extra_fields` (bool) — when truthy, skip computing the `address_wash`,\n`address_postal_wash`, `smart_categories`, `buyer_motivation` and `buyer_position` blocks.\nImporters pass it on their own throwaway reads (existence/type/current-data lookups whose result\nImport::importOne discards). Defaults to empty, so every normal/external caller — and the\nunrestricted reads that build webhook/event payloads — get the full record unchanged. This never\nalters output for callers that don't opt in.",
+            "type": "array",
+            "default_value": [],
+            "required": false
           }
         },
-        "returns": "array ",
+        "returns": "void",
         "experimental": false,
         "openapi": {
           "available": true,
@@ -1953,6 +1987,14 @@
                   ],
                   "nullable": true
                 }
+              },
+              "options": {
+                "required": false,
+                "definition": {
+                  "description": "Internal read options (CRM-14432). Recognised key:\n`skip_discarded_extra_fields` (bool) — when truthy, skip computing the `address_wash`,\n`address_postal_wash`, `smart_categories`, `buyer_motivation` and `buyer_position` blocks.\nImporters pass it on their own throwaway reads (existence/type/current-data lookups whose result\nImport::importOne discards). Defaults to empty, so every normal/external caller — and the\nunrestricted reads that build webhook/event payloads — get the full record unchanged. This never\nalters output for callers that don't opt in.",
+                  "type": "array",
+                  "default": []
+                }
               }
             },
             "examples": {
@@ -1984,6 +2026,10 @@
                     "company_size": null,
                     "website_url": null,
                     "is_dnd": true,
+                    "contact_by_email": false,
+                    "contact_by_sms": false,
+                    "contact_by_phone": false,
+                    "contact_by_letter": false,
                     "type": "person",
                     "interest_level": "warm",
                     "last_contacted_date": "2019-04-25",
@@ -2083,6 +2129,10 @@
                             "phone_number": "(02) 3536 6439",
                             "fax_number": null,
                             "is_dnd": null,
+                            "contact_by_email": null,
+                            "contact_by_sms": null,
+                            "contact_by_phone": null,
+                            "contact_by_letter": null,
                             "type": "person",
                             "last_contacted_date": "2019-04-26",
                             "name_last": "Dickinson",
@@ -2480,6 +2530,10 @@
                         "phone_number": "(03) 5251 7119",
                         "fax_number": null,
                         "is_dnd": "1",
+                        "contact_by_email": "0",
+                        "contact_by_sms": "0",
+                        "contact_by_phone": "0",
+                        "contact_by_letter": "0",
                         "type": "person",
                         "last_contacted_date": "2019-04-25",
                         "name_last": "Wyman",
@@ -2533,6 +2587,10 @@
                         "phone_number": "(02) 3536 6439",
                         "fax_number": null,
                         "is_dnd": null,
+                        "contact_by_email": null,
+                        "contact_by_sms": null,
+                        "contact_by_phone": null,
+                        "contact_by_letter": null,
                         "type": "person",
                         "last_contacted_date": "2019-04-26",
                         "name_last": "Dickinson",
@@ -2784,6 +2842,26 @@
                     },
                     "is_dnd": {
                       "description": "Whether contact can be contacted for marketing purposes",
+                      "nullable": true,
+                      "type": "boolean"
+                    },
+                    "contact_by_email": {
+                      "description": "Whether the contact may be contacted by email (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+                      "nullable": true,
+                      "type": "boolean"
+                    },
+                    "contact_by_sms": {
+                      "description": "Whether the contact may be contacted by SMS (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+                      "nullable": true,
+                      "type": "boolean"
+                    },
+                    "contact_by_phone": {
+                      "description": "Whether the contact may be contacted by phone (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
+                      "nullable": true,
+                      "type": "boolean"
+                    },
+                    "contact_by_letter": {
+                      "description": "Whether the contact may be contacted by letter (null/true = allowed, false = blocked). Setting is_dnd overwrites all four contact_by_* values (is_dnd = true blocks every channel, is_dnd = false allows every channel); a payload that sets is_dnd together with a contradicting per-channel value is rejected.",
                       "nullable": true,
                       "type": "boolean"
                     },
@@ -3095,6 +3173,10 @@
                     "company_size": null,
                     "website_url": null,
                     "is_dnd": true,
+                    "contact_by_email": false,
+                    "contact_by_sms": false,
+                    "contact_by_phone": false,
+                    "contact_by_letter": false,
                     "type": "person",
                     "interest_level": "warm",
                     "last_contacted_date": "2019-04-25",
@@ -3194,6 +3276,10 @@
                             "phone_number": "(02) 3536 6439",
                             "fax_number": null,
                             "is_dnd": null,
+                            "contact_by_email": null,
+                            "contact_by_sms": null,
+                            "contact_by_phone": null,
+                            "contact_by_letter": null,
                             "type": "person",
                             "last_contacted_date": "2019-04-26",
                             "name_last": "Dickinson",
