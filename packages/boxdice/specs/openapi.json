@@ -1,0 +1,4610 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Box+Dice AI API",
+    "version": "1.0.0",
+    "description": "Transcribed from the API Blueprint at https://boxdiceaiapi.docs.apiary.io/ by scripts/build-spec.ts. The response side has NOT been verified against a live tenant."
+  },
+  "servers": [
+    {
+      "url": "https://{tenant}.boxdice.com.au/ai_api",
+      "description": "Per-tenant. `tenant` is the agency's Box+Dice subdomain; the path segment is whichever partner API the key was provisioned for.",
+      "variables": {
+        "tenant": {
+          "default": "your-domain"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/appraisal_leads": {
+      "get": {
+        "operationId": "listAppraisalLeads",
+        "summary": "List appraisal leads sourced from this integration.",
+        "tags": [
+          "AppraisalLeads"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List appraisal leads sourced from this integration.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/AppraisalLead"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      },
+      "post": {
+        "operationId": "createAppraisalLead",
+        "summary": "Create a sales appraisal or rental BDM lead.",
+        "description": "Idempotent-ish: no new lead is created when an open one already exists for the same contact, property and listing type. When the lead consultant does not have the Lead Flow module enabled this creates a TASK instead — the response `id` is a task id in that case, and nothing in the response says which.",
+        "tags": [
+          "AppraisalLeads"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "appraisal_lead": {
+                    "type": "object",
+                    "properties": {
+                      "consultant_id": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "contact_id": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "property_id": {
+                        "type": "integer",
+                        "nullable": true,
+                        "description": "Must be a property owned by the contact."
+                      },
+                      "address": {
+                        "$ref": "#/components/schemas/LeadAddress"
+                      },
+                      "listing_type": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "`sales` (default) or `rental`."
+                      },
+                      "temperature": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "`hot`, `warm` or `cold`."
+                      },
+                      "subject": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Task subject. Defaults to `New AI Lead`."
+                      },
+                      "task_date": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "date",
+                        "description": "Task due date. Defaults to today."
+                      },
+                      "comment": {
+                        "type": "string",
+                        "nullable": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lead (or task) created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedId"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request is invalid. The body carries `error` (a string) or `errors` (a field → messages map); `src/protocol.ts` normalises both.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "errors": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/consultants": {
+      "get": {
+        "operationId": "listConsultants",
+        "summary": "List consultants.",
+        "tags": [
+          "Consultants"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List consultants.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Consultant"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/consultants/{consultant_id}/contacts": {
+      "get": {
+        "operationId": "listConsultantContacts",
+        "summary": "List contacts belonging to a consultant.",
+        "tags": [
+          "Consultants"
+        ],
+        "parameters": [
+          {
+            "name": "consultant_id",
+            "in": "path",
+            "required": true,
+            "description": "Consultant ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List contacts belonging to a consultant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Contact"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/contacts": {
+      "get": {
+        "operationId": "listContacts",
+        "summary": "List contacts.",
+        "tags": [
+          "Contacts"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List contacts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Contact"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      },
+      "post": {
+        "operationId": "createContact",
+        "summary": "Create a contact.",
+        "tags": [
+          "Contacts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "contact": {
+                    "type": "object",
+                    "properties": {
+                      "first_name": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "last_name": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "salutation": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "attention": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "legal_name": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "mobile": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "phone_bh": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "phone_ah": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "email": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "company": {
+                        "type": "boolean",
+                        "nullable": true
+                      },
+                      "deceased": {
+                        "type": "boolean",
+                        "nullable": true
+                      },
+                      "permit_email": {
+                        "type": "boolean",
+                        "nullable": true
+                      },
+                      "permit_email_blast": {
+                        "type": "boolean",
+                        "nullable": true
+                      },
+                      "permit_sms": {
+                        "type": "boolean",
+                        "nullable": true
+                      },
+                      "consultant_id": {
+                        "type": "integer",
+                        "nullable": true,
+                        "description": "Consultant recorded as the contact's creator."
+                      },
+                      "address": {
+                        "$ref": "#/components/schemas/Address"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Contact created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedId"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request is invalid. The body carries `error` (a string) or `errors` (a field → messages map); `src/protocol.ts` normalises both.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "errors": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/search": {
+      "get": {
+        "operationId": "searchContacts",
+        "summary": "Search contacts by email or mobile.",
+        "description": "Searches only the offices the API key is permitted for. Passing both parameters ORs them — it does not narrow the result.",
+        "tags": [
+          "Contacts"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mobile",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching contacts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Contact"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No contact matched."
+          }
+        }
+      }
+    },
+    "/contacts/{id}": {
+      "get": {
+        "operationId": "getContact",
+        "summary": "Get a contact.",
+        "tags": [
+          "Contacts"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The contact.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Contact"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateContact",
+        "summary": "Update contact details and contact permissions.",
+        "tags": [
+          "Contacts"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "contact": {
+                    "type": "object",
+                    "properties": {
+                      "first_name": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "last_name": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "salutation": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "attention": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "legal_name": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "mobile": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "phone_bh": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "phone_ah": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "email": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "deceased": {
+                        "type": "boolean",
+                        "nullable": true
+                      },
+                      "permit_email": {
+                        "type": "boolean",
+                        "nullable": true
+                      },
+                      "permit_email_blast": {
+                        "type": "boolean",
+                        "nullable": true
+                      },
+                      "permit_sms": {
+                        "type": "boolean",
+                        "nullable": true
+                      },
+                      "address": {
+                        "$ref": "#/components/schemas/Address"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated. The body is `{}`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request is invalid. The body carries `error` (a string) or `errors` (a field → messages map); `src/protocol.ts` normalises both.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "errors": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{id}/buyer_notes": {
+      "get": {
+        "operationId": "listContactBuyerNotes",
+        "summary": "List a contact's buyer notes.",
+        "tags": [
+          "Contacts"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List a contact's buyer notes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/BuyerNote"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/contacts/{id}/email_history": {
+      "get": {
+        "operationId": "listContactEmailHistory",
+        "summary": "List emails sent to a contact.",
+        "tags": [
+          "Contacts"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List emails sent to a contact.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Email"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/contacts/{id}/sms_history": {
+      "get": {
+        "operationId": "listContactSmsHistory",
+        "summary": "List SMS messages sent to a contact.",
+        "tags": [
+          "Contacts"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List SMS messages sent to a contact.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/SmsMessage"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/contacts/{id}/owned_properties": {
+      "get": {
+        "operationId": "listContactOwnedProperties",
+        "summary": "List properties owned by a contact.",
+        "tags": [
+          "Contacts"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The contact's owned properties.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Property"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "The contact owns no properties."
+          }
+        }
+      }
+    },
+    "/contact_activities": {
+      "get": {
+        "operationId": "listContactActivities",
+        "summary": "List contact activities.",
+        "tags": [
+          "ContactActivities"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List contact activities.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/ContactActivity"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/contacts/{contact_id}/contact_activities": {
+      "get": {
+        "operationId": "listContactActivitiesForContact",
+        "summary": "List one contact's activities.",
+        "tags": [
+          "ContactActivities"
+        ],
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List one contact's activities.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/ContactActivity"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/contacts/{contact_id}/categories": {
+      "post": {
+        "operationId": "createContactCategory",
+        "summary": "Assign a category to a contact.",
+        "description": "Supply `type_id` or `name`. An unknown `name` CREATES a new category type in the consultant's office group — a typo becomes a permanent category, so prefer `type_id` from listContactCategoryTypes.",
+        "tags": [
+          "ContactCategories"
+        ],
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "contact_category": {
+                    "type": "object",
+                    "properties": {
+                      "type_id": {
+                        "type": "integer",
+                        "nullable": true,
+                        "description": "Required unless `name` is given."
+                      },
+                      "name": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Required unless `type_id` is given. Max 100 characters."
+                      },
+                      "consultant_id": {
+                        "type": "integer",
+                        "nullable": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Category assigned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedId"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request is invalid. The body carries `error` (a string) or `errors` (a field → messages map); `src/protocol.ts` normalises both.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "errors": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{contact_id}/categories/{id}": {
+      "delete": {
+        "operationId": "deleteContactCategory",
+        "summary": "Remove a category from a contact by category id.",
+        "tags": [
+          "ContactCategories"
+        ],
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Contact category ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Removed. The body is `{}`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{contact_id}/category": {
+      "delete": {
+        "operationId": "deleteContactCategoryByName",
+        "summary": "Remove a category from a contact by category name.",
+        "description": "Succeeds even when the contact has no category by that name, so the response does not tell you whether anything was removed.",
+        "tags": [
+          "ContactCategories"
+        ],
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "contact_category": {
+                    "type": "object",
+                    "properties": {
+                      "consultant_id": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "name": {
+                        "type": "string",
+                        "nullable": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Removed (or nothing matched).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contact_category_types": {
+      "get": {
+        "operationId": "listContactCategoryTypes",
+        "summary": "List contact category types.",
+        "tags": [
+          "Enumerations"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List contact category types.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/ContactCategoryType"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/contacts/{contact_id}/notes": {
+      "post": {
+        "operationId": "createContactNote",
+        "summary": "Add a note to a contact.",
+        "tags": [
+          "Contacts"
+        ],
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "note": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "consultant_id": {
+                        "type": "integer",
+                        "nullable": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Note created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedId"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request is invalid. The body carries `error` (a string) or `errors` (a field → messages map); `src/protocol.ts` normalises both.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "errors": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rental_listings": {
+      "get": {
+        "operationId": "listRentalListings",
+        "summary": "List rental listings.",
+        "tags": [
+          "Listings"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List rental listings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/RentalListing"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/sales_listings": {
+      "get": {
+        "operationId": "listSalesListings",
+        "summary": "List sales listings, including the commission voucher.",
+        "tags": [
+          "Listings"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List sales listings, including the commission voucher.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/SalesListing"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/sales_listings/{id}": {
+      "patch": {
+        "operationId": "updateSalesListing",
+        "summary": "Update a sales listing's primary consultant and/or vendors.",
+        "description": "Only these two members can be changed. Unlike the other writes, this returns the FULL updated listing rather than `{}`.",
+        "tags": [
+          "Listings"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Sales listing ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sales_listing": {
+                    "type": "object",
+                    "properties": {
+                      "primary_consultant_id": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "vendor_ids": {
+                        "type": "array",
+                        "nullable": true,
+                        "items": {
+                          "type": "integer",
+                          "nullable": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated listing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SalesListing"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request is invalid. The body carries `error` (a string) or `errors` (a field → messages map); `src/protocol.ts` normalises both.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "errors": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{contact_id}/criteria": {
+      "post": {
+        "operationId": "createSearchCriteria",
+        "summary": "Create buying criteria for a contact.",
+        "tags": [
+          "SearchCriteria"
+        ],
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "criteria": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "`sales` or `rental`."
+                      },
+                      "suburb_ids": {
+                        "type": "array",
+                        "nullable": true,
+                        "items": {
+                          "type": "integer",
+                          "nullable": true
+                        }
+                      },
+                      "property_type_ids": {
+                        "type": "array",
+                        "nullable": true,
+                        "items": {
+                          "type": "integer",
+                          "nullable": true
+                        }
+                      },
+                      "property_category_ids": {
+                        "type": "array",
+                        "nullable": true,
+                        "items": {
+                          "type": "integer",
+                          "nullable": true
+                        }
+                      },
+                      "beds_from": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "beds_to": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "baths": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "rooms": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "cars": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "price_from": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Sent as a string in the blueprint's example."
+                      },
+                      "price_to": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Sent as a string in the blueprint's example."
+                      },
+                      "house_size_from": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "house_size_to": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "house_measure": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "`Square(s)` or `Sqm`."
+                      },
+                      "land_size_from": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "land_size_to": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "land_measure": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "`Acre(s)`, `Hectare(s)`, `Square(s)` or `Sqm`."
+                      },
+                      "return_pa_from": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "return_pa_to": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "notes": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "ealert_enabled": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "Write-only: accepted here, never returned on the read side."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Criteria created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedId"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request is invalid. The body carries `error` (a string) or `errors` (a field → messages map); `src/protocol.ts` normalises both.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "errors": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{contact_id}/criteria/{id}": {
+      "patch": {
+        "operationId": "updateSearchCriteria",
+        "summary": "Update buying criteria.",
+        "tags": [
+          "SearchCriteria"
+        ],
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Criteria ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "criteria": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "suburb_ids": {
+                        "type": "array",
+                        "nullable": true,
+                        "items": {
+                          "type": "integer",
+                          "nullable": true
+                        }
+                      },
+                      "property_type_ids": {
+                        "type": "array",
+                        "nullable": true,
+                        "items": {
+                          "type": "integer",
+                          "nullable": true
+                        }
+                      },
+                      "property_category_ids": {
+                        "type": "array",
+                        "nullable": true,
+                        "items": {
+                          "type": "integer",
+                          "nullable": true
+                        }
+                      },
+                      "beds_from": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "beds_to": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "baths": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "rooms": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "cars": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "price_from": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "price_to": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "house_size_from": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "house_size_to": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "house_measure": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "land_size_from": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "land_size_to": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "land_measure": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "return_pa_from": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "return_pa_to": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "notes": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "ealert_enabled": {
+                        "type": "boolean",
+                        "nullable": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated. The body is `{}`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteSearchCriteria",
+        "summary": "Delete buying criteria.",
+        "tags": [
+          "SearchCriteria"
+        ],
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Criteria ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted. The body is `{}`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks": {
+      "get": {
+        "operationId": "listTasks",
+        "summary": "List tasks.",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List tasks.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Task"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      },
+      "post": {
+        "operationId": "createTasks",
+        "summary": "Create one or more tasks.",
+        "description": "Batch endpoint. The response is a BARE ARRAY positionally matching the submitted tasks, each entry either `{ id }` or `{ errors }` — so a 200 does not mean every task was created. Note the create member is `action_date`, while the read side returns `task_date`.",
+        "tags": [
+          "Tasks"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tasks": {
+                    "type": "array",
+                    "nullable": true,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "subject": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "contact_ids": {
+                          "type": "array",
+                          "nullable": true,
+                          "items": {
+                            "type": "integer",
+                            "nullable": true
+                          }
+                        },
+                        "action_date": {
+                          "type": "string",
+                          "nullable": true,
+                          "format": "date"
+                        },
+                        "consultant_id": {
+                          "type": "integer",
+                          "nullable": true
+                        },
+                        "kind": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "`Phone`, `Email`, `SMS`, `Letter`, `Task`, `Web enquiry` or `Others`."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Per-task results, positionally matching the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "errors": {
+                        "type": "object",
+                        "nullable": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{contact_id}/tasks": {
+      "get": {
+        "operationId": "listContactTasks",
+        "summary": "List a contact's tasks.",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List a contact's tasks.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Task"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/contacts/{contact_id}/completed_tasks": {
+      "get": {
+        "operationId": "listContactCompletedTasks",
+        "summary": "List a contact's completed tasks.",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List a contact's completed tasks.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Task"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/appointments": {
+      "get": {
+        "operationId": "listAppointments",
+        "summary": "List future appointments.",
+        "tags": [
+          "Appointments"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List future appointments.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Appointment"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/contacts/{contact_id}/appointments": {
+      "get": {
+        "operationId": "listContactAppointments",
+        "summary": "List a contact's future appointments.",
+        "tags": [
+          "Appointments"
+        ],
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List a contact's future appointments.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Appointment"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/contacts/{contact_id}/past_appointments": {
+      "get": {
+        "operationId": "listContactPastAppointments",
+        "summary": "List a contact's past appointments.",
+        "tags": [
+          "Appointments"
+        ],
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "Contact ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List a contact's past appointments.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Appointment"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/properties": {
+      "get": {
+        "operationId": "listProperties",
+        "summary": "List properties.",
+        "tags": [
+          "Properties"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List properties.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Property"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/buyer_notes": {
+      "get": {
+        "operationId": "listBuyerNotes",
+        "summary": "List buyer notes.",
+        "tags": [
+          "Communications"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List buyer notes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/BuyerNote"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/emails": {
+      "get": {
+        "operationId": "listEmails",
+        "summary": "List emails.",
+        "tags": [
+          "Communications"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List emails.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Email"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/sms_messages": {
+      "get": {
+        "operationId": "listSmsMessages",
+        "summary": "List SMS messages.",
+        "tags": [
+          "Communications"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List SMS messages.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/SmsMessage"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/contact_activity_types": {
+      "get": {
+        "operationId": "listContactActivityTypes",
+        "summary": "List contact activity types.",
+        "tags": [
+          "Enumerations"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List contact activity types.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/ContactActivityType"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/property_types": {
+      "get": {
+        "operationId": "listPropertyTypes",
+        "summary": "List property types.",
+        "tags": [
+          "Enumerations"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List property types.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/PropertyType"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/property_categories": {
+      "get": {
+        "operationId": "listPropertyCategories",
+        "summary": "List property categories.",
+        "tags": [
+          "Enumerations"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List property categories.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/PropertyCategory"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/offices": {
+      "get": {
+        "operationId": "listOffices",
+        "summary": "List offices.",
+        "tags": [
+          "Enumerations"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List offices.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Office"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    },
+    "/appraisals": {
+      "get": {
+        "operationId": "listAppraisals",
+        "summary": "List appraisals.",
+        "tags": [
+          "Appraisals"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List appraisals.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Appraisal"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      },
+      "post": {
+        "operationId": "createAppraisal",
+        "summary": "Create an appraisal.",
+        "tags": [
+          "Appraisals"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "appraisal": {
+                    "type": "object",
+                    "properties": {
+                      "appraisal_status": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "`current` (default), `cancelled` or `listed`."
+                      },
+                      "appraisal_source": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "contact_ids": {
+                        "type": "array",
+                        "nullable": true,
+                        "items": {
+                          "type": "integer",
+                          "nullable": true,
+                          "description": "Required."
+                        }
+                      },
+                      "office_id": {
+                        "type": "integer",
+                        "nullable": true,
+                        "description": "Required."
+                      },
+                      "property_id": {
+                        "type": "integer",
+                        "nullable": true,
+                        "description": "Required."
+                      },
+                      "primary_consultant_id": {
+                        "type": "integer",
+                        "nullable": true,
+                        "description": "Required."
+                      },
+                      "price_from": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "price_to": {
+                        "type": "number",
+                        "nullable": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created appraisal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appraisal"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request is invalid. The body carries `error` (a string) or `errors` (a field → messages map); `src/protocol.ts` normalises both.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "errors": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appraisals/{id}": {
+      "put": {
+        "operationId": "updateAppraisal",
+        "summary": "Update an appraisal.",
+        "description": "Status transitions are one-way and restricted to current → cancelled, current → listed, and cancelled → listed.",
+        "tags": [
+          "Appraisals"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Appraisal ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "appraisal": {
+                    "type": "object",
+                    "properties": {
+                      "appraisal_status": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "appraisal_source": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "contact_ids": {
+                        "type": "array",
+                        "nullable": true,
+                        "items": {
+                          "type": "integer",
+                          "nullable": true
+                        }
+                      },
+                      "office_id": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "property_id": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "primary_consultant_id": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "price_from": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "price_to": {
+                        "type": "number",
+                        "nullable": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated appraisal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appraisal"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request is invalid. The body carries `error` (a string) or `errors` (a field → messages map); `src/protocol.ts` normalises both.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "errors": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inspection_attendances": {
+      "get": {
+        "operationId": "listInspectionAttendances",
+        "summary": "List inspection attendances.",
+        "tags": [
+          "Inspections"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List inspection attendances.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/InspectionAttendance"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No records newer than the cursor. The body is empty; the caller should wait `Retry-After` seconds and re-request the same URL."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Paging": {
+        "type": "object",
+        "properties": {
+          "next": {
+            "type": "string",
+            "nullable": true,
+            "description": "Absolute URL for the next request, carrying the `after` cursor. Note the API echoes whichever partner path the tenant was provisioned under — the blueprint's own examples show /ai_api/, /aire_api/ and /rebot_api/ — so read the `after` query parameter out of this URL rather than requesting it verbatim."
+          }
+        },
+        "description": "Cursor block returned by every paginated collection."
+      },
+      "Address": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Property ID — the address IS a property record."
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "number": {
+            "type": "string",
+            "nullable": true
+          },
+          "street_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "street_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "suburb": {
+            "type": "string",
+            "nullable": true
+          },
+          "postcode": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "number",
+            "nullable": true
+          }
+        }
+      },
+      "Property": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "number": {
+            "type": "string",
+            "nullable": true
+          },
+          "street_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "street_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "suburb": {
+            "type": "string",
+            "nullable": true
+          },
+          "postcode": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "number",
+            "nullable": true
+          },
+          "beds": {
+            "type": "integer",
+            "nullable": true
+          },
+          "baths": {
+            "type": "integer",
+            "nullable": true
+          },
+          "cars": {
+            "type": "integer",
+            "nullable": true
+          },
+          "rates": {
+            "type": "string",
+            "nullable": true
+          },
+          "water_rates": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        }
+      },
+      "ContactCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "type_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "consultant_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ContactNote": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "consultant_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CriteriaSuburb": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "postcode": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Criteria": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true,
+            "description": "`sales` or `rental`."
+          },
+          "suburbs": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CriteriaSuburb"
+            }
+          },
+          "property_type_ids": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          "property_category_ids": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          "beds_from": {
+            "type": "integer",
+            "nullable": true
+          },
+          "beds_to": {
+            "type": "integer",
+            "nullable": true
+          },
+          "baths": {
+            "type": "integer",
+            "nullable": true
+          },
+          "rooms": {
+            "type": "integer",
+            "nullable": true
+          },
+          "cars": {
+            "type": "integer",
+            "nullable": true
+          },
+          "price_from": {
+            "type": "number",
+            "nullable": true
+          },
+          "price_to": {
+            "type": "number",
+            "nullable": true
+          },
+          "house_size_from": {
+            "type": "number",
+            "nullable": true
+          },
+          "house_size_to": {
+            "type": "number",
+            "nullable": true
+          },
+          "house_measure": {
+            "type": "string",
+            "nullable": true,
+            "description": "`Square(s)` or `Sqm`."
+          },
+          "land_size_from": {
+            "type": "number",
+            "nullable": true
+          },
+          "land_size_to": {
+            "type": "number",
+            "nullable": true
+          },
+          "land_measure": {
+            "type": "string",
+            "nullable": true,
+            "description": "`Acre(s)`, `Hectare(s)`, `Square(s)` or `Sqm`."
+          },
+          "return_pa_from": {
+            "type": "number",
+            "nullable": true
+          },
+          "return_pa_to": {
+            "type": "number",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        },
+        "description": "Buying criteria. The blueprint documents this shape twice — once embedded in Contact, once under Search Criteria — and the two lists differ. This is their union; every member is optional, so neither reading is excluded."
+      },
+      "Contact": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "consultant_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "The `My contact` category consultant."
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "description": "Present ONLY on tombstones: a deleted contact arrives as `{ id, status: \"deleted\" }` with every other member absent. A sync consumer must branch on this before reading anything else."
+          },
+          "deceased": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "permit_email": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "permit_email_blast": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "permit_sms": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "first_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "salutation": {
+            "type": "string",
+            "nullable": true
+          },
+          "attention": {
+            "type": "string",
+            "nullable": true
+          },
+          "legal_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone_bh": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone_ah": {
+            "type": "string",
+            "nullable": true
+          },
+          "mobile": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "company": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "categories": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ContactCategory"
+            }
+          },
+          "notes": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ContactNote"
+            }
+          },
+          "criteria": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Criteria"
+            }
+          }
+        },
+        "description": "A contact. Also used for the per-consultant contact list, which returns the same shape."
+      },
+      "Consultant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "active": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Documented as the attribute; the example instead sends `status`. Both are modelled — expect one of them."
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "description": "See `active`. Observed value: `\"active\"`."
+          },
+          "first_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "mobile": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "office_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "photo_url": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ContactActivity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "contact_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "consultant_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "sales_listing_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "property_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "nullable": true,
+            "description": "BUYER_CLOSED, BUYER_IN, BUYER_MAYBE, BUYER_OUT, OWNER, PAST_OWNER, PROS_LANDLORD_APP, PROS_LANDLORD_CAN, PROS_LANDLORD_LISTED, PROS_VENDOR_APP, PROS_VENDOR_CAN, PROS_VENDOR_LISTED, PROS_VENDOR_PRE, PURCHASED, PURCHASER, PURCHASER_CANCELLED, SOLD_BY_OTHER, VENDOR, VENDOR_CANCELLED, VENDOR_SETTLED, VENDOR_SOLD. The /contact_activity_types endpoint also returns BUYER_ENQUIRY, which this list omits — read it from there rather than hard-coding."
+          }
+        }
+      },
+      "ContactActivityType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "key": {
+            "type": "string",
+            "nullable": true,
+            "description": "e.g. `BUYER_IN`."
+          },
+          "value": {
+            "type": "string",
+            "nullable": true,
+            "description": "Display label, e.g. `Buyer - In`."
+          }
+        }
+      },
+      "ContactCategoryType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "PropertyType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "PropertyCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "type_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Office": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true
+          },
+          "task_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "task_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "consultant_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "contact_ids": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "complete_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time",
+            "description": "Completed tasks only."
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        },
+        "description": "A task. The completed-tasks endpoint returns the same shape plus `complete_date`; the union is modelled here."
+      },
+      "Appointment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true
+          },
+          "contact_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "consultant_ids": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          "starts_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "ends_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        }
+      },
+      "BuyerNote": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "consultant_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "contact_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        }
+      },
+      "Email": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "from": {
+            "type": "string",
+            "nullable": true,
+            "description": "Display form, e.g. `Jane Doe <jane@example.com>`."
+          },
+          "to": {
+            "type": "string",
+            "nullable": true
+          },
+          "consultant_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "contact_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true,
+            "description": "The subject line, despite the member name."
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        }
+      },
+      "SmsMessage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "consultant_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "contact_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true,
+            "description": "The message body."
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "description": "Observed value: `COMPLETED`."
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        }
+      },
+      "Inspection": {
+        "type": "object",
+        "properties": {
+          "inspection_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "start_time": {
+            "type": "string",
+            "nullable": true,
+            "description": "`HH:MM`."
+          },
+          "end_time": {
+            "type": "string",
+            "nullable": true,
+            "description": "`HH:MM`."
+          }
+        }
+      },
+      "AdvertisingCopy": {
+        "type": "object",
+        "properties": {
+          "heading": {
+            "type": "string",
+            "nullable": true
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CommissionStructure": {
+        "type": "object",
+        "properties": {
+          "percentage": {
+            "type": "number",
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "nullable": true
+          },
+          "target": {
+            "type": "number",
+            "nullable": true
+          }
+        }
+      },
+      "GrossCommission": {
+        "type": "object",
+        "properties": {
+          "inc_gst": {
+            "type": "number",
+            "nullable": true
+          },
+          "ex_gst": {
+            "type": "number",
+            "nullable": true
+          }
+        }
+      },
+      "VoucherDeductions": {
+        "type": "object",
+        "properties": {
+          "deductions_on_gross_total": {
+            "type": "number",
+            "nullable": true
+          },
+          "deductions_on_subtotal_total": {
+            "type": "number",
+            "nullable": true
+          },
+          "commission_after_deductions_on_gross": {
+            "type": "number",
+            "nullable": true
+          },
+          "commission_after_deductions": {
+            "type": "number",
+            "nullable": true
+          }
+        }
+      },
+      "CommissionTarget": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "target": {
+            "type": "number",
+            "nullable": true
+          },
+          "list": {
+            "type": "number",
+            "nullable": true
+          },
+          "manage": {
+            "type": "number",
+            "nullable": true
+          },
+          "sell": {
+            "type": "number",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CommissionConsultant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "commission_split_type": {
+            "type": "string",
+            "nullable": true,
+            "description": "e.g. `simple_target`."
+          },
+          "commission_split_date_from": {
+            "type": "string",
+            "nullable": true
+          },
+          "commission_split_date_to": {
+            "type": "string",
+            "nullable": true
+          },
+          "cumulative_commission_introduced": {
+            "type": "string",
+            "nullable": true,
+            "description": "Documented and observed as a STRING (`\"0.0\"`), not a number."
+          },
+          "commission_targets": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CommissionTarget"
+            }
+          }
+        }
+      },
+      "CommissionDeduction": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Present in the example, absent from the attribute list."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "office_commission_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "svoucher_commission_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "reasonid_fk": {
+            "type": "integer",
+            "nullable": true
+          },
+          "fixed_price": {
+            "description": "UNRESOLVED: Documented `(Number)`, sent as `false` in the example — the name reads like a flag and the value agrees, but the attribute list does not. Typed as unknown until confirmed against a live response."
+          },
+          "campaign_item_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "criteria": {
+            "type": "string",
+            "nullable": true,
+            "description": "Observed value: `AFTER`."
+          },
+          "amount": {
+            "type": "number",
+            "nullable": true,
+            "description": "Present in the example, absent from the attribute list."
+          },
+          "percentage": {
+            "type": "number",
+            "nullable": true,
+            "description": "Present in the example, absent from the attribute list."
+          }
+        }
+      },
+      "ConsultantCommission": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true,
+            "description": "Observed values: `LIST`, and by implication `SELL`."
+          },
+          "consultant_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "comm_intro_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "comm_intro_amount": {
+            "type": "string",
+            "nullable": true,
+            "description": "Documented and observed as a STRING."
+          },
+          "comm_intro_percentage": {
+            "type": "number",
+            "nullable": true
+          },
+          "prop_value_amount": {
+            "type": "number",
+            "nullable": true
+          },
+          "prop_value_percentage": {
+            "type": "number",
+            "nullable": true
+          },
+          "autopopulated_with": {
+            "type": "integer",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Consultant's display name."
+          },
+          "office_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "percentage": {
+            "type": "number",
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "nullable": true
+          },
+          "image_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "consultant": {
+            "$ref": "#/components/schemas/CommissionConsultant"
+          },
+          "deductions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CommissionDeduction"
+            }
+          }
+        }
+      },
+      "OfficeCommission": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "office_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "percentage": {
+            "type": "number",
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "nullable": true
+          },
+          "deductions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CommissionDeduction"
+            }
+          }
+        }
+      },
+      "CommissionPaymentMilestone": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "stage_type": {
+            "type": "string",
+            "nullable": true,
+            "description": "Observed value: `DEPOSIT_RELEASE`."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "percentage": {
+            "type": "number",
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "nullable": true
+          },
+          "consultant_commissions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ConsultantCommission"
+            }
+          },
+          "office_commissions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/OfficeCommission"
+            }
+          }
+        }
+      },
+      "Voucher": {
+        "type": "object",
+        "properties": {
+          "sale_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "sale_price": {
+            "description": "UNRESOLVED: Documented `(Number)`, sent as the string `\"431000.0\"`. Typed as unknown until confirmed against a live response."
+          },
+          "settlement_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "commission_type": {
+            "type": "string",
+            "nullable": true,
+            "description": "Observed value: `tiered`."
+          },
+          "commission_structures": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CommissionStructure"
+            }
+          },
+          "gross_commission": {
+            "$ref": "#/components/schemas/GrossCommission"
+          },
+          "deductions": {
+            "$ref": "#/components/schemas/VoucherDeductions"
+          },
+          "multiple_payment_stages": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "commission_payment_milestones": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CommissionPaymentMilestone"
+            }
+          }
+        },
+        "description": "The sale and its commission breakdown. This is the richest thing the API exposes and has no equivalent in VaultRE: gross commission, deductions, payment milestones, and per-consultant splits with targets."
+      },
+      "BuyerComment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "consultant_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true,
+            "description": "Observed value: `EMAIL`."
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        }
+      },
+      "ListingBuyer": {
+        "type": "object",
+        "properties": {
+          "contact_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "interest_level": {
+            "type": "string",
+            "nullable": true,
+            "description": "Observed value: `MAYBE`."
+          },
+          "source": {
+            "type": "string",
+            "nullable": true,
+            "description": "Observed value: `REA Lead`."
+          },
+          "enquiry_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "comments": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/BuyerComment"
+            }
+          }
+        }
+      },
+      "ListingFile": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "description": "Public-flagged files only. `url` carries a single-use-looking token query parameter; treat it as short-lived rather than storing it."
+      },
+      "SalesListing": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "description": "Observed: `settled`. Related activity types imply `VENDOR_SOLD`, `VENDOR_SETTLED`, `SOLD_BY_OTHER` and cancellations elsewhere in the lifecycle; the blueprint never enumerates listing status itself."
+          },
+          "consultant_ids": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          "office_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "primary_consultant_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "listing_type": {
+            "type": "string",
+            "nullable": true,
+            "description": "Observed: `PRIVATE SALE`."
+          },
+          "hidden": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "price_undisclosed": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "address_undisclosed": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "suburb_undisclosed": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "under_offer": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "price_from": {
+            "type": "number",
+            "nullable": true
+          },
+          "price_to": {
+            "type": "number",
+            "nullable": true
+          },
+          "display_price": {
+            "type": "string",
+            "nullable": true
+          },
+          "listing_image_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "listed_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "auction_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "auctioneer_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Documented `(Number)`; the example holds a date, which is a copy-paste of `auction_date` rather than a second type. Modelled per the documentation — confirm on capture."
+          },
+          "property": {
+            "$ref": "#/components/schemas/Property"
+          },
+          "advertising_copy": {
+            "$ref": "#/components/schemas/AdvertisingCopy"
+          },
+          "inspections": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Inspection"
+            }
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/Voucher"
+          },
+          "buyers": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ListingBuyer"
+            }
+          },
+          "vendor_ids": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          "purchaser_ids": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          "files": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ListingFile"
+            }
+          },
+          "vendor_solicitor_contact_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "purchaser_solicitor_contact_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "campaign_amount": {
+            "type": "number",
+            "nullable": true
+          },
+          "expected_settlement_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "actual_release_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        }
+      },
+      "RentalListing": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "description": "Observed: `LEASED`."
+          },
+          "consultant_ids": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          "rental_type": {
+            "type": "string",
+            "nullable": true,
+            "description": "Observed: `RENTAL`."
+          },
+          "primary_consultant_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "price_undisclosed": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "address_undisclosed": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "price_from": {
+            "type": "number",
+            "nullable": true
+          },
+          "price_to": {
+            "type": "number",
+            "nullable": true
+          },
+          "price_period": {
+            "type": "string",
+            "nullable": true,
+            "description": "Observed: `WEEK`."
+          },
+          "display_price": {
+            "type": "string",
+            "nullable": true
+          },
+          "listing_image_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "property": {
+            "$ref": "#/components/schemas/Property"
+          },
+          "advertising_copy": {
+            "$ref": "#/components/schemas/AdvertisingCopy"
+          },
+          "inspections": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Inspection"
+            }
+          }
+        }
+      },
+      "Appraisal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "appraisal_status": {
+            "type": "string",
+            "nullable": true,
+            "description": "`current`, `cancelled` or `listed`."
+          },
+          "office_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "property_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "primary_consultant_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "appraisal_source": {
+            "type": "string",
+            "nullable": true
+          },
+          "appraisal_consultant_ids": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          "contact_ids": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          "price_from": {
+            "type": "number",
+            "nullable": true
+          },
+          "price_to": {
+            "type": "number",
+            "nullable": true
+          },
+          "sale_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "withdrawn_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        }
+      },
+      "InspectionDetails": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "inspection_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "start_time": {
+            "type": "string",
+            "nullable": true
+          },
+          "end_time": {
+            "type": "string",
+            "nullable": true
+          },
+          "sales_listing_id": {
+            "type": "integer",
+            "nullable": true
+          }
+        }
+      },
+      "InspectionAttendanceComment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "consultant_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        }
+      },
+      "InspectionAttendance": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "contact_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "inspection_details": {
+            "$ref": "#/components/schemas/InspectionDetails"
+          },
+          "comments": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/InspectionAttendanceComment"
+            }
+          }
+        }
+      },
+      "AppraisalLead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "temperature": {
+            "type": "string",
+            "nullable": true,
+            "description": "`hot`, `warm` or `cold`."
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "description": "`open` or `closed`."
+          },
+          "action": {
+            "type": "string",
+            "nullable": true,
+            "description": "e.g. `Appraisal created`, `Task created`, `Property listed`."
+          },
+          "task": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "task_created_on": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "appraisal": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "appraisal_status": {
+            "type": "string",
+            "nullable": true
+          },
+          "listing": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "listing_status": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreatedId": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          }
+        }
+      },
+      "Empty": {
+        "type": "object",
+        "properties": {}
+      },
+      "LeadAddress": {
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Documented `(Number)`, unlike the read side's `(String)`."
+          },
+          "number": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Documented `(Number)`, unlike the read side's `(String)`."
+          },
+          "street_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "street_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "suburb": {
+            "type": "string",
+            "nullable": true
+          },
+          "postcode": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Documented `(Number)`, unlike the read side's `(String)`."
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "description": "Address as accepted when creating a lead flow lead — used only when `property_id` is unknown. The blueprint types unit/number/postcode as numbers here and as strings everywhere on the read side; both are transcribed as documented rather than reconciled."
+      }
+    }
+  }
+}
