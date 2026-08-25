@@ -1,14 +1,14 @@
 {
-  "name": "@smartretraining/rex-effect",
+  "name": "@smartretraining/boxdice-effect",
   "version": "0.7.0",
-  "description": "Effect-native SDK for the Rex Software real-estate API, generated from Rex's describe/describeModel introspection.",
+  "description": "Effect-native SDK for the Box+Dice (MRI) AI API, generated from the published API Blueprint.",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/smartretraining/distilled.git",
-    "directory": "packages/rex"
+    "directory": "packages/boxdice"
   },
-  "homepage": "https://github.com/smartretraining/distilled/tree/main/packages/rex",
+  "homepage": "https://github.com/smartretraining/distilled/tree/main/packages/boxdice",
   "bugs": {
     "url": "https://github.com/smartretraining/distilled/issues"
   },
@@ -46,6 +46,12 @@
       "worker": "./src/traits.ts",
       "default": "./lib/traits.js"
     },
+    "./Pagination": {
+      "types": "./lib/pagination.d.ts",
+      "bun": "./src/pagination.ts",
+      "worker": "./src/pagination.ts",
+      "default": "./lib/pagination.js"
+    },
     "./Protocol": {
       "types": "./lib/protocol.d.ts",
       "bun": "./src/protocol.ts",
@@ -58,12 +64,6 @@
       "worker": "./src/retry.ts",
       "default": "./lib/retry.js"
     },
-    "./Webhooks": {
-      "types": "./lib/webhooks.d.ts",
-      "bun": "./src/webhooks.ts",
-      "worker": "./src/webhooks.ts",
-      "default": "./lib/webhooks.js"
-    },
     "./*": {
       "types": "./lib/services/*.d.ts",
       "bun": "./src/services/*.ts",
@@ -74,9 +74,8 @@
   "scripts": {
     "build": "tsc -b",
     "typecheck": "tsc -p tsconfig.json",
-    "convert": "bun scripts/build-openapi.ts && bun scripts/convert.ts",
+    "convert": "bun scripts/build-spec.ts && bun scripts/convert.ts",
     "generate": "bun scripts/generate.ts",
-    "specs:scrape": "bun scripts/scrape-specs.ts",
     "test": "bunx vitest run test"
   },
   "dependencies": {

@@ -1,0 +1,2929 @@
+FORMAT: 1A
+HOST: https://your-domain.boxdice.com.au/ai_api
+
+# Box+Dice AI API
+
+## Authentication
+
+Users can generate an API key for any office group in CRM. The key's token can then
+be used for authentication against the AI API.
+
+The API uses `Api-Key` authentication scheme. The token has to be included
+in the `Authorization` request header with every request:
+
+```
+Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+```
+
+## Response status codes
+
+The API will respond with the following status codes:
+* `200 Success` - request was processed successfully, response contains the requested resources.
+* `204 No Content` - there are no resources matching the request.
+* `400 Bad Request` - request is invalid. Response includes an error message.
+* `401 Unauthorized` - missing or invalid `Authorization` request header.
+* `429 Too Many Requests` - can be used to limit the request rate.
+
+## Pagination
+
+All API endpoints that return an array of records, are paginated by timestamps. The optimal use
+of the API enpoints to fetch all records is as follows:
+
+1. first send a request with no arguments. This will return a batch of records with the oldest timestamps.
+It will also return a `next` attribute that contains a URL to be used for the next request. This URL contains
+an `after` parameter that tells the API, which record was returned last in the last response.
+1. next send a request the this new URL. One of two things will happen:
+    * If there are new or updated records, API will respond with `200 Success` status code,
+    return another batch of records and provide new `next` URL.
+    * If there are no new nor updated records, API will respond with `204 No Content` status code and
+    an empty response body. This means the client has already received the most recent data.
+    In this case the client should wait a reasonable amount of time and then send a request to the same URL.
+
+Note that if a record is updated after it included in a response, it will appear in one of the following responses again.
+
+## Rate limiting
+
+All paginated API endpoints enforce rate limits. All these endpoints return a `Retry-After` response code, which
+contains a number of seconds client should wait before making another request. The value defaults to
+
+* 10 seconds for responses with status code `200 OK`,
+* 1 minute for responses with status code `204 No Content`.
+
+In case a rate limit is exceeded, server will respond with status code `429 Too Many Requests`. The response
+will include a `Retry-After` header. The `Retry-After` header contains number of seconds to wait before sending another request.
+The limits are subject to change so the API clients should observe and respect the `Retry-After` response header.
+
+The rate limits are applied to each paginated endpoint individually, not to the API as a whole.
+
+
+# Group Lead Flow Lead
+
+Represents lead flow lead.
+
+---
+**Attributes:**
+
+- id `(Number)`
+---
+
+## Add Lead Flow Lead [/appraisal_leads]
+
+### Create Lead Flow Lead [POST]
+
+This endpoint can be used to create Sales Appraisal or Rental BDM Leads. The response will contain id of the created Lead or task. It will not create a new Lead when an open Lead already exists in system for the contact, property and lead type. When Lead Consultant does not have the Lead Flow module enabled, this endpoint will create tasks instead.
+
+---
+**Lead Flow Lead attributes:**
+- consultant_id `(Number, required)`
+- contact_id `(Number, required)`
+- property_id `(Number, optional)` - should be:
+    - property owned by contact
+- address - (if property id is unknown):
+    - unit `(Number)`
+    - number `(Number)` 
+    - street name `(String, optional)`
+    - street type `(String, optional)`
+    - suburb `(String, optional)`
+    - postcode `(Number)`
+    - state `(String, optional)`
+    - country `(String, optional)`
+- listing_type `(String, optional)` - should be:
+    - sales [default if blank]
+    - rental
+- temperature `(String, optional)` - one of:
+    - hot
+    - warm
+    - cold
+- subject `(String, optional)`
+    - task subject [Default: New AI Lead]
+- task_date `(Date, optional)`
+    - task due date [Default: Date.today]
+- comment `(String, optional)`
+
+---
+
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
+    + Body
+
+            {
+              "appraisal_lead": 
+                {
+                  "consultant_id": 1,
+                  "contact_id": 2,
+                  "property_id": 3,
+                  "temperature": "hot",
+                  "listing_type": "sales",
+                }
+            }
+            
++ Response 200 (application/json)
+
+            {
+                "id": 7352
+            }
+
+
++ Response 400 (application/json)
+
+            {
+                "error": "Appraisal Lead for this contact and property already exists." 
+            }
+
+
+## List Appraisal Lead [/appraisal_leads?{after}]
+
+### All Appraisal Lead [GET]
+
+This endpoint will list all Appraisal Lead with Aire as the source.
+
+---
+
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+            
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "temperature": "warm",
+                    "status": "open",
+                    "action": "Appraisal created",
+                    "task": false,
+                    "appraisal": true,
+                    "appraisal_status": "appraisal",
+                    "listing": false
+                },
+                {
+                    "id": 2,
+                    "temperature": "warm",
+                    "status": "open",
+                    "action": "Task created",
+                    "task": true,
+                    "task_created_on": "2024-06-25T21:41:25+10:00",
+                    "appraisal": false,
+                    "listing": false
+                },
+                {
+                    "id": 3,
+                    "temperature": "hot",
+                    "status": "closed",
+                    "action": "Property listed",
+                    "task": false,
+                    "appraisal": false,
+                    "listing": true,
+                    "listing_status": "listing_cancelled"
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/aire_api/appraisal_leads?after=1719493620_8704"
+            }
+
+
+# Group Consultant
+
+Represents consultant details. 
+
+---
+**Consultant attributes:**
+
+- id `(Number)`
+- active `(Boolean)`
+- first_name `(String)`
+- last_name `(String)`
+- mobile `(String)`
+- email `(String)`
+- office_id `(Number)`
+- photo_url `(String)`
+---
+
+## Consultants collection [/consultants?{after}]
+
+### List all consultants [GET]
+
+Retrieve paginated list of consultants.
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "status": "active",
+                    "first_name": "John",
+                    "last_name": "Smith",
+                    "mobile": "0444123456",
+                    "email": "john.smith@example.com",
+                    "office_id": 12,
+                    "photo_url": "https://example.com/image.jpg",
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/ai_api/consultants?after=1520848432_37"
+            }
+        }
+
+## Consultant contacts [/consultants/{consultant_id}/contacts?{after}]
+
+### List contacts [GET]
+
+Retrieve contacts related to the Consultant.
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + consultant_id (required, integer, `1`) ... Consultant ID
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 6,
+                    "consultant_id": 1,
+                    "permit_email": true,
+                    "permit_email_blast": true,
+                    "first_name": "Josh",
+                    "last_name": "Support",
+                    "salutation": "BD Support",
+                    "attention": "Box+Dice Support",
+                    "phone_bh": "006421897088",
+                    "mobile": "0401503683",
+                    "email": "client-6@example.com",
+                    "company": false,
+                    "created_at": "2019-01-03T11:44:33+11:00",
+                    "address": {
+                        "id": 10,
+                        "number": "730",
+                        "street_name": "Barkers Lodge",
+                        "street_type": "Road",
+                        "suburb": "OAKDALE",
+                        "postcode": "2570",
+                        "state": "NSW",
+                        "country": "Australia",
+                        "latitude": -34.0889811,
+                        "longitude": 150.5068012
+                    },
+                    "categories": [
+                        {
+                            "id": 87,
+                            "type_id": 4,
+                            "consultant_id": 3,
+                            "name": "Foo Bar"
+                        }
+                    ],
+                    "notes": [
+                        {
+                            "id": 967,
+                            "consultant_id": 3,
+                            "text": "Foo bar"
+                        }
+                    ]
+                },
+                {
+                    "id": 7,
+                    "status": "deleted"
+                }
+                
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/ai_api/contacts?after=1520848432_37"
+            }
+        }
+
+# Group Contact
+
+Represents contact details. 
+
+---
+**Contact attributes:**
+
+- id `(Number)`
+- consultant_id `(Number)`: represents `My contact` category consultant
+- deceased `(Boolean)`
+- permit_email `(Boolean)`
+- permit_email_blast `(Boolean)`
+- permit_sms `(Boolean)`
+- first_name `(String)`
+- last_name `(String)`
+- salutation `(String)`
+- attention `(String)`
+- legal_name `(String)`
+- phone_bh `(String)`
+- phone_ah `(String)`
+- mobile `(String)`
+- email `(String)`
+- company `(Boolean)`
+- created_at `(String)`: date & time of the contact creation in DB (in ISO 8601 format)
+- address `(Object)`
+    - id `(Number)`: Property ID
+    - unit `(String)`
+    - number `(String)`
+    - street_name `(String)`
+    - street_type `(String)`
+    - suburb `(String)`
+    - postcode `(String)`
+    - state `(String)`
+    - country `(String)`
+    - latitude `(Number)`
+    - longitude `(Number)`
+- categories `(Array)`
+    - id `(Number)`
+    - type_id `(Number)`
+    - consultant_id `(Number)`
+    - name `(String)`
+- notes `(Array)`
+    - id `(Number)`
+    - consultant_id `(Number)`
+    - text `(String)`
+- criteria `(Array)`
+    - id `(Number)`
+    - type `(String)`
+    - suburbs `(Array)`
+      - name `(String)`
+      - postcode `(String)`
+      - state `(String)`
+    - property_type_ids `(Array)`
+    - property_category_ids `(Array)`
+    - price_from `(Number)`
+    - price_to `(Number)`
+    - house_size_from `(Number)`
+    - house_size_to `(Number)`
+    - house_measure `(String)`
+    - land_size_from `(Number)`
+    - land_size_to `(Number)`
+    - land_measure `(String)`
+    - return_pa_from `(Number)`
+    - return_pa_to `(Number)`
+    - notes `(String)`
+    - created_at `(String)`: date & time of the criteria creation in DB (in ISO 8601 format)
+    - updated_at `(String)`: : date & time of the criteria updation in DB (in ISO 8601 format)
+
+---
+
+## Contacts collection [/contacts?{after}]
+
+### List all contacts [GET]
+
+Retrieve paginated list of contacts.
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 6,
+                    "consultant_id": 1,
+                    "permit_email": true,
+                    "permit_email_blast": true,
+                    "permit_sms": true,
+                    "first_name": "Josh",
+                    "last_name": "Support",
+                    "salutation": "BD Support",
+                    "attention": "Box+Dice Support",
+                    "phone_bh": "006421897088",
+                    "mobile": "0401503683",
+                    "email": "client-6@example.com",
+                    "company": false,
+                    "created_at": "2019-01-03T11:44:33+11:00",
+                    "address": {
+                        "id": 10,
+                        "number": "730",
+                        "street_name": "Barkers Lodge",
+                        "street_type": "Road",
+                        "suburb": "OAKDALE",
+                        "postcode": "2570",
+                        "state": "NSW",
+                        "country": "Australia",
+                        "latitude": -34.0889811,
+                        "longitude": 150.5068012
+                    },
+                    "categories": [
+                        {
+                            "id": 87,
+                            "type_id": 4,
+                            "consultant_id": 3,
+                            "name": "Foo Bar"
+                        }
+                    ],
+                    "notes": [
+                        {
+                            "id": 967,
+                            "consultant_id": 3,
+                            "text": "Foo bar"
+                        }
+                    ],
+                    "criteria": [
+                      {
+                        "id": 177,
+                        "type": "sales",
+                        "suburbs": [
+                          {
+                              "name": "HOBART",
+                              "postcode": "7000",
+                              "state": "TAS"
+                          }
+                        ],
+                        "property_type_ids": [],
+                        "property_category_ids": [],
+                        "price_from": 550000,
+                        "price_to": 650000,
+                        "created_at": "2024-09-13T18:17:35+10:00",
+                        "updated_at": "2024-09-13T18:17:35+10:00"
+                      }
+                    ]
+
+                },
+                {
+                    "id": 7,
+                    "status": "deleted"
+                }
+                
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/ai_api/contacts?after=1520848432_37"
+            }
+        }
+
+### Search contacts [GET /contacts/search?{email}&{mobile}]
+
+Performs contacts search among permitted for the API enabled offices.
+
+Accepted parameters: `email`, `mobile`.
+
+More than one parameter can be passed to the API endpoint. Search will be performed using **OR** logic.
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + email (optional, string, `john@example.com`)
+
+    + mobile (optional, string, `0400123456`)
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "data": [
+                    {
+                        "id": 1,
+                        "first_name": "John",
+                        "last_name": "Smith",
+                        "mobile": "0400123456",
+                        "email": "john@example.com"
+                    }
+                ]
+            }
+
+### Create a contact [POST]
+
+Creates a contact with provided in request body details (see Contact Attributes for the list of supported attributes).
+
+Parameter `consultant_id` used to assign a Consultant - creator of a new contact.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
+    + Body
+    
+            {
+                "contact": {
+                    "first_name": "John",
+                    "last_name": "Smith",
+                    "mobile": "0404111222",
+                    "email": "john.smith@example.com",
+                    "consultant_id": 2
+                }
+            }
+
++ Response 201 (application/json)
+
+        {
+            "id": 1
+        }
+
+## Contact [/contacts/{id}]
+
+### Get contact details [GET]
+
+Returns details about a Contact.
+
++ Parameters
+
+    + id (required, integer, `6`) ... Contact ID
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Response 200 (application/json)
+
+        {
+            "id": 6,
+            "consultant_id": 1,
+            "permit_email": true,
+            "permit_email_blast": true,
+            "first_name": "Josh",
+            "last_name": "Support",
+            "salutation": "BD Support",
+            "attention": "Box+Dice Support",
+            "phone_bh": "006421897088",
+            "mobile": "0401503683",
+            "email": "client-6@example.com",
+            "company": false,
+            "created_at": "2019-01-03T11:44:33+11:00",
+            "address": {
+                "id": 10,
+                "number": "730",
+                "street_name": "Barkers Lodge",
+                "street_type": "Road",
+                "suburb": "OAKDALE",
+                "postcode": "2570",
+                "state": "NSW",
+                "country": "Australia",
+                "latitude": -34.0889811,
+                "longitude": 150.5068012
+            },
+            "categories": [
+                {
+                    "id": 87,
+                    "type_id": 4,
+                    "consultant_id": 3,
+                    "name": "Foo Bar"
+                }
+            ],
+            "notes": [
+                {
+                    "id": 967,
+                    "consultant_id": 3,
+                    "text": "Foo bar"
+                }
+            ],
+            "criteria": [
+              {
+                "id": 177,
+                "type": "sales",
+                "suburbs": [
+                  {
+                      "name": "HOBART",
+                      "postcode": "7000",
+                      "state": "TAS"
+                  }
+                ],
+                "property_type_ids": [],
+                "property_category_ids": [],
+                "price_from": 550000,
+                "price_to": 650000,
+                "created_at": "2024-09-13T18:17:35+10:00",
+                "updated_at": "2024-09-13T18:17:35+10:00"
+              }
+            ]
+        }
+
+### Update contact details [PATCH]
+
+This endpoint can be used to change contact details and permission to send mass emails.
+
++ Parameters
+
+    + id (required, integer, `12`) ... Contact ID
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
+    + Body
+            
+            {
+                "contact": {
+                    "permit_email_blast": false,
+                    "mobile": "044123456",
+                    "phone_bh": "0312345678",
+                    "phone_ah": "0387654321",
+                    "address": {
+                        "unit": "2",
+                        "number": "54",
+                        "street_name": "Evergreen",
+                        "street_type": "Terrace",
+                        "suburb": "Albert Park",
+                        "postcode": "3206",
+                        "state": "VIC",
+                        "country": "Australia"
+                    }
+                }
+            }
+
++ Response 200 (application/json)
+
+    + Body
+            
+            {}
+
+
+## Buyer Notes [/contact/{id}/buyer_notes{after}]
+
+### List of Buyer Notes [GET]
+
+Returns buyer notes related to the Contact.
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + id (required, integer, `8`) ... Contact ID
+
+    + after (optional, string, `1575952817_1`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "consultant_id": 2,
+                    "comment": "Lorem ipsum",
+                    "created_at": "2019-12-10T15:40:16+10:00"
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/aire_api/contacts/100/buyer_notes?after=1575952817_1"
+            }
+        }
+
+## Email History [/contacts/{id}/email_history{after}]
+
+### List of Emails [GET]
+
+Returns list of Emails sent to the Contact.
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + id (required, integer, `8`) ... Contact ID
+
+    + after (optional, integer, `2`) ... Page number
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "comment": "Email subject",
+                    "from": "smith@example.com",
+                    "to": "doe@example.com",
+                    "consultant_id": 2,
+                    "created_at": "2019-12-10T15:40:16+10:00"
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/aire_api/contacts/100/email_history?after=2"
+            }
+        }
+
+## SMS History [/contact/{id}/sms_history{after}]
+
+### List of SMSes [GET]
+
+Returns list of SMSes sent to the Contact.
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + id (required, integer, `8`) ... Contact ID
+
+    + after (optional, integer, `2`) ... Page number
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "consultant_id": 2,
+                    "comment": "Lorem ipsum",
+                    "created_at": "2019-12-10T15:40:16+10:00"
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/aire_api/contacts/100/sms_history?after=2"
+            }
+        }
+
+
+## Owned Properties [/contact/{id}/owned_properties]
+
+### List owned properties [GET]
+
+This endpoint can be used to get contact's owned properties.
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + id (required, integer, `8`) ... Contact ID
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "number": "2",
+                    "street_name": "Beach",
+                    "street_type": "Street",
+                    "suburb": "PORT MELBOURNE",
+                    "postcode": "3207",
+                    "state": "VIC",
+                    "country": "Australia"
+                },
+                {
+                    "id": 2,
+                    "number": "1",
+                    "street_name": "Beach",
+                    "street_type": "Street",
+                    "suburb": "PORT MELBOURNE",
+                    "postcode": "3207",
+                    "state": "VIC",
+                    "country": "Australia"
+                }
+            ]
+        }
+
+# Group Contact Activities
+
+Represents contact activities details. 
+
+---
+**Contact activity attributes:**
+
+- id `(Number)`
+- contact_id `(Number)`
+- consultant_id `(Number)`
+- sales_listing_id `(Number)`
+- property_id `(Number)`
+- created_at `(String)` - (in ISO 8601 format)
+- type `(String)`: one of:
+  - BUYER_CLOSED
+  - BUYER_IN
+  - BUYER_MAYBE
+  - BUYER_OUT
+  - OWNER
+  - PAST_OWNER
+  - PROS_LANDLORD_APP
+  - PROS_LANDLORD_CAN
+  - PROS_LANDLORD_LISTED
+  - PROS_VENDOR_APP
+  - PROS_VENDOR_CAN
+  - PROS_VENDOR_LISTED
+  - PROS_VENDOR_PRE
+  - PURCHASED
+  - PURCHASER
+  - PURCHASER_CANCELLED
+  - SOLD_BY_OTHER
+  - VENDOR
+  - VENDOR_CANCELLED
+  - VENDOR_SETTLED
+  - VENDOR_SOLD
+
+---
+
+## Contact activities collection [/contact_activities?{after}]
+
+### List all contact activities [GET]
+
+Retrieve paginated list of contact activities.
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "contact_id": 2,
+                    "consultant_id": 3,
+                    "sales_listing_id": 4,
+                    "property_id": 5,
+                    "created_at": "2022-03-09T13:29:43+00:00",
+                    "type": "BUYER_IN",
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/ai_api/contact_activities?after=1520848432_37"
+            }
+        }
+
+## Contact activities filtered [/contacts/{contact_id}/contact_activities?{after}]
+
+### List contact activities for given Contact ID [GET]
+
+Retrieve paginated list of contacts activities filtered for given `contact_id`.
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+    + contact_id (optional, integer, `12`) ... Contact ID
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "contact_id": 2,
+                    "consultant_id": 3,
+                    "sales_listing_id": 4,
+                    "type": "BUYER_IN",
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/ai_api/contacts/1/contact_activities?after=1520848432_37"
+            }
+        }
+
+# Group Contact Categories
+
+Represents contact category details.
+
+---
+**Contact category type attributes:**
+
+- type_id `(Number)`: Contact Category Type ID
+- consultant_id `(Number)`
+---
+
+## Contact Category collection [/contacts/{contact_id}/categories]
+
+### Create a contact category [POST]
+
+This endpoint can be used to assign contact category to a contact. The request must contain either `type_id` or `name`.
+
+---
+**Attributes:**
+
+- type_id `(Number *required)` - Required if `name` is not submitted.
+- name `(String *required)` - Category type name. A new category type will be created if a category type with this name in the `consultant_id` office group does not exist. Required if `type_id` is not submitted.
+- consultant_id `(Number required)`
+
+---
+
++ Parameters
+
+    + contact_id (required, integer, `12`) ... Contact ID
+
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
+    + Body
+
+            {
+                "contact_category: {
+                    "type_id": 14,
+                    "consultant_id": 3
+                }
+            }
+
+
++ Response 201 (application/json)
+
+    + Body
+        
+            {
+                "id": 7352
+            }
+
+
++ Response 400 (application/json)
+
+    + Body
+        
+            {"errors":{"name":["is too long (maximum is 100 characters)"]}}
+            
+
+## Remove by Contact Category ID [/contacts/{contact_id}/categories/{id}]
+
+### Remove a contact category [DELETE]
+
+This endpoint can be used to remove contact category from a contact by the contact category id.
+
++ Parameters
+
+    + contact_id (required, integer, `12`) ... Contact ID
+    + id (required, integer, `519`) ... Contact Category ID
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Response 200 (application/json)
+
+    + Body
+        
+            {}
+            
+            
+
+## Remove by Name [/contacts/{contact_id}/category]            
+            
+### Remove a contact category by Name [DELETE]
+
+This endpoint can be used to remove contact category from a contact by the category name. `consulant_id` is required. 
+Note: this endpoint will respond with success if the contact has no category with the category `name` in the request.
+
++ Parameters
+
+    + contact_id (required, integer, `12`) ... Contact ID
+
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
+    + Body
+
+            {
+                "contact_category: {
+                    "consultant_id": 3
+                    "name": "foobar"
+                }
+            }
+
+
++ Response 200 (application/json)
+
+    + Body
+        
+            {}
+
+# Group Contact Category Types
+
+Represents contact category type details.
+
+---
+**Contact category type attributes:**
+
+- id `(Number)`
+- name `(String)`
+---
+
+## Contact Category Types collection [/contact_category_types?{after}]
+
+### List all contact category types [GET]
+
+Retrieve paginated list of contact category types.
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "name": "My Contact",
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/ai_api/contact_category_types?after=1520848432_37"
+            }
+        }
+
+# Group Contact Notes
+
+Represents contact note details.
+
+---
+**Contact note attributes:**
+
+- text `(String)`
+- consultant_id `(Number)`
+---
+
+## Contact Notes collection [/contacts/{contact_id}/notes]
+
+### Create a contact note [POST]
+
+This endpoint can be used to create a contact note.
+
++ Parameters
+
+    + contact_id (required, integer, `12`) ... Contact ID
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
+    + Body
+
+            {
+                "note: {
+                    "text": "Will be reachable in two weeks.",
+                    "consultant_id": 3
+                }
+            }
+
++ Response 201 (application/json)
+
+    + Body
+        
+            {
+                "id": 7352
+            }
+
+# Group Rental Listing
+
+Represents rental listing details. 
+
+---
+**Rental listing attributes:**
+
+- id `(Number)`
+- status `(String)`
+- consultant_ids `(Array of Numbers)`
+- rental_type `(String)`
+- primary_consultant_id `(Number)`
+- price_undisclosed `(Boolean)`
+- address_undisclosed `(Boolean)`
+- url `(String)`
+- price_from `(Number)`
+- price_to `(Number)`
+- price_period `(String)`
+- display_price `(String)`
+- listing_image_url `(String)`
+- property `(Object)`
+    - id `(Number)`
+    - type `(String)`
+    - category `(String)`
+    - unit `(String)`
+    - number `(String)`
+    - street_name `(String)`
+    - street_type `(String)`
+    - suburb `(String)`
+    - postcode `(String)`
+    - state `(String)`
+    - country `(String)`
+    - latitude `(Number)`
+    - longitude `(Number)`
+    - beds `(Number)`
+    - baths `(Number)`
+    - cars `(Number)`
+    - rates `(String)`
+    - water_rates `(String)`
+    - created_at `(String)` - (in ISO 8601 format)
+    - updated_at `(String)` - (in ISO 8601 format)
+- advertising_copy `(Object)`
+    - heading `(String)`
+    - text `(String)`
+- inspections `(Array)`
+    - inspection_date `(Date)`
+    - start_time `(Time)`
+    - end_time `(Time)`
+---
+
+## Rental Listings collection [/rental_listings?{after}]
+
+### List all rental listings [GET]
+
+Retrieve paginated list of rental listings.
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 4,
+                    "status": "LEASED",
+                    "consultant_ids": [
+                        18
+                    ],
+                    "rental_type": "RENTAL",
+                    "primary_consultant_id": 18,
+                    "price_undisclosed": false,
+                    "address_undisclosed": false,
+                    "url": "https://your-listing-url.com",
+                    "price_period": "WEEK",
+                    "display_price": "$3500",
+                    "listing_image_url": "https://assets.boxdice.com.au/ai/rental_listings/4/MAIN.1424237612.jpg",
+                    "property": {
+                        "id": 14,
+                        "type": "Commercial",
+                        "category": "Retail",
+                        "number": "1/264",
+                        "street_name": "Queen",
+                        "street_type": "Street",
+                        "suburb": "CAMPBELLTOWN",
+                        "postcode": "2560",
+                        "state": "NSW",
+                        "country": "Australia",
+                        "latitude": -34.0686733,
+                        "longitude": 150.812516,
+                        "beds": 2,
+                        "baths": 1,
+                        "rates": "123",
+                        "water_rates": "321",
+                        "created_at": "2022-03-09T13:29:43+00:00",
+                        "updated_at": "2022-03-09T13:29:43+00:00",
+                    },
+                    "advertising_copy": {
+                        "heading": "Retail Space located in main street of Campbelltown",
+                        "text": "- Area of approx 103sqm Situated in a Prime Location on the main street of Campbelltown"
+                    },
+                    "inspections": [
+                        {
+                            "inspection_date": "2018-09-18",
+                            "start_time": "16:00",
+                            "end_time": "16:30"
+                        }
+                    ]
+                },
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/ai_api/rental_listings?after=1520848432_37"
+            }
+        }
+
+# Group Sales Listing
+
+Represents sales listing details. 
+
+---
+**Sales listing attributes:**
+
+- id `(Number)`
+- status `(String)`
+- consultant_ids `(Array of Numbers)`
+- office_id `(Number)`
+- primary_consultant_id `(Number)`
+- listing_type `(String)`
+- hidden `(Boolean)`
+- price_undisclosed `(Boolean)`
+- address_undisclosed `(Boolean)`
+- suburb_undisclosed `(Boolean)`
+- under_offer `(Boolean)`
+- description `(String)`
+- url `(String)`
+- price_from `(Number)`
+- price_to `(Number)`
+- display_price `(String)`
+- listing_image_url `(String)`
+- listed_date `(String)`
+- auction_date `(String)`
+- auctioneer_id `(Number)`
+- property `(Object)`
+    - id `(Number)`
+    - type `(String)`
+    - category `(String)`
+    - unit `(String)`
+    - number `(String)`
+    - street_name `(String)`
+    - street_type `(String)`
+    - suburb `(String)`
+    - postcode `(String)`
+    - state `(String)`
+    - country `(String)`
+    - latitude `(Number)`
+    - longitude `(Number)`
+    - beds `(Number)`
+    - baths `(Number)`
+    - cars `(Number)`
+    - rates `(String)`
+    - water_rates `(String)`
+    - created_at `(String)` - (in ISO 8601 format)
+    - updated_at `(String)` - (in ISO 8601 format)
+- advertising_copy `(Object)`
+    - heading `(String)`
+    - text `(String)`
+- inspections `(Array)`
+    - inspection_date `(Date)`
+    - start_time `(Time)`
+    - end_time `(Time)`
+- voucher `(Object)`
+    - sale_date `(Date)`
+    - sale_price `(Number)`
+    - settlement_date `(Date)`
+    - commission_type `(String)`
+    - commission_structures `(Array)`
+        - percentage `(Number)`
+        - amount `(Number)`
+        - target `(Number)`
+    - gross_commission `(Object)`
+        - inc_gst `(Number)`
+        - ex_gst `(Number)`
+    - deductions `(Object)`
+        - deductions_on_gross_total `(Number)`
+        - deductions_on_subtotal_total `(Number)`
+        - commission_after_deductions_on_gross `(Number)`
+        - commission_after_deductions `(Number)`
+    - multiple_payment_stages `(Boolean)`
+    - commission_payment_milestones `(Array)`
+        - id `(Number)`
+        - stage_type `(String)`
+        - description `(String)`
+        - percentage `(Number)`
+        - amount `(Number)`
+        - consultant_commissions `(Array)`
+            - id `(Number)`
+            - role `(String)`
+            - consultant_id `(Number)`
+            - comm_intro_at `(String)` - (in ISO 8601 format)
+            - comm_intro_amount `(String)`
+            - comm_intro_percentage `(Number)`
+            - prop_value_amount `(Number)`
+            - prop_value_percentage `(Number)`
+            - autopopulated_with `(Number)`
+            - name `(String)`
+            - office_id `(Number)`
+            - percentage `(Number)`
+            - amount `(Number)`
+            - image_url `(String)`
+            - consultant `(Object)`
+                - id `(Number)`
+                - commission_split_type `(String)`
+                - commission_split_date_from `(String)`
+                - commission_split_date_to `(String)`
+                - cumulative_commission_introduced `(String)`
+                - commission_targets `(Array)`
+                    - id `(Number)`
+                    - target `(Number)`
+                    - list `(Number)`
+                    - manage `(Number)`
+                    - sell `(Number)`
+                    - type `(String)`
+            - deductions `(Array)`
+                - id `(Number)`
+                - description `(String)`
+                - office_commission_id `(Number)`
+                - svoucher_commission_id `(Number)`
+                - reasonid_fk `(Number)`
+                - fixed_price `(Number)`
+                - campaign_item_id `(Number)`
+                - criteria `(String)`
+        - office_commissions `(Array)`
+            - id `(Number)`
+            - office_id `(Number)`
+            - percentage `(Number)`
+            - amount `(Number)`
+            - deductions `(Array)`
+                - id `(Number)`
+                - description `(String)`
+                - office_commission_id `(Number)`
+                - svoucher_commission_id `(Number)`
+                - reasonid_fk `(Number)`
+                - fixed_price `(Number)`
+                - campaign_item_id `(Number)`
+                - criteria `(String)`
+- buyers `(Array)`
+    - contact_id `(Number)`
+    - interest_level `(String)`
+    - source `(String)`
+    - enquiry_date `(String)` - (in ISO 8601 format)
+    - comments `(Array)`
+      - id `(Number)`
+      - consultant_id `(Number)`
+      - text `(String)`
+      - type `(String)`
+      - created_at `(String)` - (in ISO 8601 format)
+      - updated_at `(String)` - (in ISO 8601 format)
+- vendor_ids `(Array of contact_ids)`
+- purchaser_ids `(Array of contact_ids)`
+- files `(Array)` - only files flagged public
+    - id `(Number)`
+    - name `(String)`
+    - description `(String)`
+    - url `(String)`
+- vendor_solicitor_contact_id `(Number)`
+- purchaser_solicitor_contact_id `(Number)`
+- campaign_amount `(Number)`
+- expected_settlement_date  `(String)` - (in ISO 8601 format)
+- actual_release_date  `(String)` - (in ISO 8601 format)
+- expected_settlement_date `(String)` - (in ISO 8601 format)
+---
+
+## Sales Listings collection [/sales_listings?{after}]
+
+### List all sales listings [GET]
+
+Retrieve paginated list of sales listings.
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 7,
+                    "status": "settled",
+                    "consultant_ids": [
+                        12
+                    ],
+                    "primary_consultant_id": 12,
+                    "listing_type": "PRIVATE SALE",
+                    "hidden": false,
+                    "price_undisclosed": false,
+                    "address_undisclosed": false,
+                    "suburb_undisclosed": false,
+                    "under_offer": false,
+                    "description": "",
+                    "url": "https://your-listing-url.com",
+                    "price_from": 0,
+                    "price_to": 0,
+                    "display_price": "Offers Above $395,000",
+                    "listed_date": "2021-10-01",
+                    "listing_image_url": "https://assets.boxdice.com.au/combined_macarthur/listings/7/aa3a7f0e.jpg",
+                    "auction_date": "2021-10-01",
+                    "auctioneer_id": "2021-10-01",
+                    "property": {
+                        "id": 17,
+                        "type": "Residential",
+                        "number": "46",
+                        "street_name": "York",
+                        "street_type": "Street",
+                        "suburb": "TAHMOOR",
+                        "postcode": "2573",
+                        "state": "NSW",
+                        "country": "Australia",
+                        "latitude": -34.218655,
+                        "longitude": 150.593717,
+                        "beds": 3,
+                        "baths": 1,
+                        "cars": 0,
+                        "rates": "123",
+                        "water_rates": "321",
+                        "created_at": "2022-03-09T13:29:43+00:00",
+                        "updated_at": "2022-03-09T13:29:43+00:00"
+                    },
+                    "advertising_copy": {
+                        "heading": "DUAL INCOME POTENTIAL",
+                        "text": "With 3 bedrooms all with built ins, tiled living areas"
+                    },
+                    "voucher": {
+                        "sale_date": "2015-03-16",
+                        "sale_price": "431000.0",
+                        "commission_type": "tiered",
+                        "commission_structures": [
+                            {
+                                "percentage": 10.0,
+                                "amount": 0.0,
+                                "target": 1.0
+                            }
+                        ],
+                        "gross_commission": {
+                            "inc_gst": 0.11,
+                            "ex_gst": 0.1
+                        },
+                        "deductions": {
+                            "deductions_on_gross_total": 0.0,
+                            "deductions_on_subtotal_total": 0.0,
+                            "commission_after_deductions_on_gross": 0.0,
+                            "commission_after_deductions": 0.0
+                        },
+                        "multiple_payment_stages": false,
+                        "commission_payment_milestones": [
+                            {
+                                "id": 2,
+                                "stage_type": "DEPOSIT_RELEASE",
+                                "description": "Commission drawn/received",
+                                "percentage": 100.0,
+                                "amount": 0.1,
+                                "consultant_commissions": [
+                                    {
+                                        "id": 7,
+                                        "role": "LIST",
+                                        "consultant_id": 2,
+                                        "comm_intro_at": "2023-09-11T15:04:55.000+10:00",
+                                        "comm_intro_amount": "0.0",
+                                        "name": "consultant1 one",
+                                        "office_id": 1,
+                                        "percentage": 50.0,
+                                        "amount": 0.05,
+                                        "consultant": {
+                                            "id": 2,
+                                            "commission_split_type": "simple_target",
+                                            "cumulative_commission_introduced": "0.0",
+                                            "commission_targets": []
+                                        },
+                                        "deductions": []
+                                    },
+                                    {
+                                        "id": 8,
+                                        "role": "LIST",
+                                        "consultant_id": 3,
+                                        "comm_intro_at": "2023-09-11T15:04:55.000+10:00",
+                                        "comm_intro_amount": "0.0",
+                                        "name": "consultant2 two",
+                                        "office_id": 1,
+                                        "percentage": 50.0,
+                                        "amount": 0.05,
+                                        "consultant": {
+                                            "id": 3,
+                                            "commission_split_type": "simple_target",
+                                            "cumulative_commission_introduced": "0.0",
+                                            "commission_targets": []
+                                        },
+                                        "deductions": []
+                                    }
+                                ],
+                                "office_commissions": [
+                                    {
+                                        "id": 2,
+                                        "office_id": 1,
+                                        "percentage": 50.0,
+                                        "amount": 0.0,
+                                        "deductions": [
+                                            {
+                                                "id": 19,
+                                                "description": "",
+                                                "office_commission_id": 2,
+                                                "reasonid_fk": 7,
+                                                "fixed_price": false,
+                                                "criteria": "AFTER",
+                                                "name": "Advertising",
+                                                "amount": 0.0,
+                                                "percentage": 1.0
+                                            },
+                                            {
+                                                "id": 20,
+                                                "description": "",
+                                                "office_commission_id": 2,
+                                                "reasonid_fk": 1,
+                                                "fixed_price": false,
+                                                "criteria": "AFTER",
+                                                "name": "Advertising Loss",
+                                                "amount": 0.0,
+                                                "percentage": 1.0
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "buyers": [
+                        {
+                            "contact_id": 85,
+                            "interest_level": "MAYBE",
+                            "source": "REA Lead",
+                            "enquiry_date": "2022-03-09T13:29:43+00:00",
+                            "comments": [
+                                {    
+                                    "id": 14,
+                                    "consultant_id": 12,
+                                    "text": "Comment text",
+                                    "type": "EMAIL",
+                                    "created_at": "2022-03-09T13:29:43+00:00",
+                                    "updated_at": "2022-03-09T13:29:43+00:00"
+                                }
+                            ]
+                        }
+                    ],
+                    "vendor_ids": [
+                        11
+                    ],
+                    "purchaser_ids": [
+                        420
+                    ],            
+                    "files": [
+                        {
+                            "id": 1239,
+                            "name": "SOI.pdf",
+                            "description": "SOI",
+                            "url": "https://example.com/virtual_files/1239?&token=946a4b86ccc6875912f6e41f7fe143cb238e308730945952ed75d2d44c68bf44"
+                        },
+                        {
+                            "id": 1257,
+                            "name": "test.pdf",
+                            "description": "test",
+                            "url": "https://example.com/virtual_files/1257?token=5786174f76595ab9ae7ca66062e38e087916db60d61cb02de3ec34a1ee853ec8"
+                        }
+                    ],
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/rebot_api/rental_listings?after=1520848432_37"
+            }
+        }
+
+
+## Sales Listing [/sales_listings/{id}]
+
++ Parameters
+
+    + id (required, number) - Sales Listing ID
+
+### Update [PATCH]
+
+This endpoint can be used for updating Sales Listing's primary Consultant and/or vendor Contacts.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
+    + Body
+    
+            {
+                "sales_listing": {
+                    "primary_consultant_id": 1,
+                    "vendor_ids": [1000, 1001]
+                }
+            }
+
++ Response 200 (application/json)
+
+            {
+                "id": 7,
+                "status": "settled",
+                "consultant_ids": [
+                    12
+                ],
+                "primary_consultant_id": 1,
+                "listing_type": "PRIVATE SALE",
+                "hidden": false,
+                "price_undisclosed": false,
+                "address_undisclosed": false,
+                "suburb_undisclosed": false,
+                "under_offer": false,
+                "description": "",
+                "url": "https://your-listing-url.com",
+                "price_from": 0,
+                "price_to": 0,
+                "display_price": "Offers Above $395,000",
+                "listed_date": "2021-10-01",
+                "listing_image_url": "https://assets.boxdice.com.au/combined_macarthur/listings/7/aa3a7f0e.jpg",
+                "property": {
+                    "id": 17,
+                    "type": "Residential",
+                    "number": "46",
+                    "street_name": "York",
+                    "street_type": "Street",
+                    "suburb": "TAHMOOR",
+                    "postcode": "2573",
+                    "state": "NSW",
+                    "country": "Australia",
+                    "latitude": -34.218655,
+                    "longitude": 150.593717,
+                    "beds": 3,
+                    "baths": 1,
+                    "cars": 0,
+                    "rates": "123",
+                    "water_rates": "321",
+                    "created_at": "2022-03-09T13:29:43+00:00",
+                    "updated_at": "2022-03-09T13:29:43+00:00"
+                },
+                "advertising_copy": {
+                    "heading": "DUAL INCOME POTENTIAL",
+                    "text": "With 3 bedrooms all with built ins, tiled living areas"
+                },
+                "voucher": {
+                    "sale_date": "2015-03-16",
+                    "sale_price": "431000.0"
+                },
+                "buyers": [
+                    {
+                        "contact_id": 85,
+                        "interest_level": "MAYBE",
+                        "source": "REA Lead",
+                        "enquiry_date": "2022-03-09T13:29:43+00:00",
+                        "comments": [
+                            {    
+                                "id": 14,
+                                "consultant_id": 12,
+                                "text": "Comment text",
+                                "type": "EMAIL",
+                                "created_at": "2022-03-09T13:29:43+00:00",
+                                "updated_at": "2022-03-09T13:29:43+00:00"
+                            }
+                        ]
+                    }
+                ],
+                "vendor_ids": [
+                    1000, 1001
+                ],
+                "purchaser_ids": [
+                    420
+                ]
+            }
+
+
+# Group Search Criteria
+
+Represents search criteria details. 
+
+---
+**Search criteria attributes:**
+
+- id `(Number)`
+- type `(One of [sales rental])`
+- beds_from `(Number)`
+- beds_to `(Number)`
+- baths `(Number)`
+- rooms `(Number)`
+- cars `(Number)`
+- price_from `(Number)`
+- price_to `(Number)`
+- house_size_from `(Number)`
+- house_size_to `(Number)`
+- house_measure `(One of [Square(s) Sqm])`
+- land_size_from `(Number)`
+- land_size_to `(Number)`
+- land_measure `(One of [Acre(s) Hectare(s) Square(s) Sqm])`
+- return_pa_from `(Number)`
+- return_pa_to `(Number)`
+- notes `(String)`
+---
+
+## Search criteria collection [/contacts/{contact_id}/criteria]
+
++ Parameters
+
+    + contact_id (required, integer, `31415`)
+
+### Create search criteria [POST]
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
+    + Body
+
+            {
+                "criteria": {
+                    "type": "sales",
+                    "suburb_ids": [3, 7, 13],
+                    "property_type_ids": [1, 6],
+                    "property_category_ids": [45, 46],
+                    "beds_from": 3,
+                    "beds_to": 3,
+                    "baths": 2,
+                    "rooms": 4,
+                    "cars": 2,
+                    "price_from": "1250000",
+                    "price_to": "1300000",
+                    "house_size_from": 8,
+                    "house_size_to": 10,
+                    "house_measure": "Square(s)",
+                    "land_size_from": 1500,
+                    "land_size_to": 2000,
+                    "land_measure": "Sqm",
+                    "return_pa_from": 10,
+                    "return_pa_to": 15,
+                    "notes": "Investment property",
+                    "ealert_enabled": false
+                }
+            }
+    
++ Response 201 (application/json)
+
+    + Body
+    
+            {
+                "id": 913
+            }
+
+## Search criteria [/contacts/{contact_id}/criteria/{id}]
+
++ Parameters
+    
+    + contact_id (required, integer, `31415`)
+    + id (required, integer, `2728`)
+
+### Update search criteria [PATCH]
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
+    + Body
+    
+            {
+                "criteria": {
+                    "suburb_ids": [3, 5],
+                    "price_to": "1400000",
+                    "cars": 1,
+                    "ealert_enabled": false
+                }
+            }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {}
+
+### Delete search criteria [DELETE]
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Response 200 (application/json)
+
+    + Body
+            
+            {}
+
+# Group Tasks
+
+Represents task details.
+
+---
+**Attributes:**
+
+- id `(Number)`
+- subject `(String)`
+- task_type `(String)`
+- task_date `(String)`
+- consultant_id `(Number)`
+- contact_ids `(Array of Number)`
+- notes `(String)`
+---
+
+## Tasks collection [/tasks?{after}]
+
+### List all tasks [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "subject": "Task 1",
+                    "task_type": "Task",
+                    "task_date": "2018-12-04",
+                    "consultant_id": 1,
+                    "contact_ids": [8],
+                    "notes": "Regarding task"
+                },
+                {
+                    "id": 4,
+                    "subject": "Task 2",
+                    "task_type": "Task",
+                    "task_date": "2019-01-18",
+                    "consultant_id": 1,
+                    "contact_ids": [],
+                    "notes": "Regarding another task"
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/ai_api/tasks?after=1547774654_4"
+            }
+        }
+
+### Create Tasks [POST]
+
+This endpoint can be used to create multiple tasks. The response will contain an array of ids/errors. The position of the id/error in the array in the response matches the position of the item that was submitted.
+
+---
+**Task attributes:**
+- subject `(String, required)`
+- contact_ids `(Number Array, required)`
+- action_date `(Date, required)`
+- consultant_id `(Number, required)`
+- kind `(String, required)` - one of:
+  - Phone
+  - Email
+  - SMS
+  - Letter
+  - Task
+  - Web enquiry
+  - Others
+
+---
+
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
+    + Body
+
+            {
+              "tasks": [
+                {
+                  "subject": "foobar",
+                  "contact_ids": [1],
+                  "action_date": "2021-01-01",
+                  "kind": "SMS",
+                  "consultant_id": 1,
+                },
+                {
+                  "subject": "foobar",
+                  "contact_ids": [2],
+                  "action_date": "2021-01-01",
+                  "kind": "SMS",
+                  "consultant_id": null,
+                }
+              ]
+            }
++ Response 200 (application/json)
+
+        
+        [
+            {"id": 7352},
+            {"errors": { "consultant": ["can't be blank"] }}
+        ]
+
+## Contact Tasks collection [/contacts/{contact_id}/tasks?{after}]
+
+### List all tasks [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + contact_id (required, integer, `8`) ... Contact ID
+    + after (optional, string, `1543876529_1`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "subject": "Task 1",
+                    "task_type": "Task",
+                    "task_date": "2018-12-04",
+                    "consultant_id": 1,
+                    "contact_ids": [8],
+                    "notes": "Regarding task"
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/ai_api/contacts/8/tasks?after=1543876529_1"
+            }
+        }
+
+
+## Contact complete Tasks [/contacts/{contact_id}/completed_tasks?{after}]
+
+Returns complete tasks related to The Contact.
+
+### List tasks [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + contact_id (required, integer, `8`) ... Contact ID
+
+    + after (optional, string, `1543876529_1`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "consultant_id": 1,
+                    "subject": "Task 1",
+                    "task_type": "Task",
+                    "task_date": "2018-12-04",
+                    "complete_date": "2024-05-24T15:41:42+10:00",
+                    "created_at": "2018-12-01T10:00:00+10:00",
+                    "updated_at": "2018-12-04T12:13:14+10:00"
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/aire_api/contacts/100/completed_tasks?after=1543876529_1"
+            }
+        }
+
+
+# Group Appointments
+
+Represents appointment details.
+
+---
+**Attributes:**
+
+- id `(Number)`
+- subject `(String)`
+- contact_id `(Number)`
+- consultant_ids `(Array of Number)`
+- starts_at `(String)`: date and time of appointment start (in ISO 8601 format)
+- ends_at `(String)`: date end time of appointment end (in ISO 8601 format)
+---
+
+## Appointments collection [/appointments?{after}]
+
+### List all future appointments [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 3,
+                    "subject": "Appointment 1",
+                    "contact_id": 8,
+                    "consultant_ids": [22, 49],
+                    "starts_at": "2019-10-30T15:00:00+11:00",
+                    "ends_at": "2019-10-30T16:00:00+11:00"
+                },
+                {
+                    "id": 5,
+                    "subject": "Appointment 2",
+                    "consultant_ids": [49],
+                    "starts_at": "2019-04-20T16:00:00+10:00",
+                    "ends_at": "2019-04-20T17:00:00+10:00"
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/ai_api/appointments?after=1548023004_5"
+            }
+        }
+
+## Contact past Appointments [/contacts/{contact_id}/past_appointments?{after}]
+
+Returns past Appointments related to the Contact.
+
+### List appointments [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + contact_id (required, integer, `8`) ... Contact ID
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 3,
+                    "subject": "Appointment 1",
+                    "consultant_ids": [22, 49],
+                    "starts_at": "2019-10-30T15:00:00+11:00",
+                    "ends_at": "2019-10-30T16:00:00+11:00",
+                    "created_at": "2019-10-30T10:00:00+11:00",
+                    "updated_at": "2019-10-30T10:00:00+11:00"
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/contacts/100/past_appointments?after=1548023004_5"
+            }
+        }
+
+
+## Contact future Appointments [/contacts/{contact_id}/appointments?{after}]
+
+Returns future Appointments related to the Contact.
+
+### List appointments [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + contact_id (required, integer, `8`) ... Contact ID
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 3,
+                    "subject": "Appointment 1",
+                    "contact_id": 8,
+                    "consultant_ids": [22, 49],
+                    "starts_at": "2019-10-30T15:00:00+11:00",
+                    "ends_at": "2019-10-30T16:00:00+11:00"
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/contacts/1/appointments?after=1548023004_5"
+            }
+        }
+
+        
+# Group Properties
+
+Represents property details.
+
+---
+**Attributes:**
+
+- id `(Number)`
+- unit `(String)`
+- number `(String)`
+- street_name `(String)`
+- street_type `(String)`
+- suburb `(String)`
+- postcode `(String)`
+- state `(String)`
+- country `(String)`
+- latitude `(Number)`
+- longitude `(Number)`
+- beds `(Number)`
+- baths `(Number)`
+- cars `(Number)`
+- type `(String)`
+- category `(String)`
+- rates `(String)`
+- water_rates `(String)`
+- created_at `(String)` - (in ISO 8601 format)
+- updated_at `(String)` - (in ISO 8601 format)
+
+---
+
+## Properties collection [/properties?{after}]
+
+### List all properties [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+          "data": [
+            {
+              "id": 89,
+              "unit": null,
+              "number": "82",
+              "street_name": "Kernot",
+              "street_type": "Street",
+              "suburb": "KINGSVILLE SOUTH",
+              "postcode": "",
+              "state": "VIC",
+              "country": "Australia",
+              "latitude": -37.832754,
+              "longitude": 144.872022,
+              "beds": 0,
+              "baths": 0,
+              "cars": 0,
+              "type": null,
+              "category": null,
+              "rates": "123",
+              "water_rates": "321",
+              "created_at": "2022-03-09T13:29:43+00:00",
+              "updated_at": "2022-03-09T13:29:43+00:00",
+            }
+          ],
+          "paging": {
+            "next": "https://your-domain.boxdice.com.au/ai_api/properties?after=1548023004_5"
+          }
+        }
+
+
+# Group Buyer Notes
+
+Represents buyer notes.
+
+---
+**Attributes:**
+
+- id `(Number)`
+- consultant_id `(Number)`
+- comment `(String)`
+- created_at `(String)`: (in ISO 8601 format)
+- contact_id `(Number)`
+
+---
+
+## Buyer Notes collection [/buyer_notes?{after}]
+
+### List all buyer notes [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+          "data": [
+            {
+              "id": 254907,
+              "consultant_id": 5,
+              "comment": "Interested in 14 The Strand. Going through wed 20th July at 1pm",
+              "created_at": "1970-01-01T10:01:53+10:00",
+              "contact_id": 310
+            }
+          ],
+          "paging": {
+            "next": "https://you-domain.boxdice.com/aire_api/buyer_notes?after=1618961040_254907"
+          }
+        }
+
+
+# Group Emails
+
+Represents emails.
+
+---
+**Attributes:**
+
+- id `(Number)`
+- from `(String)`
+- to `(String)`
+- consultant_id `(Number)`
+- comment `(String)`
+- created_at `(String)`: (in ISO 8601 format)
+- contact_id `(Number)`
+---
+
+## Emails collection [/emails?{after}]
+
+### List all emails [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+          "data": [
+            {
+              "id": 3747364,
+              "from": "Ashlee Mitchell <ashleem@williamsre.com.au>",
+              "to": "test@example.com",
+              "consultant_id": 109,
+              "comment": "Testing",
+              "created_at": "2021-06-03T15:29:48+10:00",
+              "contact_id": 72168
+            },
+            {
+              "id": 3747365,
+              "from": "BoxDice Admin <admin+williams@boxdice.com.au>",
+              "to": "test@example.com",
+              "consultant_id": 49,
+              "comment": "aouaouaou",
+              "created_at": "2021-06-03T15:30:36+10:00",
+              "contact_id": 72168
+            }
+          ],
+          "paging": {
+            "next": "https://you-domain.boxdice.com/ai_api/emails?after=1622698236_3747365"
+          }
+        }
+
+# Group Sms Messages
+
+Represents sms messages.
+
+---
+**Attributes:**
+
+- id `(Number)`
+- consultant_id `(Number)`
+- comment `(String)`
+- created_at `(String)`: (in ISO 8601 format)
+- status `(String)`
+- contact_id `(Number)`
+---
+
+## SMS Messages collection [/sms_messages?{after}]
+
+### List all sms messages [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+          "data": [
+            {
+              "id": 97487,
+              "consultant_id": 49,
+              "comment": "Testing",
+              "created_at": "2021-06-07T09:14:59+10:00",
+              "status": "COMPLETED",
+              "contact_id": 51476
+            }
+          ],
+          "paging": {
+            "next": "https://you-domain.boxdice.com/ai_api/sms_messages?after=1623021301_97487"
+          }
+        }
+
+# Group Contact Activity Types
+
+Represents contact activity types.
+
+NOTE: these values will rarely change.
+
+---
+**Attributes:**
+
+- id `(Number)`
+- key `(String)`
+- value `(String)`
+---
+
+## Contact Activity Types collection [/contact_activity_types?{after}]
+
+### List all contact activity types [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+
+        {
+          "data": [
+            {
+              "id": 1,
+              "key": "BUYER_IN",
+              "value": "Buyer - In"
+            },
+            {
+              "id": 2,
+              "key": "BUYER_OUT",
+              "value": "Buyer - Out"
+            },
+            {
+              "id": 3,
+              "key": "BUYER_MAYBE",
+              "value": "Buyer - Maybe"
+            },
+            {
+              "id": 4,
+              "key": "OWNER",
+              "value": "Owner"
+            },
+            {
+              "id": 5,
+              "key": "PAST_OWNER",
+              "value": "Past Owner"
+            },
+            {
+              "id": 6,
+              "key": "BUYER_CLOSED",
+              "value": "Buyer - Closed"
+            },
+            {
+              "id": 7,
+              "key": "PURCHASER",
+              "value": "Purchaser"
+            },
+            {
+              "id": 8,
+              "key": "PURCHASER_CANCELLED",
+              "value": "Potential Landlord"
+            },
+            {
+              "id": 9,
+              "key": "PURCHASED",
+              "value": "Purchased"
+            },
+            {
+              "id": 10,
+              "key": "PROS_VENDOR_APP",
+              "value": "Appraisal"
+            },
+            {
+              "id": 12,
+              "key": "PROS_VENDOR_CAN",
+              "value": "Prospective Vendor - Cancelled"
+            },
+            {
+              "id": 13,
+              "key": "VENDOR",
+              "value": "Vendor"
+            },
+            {
+              "id": 14,
+              "key": "VENDOR_CANCELLED",
+              "value": "Vendor - Cancelled"
+            },
+            {
+              "id": 15,
+              "key": "VENDOR_SOLD",
+              "value": "Vendor - Sold"
+            },
+            {
+              "id": 16,
+              "key": "SOLD_BY_OTHER",
+              "value": "Sold By Other"
+            },
+            {
+              "id": 17,
+              "key": "PROS_VENDOR_LISTED",
+              "value": "Pros Vendor - Listed"
+            },
+            {
+              "id": 18,
+              "key": "VENDOR_SETTLED",
+              "value": "Vendor - Settled"
+            },
+            {
+              "id": 19,
+              "key": "PROS_LANDLORD_APP",
+              "value": "Rental Appraisal"
+            },
+            {
+              "id": 20,
+              "key": "PROS_LANDLORD_LISTED",
+              "value": "Rental Appraisal - Listed"
+            },
+            {
+              "id": 21,
+              "key": "PROS_LANDLORD_CAN",
+              "value": "Rental Appraisal - Cancelled"
+            },
+            {
+              "id": 11,
+              "key": "PROS_VENDOR_PRE",
+              "value": "Prospective Vendor - Presentation"
+            },
+            {
+              "id": 22,
+              "key": "BUYER_ENQUIRY",
+              "value": "Buyer - Web Lead"
+            }
+          ],
+          "paging": {
+            "next": "https://you-domain.boxdice.com/ai_api/contact_activity_types?after=1618961214_22"
+          }
+        }
+
+# Group Property Types
+
+Represents property types.
+
+---
+**Attributes:**
+
+- id `(Number)`
+- name `(String)`
+---
+
+## Property types collection [/property_types?{after}]
+
+### List all property types [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+          {
+            "data": [
+              {
+                "id": 1,
+                "name": "Business"
+              },
+              {
+                "id": 2,
+                "name": "Commercial"
+              },
+              {
+                "id": 3,
+                "name": "Commercial Land"
+              },
+              {
+                "id": 4,
+                "name": "Residential Land"
+              },
+              {
+                "id": 6,
+                "name": "Residential"
+              },
+              {
+                "id": 7,
+                "name": "Rural"
+              }
+            ],
+            "paging": {
+              "next": "https://you-domain.boxdice.com/ai_api/property_types?after=7_7"
+            }
+          }
+
+
+# Group Property Categories
+
+Represents property types.
+
+---
+**Attributes:**
+
+- id `(Number)`
+- type_id `(Number)`
+- name `(String)`
+---
+
+## Property categories collection [/property_categories?{after}]
+
+### List all property categories [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+          {
+            "data": [
+              {
+                "id": 1,
+                "type_id": 1,
+                "name": "Accommodation/Tourism"
+              },
+              {
+                "id": 2,
+                "type_id": 1,
+                "name": "Automotive"
+              }
+            ],
+            "paging": {
+              "next": "https://you-domain.boxdice.com/ai_api/property_categories?after=1618977364_73"
+            }
+          }
+          
+# Group Appraisals
+
+Represents appraisals.
+
+---
+**Appraisal attributes:**
+
+- id `(Number)`
+- appraisal_status `(String)`
+- office_id `(Number)`
+- property_id `(Number)`
+- primary_consultant_id `(Number)`
+- appraisal_source `(String)`
+- appraisal_consultant_ids `(Array of Numbers)`
+- contact_ids `(Array of Numbers)`
+- created_at `(String)` (in ISO 8601 format)
+- price_from `(Number)`
+- price_to `(Number)`
+- sale_date `(String)` (in ISO 8601 format)
+- withdrawn_date `(String)` (in ISO 8601 format)
+- updated_at `(String)` (in ISO 8601 format)
+
+## Appraisals collection [/appraisals?{after}]
+
+### List [GET]
+
+Retrieve paginated list of appraisals.
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 100,
+                    "appraisal_status": "current",
+                    "office_id": 1,
+                    "property_id": 2,
+                    "primary_consultant_id": 1,
+                    "appraisal_source": "Newspaper",
+                    "appraisal_consultant_ids": [
+                        1,2,4
+                    ],
+                    "contact_ids": [
+                        11
+                    ],
+                    "created_at": "2021-08-24T13:13:37+10:00",
+                    "price_from": 400000,
+                    "price_to": 450000,
+                    "sale_date": "2015-03-16",
+                    "withdrawn_date": "2015-03-16",
+                    "updated_at": "2021-08-24T13:13:37+10:00",
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/aire_api/appraisals?after=1520848432_100"
+            }
+        }
+        
+### Create [POST]
+
+Create a new appraisal with the following attributes (highlighted in **bold** are mandatory):
+
+- appraisal_status `(String)`: "current" | "cancelled" | "listed" ("current" is default).
+- appraisal_source `(String)`
+- **contact_ids** `(Array of Numbers)`
+- **office_id** `(Number)`
+- **property_id** `(Number)`
+- **primary_consultant_id** `(Number)`
+- price_from `(Number)`
+- price_to `(Number)`
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
+    + Body
+
+            {
+                "appraisal": {
+                    "appraisal_status": "current",
+                    "appraisal_source": "Internet",
+                    "contact_ids": [100],
+                    "office_id": 1,
+                    "property_id": 2,
+                    "primary_consultant_id": 3,
+                    "price_from": 400000,
+                    "price_to": 450000
+                }
+            }
+
++ Response 201 (application/json)
+
+        {
+            "id": 100,
+            "appraisal_status": "current",
+            "office_id": 1,
+            "property_id": 2,
+            "primary_consultant_id": 3,
+            "appraisal_source": "Internet",
+            "appraisal_consultant_ids": [
+                1,2,4
+            ],
+            "contact_ids": [
+                100
+            ],
+            "created_at": "2021-10-11T13:13:37+11:00",
+            "updated_at": "2021-10-11T13:13:37+11:00",
+            "price_from": 400000,
+            "price_to": 450000
+        }
+
+## Appraisal [/appraisals/{id}]
+
+### Update [PUT]
+
+An existing appraisal can be updated with the same attributes as for Create action above (without mandatory attributes restriction).
+
+Update of "appraisal_status" is possible only for the following ways:
+
+- "current" -> "cancelled"
+- "current" -> "listed"
+- "cancelled" -> "listed"
+
++ Parameters
+
+    + id (required, number) - Appraisal ID
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
+    + Body
+
+            {
+                "appraisal": {
+                    "price_from": 500000,
+                    "price_to": 550000
+                }
+            }
+
++ Response 200 (application/json)
+
+        {
+            "id": 100,
+            "appraisal_status": "current",
+            "office_id": 1,
+            "property_id": 2,
+            "primary_consultant_id": 3,
+            "appraisal_source": "Internet",
+            "appraisal_consultant_ids": [
+                1,2,4
+            ],
+            "contact_ids": [
+                100
+            ],
+            "created_at": "2021-10-11T13:13:37+11:00",
+            "updated_at": "2021-10-11T13:13:37+11:00",
+            "price_from": 500000,
+            "price_to": 550000
+        }
+
+# Group Inspection Attendances
+
+Represents inspection attendance.
+
+---
+**Inspection attendance attributes:**
+
+- id `(Number)`
+- contact_id `(Number)`
+- inspection_details `(Object)`
+    - id `(Number)`
+    - inspection_date `(Date)`
+    - start_time `(Time)`
+    - end_time `(Time)`
+    - sales_listing_id `(Number)` 
+- comments `(Array)`
+    - id `(Number)`
+    - comment `(String)`
+    - consultant_id `(Number)`
+    - created_at `(String)` (in ISO 8601 format)
+
+## Inspection Attendances collection [/inspection_attendances?{after}]
+
+### List [GET]
+
+Retrieve paginated list of inspection attendances.
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "contact_id": 2,
+                    "inspection_details": {
+                        "id": 112,
+                        "inspection_date": "2022-02-18",
+                        "start_time": "16:00",
+                        "end_time": "16:30"
+                        "sales_listing_id": 123
+                    },
+                    "comments": [{
+                        "id": 1234,
+                        "comment": "Foo bar",
+                        "consultant_id": 56,
+                        "created_at": "2021-10-11T13:13:37+11:00"
+                    }],
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/aire_api/inspection_attendances?after=1520848432_100"
+            }
+        }
+
+
+# Group Offices
+
+Represents an office.
+
+---
+
+## Offices collection [/offices?{after}]
+
+### List [GET]
+
+Retrieve paginated list of offices.
+
++ Request
+
+    + Headers
+
+            Authorization: Api-Key token=b3c7623c3ad30d34fec6226f90914b0af125dc06
+
++ Parameters
+
+    + after (optional, string, `1520452907_37`) ... Paging cursor returned in the last response
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "name": "officeA"
+                }
+            ],
+            "paging": {
+                "next": "https://your-domain.boxdice.com.au/aire_api/offices?after=1520848432_100"
+            }
+        }

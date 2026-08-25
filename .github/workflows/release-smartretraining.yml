@@ -58,7 +58,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  PACKAGES: packages/rex packages/reapit
+  PACKAGES: packages/rex packages/reapit packages/boxdice
 
 jobs:
   release:

@@ -1,0 +1,5935 @@
+{
+  "smithy": "2.0",
+  "metadata": {
+    "suppressions": [
+      {
+        "id": "HttpUriConflict",
+        "namespace": "*"
+      },
+      {
+        "id": "HttpMethodSemantics",
+        "namespace": "*"
+      },
+      {
+        "id": "UnreferencedShape",
+        "namespace": "*"
+      }
+    ]
+  },
+  "shapes": {
+    "com.boxdice.ai#ListAppraisalLeadsRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#AppraisalLead": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "temperature": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`hot`, `warm` or `cold`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "status": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`open` or `closed`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "action": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "e.g. `Appraisal created`, `Task created`, `Property listed`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "task": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "task_created_on": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "appraisal": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "appraisal_status": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "listing": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "listing_status": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListAppraisalLeadsResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#AppraisalLead"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#Paging": {
+      "type": "structure",
+      "members": {
+        "next": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Absolute URL for the next request, carrying the `after` cursor. Note the API echoes whichever partner path the tenant was provisioned under — the blueprint's own examples show /ai_api/, /aire_api/ and /rebot_api/ — so read the `after` query parameter out of this URL rather than requesting it verbatim.",
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#documentation": "Cursor block returned by every paginated collection."
+      }
+    },
+    "com.boxdice.ai#ListAppraisalLeadsResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListAppraisalLeadsResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListAppraisalLeads": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListAppraisalLeadsRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListAppraisalLeadsResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/appraisal_leads",
+          "code": 200
+        },
+        "smithy.api#documentation": "List appraisal leads sourced from this integration."
+      }
+    },
+    "com.boxdice.ai#LeadAddress": {
+      "type": "structure",
+      "members": {
+        "unit": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#documentation": "Documented `(Number)`, unlike the read side's `(String)`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "number": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#documentation": "Documented `(Number)`, unlike the read side's `(String)`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "street_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "street_type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "suburb": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "postcode": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#documentation": "Documented `(Number)`, unlike the read side's `(String)`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "state": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "country": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#documentation": "Address as accepted when creating a lead flow lead — used only when `property_id` is unknown. The blueprint types unit/number/postcode as numbers here and as strings everywhere on the read side; both are transcribed as documented rather than reconciled."
+      }
+    },
+    "com.boxdice.ai#CreateAppraisalLeadRequestAppraisalLead": {
+      "type": "structure",
+      "members": {
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "property_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#documentation": "Must be a property owned by the contact.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "address": {
+          "target": "com.boxdice.ai#LeadAddress"
+        },
+        "listing_type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`sales` (default) or `rental`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "temperature": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`hot`, `warm` or `cold`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "subject": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Task subject. Defaults to `New AI Lead`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "task_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Task due date. Defaults to today.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "comment": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateAppraisalLeadRequest": {
+      "type": "structure",
+      "members": {
+        "appraisal_lead": {
+          "target": "com.boxdice.ai#CreateAppraisalLeadRequestAppraisalLead"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#CreatedId": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateAppraisalLead": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#CreateAppraisalLeadRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#CreatedId"
+      },
+      "errors": [
+        {
+          "target": "com.boxdice.ai#BadRequest"
+        }
+      ],
+      "traits": {
+        "smithy.api#http": {
+          "method": "POST",
+          "uri": "/appraisal_leads",
+          "code": 200
+        },
+        "smithy.api#documentation": "Create a sales appraisal or rental BDM lead.\n\nIdempotent-ish: no new lead is created when an open one already exists for the same contact, property and listing type. When the lead consultant does not have the Lead Flow module enabled this creates a TASK instead — the response `id` is a task id in that case, and nothing in the response says which."
+      }
+    },
+    "com.boxdice.ai#ListConsultantsRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#Consultant": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "active": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "smithy.api#documentation": "Documented as the attribute; the example instead sends `status`. Both are modelled — expect one of them.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "status": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "See `active`. Observed value: `\"active\"`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "first_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "last_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "mobile": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "email": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "office_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "photo_url": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListConsultantsResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Consultant"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListConsultantsResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListConsultantsResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListConsultants": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListConsultantsRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListConsultantsResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/consultants",
+          "code": 200
+        },
+        "smithy.api#documentation": "List consultants."
+      }
+    },
+    "com.boxdice.ai#ListConsultantContactsRequest": {
+      "type": "structure",
+      "members": {
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Consultant ID"
+          }
+        },
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#Contact": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#documentation": "The `My contact` category consultant.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "status": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Present ONLY on tombstones: a deleted contact arrives as `{ id, status: \"deleted\" }` with every other member absent. A sync consumer must branch on this before reading anything else.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "deceased": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "permit_email": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "permit_email_blast": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "permit_sms": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "first_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "last_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "salutation": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "attention": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "legal_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "phone_bh": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "phone_ah": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "mobile": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "email": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "company": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "created_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "address": {
+          "target": "com.boxdice.ai#Address"
+        },
+        "categories": {
+          "target": "com.boxdice.ai#ContactCategoriesList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "notes": {
+          "target": "com.boxdice.ai#ContactNotesList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "criteria": {
+          "target": "com.boxdice.ai#ContactCriteriaList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#documentation": "A contact. Also used for the per-consultant contact list, which returns the same shape."
+      }
+    },
+    "com.boxdice.ai#Address": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#documentation": "Property ID — the address IS a property record.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "unit": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "number": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "street_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "street_type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "suburb": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "postcode": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "state": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "country": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "latitude": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "longitude": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ContactCategory": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "type_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ContactCategoriesList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#ContactCategory"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ContactNote": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "text": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ContactNotesList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#ContactNote"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#Criteria": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`sales` or `rental`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "suburbs": {
+          "target": "com.boxdice.ai#CriteriaSuburbsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "property_type_ids": {
+          "target": "com.boxdice.ai#CriteriaPropertyTypeIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "property_category_ids": {
+          "target": "com.boxdice.ai#CriteriaPropertyCategoryIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "beds_from": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "beds_to": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "baths": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "rooms": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "cars": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "house_size_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "house_size_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "house_measure": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`Square(s)` or `Sqm`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "land_size_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "land_size_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "land_measure": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`Acre(s)`, `Hectare(s)`, `Square(s)` or `Sqm`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "return_pa_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "return_pa_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "notes": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "created_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "updated_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#documentation": "Buying criteria. The blueprint documents this shape twice — once embedded in Contact, once under Search Criteria — and the two lists differ. This is their union; every member is optional, so neither reading is excluded."
+      }
+    },
+    "com.boxdice.ai#CriteriaSuburb": {
+      "type": "structure",
+      "members": {
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "postcode": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "state": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CriteriaSuburbsList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#CriteriaSuburb"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CriteriaPropertyTypeIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CriteriaPropertyCategoryIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ContactCriteriaList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Criteria"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListConsultantContactsResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Contact"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListConsultantContactsResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListConsultantContactsResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListConsultantContacts": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListConsultantContactsRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListConsultantContactsResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/consultants/{consultant_id}/contacts",
+          "code": 200
+        },
+        "smithy.api#documentation": "List contacts belonging to a consultant."
+      }
+    },
+    "com.boxdice.ai#ListContactsRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#ListContactsResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Contact"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactsResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListContactsResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListContacts": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListContactsRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListContactsResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contacts",
+          "code": 200
+        },
+        "smithy.api#documentation": "List contacts."
+      }
+    },
+    "com.boxdice.ai#CreateContactRequestContact": {
+      "type": "structure",
+      "members": {
+        "first_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "last_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "salutation": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "attention": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "legal_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "mobile": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "phone_bh": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "phone_ah": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "email": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "company": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "deceased": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "permit_email": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "permit_email_blast": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "permit_sms": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#documentation": "Consultant recorded as the contact's creator.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "address": {
+          "target": "com.boxdice.ai#Address"
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateContactRequest": {
+      "type": "structure",
+      "members": {
+        "contact": {
+          "target": "com.boxdice.ai#CreateContactRequestContact"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#CreateContact": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#CreateContactRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#CreatedId"
+      },
+      "errors": [
+        {
+          "target": "com.boxdice.ai#BadRequest"
+        }
+      ],
+      "traits": {
+        "smithy.api#http": {
+          "method": "POST",
+          "uri": "/contacts",
+          "code": 200
+        },
+        "smithy.api#documentation": "Create a contact."
+      }
+    },
+    "com.boxdice.ai#SearchContactsRequest": {
+      "type": "structure",
+      "members": {
+        "email": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "email"
+          }
+        },
+        "mobile": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "mobile"
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#SearchContactsResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Contact"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#SearchContactsResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#SearchContactsResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#SearchContacts": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#SearchContactsRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#SearchContactsResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contacts/search",
+          "code": 200
+        },
+        "smithy.api#documentation": "Search contacts by email or mobile.\n\nSearches only the offices the API key is permitted for. Passing both parameters ORs them — it does not narrow the result."
+      }
+    },
+    "com.boxdice.ai#GetContactRequest": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#GetContact": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#GetContactRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#Contact"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contacts/{id}",
+          "code": 200
+        },
+        "smithy.api#documentation": "Get a contact."
+      }
+    },
+    "com.boxdice.ai#UpdateContactRequestContact": {
+      "type": "structure",
+      "members": {
+        "first_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "last_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "salutation": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "attention": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "legal_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "mobile": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "phone_bh": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "phone_ah": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "email": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "deceased": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "permit_email": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "permit_email_blast": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "permit_sms": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "address": {
+          "target": "com.boxdice.ai#Address"
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#UpdateContactRequest": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "contact": {
+          "target": "com.boxdice.ai#UpdateContactRequestContact"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#UpdateContactResponse": {
+      "type": "structure",
+      "members": {
+        "body": {
+          "target": "smithy.api#Document",
+          "traits": {
+            "com.distilled.openapi#rawResponse": {},
+            "smithy.api#required": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#UpdateContact": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#UpdateContactRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#UpdateContactResponse"
+      },
+      "errors": [
+        {
+          "target": "com.boxdice.ai#BadRequest"
+        }
+      ],
+      "traits": {
+        "smithy.api#http": {
+          "method": "PATCH",
+          "uri": "/contacts/{id}",
+          "code": 200
+        },
+        "smithy.api#documentation": "Update contact details and contact permissions."
+      }
+    },
+    "com.boxdice.ai#ListContactBuyerNotesRequest": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#BuyerNote": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "comment": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "created_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactBuyerNotesResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#BuyerNote"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactBuyerNotesResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListContactBuyerNotesResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListContactBuyerNotes": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListContactBuyerNotesRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListContactBuyerNotesResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contacts/{id}/buyer_notes",
+          "code": 200
+        },
+        "smithy.api#documentation": "List a contact's buyer notes."
+      }
+    },
+    "com.boxdice.ai#ListContactEmailHistoryRequest": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#Email": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "from": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Display form, e.g. `Jane Doe <jane@example.com>`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "to": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "comment": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "The subject line, despite the member name.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "created_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactEmailHistoryResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Email"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactEmailHistoryResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListContactEmailHistoryResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListContactEmailHistory": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListContactEmailHistoryRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListContactEmailHistoryResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contacts/{id}/email_history",
+          "code": 200
+        },
+        "smithy.api#documentation": "List emails sent to a contact."
+      }
+    },
+    "com.boxdice.ai#ListContactSmsHistoryRequest": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#SmsMessage": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "comment": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "The message body.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "status": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Observed value: `COMPLETED`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "created_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactSmsHistoryResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#SmsMessage"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactSmsHistoryResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListContactSmsHistoryResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListContactSmsHistory": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListContactSmsHistoryRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListContactSmsHistoryResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contacts/{id}/sms_history",
+          "code": 200
+        },
+        "smithy.api#documentation": "List SMS messages sent to a contact."
+      }
+    },
+    "com.boxdice.ai#ListContactOwnedPropertiesRequest": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#Property": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "category": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "unit": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "number": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "street_name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "street_type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "suburb": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "postcode": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "state": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "country": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "latitude": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "longitude": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "beds": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "baths": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "cars": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "rates": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "water_rates": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "created_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "updated_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactOwnedPropertiesResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Property"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactOwnedPropertiesResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListContactOwnedPropertiesResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListContactOwnedProperties": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListContactOwnedPropertiesRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListContactOwnedPropertiesResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contacts/{id}/owned_properties",
+          "code": 200
+        },
+        "smithy.api#documentation": "List properties owned by a contact."
+      }
+    },
+    "com.boxdice.ai#ListContactActivitiesRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#ContactActivity": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "sales_listing_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "property_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "created_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "BUYER_CLOSED, BUYER_IN, BUYER_MAYBE, BUYER_OUT, OWNER, PAST_OWNER, PROS_LANDLORD_APP, PROS_LANDLORD_CAN, PROS_LANDLORD_LISTED, PROS_VENDOR_APP, PROS_VENDOR_CAN, PROS_VENDOR_LISTED, PROS_VENDOR_PRE, PURCHASED, PURCHASER, PURCHASER_CANCELLED, SOLD_BY_OTHER, VENDOR, VENDOR_CANCELLED, VENDOR_SETTLED, VENDOR_SOLD. The /contact_activity_types endpoint also returns BUYER_ENQUIRY, which this list omits — read it from there rather than hard-coding.",
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactActivitiesResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#ContactActivity"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactActivitiesResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListContactActivitiesResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListContactActivities": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListContactActivitiesRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListContactActivitiesResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contact_activities",
+          "code": 200
+        },
+        "smithy.api#documentation": "List contact activities."
+      }
+    },
+    "com.boxdice.ai#ListContactActivitiesForContactRequest": {
+      "type": "structure",
+      "members": {
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#ListContactActivitiesForContactResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#ContactActivity"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactActivitiesForContactResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListContactActivitiesForContactResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListContactActivitiesForContact": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListContactActivitiesForContactRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListContactActivitiesForContactResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contacts/{contact_id}/contact_activities",
+          "code": 200
+        },
+        "smithy.api#documentation": "List one contact's activities."
+      }
+    },
+    "com.boxdice.ai#CreateContactCategoryRequestContactCategory": {
+      "type": "structure",
+      "members": {
+        "type_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#documentation": "Required unless `name` is given.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Required unless `type_id` is given. Max 100 characters.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateContactCategoryRequest": {
+      "type": "structure",
+      "members": {
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "contact_category": {
+          "target": "com.boxdice.ai#CreateContactCategoryRequestContactCategory"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#CreateContactCategory": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#CreateContactCategoryRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#CreatedId"
+      },
+      "errors": [
+        {
+          "target": "com.boxdice.ai#BadRequest"
+        }
+      ],
+      "traits": {
+        "smithy.api#http": {
+          "method": "POST",
+          "uri": "/contacts/{contact_id}/categories",
+          "code": 200
+        },
+        "smithy.api#documentation": "Assign a category to a contact.\n\nSupply `type_id` or `name`. An unknown `name` CREATES a new category type in the consultant's office group — a typo becomes a permanent category, so prefer `type_id` from listContactCategoryTypes."
+      }
+    },
+    "com.boxdice.ai#DeleteContactCategoryRequest": {
+      "type": "structure",
+      "members": {
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact category ID"
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#DeleteContactCategoryResponse": {
+      "type": "structure",
+      "members": {
+        "body": {
+          "target": "smithy.api#Document",
+          "traits": {
+            "com.distilled.openapi#rawResponse": {},
+            "smithy.api#required": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#DeleteContactCategory": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#DeleteContactCategoryRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#DeleteContactCategoryResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "DELETE",
+          "uri": "/contacts/{contact_id}/categories/{id}",
+          "code": 200
+        },
+        "smithy.api#documentation": "Remove a category from a contact by category id."
+      }
+    },
+    "com.boxdice.ai#DeleteContactCategoryByNameRequestContactCategory": {
+      "type": "structure",
+      "members": {
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#DeleteContactCategoryByNameRequest": {
+      "type": "structure",
+      "members": {
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "contact_category": {
+          "target": "com.boxdice.ai#DeleteContactCategoryByNameRequestContactCategory"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#DeleteContactCategoryByNameResponse": {
+      "type": "structure",
+      "members": {
+        "body": {
+          "target": "smithy.api#Document",
+          "traits": {
+            "com.distilled.openapi#rawResponse": {},
+            "smithy.api#required": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#DeleteContactCategoryByName": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#DeleteContactCategoryByNameRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#DeleteContactCategoryByNameResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "DELETE",
+          "uri": "/contacts/{contact_id}/category",
+          "code": 200
+        },
+        "smithy.api#documentation": "Remove a category from a contact by category name.\n\nSucceeds even when the contact has no category by that name, so the response does not tell you whether anything was removed."
+      }
+    },
+    "com.boxdice.ai#ListContactCategoryTypesRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#ContactCategoryType": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactCategoryTypesResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#ContactCategoryType"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactCategoryTypesResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListContactCategoryTypesResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListContactCategoryTypes": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListContactCategoryTypesRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListContactCategoryTypesResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contact_category_types",
+          "code": 200
+        },
+        "smithy.api#documentation": "List contact category types."
+      }
+    },
+    "com.boxdice.ai#CreateContactNoteRequestNote": {
+      "type": "structure",
+      "members": {
+        "text": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateContactNoteRequest": {
+      "type": "structure",
+      "members": {
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "note": {
+          "target": "com.boxdice.ai#CreateContactNoteRequestNote"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#CreateContactNote": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#CreateContactNoteRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#CreatedId"
+      },
+      "errors": [
+        {
+          "target": "com.boxdice.ai#BadRequest"
+        }
+      ],
+      "traits": {
+        "smithy.api#http": {
+          "method": "POST",
+          "uri": "/contacts/{contact_id}/notes",
+          "code": 200
+        },
+        "smithy.api#documentation": "Add a note to a contact."
+      }
+    },
+    "com.boxdice.ai#ListRentalListingsRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#RentalListing": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "status": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Observed: `LEASED`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_ids": {
+          "target": "com.boxdice.ai#RentalListingConsultantIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "rental_type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Observed: `RENTAL`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "primary_consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_undisclosed": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "address_undisclosed": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "url": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_period": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Observed: `WEEK`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "display_price": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "listing_image_url": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "property": {
+          "target": "com.boxdice.ai#Property"
+        },
+        "advertising_copy": {
+          "target": "com.boxdice.ai#AdvertisingCopy"
+        },
+        "inspections": {
+          "target": "com.boxdice.ai#RentalListingInspectionsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#RentalListingConsultantIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#AdvertisingCopy": {
+      "type": "structure",
+      "members": {
+        "heading": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "text": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#Inspection": {
+      "type": "structure",
+      "members": {
+        "inspection_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "start_time": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`HH:MM`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "end_time": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`HH:MM`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#RentalListingInspectionsList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Inspection"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListRentalListingsResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#RentalListing"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListRentalListingsResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListRentalListingsResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListRentalListings": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListRentalListingsRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListRentalListingsResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/rental_listings",
+          "code": 200
+        },
+        "smithy.api#documentation": "List rental listings."
+      }
+    },
+    "com.boxdice.ai#ListSalesListingsRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#SalesListing": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "status": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Observed: `settled`. Related activity types imply `VENDOR_SOLD`, `VENDOR_SETTLED`, `SOLD_BY_OTHER` and cancellations elsewhere in the lifecycle; the blueprint never enumerates listing status itself.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_ids": {
+          "target": "com.boxdice.ai#SalesListingConsultantIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "office_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "primary_consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "listing_type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Observed: `PRIVATE SALE`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "hidden": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_undisclosed": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "address_undisclosed": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "suburb_undisclosed": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "under_offer": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "description": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "url": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "display_price": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "listing_image_url": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "listed_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "auction_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "auctioneer_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#documentation": "Documented `(Number)`; the example holds a date, which is a copy-paste of `auction_date` rather than a second type. Modelled per the documentation — confirm on capture.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "property": {
+          "target": "com.boxdice.ai#Property"
+        },
+        "advertising_copy": {
+          "target": "com.boxdice.ai#AdvertisingCopy"
+        },
+        "inspections": {
+          "target": "com.boxdice.ai#SalesListingInspectionsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "voucher": {
+          "target": "com.boxdice.ai#Voucher"
+        },
+        "buyers": {
+          "target": "com.boxdice.ai#SalesListingBuyersList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "vendor_ids": {
+          "target": "com.boxdice.ai#SalesListingVendorIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "purchaser_ids": {
+          "target": "com.boxdice.ai#SalesListingPurchaserIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "files": {
+          "target": "com.boxdice.ai#SalesListingFilesList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "vendor_solicitor_contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "purchaser_solicitor_contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "campaign_amount": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "expected_settlement_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "actual_release_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#SalesListingConsultantIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#SalesListingInspectionsList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Inspection"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#Voucher": {
+      "type": "structure",
+      "members": {
+        "sale_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "sale_price": {
+          "target": "smithy.api#Document",
+          "traits": {
+            "smithy.api#documentation": "UNRESOLVED: Documented `(Number)`, sent as the string `\"431000.0\"`. Typed as unknown until confirmed against a live response."
+          }
+        },
+        "settlement_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "commission_type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Observed value: `tiered`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "commission_structures": {
+          "target": "com.boxdice.ai#VoucherCommissionStructuresList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "gross_commission": {
+          "target": "com.boxdice.ai#GrossCommission"
+        },
+        "deductions": {
+          "target": "com.boxdice.ai#VoucherDeductions"
+        },
+        "multiple_payment_stages": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "commission_payment_milestones": {
+          "target": "com.boxdice.ai#VoucherCommissionPaymentMilestonesList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#documentation": "The sale and its commission breakdown. This is the richest thing the API exposes and has no equivalent in VaultRE: gross commission, deductions, payment milestones, and per-consultant splits with targets."
+      }
+    },
+    "com.boxdice.ai#CommissionStructure": {
+      "type": "structure",
+      "members": {
+        "percentage": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "amount": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "target": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#VoucherCommissionStructuresList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#CommissionStructure"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#GrossCommission": {
+      "type": "structure",
+      "members": {
+        "inc_gst": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "ex_gst": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#VoucherDeductions": {
+      "type": "structure",
+      "members": {
+        "deductions_on_gross_total": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "deductions_on_subtotal_total": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "commission_after_deductions_on_gross": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "commission_after_deductions": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CommissionPaymentMilestone": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "stage_type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Observed value: `DEPOSIT_RELEASE`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "description": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "percentage": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "amount": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_commissions": {
+          "target": "com.boxdice.ai#CommissionPaymentMilestoneConsultantCommissionsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "office_commissions": {
+          "target": "com.boxdice.ai#CommissionPaymentMilestoneOfficeCommissionsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ConsultantCommission": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "role": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Observed values: `LIST`, and by implication `SELL`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "comm_intro_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "comm_intro_amount": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Documented and observed as a STRING.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "comm_intro_percentage": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "prop_value_amount": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "prop_value_percentage": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "autopopulated_with": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Consultant's display name.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "office_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "percentage": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "amount": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "image_url": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant": {
+          "target": "com.boxdice.ai#CommissionConsultant"
+        },
+        "deductions": {
+          "target": "com.boxdice.ai#ConsultantCommissionDeductionsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CommissionConsultant": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "commission_split_type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "e.g. `simple_target`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "commission_split_date_from": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "commission_split_date_to": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "cumulative_commission_introduced": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Documented and observed as a STRING (`\"0.0\"`), not a number.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "commission_targets": {
+          "target": "com.boxdice.ai#CommissionConsultantCommissionTargetsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CommissionTarget": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "target": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "list": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "manage": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "sell": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CommissionConsultantCommissionTargetsList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#CommissionTarget"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CommissionDeduction": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Present in the example, absent from the attribute list.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "description": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "office_commission_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "svoucher_commission_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "reasonid_fk": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "fixed_price": {
+          "target": "smithy.api#Document",
+          "traits": {
+            "smithy.api#documentation": "UNRESOLVED: Documented `(Number)`, sent as `false` in the example — the name reads like a flag and the value agrees, but the attribute list does not. Typed as unknown until confirmed against a live response."
+          }
+        },
+        "campaign_item_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "criteria": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Observed value: `AFTER`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "amount": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "smithy.api#documentation": "Present in the example, absent from the attribute list.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "percentage": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "smithy.api#documentation": "Present in the example, absent from the attribute list.",
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ConsultantCommissionDeductionsList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#CommissionDeduction"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CommissionPaymentMilestoneConsultantCommissionsList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#ConsultantCommission"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#OfficeCommission": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "office_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "percentage": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "amount": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "deductions": {
+          "target": "com.boxdice.ai#OfficeCommissionDeductionsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#OfficeCommissionDeductionsList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#CommissionDeduction"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CommissionPaymentMilestoneOfficeCommissionsList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#OfficeCommission"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#VoucherCommissionPaymentMilestonesList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#CommissionPaymentMilestone"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListingBuyer": {
+      "type": "structure",
+      "members": {
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "interest_level": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Observed value: `MAYBE`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "source": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Observed value: `REA Lead`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "enquiry_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "comments": {
+          "target": "com.boxdice.ai#ListingBuyerCommentsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#BuyerComment": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "text": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Observed value: `EMAIL`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "created_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "updated_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListingBuyerCommentsList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#BuyerComment"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#SalesListingBuyersList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#ListingBuyer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#SalesListingVendorIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#SalesListingPurchaserIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListingFile": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "description": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "url": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#documentation": "Public-flagged files only. `url` carries a single-use-looking token query parameter; treat it as short-lived rather than storing it."
+      }
+    },
+    "com.boxdice.ai#SalesListingFilesList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#ListingFile"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListSalesListingsResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#SalesListing"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListSalesListingsResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListSalesListingsResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListSalesListings": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListSalesListingsRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListSalesListingsResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/sales_listings",
+          "code": 200
+        },
+        "smithy.api#documentation": "List sales listings, including the commission voucher."
+      }
+    },
+    "com.boxdice.ai#UpdateSalesListingRequestSalesListingVendorIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#UpdateSalesListingRequestSalesListing": {
+      "type": "structure",
+      "members": {
+        "primary_consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "vendor_ids": {
+          "target": "com.boxdice.ai#UpdateSalesListingRequestSalesListingVendorIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#UpdateSalesListingRequest": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Sales listing ID"
+          }
+        },
+        "sales_listing": {
+          "target": "com.boxdice.ai#UpdateSalesListingRequestSalesListing"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#UpdateSalesListing": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#UpdateSalesListingRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#SalesListing"
+      },
+      "errors": [
+        {
+          "target": "com.boxdice.ai#BadRequest"
+        }
+      ],
+      "traits": {
+        "smithy.api#http": {
+          "method": "PATCH",
+          "uri": "/sales_listings/{id}",
+          "code": 200
+        },
+        "smithy.api#documentation": "Update a sales listing's primary consultant and/or vendors.\n\nOnly these two members can be changed. Unlike the other writes, this returns the FULL updated listing rather than `{}`."
+      }
+    },
+    "com.boxdice.ai#CreateSearchCriteriaRequestCriteriaSuburbIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateSearchCriteriaRequestCriteriaPropertyTypeIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateSearchCriteriaRequestCriteriaPropertyCategoryIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateSearchCriteriaRequestCriteria": {
+      "type": "structure",
+      "members": {
+        "type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`sales` or `rental`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "suburb_ids": {
+          "target": "com.boxdice.ai#CreateSearchCriteriaRequestCriteriaSuburbIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "property_type_ids": {
+          "target": "com.boxdice.ai#CreateSearchCriteriaRequestCriteriaPropertyTypeIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "property_category_ids": {
+          "target": "com.boxdice.ai#CreateSearchCriteriaRequestCriteriaPropertyCategoryIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "beds_from": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "beds_to": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "baths": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "rooms": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "cars": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_from": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Sent as a string in the blueprint's example.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_to": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Sent as a string in the blueprint's example.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "house_size_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "house_size_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "house_measure": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`Square(s)` or `Sqm`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "land_size_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "land_size_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "land_measure": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`Acre(s)`, `Hectare(s)`, `Square(s)` or `Sqm`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "return_pa_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "return_pa_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "notes": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "ealert_enabled": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "smithy.api#documentation": "Write-only: accepted here, never returned on the read side.",
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateSearchCriteriaRequest": {
+      "type": "structure",
+      "members": {
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "criteria": {
+          "target": "com.boxdice.ai#CreateSearchCriteriaRequestCriteria"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#CreateSearchCriteria": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#CreateSearchCriteriaRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#CreatedId"
+      },
+      "errors": [
+        {
+          "target": "com.boxdice.ai#BadRequest"
+        }
+      ],
+      "traits": {
+        "smithy.api#http": {
+          "method": "POST",
+          "uri": "/contacts/{contact_id}/criteria",
+          "code": 200
+        },
+        "smithy.api#documentation": "Create buying criteria for a contact."
+      }
+    },
+    "com.boxdice.ai#UpdateSearchCriteriaRequestCriteriaSuburbIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#UpdateSearchCriteriaRequestCriteriaPropertyTypeIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#UpdateSearchCriteriaRequestCriteriaPropertyCategoryIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#UpdateSearchCriteriaRequestCriteria": {
+      "type": "structure",
+      "members": {
+        "type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "suburb_ids": {
+          "target": "com.boxdice.ai#UpdateSearchCriteriaRequestCriteriaSuburbIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "property_type_ids": {
+          "target": "com.boxdice.ai#UpdateSearchCriteriaRequestCriteriaPropertyTypeIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "property_category_ids": {
+          "target": "com.boxdice.ai#UpdateSearchCriteriaRequestCriteriaPropertyCategoryIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "beds_from": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "beds_to": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "baths": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "rooms": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "cars": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_from": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_to": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "house_size_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "house_size_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "house_measure": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "land_size_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "land_size_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "land_measure": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "return_pa_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "return_pa_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "notes": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "ealert_enabled": {
+          "target": "smithy.api#Boolean",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#UpdateSearchCriteriaRequest": {
+      "type": "structure",
+      "members": {
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Criteria ID"
+          }
+        },
+        "criteria": {
+          "target": "com.boxdice.ai#UpdateSearchCriteriaRequestCriteria"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#UpdateSearchCriteriaResponse": {
+      "type": "structure",
+      "members": {
+        "body": {
+          "target": "smithy.api#Document",
+          "traits": {
+            "com.distilled.openapi#rawResponse": {},
+            "smithy.api#required": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#UpdateSearchCriteria": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#UpdateSearchCriteriaRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#UpdateSearchCriteriaResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "PATCH",
+          "uri": "/contacts/{contact_id}/criteria/{id}",
+          "code": 200
+        },
+        "smithy.api#documentation": "Update buying criteria."
+      }
+    },
+    "com.boxdice.ai#DeleteSearchCriteriaRequest": {
+      "type": "structure",
+      "members": {
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Criteria ID"
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#DeleteSearchCriteriaResponse": {
+      "type": "structure",
+      "members": {
+        "body": {
+          "target": "smithy.api#Document",
+          "traits": {
+            "com.distilled.openapi#rawResponse": {},
+            "smithy.api#required": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#DeleteSearchCriteria": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#DeleteSearchCriteriaRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#DeleteSearchCriteriaResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "DELETE",
+          "uri": "/contacts/{contact_id}/criteria/{id}",
+          "code": 200
+        },
+        "smithy.api#documentation": "Delete buying criteria."
+      }
+    },
+    "com.boxdice.ai#ListTasksRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#Task": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "subject": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "task_type": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "task_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_ids": {
+          "target": "com.boxdice.ai#TaskContactIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "notes": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "complete_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Completed tasks only.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "created_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "updated_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#documentation": "A task. The completed-tasks endpoint returns the same shape plus `complete_date`; the union is modelled here."
+      }
+    },
+    "com.boxdice.ai#TaskContactIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListTasksResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Task"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListTasksResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListTasksResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListTasks": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListTasksRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListTasksResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/tasks",
+          "code": 200
+        },
+        "smithy.api#documentation": "List tasks."
+      }
+    },
+    "com.boxdice.ai#CreateTasksRequestTasksItemContactIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateTasksRequestTasksItem": {
+      "type": "structure",
+      "members": {
+        "subject": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_ids": {
+          "target": "com.boxdice.ai#CreateTasksRequestTasksItemContactIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "action_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "kind": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`Phone`, `Email`, `SMS`, `Letter`, `Task`, `Web enquiry` or `Others`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateTasksRequestTasksList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#CreateTasksRequestTasksItem"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateTasksRequest": {
+      "type": "structure",
+      "members": {
+        "tasks": {
+          "target": "com.boxdice.ai#CreateTasksRequestTasksList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#CreateTasksResponseBodyItem": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "errors": {
+          "target": "smithy.api#Document",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateTasksResponseBodyList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#CreateTasksResponseBodyItem"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateTasksResponse": {
+      "type": "structure",
+      "members": {
+        "body": {
+          "target": "com.boxdice.ai#CreateTasksResponseBodyList",
+          "traits": {
+            "com.distilled.openapi#rawResponse": {},
+            "smithy.api#required": {}
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#CreateTasks": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#CreateTasksRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#CreateTasksResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "POST",
+          "uri": "/tasks",
+          "code": 200
+        },
+        "smithy.api#documentation": "Create one or more tasks.\n\nBatch endpoint. The response is a BARE ARRAY positionally matching the submitted tasks, each entry either `{ id }` or `{ errors }` — so a 200 does not mean every task was created. Note the create member is `action_date`, while the read side returns `task_date`."
+      }
+    },
+    "com.boxdice.ai#ListContactTasksRequest": {
+      "type": "structure",
+      "members": {
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#ListContactTasksResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Task"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactTasksResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListContactTasksResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListContactTasks": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListContactTasksRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListContactTasksResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contacts/{contact_id}/tasks",
+          "code": 200
+        },
+        "smithy.api#documentation": "List a contact's tasks."
+      }
+    },
+    "com.boxdice.ai#ListContactCompletedTasksRequest": {
+      "type": "structure",
+      "members": {
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#ListContactCompletedTasksResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Task"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactCompletedTasksResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListContactCompletedTasksResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListContactCompletedTasks": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListContactCompletedTasksRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListContactCompletedTasksResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contacts/{contact_id}/completed_tasks",
+          "code": 200
+        },
+        "smithy.api#documentation": "List a contact's completed tasks."
+      }
+    },
+    "com.boxdice.ai#ListAppointmentsRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#Appointment": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "subject": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_ids": {
+          "target": "com.boxdice.ai#AppointmentConsultantIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "starts_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "ends_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "created_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "updated_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#AppointmentConsultantIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListAppointmentsResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Appointment"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListAppointmentsResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListAppointmentsResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListAppointments": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListAppointmentsRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListAppointmentsResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/appointments",
+          "code": 200
+        },
+        "smithy.api#documentation": "List future appointments."
+      }
+    },
+    "com.boxdice.ai#ListContactAppointmentsRequest": {
+      "type": "structure",
+      "members": {
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#ListContactAppointmentsResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Appointment"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactAppointmentsResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListContactAppointmentsResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListContactAppointments": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListContactAppointmentsRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListContactAppointmentsResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contacts/{contact_id}/appointments",
+          "code": 200
+        },
+        "smithy.api#documentation": "List a contact's future appointments."
+      }
+    },
+    "com.boxdice.ai#ListContactPastAppointmentsRequest": {
+      "type": "structure",
+      "members": {
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Contact ID"
+          }
+        },
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#ListContactPastAppointmentsResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Appointment"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactPastAppointmentsResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListContactPastAppointmentsResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListContactPastAppointments": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListContactPastAppointmentsRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListContactPastAppointmentsResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contacts/{contact_id}/past_appointments",
+          "code": 200
+        },
+        "smithy.api#documentation": "List a contact's past appointments."
+      }
+    },
+    "com.boxdice.ai#ListPropertiesRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#ListPropertiesResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Property"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListPropertiesResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListPropertiesResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListProperties": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListPropertiesRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListPropertiesResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/properties",
+          "code": 200
+        },
+        "smithy.api#documentation": "List properties."
+      }
+    },
+    "com.boxdice.ai#ListBuyerNotesRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#ListBuyerNotesResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#BuyerNote"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListBuyerNotesResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListBuyerNotesResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListBuyerNotes": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListBuyerNotesRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListBuyerNotesResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/buyer_notes",
+          "code": 200
+        },
+        "smithy.api#documentation": "List buyer notes."
+      }
+    },
+    "com.boxdice.ai#ListEmailsRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#ListEmailsResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Email"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListEmailsResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListEmailsResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListEmails": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListEmailsRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListEmailsResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/emails",
+          "code": 200
+        },
+        "smithy.api#documentation": "List emails."
+      }
+    },
+    "com.boxdice.ai#ListSmsMessagesRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#ListSmsMessagesResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#SmsMessage"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListSmsMessagesResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListSmsMessagesResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListSmsMessages": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListSmsMessagesRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListSmsMessagesResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/sms_messages",
+          "code": 200
+        },
+        "smithy.api#documentation": "List SMS messages."
+      }
+    },
+    "com.boxdice.ai#ListContactActivityTypesRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#ContactActivityType": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "key": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "e.g. `BUYER_IN`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "value": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "Display label, e.g. `Buyer - In`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactActivityTypesResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#ContactActivityType"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListContactActivityTypesResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListContactActivityTypesResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListContactActivityTypes": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListContactActivityTypesRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListContactActivityTypesResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/contact_activity_types",
+          "code": 200
+        },
+        "smithy.api#documentation": "List contact activity types."
+      }
+    },
+    "com.boxdice.ai#ListPropertyTypesRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#PropertyType": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListPropertyTypesResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#PropertyType"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListPropertyTypesResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListPropertyTypesResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListPropertyTypes": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListPropertyTypesRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListPropertyTypesResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/property_types",
+          "code": 200
+        },
+        "smithy.api#documentation": "List property types."
+      }
+    },
+    "com.boxdice.ai#ListPropertyCategoriesRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#PropertyCategory": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "type_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListPropertyCategoriesResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#PropertyCategory"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListPropertyCategoriesResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListPropertyCategoriesResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListPropertyCategories": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListPropertyCategoriesRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListPropertyCategoriesResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/property_categories",
+          "code": 200
+        },
+        "smithy.api#documentation": "List property categories."
+      }
+    },
+    "com.boxdice.ai#ListOfficesRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#Office": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "name": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListOfficesResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Office"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListOfficesResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListOfficesResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListOffices": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListOfficesRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListOfficesResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/offices",
+          "code": 200
+        },
+        "smithy.api#documentation": "List offices."
+      }
+    },
+    "com.boxdice.ai#ListAppraisalsRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#Appraisal": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "appraisal_status": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`current`, `cancelled` or `listed`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "office_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "property_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "primary_consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "appraisal_source": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "appraisal_consultant_ids": {
+          "target": "com.boxdice.ai#AppraisalAppraisalConsultantIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_ids": {
+          "target": "com.boxdice.ai#AppraisalContactIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "sale_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "withdrawn_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "created_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "updated_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#AppraisalAppraisalConsultantIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#AppraisalContactIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListAppraisalsResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#Appraisal"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListAppraisalsResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListAppraisalsResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListAppraisals": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListAppraisalsRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListAppraisalsResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/appraisals",
+          "code": 200
+        },
+        "smithy.api#documentation": "List appraisals."
+      }
+    },
+    "com.boxdice.ai#CreateAppraisalRequestAppraisalContactIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateAppraisalRequestAppraisal": {
+      "type": "structure",
+      "members": {
+        "appraisal_status": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#documentation": "`current` (default), `cancelled` or `listed`.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "appraisal_source": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_ids": {
+          "target": "com.boxdice.ai#CreateAppraisalRequestAppraisalContactIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "office_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#documentation": "Required.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "property_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#documentation": "Required.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "primary_consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#documentation": "Required.",
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#CreateAppraisalRequest": {
+      "type": "structure",
+      "members": {
+        "appraisal": {
+          "target": "com.boxdice.ai#CreateAppraisalRequestAppraisal"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#CreateAppraisal": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#CreateAppraisalRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#Appraisal"
+      },
+      "errors": [
+        {
+          "target": "com.boxdice.ai#BadRequest"
+        }
+      ],
+      "traits": {
+        "smithy.api#http": {
+          "method": "POST",
+          "uri": "/appraisals",
+          "code": 200
+        },
+        "smithy.api#documentation": "Create an appraisal."
+      }
+    },
+    "com.boxdice.ai#UpdateAppraisalRequestAppraisalContactIdsList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#Integer"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#UpdateAppraisalRequestAppraisal": {
+      "type": "structure",
+      "members": {
+        "appraisal_status": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "appraisal_source": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_ids": {
+          "target": "com.boxdice.ai#UpdateAppraisalRequestAppraisalContactIdsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "office_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "property_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "primary_consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_from": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "price_to": {
+          "target": "smithy.api#Double",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#UpdateAppraisalRequest": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {},
+            "smithy.api#documentation": "Appraisal ID"
+          }
+        },
+        "appraisal": {
+          "target": "com.boxdice.ai#UpdateAppraisalRequestAppraisal"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#UpdateAppraisal": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#UpdateAppraisalRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#Appraisal"
+      },
+      "errors": [
+        {
+          "target": "com.boxdice.ai#BadRequest"
+        }
+      ],
+      "traits": {
+        "smithy.api#http": {
+          "method": "PUT",
+          "uri": "/appraisals/{id}",
+          "code": 200
+        },
+        "smithy.api#documentation": "Update an appraisal.\n\nStatus transitions are one-way and restricted to current → cancelled, current → listed, and cancelled → listed."
+      }
+    },
+    "com.boxdice.ai#ListInspectionAttendancesRequest": {
+      "type": "structure",
+      "members": {
+        "after": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "after",
+            "smithy.api#documentation": "Paging cursor from the previous response's `paging.next` URL. Omit for the first page (oldest records first)."
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "com.boxdice.ai#InspectionAttendance": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "contact_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "inspection_details": {
+          "target": "com.boxdice.ai#InspectionDetails"
+        },
+        "comments": {
+          "target": "com.boxdice.ai#InspectionAttendanceCommentsList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#InspectionDetails": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "inspection_date": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "start_time": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "end_time": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "sales_listing_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#InspectionAttendanceComment": {
+      "type": "structure",
+      "members": {
+        "id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "comment": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "consultant_id": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "created_at": {
+          "target": "smithy.api#String",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        }
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#InspectionAttendanceCommentsList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#InspectionAttendanceComment"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListInspectionAttendancesResponseDataList": {
+      "type": "list",
+      "member": {
+        "target": "com.boxdice.ai#InspectionAttendance"
+      },
+      "traits": {}
+    },
+    "com.boxdice.ai#ListInspectionAttendancesResponse": {
+      "type": "structure",
+      "members": {
+        "data": {
+          "target": "com.boxdice.ai#ListInspectionAttendancesResponseDataList",
+          "traits": {
+            "com.distilled.openapi#nullable": {}
+          }
+        },
+        "paging": {
+          "target": "com.boxdice.ai#Paging"
+        }
+      },
+      "traits": {
+        "smithy.api#output": {}
+      }
+    },
+    "com.boxdice.ai#ListInspectionAttendances": {
+      "type": "operation",
+      "input": {
+        "target": "com.boxdice.ai#ListInspectionAttendancesRequest"
+      },
+      "output": {
+        "target": "com.boxdice.ai#ListInspectionAttendancesResponse"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "GET",
+          "uri": "/inspection_attendances",
+          "code": 200
+        },
+        "smithy.api#documentation": "List inspection attendances."
+      }
+    },
+    "com.boxdice.ai#BadRequest": {
+      "type": "structure",
+      "members": {},
+      "traits": {
+        "smithy.api#error": "client",
+        "smithy.api#httpError": 400,
+        "com.distilled.openapi#errorMatchers": [
+          {
+            "status": 400
+          }
+        ]
+      }
+    },
+    "com.boxdice.ai#BoxDice": {
+      "type": "service",
+      "version": "1.0.0",
+      "operations": [
+        {
+          "target": "com.boxdice.ai#ListAppraisalLeads"
+        },
+        {
+          "target": "com.boxdice.ai#CreateAppraisalLead"
+        },
+        {
+          "target": "com.boxdice.ai#ListConsultants"
+        },
+        {
+          "target": "com.boxdice.ai#ListConsultantContacts"
+        },
+        {
+          "target": "com.boxdice.ai#ListContacts"
+        },
+        {
+          "target": "com.boxdice.ai#CreateContact"
+        },
+        {
+          "target": "com.boxdice.ai#SearchContacts"
+        },
+        {
+          "target": "com.boxdice.ai#GetContact"
+        },
+        {
+          "target": "com.boxdice.ai#UpdateContact"
+        },
+        {
+          "target": "com.boxdice.ai#ListContactBuyerNotes"
+        },
+        {
+          "target": "com.boxdice.ai#ListContactEmailHistory"
+        },
+        {
+          "target": "com.boxdice.ai#ListContactSmsHistory"
+        },
+        {
+          "target": "com.boxdice.ai#ListContactOwnedProperties"
+        },
+        {
+          "target": "com.boxdice.ai#ListContactActivities"
+        },
+        {
+          "target": "com.boxdice.ai#ListContactActivitiesForContact"
+        },
+        {
+          "target": "com.boxdice.ai#CreateContactCategory"
+        },
+        {
+          "target": "com.boxdice.ai#DeleteContactCategory"
+        },
+        {
+          "target": "com.boxdice.ai#DeleteContactCategoryByName"
+        },
+        {
+          "target": "com.boxdice.ai#ListContactCategoryTypes"
+        },
+        {
+          "target": "com.boxdice.ai#CreateContactNote"
+        },
+        {
+          "target": "com.boxdice.ai#ListRentalListings"
+        },
+        {
+          "target": "com.boxdice.ai#ListSalesListings"
+        },
+        {
+          "target": "com.boxdice.ai#UpdateSalesListing"
+        },
+        {
+          "target": "com.boxdice.ai#CreateSearchCriteria"
+        },
+        {
+          "target": "com.boxdice.ai#UpdateSearchCriteria"
+        },
+        {
+          "target": "com.boxdice.ai#DeleteSearchCriteria"
+        },
+        {
+          "target": "com.boxdice.ai#ListTasks"
+        },
+        {
+          "target": "com.boxdice.ai#CreateTasks"
+        },
+        {
+          "target": "com.boxdice.ai#ListContactTasks"
+        },
+        {
+          "target": "com.boxdice.ai#ListContactCompletedTasks"
+        },
+        {
+          "target": "com.boxdice.ai#ListAppointments"
+        },
+        {
+          "target": "com.boxdice.ai#ListContactAppointments"
+        },
+        {
+          "target": "com.boxdice.ai#ListContactPastAppointments"
+        },
+        {
+          "target": "com.boxdice.ai#ListProperties"
+        },
+        {
+          "target": "com.boxdice.ai#ListBuyerNotes"
+        },
+        {
+          "target": "com.boxdice.ai#ListEmails"
+        },
+        {
+          "target": "com.boxdice.ai#ListSmsMessages"
+        },
+        {
+          "target": "com.boxdice.ai#ListContactActivityTypes"
+        },
+        {
+          "target": "com.boxdice.ai#ListPropertyTypes"
+        },
+        {
+          "target": "com.boxdice.ai#ListPropertyCategories"
+        },
+        {
+          "target": "com.boxdice.ai#ListOffices"
+        },
+        {
+          "target": "com.boxdice.ai#ListAppraisals"
+        },
+        {
+          "target": "com.boxdice.ai#CreateAppraisal"
+        },
+        {
+          "target": "com.boxdice.ai#UpdateAppraisal"
+        },
+        {
+          "target": "com.boxdice.ai#ListInspectionAttendances"
+        }
+      ],
+      "traits": {
+        "smithy.api#title": "Box+Dice AI API",
+        "smithy.api#documentation": "Transcribed from the API Blueprint at https://boxdiceaiapi.docs.apiary.io/ by scripts/build-spec.ts. The response side has NOT been verified against a live tenant."
+      }
+    }
+  }
+}

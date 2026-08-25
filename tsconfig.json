@@ -10,6 +10,8 @@
     { "path": "./packages/axiom/tsconfig.scripts.json" },
     { "path": "./packages/azure/tsconfig.json" },
     { "path": "./packages/azure/tsconfig.scripts.json" },
+    { "path": "./packages/boxdice/tsconfig.json" },
+    { "path": "./packages/boxdice/tsconfig.scripts.json" },
     { "path": "./packages/coinbase/tsconfig.json" },
     { "path": "./packages/coinbase/tsconfig.scripts.json" },
     { "path": "./packages/discord/tsconfig.json" },
