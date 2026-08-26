@@ -1,6 +1,6 @@
 {
   "name": "@smartretraining/reapit-effect",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Effect-native SDK for the Reapit Sales API (Agentbox), generated from the OpenAPI document with response schemas repaired against the live API.",
   "license": "MIT",
   "repository": {

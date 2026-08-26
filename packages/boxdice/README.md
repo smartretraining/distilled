@@ -151,12 +151,13 @@ BoxDice.CredentialsFromEnv                                   // BOXDICE_TENANT +
 The `@smartretraining` packages share a single version line and ship together
 from `.github/workflows/release-smartretraining.yml`, which refuses to run if
 they disagree on the version or if it is already on the registry. That is why
-this package's first published version is `0.7.0` rather than `0.1.0` — it
-joins `rex-effect` and `reapit-effect` on their existing line.
+this package never had a `0.1.0` — it joins `rex-effect` and `reapit-effect`
+on their existing line.
 
 Publishing uses npm trusted publishing (OIDC), so no npm token exists in the
-repository or on any developer machine. A brand-new package has to exist on
-the registry before a trusted publisher can be configured for it, so
-`0.7.0` is published once by hand (`npm publish --access public` from
-`packages/boxdice`, by someone logged in to the `@smartretraining` scope);
-every release after that runs from the workflow.
+repository or on any developer machine. A package has to exist on the registry
+before a trusted publisher can be configured for it, so `0.7.0` was published
+once by hand to bootstrap that; every release since runs from the workflow,
+which is why the line's first workflow release including this package is
+`0.8.0`. Do not install `0.7.0` — it is the bootstrap, and it is the one
+version of this package with no provenance attestation.
