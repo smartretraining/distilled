@@ -8877,6 +8877,3920 @@ export const ContactsUpdateResponse = /*@__PURE__*/ S.suspend(() =>
   identifier: "ContactsUpdateResponse",
 }) as any as S.Schema<ContactsUpdateResponse>;
 
+export interface ContractsAutocompleteRequest {
+  /** The start of the map area name to autocomplete on */
+  search_string: string;
+  /** Maximum number of results to return */
+  limit?: number | null;
+  /** Whether a viewstate id should be returned instead of the matching record ids */
+  return_viewstate?: boolean | null;
+}
+export const ContractsAutocompleteRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    search_string: S.String,
+    limit: S.optional(S.NullOr(S.Number)),
+    return_viewstate: S.optional(S.NullOr(S.Boolean)),
+  }).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/Contracts::autocomplete",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "ContractsAutocompleteRequest",
+}) as any as S.Schema<ContractsAutocompleteRequest>;
+
+export type ContractsAutocompleteResponseBodyList = Array<unknown>;
+export const ContractsAutocompleteResponseBodyList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<ContractsAutocompleteResponseBodyList>;
+
+export type ContractsAutocompleteResponse =
+  ContractsAutocompleteResponseBodyList;
+export const ContractsAutocompleteResponse = /*@__PURE__*/ S.suspend(() =>
+  ContractsAutocompleteResponseBodyList.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "ContractsAutocompleteResponse",
+}) as any as S.Schema<ContractsAutocompleteResponse>;
+
+export interface ContractsCreateRequestDataListing {
+  /** ID of listing this contract relates to */
+  id?: number;
+}
+export const ContractsCreateRequestDataListing = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.optional(S.Number),
+  }),
+).annotate({
+  identifier: "ContractsCreateRequestDataListing",
+}) as any as S.Schema<ContractsCreateRequestDataListing>;
+
+export interface ContractsCreateRequestDataDetailFinanceLenderContact {
+  /** Contact ID of the finance lender */
+  id?: number | null;
+}
+export const ContractsCreateRequestDataDetailFinanceLenderContact =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.Number)),
+    }),
+  ).annotate({
+    identifier: "ContractsCreateRequestDataDetailFinanceLenderContact",
+  }) as any as S.Schema<ContractsCreateRequestDataDetailFinanceLenderContact>;
+
+export interface ContractsCreateRequestDataFallenReason {
+  /** Reason why contract fell through (valuelist: contract_fallen_reason) */
+  id?: string | null;
+}
+export const ContractsCreateRequestDataFallenReason = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.String)),
+    }),
+).annotate({
+  identifier: "ContractsCreateRequestDataFallenReason",
+}) as any as S.Schema<ContractsCreateRequestDataFallenReason>;
+
+export interface ContractsCreateRequestDataPurchtenantSolicitor {
+  /** Purchaser or tenant's solicitor id */
+  id?: number | null;
+}
+export const ContractsCreateRequestDataPurchtenantSolicitor =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.Number)),
+    }),
+  ).annotate({
+    identifier: "ContractsCreateRequestDataPurchtenantSolicitor",
+  }) as any as S.Schema<ContractsCreateRequestDataPurchtenantSolicitor>;
+
+export interface ContractsCreateRequestDataAgent {
+  /** Contract agent id */
+  id?: number | null;
+}
+export const ContractsCreateRequestDataAgent = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.optional(S.NullOr(S.Number)),
+  }),
+).annotate({
+  identifier: "ContractsCreateRequestDataAgent",
+}) as any as S.Schema<ContractsCreateRequestDataAgent>;
+
+export interface ContractsCreateRequestDataMarketingEnquirySource {
+  /** Market research enquiry source ID (valuelist: enquiry_source) */
+  id?: string | null;
+}
+export const ContractsCreateRequestDataMarketingEnquirySource =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier: "ContractsCreateRequestDataMarketingEnquirySource",
+  }) as any as S.Schema<ContractsCreateRequestDataMarketingEnquirySource>;
+
+export interface ContractsCreateRequestDataMarketingEnquiryMethod {
+  /** Market research enquiry method ID (valuelist: enquiry_method) */
+  id?: string | null;
+}
+export const ContractsCreateRequestDataMarketingEnquiryMethod =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier: "ContractsCreateRequestDataMarketingEnquiryMethod",
+  }) as any as S.Schema<ContractsCreateRequestDataMarketingEnquiryMethod>;
+
+/** An array of data to add to the record */
+export interface ContractsCreateRequestData {
+  listing?: ContractsCreateRequestDataListing | null;
+  /** Sale price for sale property or the lease per annum for commercial rental */
+  detail_sale_price_or_lease_pa?: number | null;
+  /** Initial deposit amount */
+  detail_deposit_init_or_bond?: number | null;
+  /** Full deposit amount */
+  detail_deposit_full_or_prepayment?: number | null;
+  /** The finance amount the purchaser will obtain */
+  detail_finance_amount?: number | null;
+  /** Lender from whom the purchaser is obtaining finance */
+  detail_finance_lender?: string | null;
+  detail_finance_lender_contact?: ContractsCreateRequestDataDetailFinanceLenderContact | null;
+  /** Date when the deposit is expected to be received */
+  date_expec_deposit?: string | null;
+  /** Date when finance is due to be received */
+  date_expec_finance?: string | null;
+  /** Date when contract is expected to become unconditional */
+  date_expec_unconditional?: string | null;
+  /** Date when contract is expected to settle */
+  date_expec_settlement?: string | null;
+  /** Date when the possession of the property is due to change from current vendor to purchaser - NZ only */
+  date_expec_possession?: string | null;
+  /** Date when the contract was accepted */
+  date_actual_accepted?: string | null;
+  /** Date when the contract was deposited */
+  date_actual_deposit?: string | null;
+  /** Date when the contract finance was received */
+  date_actual_finance?: string | null;
+  /** Date when the contract became unconditional */
+  date_actual_unconditional?: string | null;
+  /** Date when the contract was settled or released */
+  date_actual_settlement?: string | null;
+  /** Date when the possession changed - NZ only */
+  date_actual_possession?: string | null;
+  /** Date when the offer fell through */
+  date_actual_fallen?: string | null;
+  /** Date when the offer was withdrawn */
+  date_actual_withdrawn?: string | null;
+  fallen_reason?: ContractsCreateRequestDataFallenReason | null;
+  purchtenant_solicitor?: ContractsCreateRequestDataPurchtenantSolicitor | null;
+  /** Purchaser or tenant's solicitor legal name */
+  purchtenant_legal_name?: string | null;
+  /** Purchaser or tenant's solicitor residence */
+  purchtenant_residence?: string | null;
+  agent?: ContractsCreateRequestDataAgent | null;
+  /** Contract notes */
+  notes?: string | null;
+  /** Objects that come with the sale of the property */
+  chattels?: string | null;
+  /** Contract marketing rebate */
+  marketing_rebate?: number | null;
+  marketing_enquiry_source?: ContractsCreateRequestDataMarketingEnquirySource | null;
+  marketing_enquiry_method?: ContractsCreateRequestDataMarketingEnquiryMethod | null;
+  /** Market research contact's age */
+  marketing_contact_age?: number | null;
+  /** Market research postcode */
+  marketing_postcode?: string | null;
+}
+export const ContractsCreateRequestData = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    listing: S.optional(S.NullOr(ContractsCreateRequestDataListing)),
+    detail_sale_price_or_lease_pa: S.optional(S.NullOr(S.Number)),
+    detail_deposit_init_or_bond: S.optional(S.NullOr(S.Number)),
+    detail_deposit_full_or_prepayment: S.optional(S.NullOr(S.Number)),
+    detail_finance_amount: S.optional(S.NullOr(S.Number)),
+    detail_finance_lender: S.optional(S.NullOr(S.String)),
+    detail_finance_lender_contact: S.optional(
+      S.NullOr(ContractsCreateRequestDataDetailFinanceLenderContact),
+    ),
+    date_expec_deposit: S.optional(S.NullOr(S.String)),
+    date_expec_finance: S.optional(S.NullOr(S.String)),
+    date_expec_unconditional: S.optional(S.NullOr(S.String)),
+    date_expec_settlement: S.optional(S.NullOr(S.String)),
+    date_expec_possession: S.optional(S.NullOr(S.String)),
+    date_actual_accepted: S.optional(S.NullOr(S.String)),
+    date_actual_deposit: S.optional(S.NullOr(S.String)),
+    date_actual_finance: S.optional(S.NullOr(S.String)),
+    date_actual_unconditional: S.optional(S.NullOr(S.String)),
+    date_actual_settlement: S.optional(S.NullOr(S.String)),
+    date_actual_possession: S.optional(S.NullOr(S.String)),
+    date_actual_fallen: S.optional(S.NullOr(S.String)),
+    date_actual_withdrawn: S.optional(S.NullOr(S.String)),
+    fallen_reason: S.optional(S.NullOr(ContractsCreateRequestDataFallenReason)),
+    purchtenant_solicitor: S.optional(
+      S.NullOr(ContractsCreateRequestDataPurchtenantSolicitor),
+    ),
+    purchtenant_legal_name: S.optional(S.NullOr(S.String)),
+    purchtenant_residence: S.optional(S.NullOr(S.String)),
+    agent: S.optional(S.NullOr(ContractsCreateRequestDataAgent)),
+    notes: S.optional(S.NullOr(S.String)),
+    chattels: S.optional(S.NullOr(S.String)),
+    marketing_rebate: S.optional(S.NullOr(S.Number)),
+    marketing_enquiry_source: S.optional(
+      S.NullOr(ContractsCreateRequestDataMarketingEnquirySource),
+    ),
+    marketing_enquiry_method: S.optional(
+      S.NullOr(ContractsCreateRequestDataMarketingEnquiryMethod),
+    ),
+    marketing_contact_age: S.optional(S.NullOr(S.Number)),
+    marketing_postcode: S.optional(S.NullOr(S.String)),
+  }),
+).annotate({
+  identifier: "ContractsCreateRequestData",
+}) as any as S.Schema<ContractsCreateRequestData>;
+
+export interface ContractsCreateRequest {
+  /** An array of data to add to the record */
+  data: ContractsCreateRequestData;
+  /** True if the id should returned only. False if the record should be returned */
+  return_id?: boolean;
+}
+export const ContractsCreateRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    data: ContractsCreateRequestData,
+    return_id: S.optional(S.Boolean),
+  }).pipe(
+    T.Http({ method: "POST", uri: "/v1/rex/Contracts::create", code: 200 }),
+  ),
+).annotate({
+  identifier: "ContractsCreateRequest",
+}) as any as S.Schema<ContractsCreateRequest>;
+
+export type ContractsCreateResponse = unknown;
+export const ContractsCreateResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Unknown.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "ContractsCreateResponse",
+}) as any as S.Schema<ContractsCreateResponse>;
+
+/** An object in the form {amount, offer_date, offer_time, note} */
+export type ContractsCreateOfferHistoryEntryRequestDataList = Array<unknown>;
+export const ContractsCreateOfferHistoryEntryRequestDataList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsCreateOfferHistoryEntryRequestDataList>;
+
+export interface ContractsCreateOfferHistoryEntryRequest {
+  /** Contract id */
+  contract_id: number;
+  /** An object in the form {amount, offer_date, offer_time, note} */
+  data: ContractsCreateOfferHistoryEntryRequestDataList;
+}
+export const ContractsCreateOfferHistoryEntryRequest = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      contract_id: S.Number,
+      data: ContractsCreateOfferHistoryEntryRequestDataList,
+    }).pipe(
+      T.Http({
+        method: "POST",
+        uri: "/v1/rex/Contracts::createOfferHistoryEntry",
+        code: 200,
+      }),
+    ),
+).annotate({
+  identifier: "ContractsCreateOfferHistoryEntryRequest",
+}) as any as S.Schema<ContractsCreateOfferHistoryEntryRequest>;
+
+export type ContractsCreateOfferHistoryEntryResponse = unknown;
+export const ContractsCreateOfferHistoryEntryResponse = /*@__PURE__*/ S.suspend(
+  () => S.Unknown.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "ContractsCreateOfferHistoryEntryResponse",
+}) as any as S.Schema<ContractsCreateOfferHistoryEntryResponse>;
+
+export interface ContractsDescribeRequest {
+  /** True if detailed descriptions of each method should be included */
+  include_detail?: boolean;
+}
+export const ContractsDescribeRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    include_detail: S.optional(S.Boolean),
+  }).pipe(
+    T.Http({ method: "POST", uri: "/v1/rex/Contracts::describe", code: 200 }),
+  ),
+).annotate({
+  identifier: "ContractsDescribeRequest",
+}) as any as S.Schema<ContractsDescribeRequest>;
+
+export type ContractsDescribeResponseMethodsArchiveParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const ContractsDescribeResponseMethodsArchiveParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type ContractsDescribeResponseMethodsArchiveParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+export const ContractsDescribeResponseMethodsArchiveParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+
+export type ContractsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const ContractsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type ContractsDescribeResponseMethodsArchiveOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const ContractsDescribeResponseMethodsArchiveOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type ContractsDescribeResponseMethodsArchiveOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+export const ContractsDescribeResponseMethodsArchiveOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+
+export type ContractsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+export const ContractsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+
+export type ContractsDescribeResponseMethodsArchiveOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+export const ContractsDescribeResponseMethodsArchiveOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+
+export type ContractsDescribeResponseMethodsArchiveOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+export const ContractsDescribeResponseMethodsArchiveOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+
+export type ContractsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+export const ContractsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+
+export type ContractsDescribeResponseMethodsArchiveOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+export const ContractsDescribeResponseMethodsArchiveOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+
+export type ContractsDescribeResponseMethodsArchiveOpenapiResponseSchemaList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsArchiveOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsArchiveOpenapiResponseSchemaList>;
+
+export type ContractsDescribeResponseMethodsArchiveOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const ContractsDescribeResponseMethodsArchiveOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface ContractsDescribeResponseMethodsArchiveOpenapiResponse {
+  examples?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples | null;
+  schema?: ContractsDescribeResponseMethodsArchiveOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const ContractsDescribeResponseMethodsArchiveOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples,
+        ),
+      ),
+      schema: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsArchiveOpenapiResponseSchemaList,
+        ),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsArchiveOpenapiResponse",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsArchiveOpenapiResponse>;
+
+export interface ContractsDescribeResponseMethodsArchiveOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest | null;
+  response?: ContractsDescribeResponseMethodsArchiveOpenapiResponse | null;
+}
+export const ContractsDescribeResponseMethodsArchiveOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsArchiveOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsArchiveOpenapi",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsArchiveOpenapi>;
+
+export interface ContractsDescribeResponseMethodsArchive {
+  description?: string | null;
+  parameters?: AdminValueListsDescribeResponseMethodsArchiveParameters | null;
+  returns?: string | null;
+  openapi?: ContractsDescribeResponseMethodsArchiveOpenapi | null;
+}
+export const ContractsDescribeResponseMethodsArchive = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsArchiveOpenapi),
+      ),
+    }),
+).annotate({
+  identifier: "ContractsDescribeResponseMethodsArchive",
+}) as any as S.Schema<ContractsDescribeResponseMethodsArchive>;
+
+export type ContractsDescribeResponseMethodsCreateParametersData =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const ContractsDescribeResponseMethodsCreateParametersData =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type ContractsDescribeResponseMethodsCreateParametersReturnId =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+export const ContractsDescribeResponseMethodsCreateParametersReturnId =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+
+export type ContractsDescribeResponseMethodsCreateParameters =
+  AdminValueListsDescribeResponseMethodsCreateParameters;
+export const ContractsDescribeResponseMethodsCreateParameters =
+  AdminValueListsDescribeResponseMethodsCreateParameters;
+
+export type ContractsDescribeResponseMethodsCreateOpenapiRequestParametersDataList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsCreateOpenapiRequestParametersDataList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsCreateOpenapiRequestParametersDataList>;
+
+export type ContractsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+export const ContractsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+
+export type ContractsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+export const ContractsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+
+export interface ContractsDescribeResponseMethodsCreateOpenapiRequestParameters {
+  data?: ContractsDescribeResponseMethodsCreateOpenapiRequestParametersDataList | null;
+  return_id?: AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId | null;
+}
+export const ContractsDescribeResponseMethodsCreateOpenapiRequestParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      data: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsCreateOpenapiRequestParametersDataList,
+        ),
+      ),
+      return_id: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "ContractsDescribeResponseMethodsCreateOpenapiRequestParameters",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsCreateOpenapiRequestParameters>;
+
+export type ContractsDescribeResponseMethodsCreateOpenapiRequestExamplesExample1List =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsCreateOpenapiRequestExamplesExample1List =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsCreateOpenapiRequestExamplesExample1List>;
+
+export interface ContractsDescribeResponseMethodsCreateOpenapiRequestExamples {
+  Example1?: ContractsDescribeResponseMethodsCreateOpenapiRequestExamplesExample1List | null;
+}
+export const ContractsDescribeResponseMethodsCreateOpenapiRequestExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsCreateOpenapiRequestExamplesExample1List,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsCreateOpenapiRequestExamples",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsCreateOpenapiRequestExamples>;
+
+export interface ContractsDescribeResponseMethodsCreateOpenapiRequest {
+  parameters?: ContractsDescribeResponseMethodsCreateOpenapiRequestParameters | null;
+  examples?: ContractsDescribeResponseMethodsCreateOpenapiRequestExamples | null;
+}
+export const ContractsDescribeResponseMethodsCreateOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsCreateOpenapiRequestParameters,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsCreateOpenapiRequestExamples),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsCreateOpenapiRequest",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsCreateOpenapiRequest>;
+
+export type ContractsDescribeResponseMethodsCreateOpenapiResponseExamplesExample1List =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsCreateOpenapiResponseExamplesExample1List =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsCreateOpenapiResponseExamplesExample1List>;
+
+export interface ContractsDescribeResponseMethodsCreateOpenapiResponseExamples {
+  Example1?: ContractsDescribeResponseMethodsCreateOpenapiResponseExamplesExample1List | null;
+}
+export const ContractsDescribeResponseMethodsCreateOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsCreateOpenapiResponseExamplesExample1List,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsCreateOpenapiResponseExamples",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsCreateOpenapiResponseExamples>;
+
+export type ContractsDescribeResponseMethodsCreateOpenapiResponseSchemaList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsCreateOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsCreateOpenapiResponseSchemaList>;
+
+export type ContractsDescribeResponseMethodsCreateOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const ContractsDescribeResponseMethodsCreateOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface ContractsDescribeResponseMethodsCreateOpenapiResponse {
+  examples?: ContractsDescribeResponseMethodsCreateOpenapiResponseExamples | null;
+  schema?: ContractsDescribeResponseMethodsCreateOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const ContractsDescribeResponseMethodsCreateOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsCreateOpenapiResponseExamples),
+      ),
+      schema: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsCreateOpenapiResponseSchemaList,
+        ),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsCreateOpenapiResponse",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsCreateOpenapiResponse>;
+
+export interface ContractsDescribeResponseMethodsCreateOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: ContractsDescribeResponseMethodsCreateOpenapiRequest | null;
+  response?: ContractsDescribeResponseMethodsCreateOpenapiResponse | null;
+}
+export const ContractsDescribeResponseMethodsCreateOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsCreateOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsCreateOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsCreateOpenapi",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsCreateOpenapi>;
+
+export interface ContractsDescribeResponseMethodsCreate {
+  description?: string | null;
+  parameters?: AdminValueListsDescribeResponseMethodsCreateParameters | null;
+  returns?: string | null;
+  openapi?: ContractsDescribeResponseMethodsCreateOpenapi | null;
+}
+export const ContractsDescribeResponseMethodsCreate = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsCreateParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsCreateOpenapi),
+      ),
+    }),
+).annotate({
+  identifier: "ContractsDescribeResponseMethodsCreate",
+}) as any as S.Schema<ContractsDescribeResponseMethodsCreate>;
+
+export type ContractsDescribeResponseMethodsReadParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const ContractsDescribeResponseMethodsReadParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type ContractsDescribeResponseMethodsReadParametersFieldsDefaultValueList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsReadParametersFieldsDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsReadParametersFieldsDefaultValueList>;
+
+export interface ContractsDescribeResponseMethodsReadParametersFields {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: ContractsDescribeResponseMethodsReadParametersFieldsDefaultValueList | null;
+  required?: boolean | null;
+}
+export const ContractsDescribeResponseMethodsReadParametersFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsReadParametersFieldsDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsReadParametersFields",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsReadParametersFields>;
+
+export type ContractsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
+  Array<string>;
+export const ContractsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList>;
+
+export interface ContractsDescribeResponseMethodsReadParametersExtraFields {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: ContractsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList | null;
+  required?: boolean | null;
+}
+export const ContractsDescribeResponseMethodsReadParametersExtraFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsReadParametersExtraFields",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsReadParametersExtraFields>;
+
+export interface ContractsDescribeResponseMethodsReadParameters {
+  id?: AdminValueListsDescribeResponseMethodsArchiveParametersId | null;
+  fields?: ContractsDescribeResponseMethodsReadParametersFields | null;
+  extra_fields?: ContractsDescribeResponseMethodsReadParametersExtraFields | null;
+}
+export const ContractsDescribeResponseMethodsReadParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParametersId),
+      ),
+      fields: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsReadParametersFields),
+      ),
+      extra_fields: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsReadParametersExtraFields),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsReadParameters",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsReadParameters>;
+
+export type ContractsDescribeResponseMethodsReadOpenapiRequestParametersList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsReadOpenapiRequestParametersList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsReadOpenapiRequestParametersList>;
+
+export type ContractsDescribeResponseMethodsReadOpenapiRequestExamplesList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsReadOpenapiRequestExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsReadOpenapiRequestExamplesList>;
+
+export interface ContractsDescribeResponseMethodsReadOpenapiRequest {
+  parameters?: ContractsDescribeResponseMethodsReadOpenapiRequestParametersList | null;
+  examples?: ContractsDescribeResponseMethodsReadOpenapiRequestExamplesList | null;
+}
+export const ContractsDescribeResponseMethodsReadOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsReadOpenapiRequestParametersList,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsReadOpenapiRequestExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsReadOpenapiRequest",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsReadOpenapiRequest>;
+
+export type ContractsDescribeResponseMethodsReadOpenapiResponseExamplesList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsReadOpenapiResponseExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsReadOpenapiResponseExamplesList>;
+
+export type ContractsDescribeResponseMethodsReadOpenapiResponseSchemaList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsReadOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsReadOpenapiResponseSchemaList>;
+
+export type ContractsDescribeResponseMethodsReadOpenapiResponseStatusesList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsReadOpenapiResponseStatusesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsReadOpenapiResponseStatusesList>;
+
+export interface ContractsDescribeResponseMethodsReadOpenapiResponse {
+  examples?: ContractsDescribeResponseMethodsReadOpenapiResponseExamplesList | null;
+  schema?: ContractsDescribeResponseMethodsReadOpenapiResponseSchemaList | null;
+  statuses?: ContractsDescribeResponseMethodsReadOpenapiResponseStatusesList | null;
+}
+export const ContractsDescribeResponseMethodsReadOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsReadOpenapiResponseExamplesList,
+        ),
+      ),
+      schema: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsReadOpenapiResponseSchemaList),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsReadOpenapiResponseStatusesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsReadOpenapiResponse",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsReadOpenapiResponse>;
+
+export interface ContractsDescribeResponseMethodsReadOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: ContractsDescribeResponseMethodsReadOpenapiRequest | null;
+  response?: ContractsDescribeResponseMethodsReadOpenapiResponse | null;
+}
+export const ContractsDescribeResponseMethodsReadOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsReadOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsReadOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsReadOpenapi",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsReadOpenapi>;
+
+export interface ContractsDescribeResponseMethodsRead {
+  description?: string | null;
+  parameters?: ContractsDescribeResponseMethodsReadParameters | null;
+  returns?: string | null;
+  openapi?: ContractsDescribeResponseMethodsReadOpenapi | null;
+}
+export const ContractsDescribeResponseMethodsRead = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsReadParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsReadOpenapi),
+      ),
+    }),
+).annotate({
+  identifier: "ContractsDescribeResponseMethodsRead",
+}) as any as S.Schema<ContractsDescribeResponseMethodsRead>;
+
+export type ContractsDescribeResponseMethodsRecoverFromArchiveParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const ContractsDescribeResponseMethodsRecoverFromArchiveParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type ContractsDescribeResponseMethodsRecoverFromArchiveParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+export const ContractsDescribeResponseMethodsRecoverFromArchiveParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+
+export type ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+export const ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+
+export type ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+export const ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+
+export type ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+export const ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+
+export type ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+export const ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+
+export type ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+export const ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+
+export type ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+export const ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+
+export type ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponseSchemaList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponseSchemaList>;
+
+export type ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponse {
+  examples?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples | null;
+  schema?: ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples,
+        ),
+      ),
+      schema: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponseSchemaList,
+        ),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponse",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponse>;
+
+export interface ContractsDescribeResponseMethodsRecoverFromArchiveOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest | null;
+  response?: ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponse | null;
+}
+export const ContractsDescribeResponseMethodsRecoverFromArchiveOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsRecoverFromArchiveOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsRecoverFromArchiveOpenapi",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsRecoverFromArchiveOpenapi>;
+
+export interface ContractsDescribeResponseMethodsRecoverFromArchive {
+  description?: string | null;
+  parameters?: AdminValueListsDescribeResponseMethodsArchiveParameters | null;
+  returns?: string | null;
+  openapi?: ContractsDescribeResponseMethodsRecoverFromArchiveOpenapi | null;
+}
+export const ContractsDescribeResponseMethodsRecoverFromArchive =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsRecoverFromArchiveOpenapi),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsRecoverFromArchive",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsRecoverFromArchive>;
+
+export type ContractsDescribeResponseMethodsRecoverFromTrashParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const ContractsDescribeResponseMethodsRecoverFromTrashParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type ContractsDescribeResponseMethodsRecoverFromTrashParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+export const ContractsDescribeResponseMethodsRecoverFromTrashParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+
+export type ContractsDescribeResponseMethodsRecoverFromTrashOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const ContractsDescribeResponseMethodsRecoverFromTrashOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type ContractsDescribeResponseMethodsRecoverFromTrashOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const ContractsDescribeResponseMethodsRecoverFromTrashOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type ContractsDescribeResponseMethodsRecoverFromTrashOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+export const ContractsDescribeResponseMethodsRecoverFromTrashOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+
+export type ContractsDescribeResponseMethodsRecoverFromTrashOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+export const ContractsDescribeResponseMethodsRecoverFromTrashOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+
+export type ContractsDescribeResponseMethodsRecoverFromTrashOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+export const ContractsDescribeResponseMethodsRecoverFromTrashOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+
+export type ContractsDescribeResponseMethodsRecoverFromTrashOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+export const ContractsDescribeResponseMethodsRecoverFromTrashOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+
+export type ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+export const ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+
+export type ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+export const ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+
+export type ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponseSchemaList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponseSchemaList>;
+
+export type ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponse {
+  examples?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples | null;
+  schema?: ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples,
+        ),
+      ),
+      schema: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponseSchemaList,
+        ),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponse",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponse>;
+
+export interface ContractsDescribeResponseMethodsRecoverFromTrashOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest | null;
+  response?: ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponse | null;
+}
+export const ContractsDescribeResponseMethodsRecoverFromTrashOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsRecoverFromTrashOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsRecoverFromTrashOpenapi",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsRecoverFromTrashOpenapi>;
+
+export interface ContractsDescribeResponseMethodsRecoverFromTrash {
+  description?: string | null;
+  parameters?: AdminValueListsDescribeResponseMethodsArchiveParameters | null;
+  returns?: string | null;
+  openapi?: ContractsDescribeResponseMethodsRecoverFromTrashOpenapi | null;
+}
+export const ContractsDescribeResponseMethodsRecoverFromTrash =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsRecoverFromTrashOpenapi),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsRecoverFromTrash",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsRecoverFromTrash>;
+
+export type ContractsDescribeResponseMethodsSearchParametersCriteriaDefaultValueList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsSearchParametersCriteriaDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsSearchParametersCriteriaDefaultValueList>;
+
+export interface ContractsDescribeResponseMethodsSearchParametersCriteria {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: ContractsDescribeResponseMethodsSearchParametersCriteriaDefaultValueList | null;
+  required?: boolean | null;
+}
+export const ContractsDescribeResponseMethodsSearchParametersCriteria =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsSearchParametersCriteriaDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsSearchParametersCriteria",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsSearchParametersCriteria>;
+
+export type ContractsDescribeResponseMethodsSearchParametersOrderByDefaultValueList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsSearchParametersOrderByDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsSearchParametersOrderByDefaultValueList>;
+
+export interface ContractsDescribeResponseMethodsSearchParametersOrderBy {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: ContractsDescribeResponseMethodsSearchParametersOrderByDefaultValueList | null;
+  required?: boolean | null;
+}
+export const ContractsDescribeResponseMethodsSearchParametersOrderBy =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsSearchParametersOrderByDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsSearchParametersOrderBy",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsSearchParametersOrderBy>;
+
+export type ContractsDescribeResponseMethodsSearchParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+export const ContractsDescribeResponseMethodsSearchParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+
+export type ContractsDescribeResponseMethodsSearchParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+export const ContractsDescribeResponseMethodsSearchParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+
+export type ContractsDescribeResponseMethodsSearchParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+export const ContractsDescribeResponseMethodsSearchParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+
+export type ContractsDescribeResponseMethodsSearchParametersSearchState =
+  AdminValueListsDescribeResponseMethodsSearchParametersSearchState;
+export const ContractsDescribeResponseMethodsSearchParametersSearchState =
+  AdminValueListsDescribeResponseMethodsSearchParametersSearchState;
+
+export type ContractsDescribeResponseMethodsSearchParametersIdsOnly =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+export const ContractsDescribeResponseMethodsSearchParametersIdsOnly =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+
+export type ContractsDescribeResponseMethodsSearchParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchParametersSearchState;
+export const ContractsDescribeResponseMethodsSearchParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchParametersSearchState;
+
+export type ContractsDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList>;
+
+export interface ContractsDescribeResponseMethodsSearchParametersExtraOptions {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: ContractsDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList | null;
+  required?: boolean | null;
+}
+export const ContractsDescribeResponseMethodsSearchParametersExtraOptions =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsSearchParametersExtraOptions",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsSearchParametersExtraOptions>;
+
+export interface ContractsDescribeResponseMethodsSearchParameters {
+  criteria?: ContractsDescribeResponseMethodsSearchParametersCriteria | null;
+  order_by?: ContractsDescribeResponseMethodsSearchParametersOrderBy | null;
+  offset?: AdminValueListsDescribeResponseMethodsSearchParametersOffset | null;
+  limit?: AdminValueListsDescribeResponseMethodsSearchParametersOffset | null;
+  create_viewstate?: AdminValueListsDescribeResponseMethodsCreateParametersReturnId | null;
+  search_state?: AdminValueListsDescribeResponseMethodsSearchParametersSearchState | null;
+  ids_only?: AdminValueListsDescribeResponseMethodsCreateParametersReturnId | null;
+  result_format?: AdminValueListsDescribeResponseMethodsSearchParametersSearchState | null;
+  extra_options?: ContractsDescribeResponseMethodsSearchParametersExtraOptions | null;
+}
+export const ContractsDescribeResponseMethodsSearchParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      criteria: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsSearchParametersCriteria),
+      ),
+      order_by: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsSearchParametersOrderBy),
+      ),
+      offset: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsSearchParametersOffset),
+      ),
+      limit: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsSearchParametersOffset),
+      ),
+      create_viewstate: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsCreateParametersReturnId,
+        ),
+      ),
+      search_state: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsSearchParametersSearchState,
+        ),
+      ),
+      ids_only: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsCreateParametersReturnId,
+        ),
+      ),
+      result_format: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsSearchParametersSearchState,
+        ),
+      ),
+      extra_options: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsSearchParametersExtraOptions),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsSearchParameters",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsSearchParameters>;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersCriteriaDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersCriteriaDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersCriteria =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersCriteria =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersOrderByDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersOrderByDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersOrderBy =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersOrderBy =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersLimitDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersLimitDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersCreateViewstateDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersCreateViewstateDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersExtraOptionsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersExtraOptionsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParametersExtraOptions =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParametersExtraOptions =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParameters;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParameters;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamplesExample1;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamplesExample1;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamples;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamples;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequest;
+export const ContractsDescribeResponseMethodsSearchOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequest;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1List =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1List =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1List>;
+
+export interface ContractsDescribeResponseMethodsSearchOpenapiResponseExamples {
+  Example1?: ContractsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1List | null;
+}
+export const ContractsDescribeResponseMethodsSearchOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1List,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsSearchOpenapiResponseExamples",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsSearchOpenapiResponseExamples>;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiResponseSchemaList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsSearchOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsSearchOpenapiResponseSchemaList>;
+
+export type ContractsDescribeResponseMethodsSearchOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const ContractsDescribeResponseMethodsSearchOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface ContractsDescribeResponseMethodsSearchOpenapiResponse {
+  examples?: ContractsDescribeResponseMethodsSearchOpenapiResponseExamples | null;
+  schema?: ContractsDescribeResponseMethodsSearchOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const ContractsDescribeResponseMethodsSearchOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsSearchOpenapiResponseExamples),
+      ),
+      schema: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsSearchOpenapiResponseSchemaList,
+        ),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsSearchOpenapiResponse",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsSearchOpenapiResponse>;
+
+export interface ContractsDescribeResponseMethodsSearchOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: AdminValueListsDescribeResponseMethodsSearchOpenapiRequest | null;
+  response?: ContractsDescribeResponseMethodsSearchOpenapiResponse | null;
+}
+export const ContractsDescribeResponseMethodsSearchOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsSearchOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsSearchOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsSearchOpenapi",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsSearchOpenapi>;
+
+export interface ContractsDescribeResponseMethodsSearch {
+  description?: string | null;
+  parameters?: ContractsDescribeResponseMethodsSearchParameters | null;
+  returns?: string | null;
+  openapi?: ContractsDescribeResponseMethodsSearchOpenapi | null;
+}
+export const ContractsDescribeResponseMethodsSearch = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsSearchParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsSearchOpenapi),
+      ),
+    }),
+).annotate({
+  identifier: "ContractsDescribeResponseMethodsSearch",
+}) as any as S.Schema<ContractsDescribeResponseMethodsSearch>;
+
+export type ContractsDescribeResponseMethodsTrashParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const ContractsDescribeResponseMethodsTrashParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type ContractsDescribeResponseMethodsTrashParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+export const ContractsDescribeResponseMethodsTrashParameters =
+  AdminValueListsDescribeResponseMethodsArchiveParameters;
+
+export type ContractsDescribeResponseMethodsTrashOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const ContractsDescribeResponseMethodsTrashOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type ContractsDescribeResponseMethodsTrashOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const ContractsDescribeResponseMethodsTrashOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type ContractsDescribeResponseMethodsTrashOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+export const ContractsDescribeResponseMethodsTrashOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParameters;
+
+export type ContractsDescribeResponseMethodsTrashOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+export const ContractsDescribeResponseMethodsTrashOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamplesExample1;
+
+export type ContractsDescribeResponseMethodsTrashOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+export const ContractsDescribeResponseMethodsTrashOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestExamples;
+
+export type ContractsDescribeResponseMethodsTrashOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+export const ContractsDescribeResponseMethodsTrashOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest;
+
+export type ContractsDescribeResponseMethodsTrashOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+export const ContractsDescribeResponseMethodsTrashOpenapiResponseExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamplesExample1;
+
+export type ContractsDescribeResponseMethodsTrashOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+export const ContractsDescribeResponseMethodsTrashOpenapiResponseExamples =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples;
+
+export type ContractsDescribeResponseMethodsTrashOpenapiResponseSchemaList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsTrashOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsTrashOpenapiResponseSchemaList>;
+
+export type ContractsDescribeResponseMethodsTrashOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const ContractsDescribeResponseMethodsTrashOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface ContractsDescribeResponseMethodsTrashOpenapiResponse {
+  examples?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples | null;
+  schema?: ContractsDescribeResponseMethodsTrashOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const ContractsDescribeResponseMethodsTrashOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseExamples,
+        ),
+      ),
+      schema: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsTrashOpenapiResponseSchemaList,
+        ),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsTrashOpenapiResponse",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsTrashOpenapiResponse>;
+
+export interface ContractsDescribeResponseMethodsTrashOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest | null;
+  response?: ContractsDescribeResponseMethodsTrashOpenapiResponse | null;
+}
+export const ContractsDescribeResponseMethodsTrashOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsTrashOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsTrashOpenapi",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsTrashOpenapi>;
+
+export interface ContractsDescribeResponseMethodsTrash {
+  description?: string | null;
+  parameters?: AdminValueListsDescribeResponseMethodsArchiveParameters | null;
+  returns?: string | null;
+  openapi?: ContractsDescribeResponseMethodsTrashOpenapi | null;
+}
+export const ContractsDescribeResponseMethodsTrash = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsTrashOpenapi),
+      ),
+    }),
+).annotate({
+  identifier: "ContractsDescribeResponseMethodsTrash",
+}) as any as S.Schema<ContractsDescribeResponseMethodsTrash>;
+
+export type ContractsDescribeResponseMethodsUpdateParametersData =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const ContractsDescribeResponseMethodsUpdateParametersData =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type ContractsDescribeResponseMethodsUpdateParametersFieldsDefaultValueList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsUpdateParametersFieldsDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsUpdateParametersFieldsDefaultValueList>;
+
+export interface ContractsDescribeResponseMethodsUpdateParametersFields {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: ContractsDescribeResponseMethodsUpdateParametersFieldsDefaultValueList | null;
+  required?: boolean | null;
+}
+export const ContractsDescribeResponseMethodsUpdateParametersFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsUpdateParametersFieldsDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsUpdateParametersFields",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsUpdateParametersFields>;
+
+export type ContractsDescribeResponseMethodsUpdateParametersExtraFieldsDefaultValueList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsUpdateParametersExtraFieldsDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsUpdateParametersExtraFieldsDefaultValueList>;
+
+export interface ContractsDescribeResponseMethodsUpdateParametersExtraFields {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: ContractsDescribeResponseMethodsUpdateParametersExtraFieldsDefaultValueList | null;
+  required?: boolean | null;
+}
+export const ContractsDescribeResponseMethodsUpdateParametersExtraFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsUpdateParametersExtraFieldsDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsUpdateParametersExtraFields",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsUpdateParametersExtraFields>;
+
+export interface ContractsDescribeResponseMethodsUpdateParameters {
+  data?: AdminValueListsDescribeResponseMethodsArchiveParametersId | null;
+  fields?: ContractsDescribeResponseMethodsUpdateParametersFields | null;
+  extra_fields?: ContractsDescribeResponseMethodsUpdateParametersExtraFields | null;
+}
+export const ContractsDescribeResponseMethodsUpdateParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      data: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParametersId),
+      ),
+      fields: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsUpdateParametersFields),
+      ),
+      extra_fields: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsUpdateParametersExtraFields),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsUpdateParameters",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsUpdateParameters>;
+
+export type ContractsDescribeResponseMethodsUpdateOpenapiRequestParametersDataList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsUpdateOpenapiRequestParametersDataList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsUpdateOpenapiRequestParametersDataList>;
+
+export type ContractsDescribeResponseMethodsUpdateOpenapiRequestParametersFieldsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const ContractsDescribeResponseMethodsUpdateOpenapiRequestParametersFieldsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type ContractsDescribeResponseMethodsUpdateOpenapiRequestParametersFields =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const ContractsDescribeResponseMethodsUpdateOpenapiRequestParametersFields =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type ContractsDescribeResponseMethodsUpdateOpenapiRequestParametersExtraFieldsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const ContractsDescribeResponseMethodsUpdateOpenapiRequestParametersExtraFieldsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type ContractsDescribeResponseMethodsUpdateOpenapiRequestParametersExtraFields =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const ContractsDescribeResponseMethodsUpdateOpenapiRequestParametersExtraFields =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export interface ContractsDescribeResponseMethodsUpdateOpenapiRequestParameters {
+  data?: ContractsDescribeResponseMethodsUpdateOpenapiRequestParametersDataList | null;
+  fields?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId | null;
+  extra_fields?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId | null;
+}
+export const ContractsDescribeResponseMethodsUpdateOpenapiRequestParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      data: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsUpdateOpenapiRequestParametersDataList,
+        ),
+      ),
+      fields: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId,
+        ),
+      ),
+      extra_fields: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "ContractsDescribeResponseMethodsUpdateOpenapiRequestParameters",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsUpdateOpenapiRequestParameters>;
+
+export type ContractsDescribeResponseMethodsUpdateOpenapiRequestExamplesExample1List =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsUpdateOpenapiRequestExamplesExample1List =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsUpdateOpenapiRequestExamplesExample1List>;
+
+export interface ContractsDescribeResponseMethodsUpdateOpenapiRequestExamples {
+  Example1?: ContractsDescribeResponseMethodsUpdateOpenapiRequestExamplesExample1List | null;
+}
+export const ContractsDescribeResponseMethodsUpdateOpenapiRequestExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsUpdateOpenapiRequestExamplesExample1List,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsUpdateOpenapiRequestExamples",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsUpdateOpenapiRequestExamples>;
+
+export interface ContractsDescribeResponseMethodsUpdateOpenapiRequest {
+  parameters?: ContractsDescribeResponseMethodsUpdateOpenapiRequestParameters | null;
+  examples?: ContractsDescribeResponseMethodsUpdateOpenapiRequestExamples | null;
+}
+export const ContractsDescribeResponseMethodsUpdateOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsUpdateOpenapiRequestParameters,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsUpdateOpenapiRequestExamples),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsUpdateOpenapiRequest",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsUpdateOpenapiRequest>;
+
+export type ContractsDescribeResponseMethodsUpdateOpenapiResponseExamplesExample1List =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsUpdateOpenapiResponseExamplesExample1List =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsUpdateOpenapiResponseExamplesExample1List>;
+
+export interface ContractsDescribeResponseMethodsUpdateOpenapiResponseExamples {
+  Example1?: ContractsDescribeResponseMethodsUpdateOpenapiResponseExamplesExample1List | null;
+}
+export const ContractsDescribeResponseMethodsUpdateOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsUpdateOpenapiResponseExamplesExample1List,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsUpdateOpenapiResponseExamples",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsUpdateOpenapiResponseExamples>;
+
+export type ContractsDescribeResponseMethodsUpdateOpenapiResponseSchemaList =
+  Array<unknown>;
+export const ContractsDescribeResponseMethodsUpdateOpenapiResponseSchemaList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeResponseMethodsUpdateOpenapiResponseSchemaList>;
+
+export type ContractsDescribeResponseMethodsUpdateOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+export const ContractsDescribeResponseMethodsUpdateOpenapiResponseStatuses =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses;
+
+export interface ContractsDescribeResponseMethodsUpdateOpenapiResponse {
+  examples?: ContractsDescribeResponseMethodsUpdateOpenapiResponseExamples | null;
+  schema?: ContractsDescribeResponseMethodsUpdateOpenapiResponseSchemaList | null;
+  statuses?: AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses | null;
+}
+export const ContractsDescribeResponseMethodsUpdateOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsUpdateOpenapiResponseExamples),
+      ),
+      schema: S.optional(
+        S.NullOr(
+          ContractsDescribeResponseMethodsUpdateOpenapiResponseSchemaList,
+        ),
+      ),
+      statuses: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiResponseStatuses,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsUpdateOpenapiResponse",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsUpdateOpenapiResponse>;
+
+export interface ContractsDescribeResponseMethodsUpdateOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: ContractsDescribeResponseMethodsUpdateOpenapiRequest | null;
+  response?: ContractsDescribeResponseMethodsUpdateOpenapiResponse | null;
+}
+export const ContractsDescribeResponseMethodsUpdateOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsUpdateOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsUpdateOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeResponseMethodsUpdateOpenapi",
+  }) as any as S.Schema<ContractsDescribeResponseMethodsUpdateOpenapi>;
+
+export interface ContractsDescribeResponseMethodsUpdate {
+  description?: string | null;
+  parameters?: ContractsDescribeResponseMethodsUpdateParameters | null;
+  returns?: string | null;
+  openapi?: ContractsDescribeResponseMethodsUpdateOpenapi | null;
+}
+export const ContractsDescribeResponseMethodsUpdate = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsUpdateParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(ContractsDescribeResponseMethodsUpdateOpenapi),
+      ),
+    }),
+).annotate({
+  identifier: "ContractsDescribeResponseMethodsUpdate",
+}) as any as S.Schema<ContractsDescribeResponseMethodsUpdate>;
+
+export interface ContractsDescribeResponseMethods {
+  archive?: ContractsDescribeResponseMethodsArchive | null;
+  create?: ContractsDescribeResponseMethodsCreate | null;
+  read?: ContractsDescribeResponseMethodsRead | null;
+  recoverFromArchive?: ContractsDescribeResponseMethodsRecoverFromArchive | null;
+  recoverFromTrash?: ContractsDescribeResponseMethodsRecoverFromTrash | null;
+  search?: ContractsDescribeResponseMethodsSearch | null;
+  trash?: ContractsDescribeResponseMethodsTrash | null;
+  update?: ContractsDescribeResponseMethodsUpdate | null;
+}
+export const ContractsDescribeResponseMethods = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    archive: S.optional(S.NullOr(ContractsDescribeResponseMethodsArchive)),
+    create: S.optional(S.NullOr(ContractsDescribeResponseMethodsCreate)),
+    read: S.optional(S.NullOr(ContractsDescribeResponseMethodsRead)),
+    recoverFromArchive: S.optional(
+      S.NullOr(ContractsDescribeResponseMethodsRecoverFromArchive),
+    ),
+    recoverFromTrash: S.optional(
+      S.NullOr(ContractsDescribeResponseMethodsRecoverFromTrash),
+    ),
+    search: S.optional(S.NullOr(ContractsDescribeResponseMethodsSearch)),
+    trash: S.optional(S.NullOr(ContractsDescribeResponseMethodsTrash)),
+    update: S.optional(S.NullOr(ContractsDescribeResponseMethodsUpdate)),
+  }),
+).annotate({
+  identifier: "ContractsDescribeResponseMethods",
+}) as any as S.Schema<ContractsDescribeResponseMethods>;
+
+export interface ContractsDescribeResponse {
+  name?: string | null;
+  description?: string | null;
+  detail?: string | null;
+  methods?: ContractsDescribeResponseMethods | null;
+}
+export const ContractsDescribeResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    name: S.optional(S.NullOr(S.String)),
+    description: S.optional(S.NullOr(S.String)),
+    detail: S.optional(S.NullOr(S.String)),
+    methods: S.optional(S.NullOr(ContractsDescribeResponseMethods)),
+  }),
+).annotate({
+  identifier: "ContractsDescribeResponse",
+}) as any as S.Schema<ContractsDescribeResponse>;
+
+export interface ContractsDescribeDeleteModesRequest {}
+export const ContractsDescribeDeleteModesRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/Contracts::describeDeleteModes",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "ContractsDescribeDeleteModesRequest",
+}) as any as S.Schema<ContractsDescribeDeleteModesRequest>;
+
+export type ContractsDescribeDeleteModesResponseBodyList = Array<string>;
+export const ContractsDescribeDeleteModesResponseBodyList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<ContractsDescribeDeleteModesResponseBodyList>;
+
+export type ContractsDescribeDeleteModesResponse =
+  ContractsDescribeDeleteModesResponseBodyList;
+export const ContractsDescribeDeleteModesResponse = /*@__PURE__*/ S.suspend(
+  () => ContractsDescribeDeleteModesResponseBodyList.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "ContractsDescribeDeleteModesResponse",
+}) as any as S.Schema<ContractsDescribeDeleteModesResponse>;
+
+export interface ContractsDescribeModelRequest {}
+export const ContractsDescribeModelRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({}).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/Contracts::describeModel",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "ContractsDescribeModelRequest",
+}) as any as S.Schema<ContractsDescribeModelRequest>;
+
+export type ContractsDescribeModelResponseSearchResultFormatsItem =
+  AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
+export const ContractsDescribeModelResponseSearchResultFormatsItem =
+  AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
+
+export type ContractsDescribeModelResponseSearchResultFormatsList =
+  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
+export const ContractsDescribeModelResponseSearchResultFormatsList =
+  /*@__PURE__*/ S.Array(
+    AdminWebhooksDescribeModelResponseSearchResultFormatsItem,
+  ) as any as S.Schema<ContractsDescribeModelResponseSearchResultFormatsList>;
+
+export type ContractsDescribeModelResponseDeleteModesList = Array<string>;
+export const ContractsDescribeModelResponseDeleteModesList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<ContractsDescribeModelResponseDeleteModesList>;
+
+export type ContractsDescribeModelResponseDataStructureStructureList =
+  Array<string>;
+export const ContractsDescribeModelResponseDataStructureStructureList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<ContractsDescribeModelResponseDataStructureStructureList>;
+
+export interface ContractsDescribeModelResponseDataStructure {
+  description?: string | null;
+  structure?: ContractsDescribeModelResponseDataStructureStructureList | null;
+}
+export const ContractsDescribeModelResponseDataStructure =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      structure: S.optional(
+        S.NullOr(ContractsDescribeModelResponseDataStructureStructureList),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsDescribeModelResponseDataStructure",
+  }) as any as S.Schema<ContractsDescribeModelResponseDataStructure>;
+
+export type ContractsDescribeModelResponseReadFields =
+  AdminWebhooksDescribeModelResponseReadFields;
+export const ContractsDescribeModelResponseReadFields =
+  AdminWebhooksDescribeModelResponseReadFields;
+
+export type ContractsDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const ContractsDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type ContractsDescribeModelResponseSearchableFieldsSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const ContractsDescribeModelResponseSearchableFieldsSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type ContractsDescribeModelResponseSearchableFieldsSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const ContractsDescribeModelResponseSearchableFieldsSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type ContractsDescribeModelResponseSearchableFieldsSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const ContractsDescribeModelResponseSearchableFieldsSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type ContractsDescribeModelResponseSearchableFieldsSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const ContractsDescribeModelResponseSearchableFieldsSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type ContractsDescribeModelResponseSearchableFieldsSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const ContractsDescribeModelResponseSearchableFieldsSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type ContractsDescribeModelResponseSearchableFieldsSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const ContractsDescribeModelResponseSearchableFieldsSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type ContractsDescribeModelResponseSearchableFieldsSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const ContractsDescribeModelResponseSearchableFieldsSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type ContractsDescribeModelResponseSearchableFieldsId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const ContractsDescribeModelResponseSearchableFieldsId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type ContractsDescribeModelResponseSearchableFieldsSystemRecordStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const ContractsDescribeModelResponseSearchableFieldsSystemRecordStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type ContractsDescribeModelResponseSearchableFieldsSystemRecordState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const ContractsDescribeModelResponseSearchableFieldsSystemRecordState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type ContractsDescribeModelResponseSearchableFields =
+  AdminWebhooksDescribeModelResponseSearchableFields;
+export const ContractsDescribeModelResponseSearchableFields =
+  AdminWebhooksDescribeModelResponseSearchableFields;
+
+export type ContractsDescribeModelResponseOrderbyFieldsList = Array<string>;
+export const ContractsDescribeModelResponseOrderbyFieldsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<ContractsDescribeModelResponseOrderbyFieldsList>;
+
+export type ContractsDescribeModelResponseExportOptionsList = Array<unknown>;
+export const ContractsDescribeModelResponseExportOptionsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsDescribeModelResponseExportOptionsList>;
+
+export interface ContractsDescribeModelResponse {
+  search_result_formats?: ContractsDescribeModelResponseSearchResultFormatsList | null;
+  delete_modes?: ContractsDescribeModelResponseDeleteModesList | null;
+  data_structure?: ContractsDescribeModelResponseDataStructure | null;
+  read_fields?: AdminWebhooksDescribeModelResponseReadFields | null;
+  read_extra_fields?: unknown | null;
+  searchable_fields?: AdminWebhooksDescribeModelResponseSearchableFields | null;
+  orderby_fields?: ContractsDescribeModelResponseOrderbyFieldsList | null;
+  export_options?: ContractsDescribeModelResponseExportOptionsList | null;
+}
+export const ContractsDescribeModelResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    search_result_formats: S.optional(
+      S.NullOr(ContractsDescribeModelResponseSearchResultFormatsList),
+    ),
+    delete_modes: S.optional(
+      S.NullOr(ContractsDescribeModelResponseDeleteModesList),
+    ),
+    data_structure: S.optional(
+      S.NullOr(ContractsDescribeModelResponseDataStructure),
+    ),
+    read_fields: S.optional(
+      S.NullOr(AdminWebhooksDescribeModelResponseReadFields),
+    ),
+    read_extra_fields: S.optional(S.NullOr(S.Unknown)),
+    searchable_fields: S.optional(
+      S.NullOr(AdminWebhooksDescribeModelResponseSearchableFields),
+    ),
+    orderby_fields: S.optional(
+      S.NullOr(ContractsDescribeModelResponseOrderbyFieldsList),
+    ),
+    export_options: S.optional(
+      S.NullOr(ContractsDescribeModelResponseExportOptionsList),
+    ),
+  }),
+).annotate({
+  identifier: "ContractsDescribeModelResponse",
+}) as any as S.Schema<ContractsDescribeModelResponse>;
+
+export interface ContractsDescribeSearchFieldsRequest {
+  /** True if detail about the fields should be included */
+  include_detail?: boolean;
+}
+export const ContractsDescribeSearchFieldsRequest = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      include_detail: S.optional(S.Boolean),
+    }).pipe(
+      T.Http({
+        method: "POST",
+        uri: "/v1/rex/Contracts::describeSearchFields",
+        code: 200,
+      }),
+    ),
+).annotate({
+  identifier: "ContractsDescribeSearchFieldsRequest",
+}) as any as S.Schema<ContractsDescribeSearchFieldsRequest>;
+
+export type ContractsDescribeSearchFieldsResponseId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const ContractsDescribeSearchFieldsResponseId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type ContractsDescribeSearchFieldsResponseSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const ContractsDescribeSearchFieldsResponseSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type ContractsDescribeSearchFieldsResponseSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const ContractsDescribeSearchFieldsResponseSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type ContractsDescribeSearchFieldsResponseSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const ContractsDescribeSearchFieldsResponseSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type ContractsDescribeSearchFieldsResponseSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const ContractsDescribeSearchFieldsResponseSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type ContractsDescribeSearchFieldsResponseSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const ContractsDescribeSearchFieldsResponseSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type ContractsDescribeSearchFieldsResponseSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const ContractsDescribeSearchFieldsResponseSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type ContractsDescribeSearchFieldsResponseSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const ContractsDescribeSearchFieldsResponseSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type ContractsDescribeSearchFieldsResponseSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const ContractsDescribeSearchFieldsResponseSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type ContractsDescribeSearchFieldsResponseSystemRecordStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const ContractsDescribeSearchFieldsResponseSystemRecordStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type ContractsDescribeSearchFieldsResponseSystemRecordState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const ContractsDescribeSearchFieldsResponseSystemRecordState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export interface ContractsDescribeSearchFieldsResponse {
+  id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  system_owner_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_created_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_modified_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_ctime?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  system_modtime?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  system_record_state?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+}
+export const ContractsDescribeSearchFieldsResponse = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      id: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      system_owner_user_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+      system_created_user_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+      system_modified_user_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+      system_ctime: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      system_modtime: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      system_record_state: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+    }),
+).annotate({
+  identifier: "ContractsDescribeSearchFieldsResponse",
+}) as any as S.Schema<ContractsDescribeSearchFieldsResponse>;
+
+export interface ContractsDuplicateTemplateContractRequest {
+  data: unknown;
+  return_id?: unknown;
+}
+export const ContractsDuplicateTemplateContractRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      data: S.Unknown,
+      return_id: S.optional(S.Unknown),
+    }).pipe(
+      T.Http({
+        method: "POST",
+        uri: "/v1/rex/Contracts::duplicateTemplateContract",
+        code: 200,
+      }),
+    ),
+  ).annotate({
+    identifier: "ContractsDuplicateTemplateContractRequest",
+  }) as any as S.Schema<ContractsDuplicateTemplateContractRequest>;
+
+export type ContractsDuplicateTemplateContractResponse = unknown;
+export const ContractsDuplicateTemplateContractResponse =
+  /*@__PURE__*/ S.suspend(() => S.Unknown.pipe(T.RawResponseRoot())).annotate({
+    identifier: "ContractsDuplicateTemplateContractResponse",
+  }) as any as S.Schema<ContractsDuplicateTemplateContractResponse>;
+
+/** If not provided current purchtenants on contract will be used. If provided (non null value), these will be used in place of the purchtenants assigned to the contract. */
+export type ContractsGetComplianceInfoRequestPurchtenantIdsList =
+  Array<unknown>;
+export const ContractsGetComplianceInfoRequestPurchtenantIdsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<ContractsGetComplianceInfoRequestPurchtenantIdsList>;
+
+export interface ContractsGetComplianceInfoRequest {
+  /** The id of the contract we're retrieving compliance info for */
+  contract_id?: number;
+  /** If not provided current purchtenants on contract will be used. If provided (non null value), these will be used in place of the purchtenants assigned to the contract. */
+  purchtenant_ids?: ContractsGetComplianceInfoRequestPurchtenantIdsList;
+}
+export const ContractsGetComplianceInfoRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    contract_id: S.optional(S.Number),
+    purchtenant_ids: S.optional(
+      ContractsGetComplianceInfoRequestPurchtenantIdsList,
+    ),
+  }).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/Contracts::getComplianceInfo",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "ContractsGetComplianceInfoRequest",
+}) as any as S.Schema<ContractsGetComplianceInfoRequest>;
+
+export type ContractsGetComplianceInfoResponse = unknown;
+export const ContractsGetComplianceInfoResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Unknown.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "ContractsGetComplianceInfoResponse",
+}) as any as S.Schema<ContractsGetComplianceInfoResponse>;
+
+export interface ContractsGetConditionsForListingRequest {
+  /** ID of the listing */
+  listing_id: number;
+  /** Return conditions that needs to be added to a contract by default */
+  return_conditions_to_add_by_default: boolean;
+}
+export const ContractsGetConditionsForListingRequest = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      listing_id: S.Number,
+      return_conditions_to_add_by_default: S.Boolean,
+    }).pipe(
+      T.Http({
+        method: "POST",
+        uri: "/v1/rex/Contracts::getConditionsForListing",
+        code: 200,
+      }),
+    ),
+).annotate({
+  identifier: "ContractsGetConditionsForListingRequest",
+}) as any as S.Schema<ContractsGetConditionsForListingRequest>;
+
+export interface ContractsGetConditionsForListingResponseBodyItem {
+  condition_type?: string | null;
+  condition_notes?: string | null;
+  condition_date_of?: unknown;
+  admin_contract_condition_id?: number | null;
+  is_auto_created?: boolean | null;
+  priority?: string | null;
+}
+export const ContractsGetConditionsForListingResponseBodyItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      condition_type: S.optional(S.NullOr(S.String)),
+      condition_notes: S.optional(S.NullOr(S.String)),
+      condition_date_of: S.optional(S.Unknown),
+      admin_contract_condition_id: S.optional(S.NullOr(S.Number)),
+      is_auto_created: S.optional(S.NullOr(S.Boolean)),
+      priority: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier: "ContractsGetConditionsForListingResponseBodyItem",
+  }) as any as S.Schema<ContractsGetConditionsForListingResponseBodyItem>;
+
+export type ContractsGetConditionsForListingResponseBodyList =
+  Array<ContractsGetConditionsForListingResponseBodyItem>;
+export const ContractsGetConditionsForListingResponseBodyList =
+  /*@__PURE__*/ S.Array(
+    ContractsGetConditionsForListingResponseBodyItem,
+  ) as any as S.Schema<ContractsGetConditionsForListingResponseBodyList>;
+
+export type ContractsGetConditionsForListingResponse =
+  ContractsGetConditionsForListingResponseBodyList;
+export const ContractsGetConditionsForListingResponse = /*@__PURE__*/ S.suspend(
+  () =>
+    ContractsGetConditionsForListingResponseBodyList.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "ContractsGetConditionsForListingResponse",
+}) as any as S.Schema<ContractsGetConditionsForListingResponse>;
+
+export interface ContractsGetOfferHistoryRequest {
+  /** Contract id */
+  contract_id: number;
+}
+export const ContractsGetOfferHistoryRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    contract_id: S.Number,
+  }).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/Contracts::getOfferHistory",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "ContractsGetOfferHistoryRequest",
+}) as any as S.Schema<ContractsGetOfferHistoryRequest>;
+
+export type ContractsGetOfferHistoryResponse = unknown;
+export const ContractsGetOfferHistoryResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Unknown.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "ContractsGetOfferHistoryResponse",
+}) as any as S.Schema<ContractsGetOfferHistoryResponse>;
+
+export interface ContractsPurgeRequest {
+  /** The id of the record that should be deleted. */
+  id: number;
+}
+export const ContractsPurgeRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.Number,
+  }).pipe(
+    T.Http({ method: "POST", uri: "/v1/rex/Contracts::purge", code: 200 }),
+  ),
+).annotate({
+  identifier: "ContractsPurgeRequest",
+}) as any as S.Schema<ContractsPurgeRequest>;
+
+export type ContractsPurgeResponse = number;
+export const ContractsPurgeResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Number.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "ContractsPurgeResponse",
+}) as any as S.Schema<ContractsPurgeResponse>;
+
+/** An array of fields to read */
+export type ContractsReadRequestFieldsList = Array<unknown>;
+export const ContractsReadRequestFieldsList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<ContractsReadRequestFieldsList>;
+
+export interface ContractsReadRequest {
+  /** The record id to read */
+  id: number;
+  /** An array of fields to read */
+  fields?: ContractsReadRequestFieldsList | null;
+  extra_fields?: unknown;
+}
+export const ContractsReadRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.Number,
+    fields: S.optional(S.NullOr(ContractsReadRequestFieldsList)),
+    extra_fields: S.optional(S.Unknown),
+  }).pipe(
+    T.Http({ method: "POST", uri: "/v1/rex/Contracts::read", code: 200 }),
+  ),
+).annotate({
+  identifier: "ContractsReadRequest",
+}) as any as S.Schema<ContractsReadRequest>;
+
+export type ContractsReadResponseSystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+export const ContractsReadResponseSystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type ContractsReadResponseSystemModifiedUser =
+  ContactsReadResponseSystemOwnerUser;
+export const ContractsReadResponseSystemModifiedUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type ContractsReadResponseSystemCreatedUser =
+  ContactsReadResponseSystemOwnerUser;
+export const ContractsReadResponseSystemCreatedUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type ContractsReadResponseAgent = ContactsReadResponseSystemOwnerUser;
+export const ContractsReadResponseAgent = ContactsReadResponseSystemOwnerUser;
+
+export type ContractsReadResponseListingListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+export const ContractsReadResponseListingListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+
+export type ContractsReadResponseListingListingCategory =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const ContractsReadResponseListingListingCategory =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export interface ContractsReadResponseListingListingPrimaryImageThumbs800x600 {
+  uri?: string | null;
+  url?: string | null;
+}
+export const ContractsReadResponseListingListingPrimaryImageThumbs800x600 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      uri: S.optional(S.NullOr(S.String)),
+      url: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier: "ContractsReadResponseListingListingPrimaryImageThumbs800x600",
+  }) as any as S.Schema<ContractsReadResponseListingListingPrimaryImageThumbs800x600>;
+
+export type ContractsReadResponseListingListingPrimaryImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const ContractsReadResponseListingListingPrimaryImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type ContractsReadResponseListingListingPrimaryImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const ContractsReadResponseListingListingPrimaryImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type ContractsReadResponseListingListingPrimaryImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const ContractsReadResponseListingListingPrimaryImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export interface ContractsReadResponseListingListingPrimaryImageThumbs {
+  _800x600?: ContractsReadResponseListingListingPrimaryImageThumbs800x600 | null;
+  _400x300?: ContractsReadResponseListingListingPrimaryImageThumbs800x600 | null;
+  _200x150?: ContractsReadResponseListingListingPrimaryImageThumbs800x600 | null;
+  _80x60?: ContractsReadResponseListingListingPrimaryImageThumbs800x600 | null;
+}
+export const ContractsReadResponseListingListingPrimaryImageThumbs =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      _800x600: S.optional(
+        S.NullOr(
+          ContractsReadResponseListingListingPrimaryImageThumbs800x600,
+        ).pipe(T.Body("800x600")),
+      ),
+      _400x300: S.optional(
+        S.NullOr(
+          ContractsReadResponseListingListingPrimaryImageThumbs800x600,
+        ).pipe(T.Body("400x300")),
+      ),
+      _200x150: S.optional(
+        S.NullOr(
+          ContractsReadResponseListingListingPrimaryImageThumbs800x600,
+        ).pipe(T.Body("200x150")),
+      ),
+      _80x60: S.optional(
+        S.NullOr(
+          ContractsReadResponseListingListingPrimaryImageThumbs800x600,
+        ).pipe(T.Body("80x60")),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsReadResponseListingListingPrimaryImageThumbs",
+  }) as any as S.Schema<ContractsReadResponseListingListingPrimaryImageThumbs>;
+
+export interface ContractsReadResponseListingListingPrimaryImage {
+  uri?: string | null;
+  url?: string | null;
+  thumbs?: ContractsReadResponseListingListingPrimaryImageThumbs | null;
+}
+export const ContractsReadResponseListingListingPrimaryImage =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      uri: S.optional(S.NullOr(S.String)),
+      url: S.optional(S.NullOr(S.String)),
+      thumbs: S.optional(
+        S.NullOr(ContractsReadResponseListingListingPrimaryImageThumbs),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsReadResponseListingListingPrimaryImage",
+  }) as any as S.Schema<ContractsReadResponseListingListingPrimaryImage>;
+
+export type ContractsReadResponseListingLocation =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const ContractsReadResponseListingLocation =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type ContractsReadResponseListingProjectStageProjectType =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const ContractsReadResponseListingProjectStageProjectType =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export interface ContractsReadResponseListingProjectStageProject {
+  id?: number | null;
+  name?: string | null;
+  type?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
+  developer_logo?: unknown;
+  estate_logo?: unknown;
+}
+export const ContractsReadResponseListingProjectStageProject =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.Number)),
+      name: S.optional(S.NullOr(S.String)),
+      type: S.optional(
+        S.NullOr(
+          ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+        ),
+      ),
+      developer_logo: S.optional(S.Unknown),
+      estate_logo: S.optional(S.Unknown),
+    }),
+  ).annotate({
+    identifier: "ContractsReadResponseListingProjectStageProject",
+  }) as any as S.Schema<ContractsReadResponseListingProjectStageProject>;
+
+export interface ContractsReadResponseListingProjectStage {
+  id?: number | null;
+  name?: string | null;
+  project?: ContractsReadResponseListingProjectStageProject | null;
+  full_name?: string | null;
+}
+export const ContractsReadResponseListingProjectStage = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.Number)),
+      name: S.optional(S.NullOr(S.String)),
+      project: S.optional(
+        S.NullOr(ContractsReadResponseListingProjectStageProject),
+      ),
+      full_name: S.optional(S.NullOr(S.String)),
+    }),
+).annotate({
+  identifier: "ContractsReadResponseListingProjectStage",
+}) as any as S.Schema<ContractsReadResponseListingProjectStage>;
+
+export type ContractsReadResponseListingProperty =
+  ContactsReadResponseRelatedContactRelnListingItemListingProperty;
+export const ContractsReadResponseListingProperty =
+  ContactsReadResponseRelatedContactRelnListingItemListingProperty;
+
+export interface ContractsReadResponseListing {
+  id?: number | null;
+  listing_agent_1?: ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1 | null;
+  listing_agent_2?: unknown;
+  listing_category?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
+  listing_primary_image?: ContractsReadResponseListingListingPrimaryImage | null;
+  location?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
+  project_stage?: ContractsReadResponseListingProjectStage | null;
+  property?: ContactsReadResponseRelatedContactRelnListingItemListingProperty | null;
+}
+export const ContractsReadResponseListing = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.optional(S.NullOr(S.Number)),
+    listing_agent_1: S.optional(
+      S.NullOr(
+        ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1,
+      ),
+    ),
+    listing_agent_2: S.optional(S.Unknown),
+    listing_category: S.optional(
+      S.NullOr(
+        ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+      ),
+    ),
+    listing_primary_image: S.optional(
+      S.NullOr(ContractsReadResponseListingListingPrimaryImage),
+    ),
+    location: S.optional(
+      S.NullOr(
+        ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+      ),
+    ),
+    project_stage: S.optional(
+      S.NullOr(ContractsReadResponseListingProjectStage),
+    ),
+    property: S.optional(
+      S.NullOr(
+        ContactsReadResponseRelatedContactRelnListingItemListingProperty,
+      ),
+    ),
+  }),
+).annotate({
+  identifier: "ContractsReadResponseListing",
+}) as any as S.Schema<ContractsReadResponseListing>;
+
+export interface ContractsReadResponsePurchtenantSolicitor {
+  name?: string | null;
+  email_address?: string | null;
+  phone_number?: string | null;
+  address_postal?: unknown;
+  address?: unknown;
+  id?: string | null;
+}
+export const ContractsReadResponsePurchtenantSolicitor =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      email_address: S.optional(S.NullOr(S.String)),
+      phone_number: S.optional(S.NullOr(S.String)),
+      address_postal: S.optional(S.Unknown),
+      address: S.optional(S.Unknown),
+      id: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier: "ContractsReadResponsePurchtenantSolicitor",
+  }) as any as S.Schema<ContractsReadResponsePurchtenantSolicitor>;
+
+export type ContractsReadResponseMarketingEnquirySource =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const ContractsReadResponseMarketingEnquirySource =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export interface ContractsReadResponseRelatedListingContractConditionsItemAdminContractCondition {
+  _name?: string | null;
+  _clause?: string | null;
+  _order?: number | null;
+  _is_editable?: boolean | null;
+  _library?: unknown;
+  id?: number | null;
+}
+export const ContractsReadResponseRelatedListingContractConditionsItemAdminContractCondition =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      _name: S.optional(S.NullOr(S.String)),
+      _clause: S.optional(S.NullOr(S.String)),
+      _order: S.optional(S.NullOr(S.Number)),
+      _is_editable: S.optional(S.NullOr(S.Boolean)),
+      _library: S.optional(S.Unknown),
+      id: S.optional(S.NullOr(S.Number)),
+    }),
+  ).annotate({
+    identifier:
+      "ContractsReadResponseRelatedListingContractConditionsItemAdminContractCondition",
+  }) as any as S.Schema<ContractsReadResponseRelatedListingContractConditionsItemAdminContractCondition>;
+
+export interface ContractsReadResponseRelatedListingContractConditionsItem {
+  is_auto_created?: boolean | null;
+  priority?: number | null;
+  condition_type?: string | null;
+  condition_notes?: string | null;
+  condition_date_of?: unknown;
+  condition_date_completed?: unknown;
+  _id?: number | null;
+  admin_contract_condition?: ContractsReadResponseRelatedListingContractConditionsItemAdminContractCondition | null;
+}
+export const ContractsReadResponseRelatedListingContractConditionsItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      is_auto_created: S.optional(S.NullOr(S.Boolean)),
+      priority: S.optional(S.NullOr(S.Number)),
+      condition_type: S.optional(S.NullOr(S.String)),
+      condition_notes: S.optional(S.NullOr(S.String)),
+      condition_date_of: S.optional(S.Unknown),
+      condition_date_completed: S.optional(S.Unknown),
+      _id: S.optional(S.NullOr(S.Number)),
+      admin_contract_condition: S.optional(
+        S.NullOr(
+          ContractsReadResponseRelatedListingContractConditionsItemAdminContractCondition,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsReadResponseRelatedListingContractConditionsItem",
+  }) as any as S.Schema<ContractsReadResponseRelatedListingContractConditionsItem>;
+
+export type ContractsReadResponseRelatedListingContractConditionsList =
+  Array<ContractsReadResponseRelatedListingContractConditionsItem>;
+export const ContractsReadResponseRelatedListingContractConditionsList =
+  /*@__PURE__*/ S.Array(
+    ContractsReadResponseRelatedListingContractConditionsItem,
+  ) as any as S.Schema<ContractsReadResponseRelatedListingContractConditionsList>;
+
+export interface ContractsReadResponseRelatedListingContractPurchtenantsItemPurchtenant {
+  name?: string | null;
+  email_address?: string | null;
+  phone_number?: string | null;
+  address_postal?: string | null;
+  address?: string | null;
+  id?: string | null;
+}
+export const ContractsReadResponseRelatedListingContractPurchtenantsItemPurchtenant =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      email_address: S.optional(S.NullOr(S.String)),
+      phone_number: S.optional(S.NullOr(S.String)),
+      address_postal: S.optional(S.NullOr(S.String)),
+      address: S.optional(S.NullOr(S.String)),
+      id: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "ContractsReadResponseRelatedListingContractPurchtenantsItemPurchtenant",
+  }) as any as S.Schema<ContractsReadResponseRelatedListingContractPurchtenantsItemPurchtenant>;
+
+export interface ContractsReadResponseRelatedListingContractPurchtenantsItem {
+  id?: number | null;
+  purchtenant?: ContractsReadResponseRelatedListingContractPurchtenantsItemPurchtenant | null;
+}
+export const ContractsReadResponseRelatedListingContractPurchtenantsItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.Number)),
+      purchtenant: S.optional(
+        S.NullOr(
+          ContractsReadResponseRelatedListingContractPurchtenantsItemPurchtenant,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "ContractsReadResponseRelatedListingContractPurchtenantsItem",
+  }) as any as S.Schema<ContractsReadResponseRelatedListingContractPurchtenantsItem>;
+
+export type ContractsReadResponseRelatedListingContractPurchtenantsList =
+  Array<ContractsReadResponseRelatedListingContractPurchtenantsItem>;
+export const ContractsReadResponseRelatedListingContractPurchtenantsList =
+  /*@__PURE__*/ S.Array(
+    ContractsReadResponseRelatedListingContractPurchtenantsItem,
+  ) as any as S.Schema<ContractsReadResponseRelatedListingContractPurchtenantsList>;
+
+export interface ContractsReadResponseRelated {
+  listing_contract_conditions?: ContractsReadResponseRelatedListingContractConditionsList | null;
+  listing_contract_purchtenants?: ContractsReadResponseRelatedListingContractPurchtenantsList | null;
+}
+export const ContractsReadResponseRelated = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    listing_contract_conditions: S.optional(
+      S.NullOr(ContractsReadResponseRelatedListingContractConditionsList),
+    ),
+    listing_contract_purchtenants: S.optional(
+      S.NullOr(ContractsReadResponseRelatedListingContractPurchtenantsList),
+    ),
+  }),
+).annotate({
+  identifier: "ContractsReadResponseRelated",
+}) as any as S.Schema<ContractsReadResponseRelated>;
+
+export type ContractsReadResponseSecurityUserRightsList = Array<string>;
+export const ContractsReadResponseSecurityUserRightsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<ContractsReadResponseSecurityUserRightsList>;
+
+export interface ContractsReadResponse {
+  system_ctime?: number | null;
+  system_modtime?: number | null;
+  system_verified_unconditional_date?: unknown;
+  system_verified_settlement_date?: unknown;
+  system_verified_fallen_date?: unknown;
+  detail_sale_price_or_lease_pa?: number | null;
+  detail_deposit_init_or_bond?: number | null;
+  detail_deposit_full_or_prepayment?: number | null;
+  detail_finance_amount?: number | null;
+  detail_finance_lender?: unknown;
+  date_expec_deposit?: string | null;
+  date_expec_finance?: string | null;
+  date_expec_unconditional?: string | null;
+  date_expec_settlement?: string | null;
+  date_expec_possession?: unknown;
+  date_expec_deposit_release?: string | null;
+  date_expec_agent_comm_payment?: string | null;
+  date_actual_offer?: string | null;
+  time_actual_offer?: unknown;
+  date_actual_communicated?: unknown;
+  time_actual_communicated?: unknown;
+  date_actual_accepted?: string | null;
+  system_accepted_set_at?: string | null;
+  date_actual_deposit?: unknown;
+  date_actual_finance?: unknown;
+  date_actual_unconditional?: unknown;
+  date_actual_deposit_release?: unknown;
+  date_actual_agent_comm_payment?: unknown;
+  system_unconditional_set_at?: unknown;
+  date_actual_settlement?: unknown;
+  system_settlement_set_at?: unknown;
+  date_actual_possession?: unknown;
+  date_actual_fallen?: unknown;
+  date_actual_withdrawn?: unknown;
+  system_fallen_set_at?: unknown;
+  purchtenant_legal_name?: string | null;
+  purchtenant_residence?: string | null;
+  notes?: unknown;
+  chattels?: unknown;
+  is_backup_offer?: unknown;
+  is_primary_backup_offer?: unknown;
+  marketing_rebate?: unknown;
+  marketing_contact_age?: string | null;
+  marketing_postcode?: string | null;
+  disclosable_interest_exists?: unknown;
+  disclosable_interest_note?: unknown;
+  id?: number | null;
+  etag?: string | null;
+  system_owner_user?: ContactsReadResponseSystemOwnerUser | null;
+  system_modified_user?: ContactsReadResponseSystemOwnerUser | null;
+  system_created_user?: ContactsReadResponseSystemOwnerUser | null;
+  agent?: ContactsReadResponseSystemOwnerUser | null;
+  listing?: ContractsReadResponseListing | null;
+  purchtenant_solicitor?: ContractsReadResponsePurchtenantSolicitor | null;
+  system_verified_unconditional_by_user?: unknown;
+  system_verified_settlement_by_user?: unknown;
+  system_verified_fallen_by_user?: unknown;
+  commission_worksheet?: unknown;
+  marketing_enquiry_method?: unknown;
+  marketing_enquiry_source?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
+  fallen_reason?: unknown;
+  purchtenant_position?: unknown;
+  detail_finance_lender_contact?: unknown;
+  primary_chain_instance?: unknown;
+  stability_indicator?: unknown;
+  contract_status?: string | null;
+  is_accepted?: boolean | null;
+  is_primary_accepted?: boolean | null;
+  related?: ContractsReadResponseRelated | null;
+  security_user_rights?: ContractsReadResponseSecurityUserRightsList | null;
+  is_template?: boolean | null;
+}
+export const ContractsReadResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    system_ctime: S.optional(S.NullOr(S.Number)),
+    system_modtime: S.optional(S.NullOr(S.Number)),
+    system_verified_unconditional_date: S.optional(S.Unknown),
+    system_verified_settlement_date: S.optional(S.Unknown),
+    system_verified_fallen_date: S.optional(S.Unknown),
+    detail_sale_price_or_lease_pa: S.optional(S.NullOr(S.Number)),
+    detail_deposit_init_or_bond: S.optional(S.NullOr(S.Number)),
+    detail_deposit_full_or_prepayment: S.optional(S.NullOr(S.Number)),
+    detail_finance_amount: S.optional(S.NullOr(S.Number)),
+    detail_finance_lender: S.optional(S.Unknown),
+    date_expec_deposit: S.optional(S.NullOr(S.String)),
+    date_expec_finance: S.optional(S.NullOr(S.String)),
+    date_expec_unconditional: S.optional(S.NullOr(S.String)),
+    date_expec_settlement: S.optional(S.NullOr(S.String)),
+    date_expec_possession: S.optional(S.Unknown),
+    date_expec_deposit_release: S.optional(S.NullOr(S.String)),
+    date_expec_agent_comm_payment: S.optional(S.NullOr(S.String)),
+    date_actual_offer: S.optional(S.NullOr(S.String)),
+    time_actual_offer: S.optional(S.Unknown),
+    date_actual_communicated: S.optional(S.Unknown),
+    time_actual_communicated: S.optional(S.Unknown),
+    date_actual_accepted: S.optional(S.NullOr(S.String)),
+    system_accepted_set_at: S.optional(S.NullOr(S.String)),
+    date_actual_deposit: S.optional(S.Unknown),
+    date_actual_finance: S.optional(S.Unknown),
+    date_actual_unconditional: S.optional(S.Unknown),
+    date_actual_deposit_release: S.optional(S.Unknown),
+    date_actual_agent_comm_payment: S.optional(S.Unknown),
+    system_unconditional_set_at: S.optional(S.Unknown),
+    date_actual_settlement: S.optional(S.Unknown),
+    system_settlement_set_at: S.optional(S.Unknown),
+    date_actual_possession: S.optional(S.Unknown),
+    date_actual_fallen: S.optional(S.Unknown),
+    date_actual_withdrawn: S.optional(S.Unknown),
+    system_fallen_set_at: S.optional(S.Unknown),
+    purchtenant_legal_name: S.optional(S.NullOr(S.String)),
+    purchtenant_residence: S.optional(S.NullOr(S.String)),
+    notes: S.optional(S.Unknown),
+    chattels: S.optional(S.Unknown),
+    is_backup_offer: S.optional(S.Unknown),
+    is_primary_backup_offer: S.optional(S.Unknown),
+    marketing_rebate: S.optional(S.Unknown),
+    marketing_contact_age: S.optional(S.NullOr(S.String)),
+    marketing_postcode: S.optional(S.NullOr(S.String)),
+    disclosable_interest_exists: S.optional(S.Unknown),
+    disclosable_interest_note: S.optional(S.Unknown),
+    id: S.optional(S.NullOr(S.Number)),
+    etag: S.optional(S.NullOr(S.String)),
+    system_owner_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    system_modified_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    system_created_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    agent: S.optional(S.NullOr(ContactsReadResponseSystemOwnerUser)),
+    listing: S.optional(S.NullOr(ContractsReadResponseListing)),
+    purchtenant_solicitor: S.optional(
+      S.NullOr(ContractsReadResponsePurchtenantSolicitor),
+    ),
+    system_verified_unconditional_by_user: S.optional(S.Unknown),
+    system_verified_settlement_by_user: S.optional(S.Unknown),
+    system_verified_fallen_by_user: S.optional(S.Unknown),
+    commission_worksheet: S.optional(S.Unknown),
+    marketing_enquiry_method: S.optional(S.Unknown),
+    marketing_enquiry_source: S.optional(
+      S.NullOr(
+        ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+      ),
+    ),
+    fallen_reason: S.optional(S.Unknown),
+    purchtenant_position: S.optional(S.Unknown),
+    detail_finance_lender_contact: S.optional(S.Unknown),
+    primary_chain_instance: S.optional(S.Unknown),
+    stability_indicator: S.optional(S.Unknown),
+    contract_status: S.optional(S.NullOr(S.String)),
+    is_accepted: S.optional(S.NullOr(S.Boolean)),
+    is_primary_accepted: S.optional(S.NullOr(S.Boolean)),
+    related: S.optional(S.NullOr(ContractsReadResponseRelated)),
+    security_user_rights: S.optional(
+      S.NullOr(ContractsReadResponseSecurityUserRightsList),
+    ),
+    is_template: S.optional(S.NullOr(S.Boolean)),
+  }),
+).annotate({
+  identifier: "ContractsReadResponse",
+}) as any as S.Schema<ContractsReadResponse>;
+
+/** An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service. */
+export type ContractsSearchRequestExtraOptionsList = Array<unknown>;
+export const ContractsSearchRequestExtraOptionsList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<ContractsSearchRequestExtraOptionsList>;
+
+export interface ContractsSearchRequest {
+  /** An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value) */
+  criteria?: unknown;
+  /** An array keyed by field name with a value of either ASC|DESC */
+  order_by?: string;
+  /** The number of rows to offset */
+  offset?: number;
+  /** The number of rows to return */
+  limit?: number;
+  /** True if a viewstate should be created, false to just return the records */
+  create_viewstate?: boolean;
+  /** Any of the search result formats available for this service */
+  result_format?: string;
+  /** An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service. */
+  extra_options?: ContractsSearchRequestExtraOptionsList;
+  /** (DEPRECATED - provide system_record_state as a criteria instead) */
+  search_state?: unknown;
+  /** (DEPRECATED - use search_result_format:'ids' instead) If set to true, returns ids of matching records only - no actual rows */
+  ids_only?: boolean;
+}
+export const ContractsSearchRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    criteria: S.optional(S.Unknown),
+    order_by: S.optional(S.String),
+    offset: S.optional(S.Number),
+    limit: S.optional(S.Number),
+    create_viewstate: S.optional(S.Boolean),
+    result_format: S.optional(S.String),
+    extra_options: S.optional(ContractsSearchRequestExtraOptionsList),
+    search_state: S.optional(S.Unknown),
+    ids_only: S.optional(S.Boolean),
+  }).pipe(
+    T.Http({ method: "POST", uri: "/v1/rex/Contracts::search", code: 200 }),
+  ),
+).annotate({
+  identifier: "ContractsSearchRequest",
+}) as any as S.Schema<ContractsSearchRequest>;
+
+export type ContractsSearchResponseRowsItemSystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+export const ContractsSearchResponseRowsItemSystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type ContractsSearchResponseRowsItemSystemModifiedUser =
+  ContactsReadResponseSystemOwnerUser;
+export const ContractsSearchResponseRowsItemSystemModifiedUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type ContractsSearchResponseRowsItemSystemCreatedUser =
+  ContactsReadResponseSystemOwnerUser;
+export const ContractsSearchResponseRowsItemSystemCreatedUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type ContractsSearchResponseRowsItemSecurityUserRightsList =
+  Array<string>;
+export const ContractsSearchResponseRowsItemSecurityUserRightsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<ContractsSearchResponseRowsItemSecurityUserRightsList>;
+
+export type ContractsSearchResponseRowsItemRelatedListingContractConditionsItemAdminContractCondition =
+  ContractsReadResponseRelatedListingContractConditionsItemAdminContractCondition;
+export const ContractsSearchResponseRowsItemRelatedListingContractConditionsItemAdminContractCondition =
+  ContractsReadResponseRelatedListingContractConditionsItemAdminContractCondition;
+
+export type ContractsSearchResponseRowsItemRelatedListingContractConditionsItem =
+  ContractsReadResponseRelatedListingContractConditionsItem;
+export const ContractsSearchResponseRowsItemRelatedListingContractConditionsItem =
+  ContractsReadResponseRelatedListingContractConditionsItem;
+
+export type ContractsSearchResponseRowsItemRelatedListingContractConditionsList =
+  Array<ContractsReadResponseRelatedListingContractConditionsItem>;
+export const ContractsSearchResponseRowsItemRelatedListingContractConditionsList =
+  /*@__PURE__*/ S.Array(
+    ContractsReadResponseRelatedListingContractConditionsItem,
+  ) as any as S.Schema<ContractsSearchResponseRowsItemRelatedListingContractConditionsList>;
+
+export interface ContractsSearchResponseRowsItemRelated {
+  listing_contract_conditions?: ContractsSearchResponseRowsItemRelatedListingContractConditionsList | null;
+}
+export const ContractsSearchResponseRowsItemRelated = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      listing_contract_conditions: S.optional(
+        S.NullOr(
+          ContractsSearchResponseRowsItemRelatedListingContractConditionsList,
+        ),
+      ),
+    }),
+).annotate({
+  identifier: "ContractsSearchResponseRowsItemRelated",
+}) as any as S.Schema<ContractsSearchResponseRowsItemRelated>;
+
+export type ContractsSearchResponseRowsItemAgent =
+  ContactsReadResponseSystemOwnerUser;
+export const ContractsSearchResponseRowsItemAgent =
+  ContactsReadResponseSystemOwnerUser;
+
+export type ContractsSearchResponseRowsItemListingListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+export const ContractsSearchResponseRowsItemListingListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+
+export type ContractsSearchResponseRowsItemListingListingCategory =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const ContractsSearchResponseRowsItemListingListingCategory =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type ContractsSearchResponseRowsItemListingListingPrimaryImageThumbs800x600 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const ContractsSearchResponseRowsItemListingListingPrimaryImageThumbs800x600 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type ContractsSearchResponseRowsItemListingListingPrimaryImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const ContractsSearchResponseRowsItemListingListingPrimaryImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type ContractsSearchResponseRowsItemListingListingPrimaryImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const ContractsSearchResponseRowsItemListingListingPrimaryImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type ContractsSearchResponseRowsItemListingListingPrimaryImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const ContractsSearchResponseRowsItemListingListingPrimaryImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type ContractsSearchResponseRowsItemListingListingPrimaryImageThumbs =
+  ContractsReadResponseListingListingPrimaryImageThumbs;
+export const ContractsSearchResponseRowsItemListingListingPrimaryImageThumbs =
+  ContractsReadResponseListingListingPrimaryImageThumbs;
+
+export type ContractsSearchResponseRowsItemListingListingPrimaryImage =
+  ContractsReadResponseListingListingPrimaryImage;
+export const ContractsSearchResponseRowsItemListingListingPrimaryImage =
+  ContractsReadResponseListingListingPrimaryImage;
+
+export type ContractsSearchResponseRowsItemListingLocation =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const ContractsSearchResponseRowsItemListingLocation =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type ContractsSearchResponseRowsItemListingProjectStageProjectType =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const ContractsSearchResponseRowsItemListingProjectStageProjectType =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type ContractsSearchResponseRowsItemListingProjectStageProject =
+  ContractsReadResponseListingProjectStageProject;
+export const ContractsSearchResponseRowsItemListingProjectStageProject =
+  ContractsReadResponseListingProjectStageProject;
+
+export type ContractsSearchResponseRowsItemListingProjectStage =
+  ContractsReadResponseListingProjectStage;
+export const ContractsSearchResponseRowsItemListingProjectStage =
+  ContractsReadResponseListingProjectStage;
+
+export type ContractsSearchResponseRowsItemListingProperty =
+  ContactsReadResponseRelatedContactRelnListingItemListingProperty;
+export const ContractsSearchResponseRowsItemListingProperty =
+  ContactsReadResponseRelatedContactRelnListingItemListingProperty;
+
+export type ContractsSearchResponseRowsItemListing =
+  ContractsReadResponseListing;
+export const ContractsSearchResponseRowsItemListing =
+  ContractsReadResponseListing;
+
+export type ContractsSearchResponseRowsItemPurchtenantSolicitor =
+  ContractsReadResponsePurchtenantSolicitor;
+export const ContractsSearchResponseRowsItemPurchtenantSolicitor =
+  ContractsReadResponsePurchtenantSolicitor;
+
+export type ContractsSearchResponseRowsItemMarketingEnquirySource =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const ContractsSearchResponseRowsItemMarketingEnquirySource =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export interface ContractsSearchResponseRowsItem {
+  system_ctime?: number | null;
+  system_modtime?: number | null;
+  system_verified_unconditional_date?: unknown;
+  system_verified_settlement_date?: unknown;
+  system_verified_fallen_date?: unknown;
+  detail_sale_price_or_lease_pa?: number | null;
+  detail_deposit_init_or_bond?: number | null;
+  detail_deposit_full_or_prepayment?: number | null;
+  detail_finance_amount?: number | null;
+  detail_finance_lender?: unknown;
+  date_expec_deposit?: string | null;
+  date_expec_finance?: string | null;
+  date_expec_unconditional?: string | null;
+  date_expec_settlement?: string | null;
+  date_expec_deposit_release?: string | null;
+  date_expec_agent_comm_payment?: string | null;
+  date_expec_possession?: unknown;
+  date_actual_offer?: string | null;
+  time_actual_offer?: unknown;
+  date_actual_communicated?: unknown;
+  time_actual_communicated?: unknown;
+  date_actual_accepted?: unknown;
+  system_accepted_set_at?: unknown;
+  date_actual_deposit?: unknown;
+  date_actual_finance?: unknown;
+  date_actual_unconditional?: unknown;
+  system_unconditional_set_at?: unknown;
+  date_actual_settlement?: unknown;
+  system_settlement_set_at?: unknown;
+  date_actual_possession?: unknown;
+  date_actual_fallen?: unknown;
+  date_actual_withdrawn?: unknown;
+  system_fallen_set_at?: unknown;
+  date_actual_deposit_release?: unknown;
+  date_actual_agent_comm_payment?: unknown;
+  purchtenant_legal_name?: string | null;
+  purchtenant_residence?: string | null;
+  notes?: unknown;
+  chattels?: unknown;
+  is_backup_offer?: unknown;
+  is_primary_backup_offer?: unknown;
+  marketing_rebate?: unknown;
+  marketing_contact_age?: string | null;
+  marketing_postcode?: string | null;
+  disclosable_interest_exists?: unknown;
+  disclosable_interest_note?: unknown;
+  system_owner_user?: ContactsReadResponseSystemOwnerUser | null;
+  system_modified_user?: ContactsReadResponseSystemOwnerUser | null;
+  system_created_user?: ContactsReadResponseSystemOwnerUser | null;
+  contract_status?: string | null;
+  is_accepted?: boolean | null;
+  is_primary_accepted?: boolean | null;
+  security_user_rights?: ContractsSearchResponseRowsItemSecurityUserRightsList | null;
+  related?: ContractsSearchResponseRowsItemRelated | null;
+  agent?: ContactsReadResponseSystemOwnerUser | null;
+  listing?: ContractsReadResponseListing | null;
+  purchtenant_solicitor?: ContractsReadResponsePurchtenantSolicitor | null;
+  system_verified_unconditional_by_user?: unknown;
+  system_verified_settlement_by_user?: unknown;
+  system_verified_fallen_by_user?: unknown;
+  marketing_enquiry_method?: unknown;
+  marketing_enquiry_source?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
+  fallen_reason?: unknown;
+  purchtenant_position?: unknown;
+  detail_finance_lender_contact?: unknown;
+  primary_chain_instance?: unknown;
+  stability_indicator?: unknown;
+  etag?: string | null;
+  id?: number | null;
+  is_template?: boolean | null;
+}
+export const ContractsSearchResponseRowsItem = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    system_ctime: S.optional(S.NullOr(S.Number)),
+    system_modtime: S.optional(S.NullOr(S.Number)),
+    system_verified_unconditional_date: S.optional(S.Unknown),
+    system_verified_settlement_date: S.optional(S.Unknown),
+    system_verified_fallen_date: S.optional(S.Unknown),
+    detail_sale_price_or_lease_pa: S.optional(S.NullOr(S.Number)),
+    detail_deposit_init_or_bond: S.optional(S.NullOr(S.Number)),
+    detail_deposit_full_or_prepayment: S.optional(S.NullOr(S.Number)),
+    detail_finance_amount: S.optional(S.NullOr(S.Number)),
+    detail_finance_lender: S.optional(S.Unknown),
+    date_expec_deposit: S.optional(S.NullOr(S.String)),
+    date_expec_finance: S.optional(S.NullOr(S.String)),
+    date_expec_unconditional: S.optional(S.NullOr(S.String)),
+    date_expec_settlement: S.optional(S.NullOr(S.String)),
+    date_expec_deposit_release: S.optional(S.NullOr(S.String)),
+    date_expec_agent_comm_payment: S.optional(S.NullOr(S.String)),
+    date_expec_possession: S.optional(S.Unknown),
+    date_actual_offer: S.optional(S.NullOr(S.String)),
+    time_actual_offer: S.optional(S.Unknown),
+    date_actual_communicated: S.optional(S.Unknown),
+    time_actual_communicated: S.optional(S.Unknown),
+    date_actual_accepted: S.optional(S.Unknown),
+    system_accepted_set_at: S.optional(S.Unknown),
+    date_actual_deposit: S.optional(S.Unknown),
+    date_actual_finance: S.optional(S.Unknown),
+    date_actual_unconditional: S.optional(S.Unknown),
+    system_unconditional_set_at: S.optional(S.Unknown),
+    date_actual_settlement: S.optional(S.Unknown),
+    system_settlement_set_at: S.optional(S.Unknown),
+    date_actual_possession: S.optional(S.Unknown),
+    date_actual_fallen: S.optional(S.Unknown),
+    date_actual_withdrawn: S.optional(S.Unknown),
+    system_fallen_set_at: S.optional(S.Unknown),
+    date_actual_deposit_release: S.optional(S.Unknown),
+    date_actual_agent_comm_payment: S.optional(S.Unknown),
+    purchtenant_legal_name: S.optional(S.NullOr(S.String)),
+    purchtenant_residence: S.optional(S.NullOr(S.String)),
+    notes: S.optional(S.Unknown),
+    chattels: S.optional(S.Unknown),
+    is_backup_offer: S.optional(S.Unknown),
+    is_primary_backup_offer: S.optional(S.Unknown),
+    marketing_rebate: S.optional(S.Unknown),
+    marketing_contact_age: S.optional(S.NullOr(S.String)),
+    marketing_postcode: S.optional(S.NullOr(S.String)),
+    disclosable_interest_exists: S.optional(S.Unknown),
+    disclosable_interest_note: S.optional(S.Unknown),
+    system_owner_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    system_modified_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    system_created_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    contract_status: S.optional(S.NullOr(S.String)),
+    is_accepted: S.optional(S.NullOr(S.Boolean)),
+    is_primary_accepted: S.optional(S.NullOr(S.Boolean)),
+    security_user_rights: S.optional(
+      S.NullOr(ContractsSearchResponseRowsItemSecurityUserRightsList),
+    ),
+    related: S.optional(S.NullOr(ContractsSearchResponseRowsItemRelated)),
+    agent: S.optional(S.NullOr(ContactsReadResponseSystemOwnerUser)),
+    listing: S.optional(S.NullOr(ContractsReadResponseListing)),
+    purchtenant_solicitor: S.optional(
+      S.NullOr(ContractsReadResponsePurchtenantSolicitor),
+    ),
+    system_verified_unconditional_by_user: S.optional(S.Unknown),
+    system_verified_settlement_by_user: S.optional(S.Unknown),
+    system_verified_fallen_by_user: S.optional(S.Unknown),
+    marketing_enquiry_method: S.optional(S.Unknown),
+    marketing_enquiry_source: S.optional(
+      S.NullOr(
+        ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+      ),
+    ),
+    fallen_reason: S.optional(S.Unknown),
+    purchtenant_position: S.optional(S.Unknown),
+    detail_finance_lender_contact: S.optional(S.Unknown),
+    primary_chain_instance: S.optional(S.Unknown),
+    stability_indicator: S.optional(S.Unknown),
+    etag: S.optional(S.NullOr(S.String)),
+    id: S.optional(S.NullOr(S.Number)),
+    is_template: S.optional(S.NullOr(S.Boolean)),
+  }),
+).annotate({
+  identifier: "ContractsSearchResponseRowsItem",
+}) as any as S.Schema<ContractsSearchResponseRowsItem>;
+
+export type ContractsSearchResponseRowsList =
+  Array<ContractsSearchResponseRowsItem>;
+export const ContractsSearchResponseRowsList = /*@__PURE__*/ S.Array(
+  ContractsSearchResponseRowsItem,
+) as any as S.Schema<ContractsSearchResponseRowsList>;
+
+export type ContractsSearchResponseCriteriaList = Array<unknown>;
+export const ContractsSearchResponseCriteriaList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<ContractsSearchResponseCriteriaList>;
+
+export type ContractsSearchResponseOrderByList = Array<unknown>;
+export const ContractsSearchResponseOrderByList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<ContractsSearchResponseOrderByList>;
+
+export interface ContractsSearchResponse {
+  rows?: ContractsSearchResponseRowsList | null;
+  total?: number | null;
+  viewstate_id?: unknown;
+  criteria?: ContractsSearchResponseCriteriaList | null;
+  order_by?: ContractsSearchResponseOrderByList | null;
+}
+export const ContractsSearchResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    rows: S.optional(S.NullOr(ContractsSearchResponseRowsList)),
+    total: S.optional(S.NullOr(S.Number)),
+    viewstate_id: S.optional(S.Unknown),
+    criteria: S.optional(S.NullOr(ContractsSearchResponseCriteriaList)),
+    order_by: S.optional(S.NullOr(ContractsSearchResponseOrderByList)),
+  }),
+).annotate({
+  identifier: "ContractsSearchResponse",
+}) as any as S.Schema<ContractsSearchResponse>;
+
+export interface ContractsSearchWithPolicyRequest {
+  criteria?: unknown;
+  order_by?: unknown;
+  create_viewstate?: unknown;
+  search_state?: unknown;
+  result_format?: unknown;
+  extra_options?: unknown;
+  limit?: unknown;
+  offset?: unknown;
+}
+export const ContractsSearchWithPolicyRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    criteria: S.optional(S.Unknown),
+    order_by: S.optional(S.Unknown),
+    create_viewstate: S.optional(S.Unknown),
+    search_state: S.optional(S.Unknown),
+    result_format: S.optional(S.Unknown),
+    extra_options: S.optional(S.Unknown),
+    limit: S.optional(S.Unknown),
+    offset: S.optional(S.Unknown),
+  }).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/Contracts::searchWithPolicy",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "ContractsSearchWithPolicyRequest",
+}) as any as S.Schema<ContractsSearchWithPolicyRequest>;
+
+export type ContractsSearchWithPolicyResponse = unknown;
+export const ContractsSearchWithPolicyResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Unknown.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "ContractsSearchWithPolicyResponse",
+}) as any as S.Schema<ContractsSearchWithPolicyResponse>;
+
+export type ContractsUpdateRequestDataListing =
+  ContractsCreateRequestDataListing;
+export const ContractsUpdateRequestDataListing =
+  ContractsCreateRequestDataListing;
+
+export type ContractsUpdateRequestDataDetailFinanceLenderContact =
+  ContractsCreateRequestDataDetailFinanceLenderContact;
+export const ContractsUpdateRequestDataDetailFinanceLenderContact =
+  ContractsCreateRequestDataDetailFinanceLenderContact;
+
+export type ContractsUpdateRequestDataFallenReason =
+  ContractsCreateRequestDataFallenReason;
+export const ContractsUpdateRequestDataFallenReason =
+  ContractsCreateRequestDataFallenReason;
+
+export type ContractsUpdateRequestDataPurchtenantSolicitor =
+  ContractsCreateRequestDataPurchtenantSolicitor;
+export const ContractsUpdateRequestDataPurchtenantSolicitor =
+  ContractsCreateRequestDataPurchtenantSolicitor;
+
+export type ContractsUpdateRequestDataAgent = ContractsCreateRequestDataAgent;
+export const ContractsUpdateRequestDataAgent = ContractsCreateRequestDataAgent;
+
+export type ContractsUpdateRequestDataMarketingEnquirySource =
+  ContractsCreateRequestDataMarketingEnquirySource;
+export const ContractsUpdateRequestDataMarketingEnquirySource =
+  ContractsCreateRequestDataMarketingEnquirySource;
+
+export type ContractsUpdateRequestDataMarketingEnquiryMethod =
+  ContractsCreateRequestDataMarketingEnquiryMethod;
+export const ContractsUpdateRequestDataMarketingEnquiryMethod =
+  ContractsCreateRequestDataMarketingEnquiryMethod;
+
+/** An array of data to add to the record */
+export interface ContractsUpdateRequestData {
+  /** ID of the contract to update */
+  id?: number | null;
+  listing?: ContractsCreateRequestDataListing | null;
+  /** Sale price for sale property or the lease per annum for commercial rental */
+  detail_sale_price_or_lease_pa?: number | null;
+  /** Initial deposit amount */
+  detail_deposit_init_or_bond?: number | null;
+  /** Full deposit amount */
+  detail_deposit_full_or_prepayment?: number | null;
+  /** The finance amount the purchaser will obtain */
+  detail_finance_amount?: number | null;
+  /** Lender from whom the purchaser is obtaining finance */
+  detail_finance_lender?: string | null;
+  detail_finance_lender_contact?: ContractsCreateRequestDataDetailFinanceLenderContact | null;
+  /** Date when the deposit is expected to be received */
+  date_expec_deposit?: string | null;
+  /** Date when finance is due to be received */
+  date_expec_finance?: string | null;
+  /** Date when contract is expected to become unconditional */
+  date_expec_unconditional?: string | null;
+  /** Date when contract is expected to settle */
+  date_expec_settlement?: string | null;
+  /** Date when the possession of the property is due to change from current vendor to purchaser - NZ only */
+  date_expec_possession?: string | null;
+  /** Date when the contract was accepted */
+  date_actual_accepted?: string | null;
+  /** Date when the contract was deposited */
+  date_actual_deposit?: string | null;
+  /** Date when the contract finance was received */
+  date_actual_finance?: string | null;
+  /** Date when the contract became unconditional */
+  date_actual_unconditional?: string | null;
+  /** Date when the contract was settled or released */
+  date_actual_settlement?: string | null;
+  /** Date when the possession changed - NZ only */
+  date_actual_possession?: string | null;
+  /** Date when the offer fell through */
+  date_actual_fallen?: string | null;
+  /** Date when the offer was withdrawn */
+  date_actual_withdrawn?: string | null;
+  fallen_reason?: ContractsCreateRequestDataFallenReason | null;
+  purchtenant_solicitor?: ContractsCreateRequestDataPurchtenantSolicitor | null;
+  /** Purchaser or tenant's solicitor legal name */
+  purchtenant_legal_name?: string | null;
+  /** Purchaser or tenant's solicitor residence */
+  purchtenant_residence?: string | null;
+  agent?: ContractsCreateRequestDataAgent | null;
+  /** Contract notes */
+  notes?: string | null;
+  /** Objects that come with the sale of the property */
+  chattels?: string | null;
+  /** Contract marketing rebate */
+  marketing_rebate?: number | null;
+  marketing_enquiry_source?: ContractsCreateRequestDataMarketingEnquirySource | null;
+  marketing_enquiry_method?: ContractsCreateRequestDataMarketingEnquiryMethod | null;
+  /** Market research contact's age */
+  marketing_contact_age?: number | null;
+  /** Market research postcode */
+  marketing_postcode?: string | null;
+}
+export const ContractsUpdateRequestData = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.optional(S.NullOr(S.Number)),
+    listing: S.optional(S.NullOr(ContractsCreateRequestDataListing)),
+    detail_sale_price_or_lease_pa: S.optional(S.NullOr(S.Number)),
+    detail_deposit_init_or_bond: S.optional(S.NullOr(S.Number)),
+    detail_deposit_full_or_prepayment: S.optional(S.NullOr(S.Number)),
+    detail_finance_amount: S.optional(S.NullOr(S.Number)),
+    detail_finance_lender: S.optional(S.NullOr(S.String)),
+    detail_finance_lender_contact: S.optional(
+      S.NullOr(ContractsCreateRequestDataDetailFinanceLenderContact),
+    ),
+    date_expec_deposit: S.optional(S.NullOr(S.String)),
+    date_expec_finance: S.optional(S.NullOr(S.String)),
+    date_expec_unconditional: S.optional(S.NullOr(S.String)),
+    date_expec_settlement: S.optional(S.NullOr(S.String)),
+    date_expec_possession: S.optional(S.NullOr(S.String)),
+    date_actual_accepted: S.optional(S.NullOr(S.String)),
+    date_actual_deposit: S.optional(S.NullOr(S.String)),
+    date_actual_finance: S.optional(S.NullOr(S.String)),
+    date_actual_unconditional: S.optional(S.NullOr(S.String)),
+    date_actual_settlement: S.optional(S.NullOr(S.String)),
+    date_actual_possession: S.optional(S.NullOr(S.String)),
+    date_actual_fallen: S.optional(S.NullOr(S.String)),
+    date_actual_withdrawn: S.optional(S.NullOr(S.String)),
+    fallen_reason: S.optional(S.NullOr(ContractsCreateRequestDataFallenReason)),
+    purchtenant_solicitor: S.optional(
+      S.NullOr(ContractsCreateRequestDataPurchtenantSolicitor),
+    ),
+    purchtenant_legal_name: S.optional(S.NullOr(S.String)),
+    purchtenant_residence: S.optional(S.NullOr(S.String)),
+    agent: S.optional(S.NullOr(ContractsCreateRequestDataAgent)),
+    notes: S.optional(S.NullOr(S.String)),
+    chattels: S.optional(S.NullOr(S.String)),
+    marketing_rebate: S.optional(S.NullOr(S.Number)),
+    marketing_enquiry_source: S.optional(
+      S.NullOr(ContractsCreateRequestDataMarketingEnquirySource),
+    ),
+    marketing_enquiry_method: S.optional(
+      S.NullOr(ContractsCreateRequestDataMarketingEnquiryMethod),
+    ),
+    marketing_contact_age: S.optional(S.NullOr(S.Number)),
+    marketing_postcode: S.optional(S.NullOr(S.String)),
+  }),
+).annotate({
+  identifier: "ContractsUpdateRequestData",
+}) as any as S.Schema<ContractsUpdateRequestData>;
+
+export interface ContractsUpdateRequest {
+  /** An array of data to add to the record */
+  data: ContractsUpdateRequestData;
+  /** An array of fields to return - all fields will be returned if this argument is not specified. Call describeModel for a list of supported fields. */
+  fields?: unknown;
+  /** An array of extra fields to read in from other services - none of this data will be returned unless explicitly requested. Call describeModel for a list of supported fields. */
+  extra_fields?: unknown;
+}
+export const ContractsUpdateRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    data: ContractsUpdateRequestData,
+    fields: S.optional(S.Unknown),
+    extra_fields: S.optional(S.Unknown),
+  }).pipe(
+    T.Http({ method: "POST", uri: "/v1/rex/Contracts::update", code: 200 }),
+  ),
+).annotate({
+  identifier: "ContractsUpdateRequest",
+}) as any as S.Schema<ContractsUpdateRequest>;
+
+export type ContractsUpdateResponseSystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+export const ContractsUpdateResponseSystemOwnerUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type ContractsUpdateResponseSystemModifiedUser =
+  ContactsReadResponseSystemOwnerUser;
+export const ContractsUpdateResponseSystemModifiedUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type ContractsUpdateResponseSystemCreatedUser =
+  ContactsReadResponseSystemOwnerUser;
+export const ContractsUpdateResponseSystemCreatedUser =
+  ContactsReadResponseSystemOwnerUser;
+
+export type ContractsUpdateResponseAgent = ContactsReadResponseSystemOwnerUser;
+export const ContractsUpdateResponseAgent = ContactsReadResponseSystemOwnerUser;
+
+export type ContractsUpdateResponseListingListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+export const ContractsUpdateResponseListingListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+
+export type ContractsUpdateResponseListingListingCategory =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const ContractsUpdateResponseListingListingCategory =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type ContractsUpdateResponseListingListingPrimaryImageThumbs800x600 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const ContractsUpdateResponseListingListingPrimaryImageThumbs800x600 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type ContractsUpdateResponseListingListingPrimaryImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const ContractsUpdateResponseListingListingPrimaryImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type ContractsUpdateResponseListingListingPrimaryImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const ContractsUpdateResponseListingListingPrimaryImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type ContractsUpdateResponseListingListingPrimaryImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const ContractsUpdateResponseListingListingPrimaryImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type ContractsUpdateResponseListingListingPrimaryImageThumbs =
+  ContractsReadResponseListingListingPrimaryImageThumbs;
+export const ContractsUpdateResponseListingListingPrimaryImageThumbs =
+  ContractsReadResponseListingListingPrimaryImageThumbs;
+
+export type ContractsUpdateResponseListingListingPrimaryImage =
+  ContractsReadResponseListingListingPrimaryImage;
+export const ContractsUpdateResponseListingListingPrimaryImage =
+  ContractsReadResponseListingListingPrimaryImage;
+
+export type ContractsUpdateResponseListingLocation =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const ContractsUpdateResponseListingLocation =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type ContractsUpdateResponseListingProjectStageProjectType =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const ContractsUpdateResponseListingProjectStageProjectType =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type ContractsUpdateResponseListingProjectStageProject =
+  ContractsReadResponseListingProjectStageProject;
+export const ContractsUpdateResponseListingProjectStageProject =
+  ContractsReadResponseListingProjectStageProject;
+
+export type ContractsUpdateResponseListingProjectStage =
+  ContractsReadResponseListingProjectStage;
+export const ContractsUpdateResponseListingProjectStage =
+  ContractsReadResponseListingProjectStage;
+
+export type ContractsUpdateResponseListingProperty =
+  ContactsReadResponseRelatedContactRelnListingItemListingProperty;
+export const ContractsUpdateResponseListingProperty =
+  ContactsReadResponseRelatedContactRelnListingItemListingProperty;
+
+export type ContractsUpdateResponseListing = ContractsReadResponseListing;
+export const ContractsUpdateResponseListing = ContractsReadResponseListing;
+
+export type ContractsUpdateResponsePurchtenantSolicitor =
+  ContractsReadResponsePurchtenantSolicitor;
+export const ContractsUpdateResponsePurchtenantSolicitor =
+  ContractsReadResponsePurchtenantSolicitor;
+
+export type ContractsUpdateResponseMarketingEnquirySource =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+export const ContractsUpdateResponseMarketingEnquirySource =
+  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
+
+export type ContractsUpdateResponseRelatedListingContractConditionsItemAdminContractCondition =
+  ContractsReadResponseRelatedListingContractConditionsItemAdminContractCondition;
+export const ContractsUpdateResponseRelatedListingContractConditionsItemAdminContractCondition =
+  ContractsReadResponseRelatedListingContractConditionsItemAdminContractCondition;
+
+export type ContractsUpdateResponseRelatedListingContractConditionsItem =
+  ContractsReadResponseRelatedListingContractConditionsItem;
+export const ContractsUpdateResponseRelatedListingContractConditionsItem =
+  ContractsReadResponseRelatedListingContractConditionsItem;
+
+export type ContractsUpdateResponseRelatedListingContractConditionsList =
+  Array<ContractsReadResponseRelatedListingContractConditionsItem>;
+export const ContractsUpdateResponseRelatedListingContractConditionsList =
+  /*@__PURE__*/ S.Array(
+    ContractsReadResponseRelatedListingContractConditionsItem,
+  ) as any as S.Schema<ContractsUpdateResponseRelatedListingContractConditionsList>;
+
+export type ContractsUpdateResponseRelatedListingContractPurchtenantsItemPurchtenant =
+  ContractsReadResponseRelatedListingContractPurchtenantsItemPurchtenant;
+export const ContractsUpdateResponseRelatedListingContractPurchtenantsItemPurchtenant =
+  ContractsReadResponseRelatedListingContractPurchtenantsItemPurchtenant;
+
+export type ContractsUpdateResponseRelatedListingContractPurchtenantsItem =
+  ContractsReadResponseRelatedListingContractPurchtenantsItem;
+export const ContractsUpdateResponseRelatedListingContractPurchtenantsItem =
+  ContractsReadResponseRelatedListingContractPurchtenantsItem;
+
+export type ContractsUpdateResponseRelatedListingContractPurchtenantsList =
+  Array<ContractsReadResponseRelatedListingContractPurchtenantsItem>;
+export const ContractsUpdateResponseRelatedListingContractPurchtenantsList =
+  /*@__PURE__*/ S.Array(
+    ContractsReadResponseRelatedListingContractPurchtenantsItem,
+  ) as any as S.Schema<ContractsUpdateResponseRelatedListingContractPurchtenantsList>;
+
+export interface ContractsUpdateResponseRelated {
+  listing_contract_conditions?: ContractsUpdateResponseRelatedListingContractConditionsList | null;
+  listing_contract_purchtenants?: ContractsUpdateResponseRelatedListingContractPurchtenantsList | null;
+}
+export const ContractsUpdateResponseRelated = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    listing_contract_conditions: S.optional(
+      S.NullOr(ContractsUpdateResponseRelatedListingContractConditionsList),
+    ),
+    listing_contract_purchtenants: S.optional(
+      S.NullOr(ContractsUpdateResponseRelatedListingContractPurchtenantsList),
+    ),
+  }),
+).annotate({
+  identifier: "ContractsUpdateResponseRelated",
+}) as any as S.Schema<ContractsUpdateResponseRelated>;
+
+export type ContractsUpdateResponseSecurityUserRightsList = Array<string>;
+export const ContractsUpdateResponseSecurityUserRightsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<ContractsUpdateResponseSecurityUserRightsList>;
+
+export interface ContractsUpdateResponse {
+  system_ctime?: number | null;
+  system_modtime?: number | null;
+  system_verified_unconditional_date?: unknown;
+  system_verified_settlement_date?: unknown;
+  system_verified_fallen_date?: unknown;
+  detail_sale_price_or_lease_pa?: number | null;
+  detail_deposit_init_or_bond?: number | null;
+  detail_deposit_full_or_prepayment?: number | null;
+  detail_finance_amount?: number | null;
+  detail_finance_lender?: unknown;
+  date_expec_deposit?: string | null;
+  date_expec_finance?: string | null;
+  date_expec_unconditional?: string | null;
+  date_expec_settlement?: string | null;
+  date_expec_possession?: unknown;
+  date_expec_deposit_release?: string | null;
+  date_expec_agent_comm_payment?: string | null;
+  date_actual_offer?: string | null;
+  time_actual_offer?: unknown;
+  date_actual_communicated?: unknown;
+  time_actual_communicated?: unknown;
+  date_actual_accepted?: unknown;
+  system_accepted_set_at?: unknown;
+  date_actual_deposit?: unknown;
+  date_actual_finance?: unknown;
+  date_actual_unconditional?: unknown;
+  system_unconditional_set_at?: unknown;
+  date_actual_settlement?: unknown;
+  system_settlement_set_at?: unknown;
+  date_actual_possession?: unknown;
+  date_actual_fallen?: unknown;
+  date_actual_withdrawn?: unknown;
+  date_actual_deposit_release?: unknown;
+  date_actual_agent_comm_payment?: unknown;
+  system_fallen_set_at?: unknown;
+  purchtenant_legal_name?: string | null;
+  purchtenant_residence?: string | null;
+  notes?: unknown;
+  chattels?: unknown;
+  is_backup_offer?: unknown;
+  is_primary_backup_offer?: unknown;
+  marketing_rebate?: unknown;
+  marketing_contact_age?: string | null;
+  marketing_postcode?: string | null;
+  disclosable_interest_exists?: unknown;
+  disclosable_interest_note?: unknown;
+  id?: number | null;
+  etag?: string | null;
+  system_owner_user?: ContactsReadResponseSystemOwnerUser | null;
+  system_modified_user?: ContactsReadResponseSystemOwnerUser | null;
+  system_created_user?: ContactsReadResponseSystemOwnerUser | null;
+  agent?: ContactsReadResponseSystemOwnerUser | null;
+  listing?: ContractsReadResponseListing | null;
+  purchtenant_solicitor?: ContractsReadResponsePurchtenantSolicitor | null;
+  system_verified_unconditional_by_user?: unknown;
+  system_verified_settlement_by_user?: unknown;
+  system_verified_fallen_by_user?: unknown;
+  commission_worksheet?: unknown;
+  marketing_enquiry_method?: unknown;
+  marketing_enquiry_source?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
+  fallen_reason?: unknown;
+  purchtenant_position?: unknown;
+  detail_finance_lender_contact?: unknown;
+  primary_chain_instance?: unknown;
+  stability_indicator?: unknown;
+  contract_status?: string | null;
+  is_accepted?: boolean | null;
+  is_primary_accepted?: boolean | null;
+  related?: ContractsUpdateResponseRelated | null;
+  security_user_rights?: ContractsUpdateResponseSecurityUserRightsList | null;
+  is_template?: boolean | null;
+}
+export const ContractsUpdateResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    system_ctime: S.optional(S.NullOr(S.Number)),
+    system_modtime: S.optional(S.NullOr(S.Number)),
+    system_verified_unconditional_date: S.optional(S.Unknown),
+    system_verified_settlement_date: S.optional(S.Unknown),
+    system_verified_fallen_date: S.optional(S.Unknown),
+    detail_sale_price_or_lease_pa: S.optional(S.NullOr(S.Number)),
+    detail_deposit_init_or_bond: S.optional(S.NullOr(S.Number)),
+    detail_deposit_full_or_prepayment: S.optional(S.NullOr(S.Number)),
+    detail_finance_amount: S.optional(S.NullOr(S.Number)),
+    detail_finance_lender: S.optional(S.Unknown),
+    date_expec_deposit: S.optional(S.NullOr(S.String)),
+    date_expec_finance: S.optional(S.NullOr(S.String)),
+    date_expec_unconditional: S.optional(S.NullOr(S.String)),
+    date_expec_settlement: S.optional(S.NullOr(S.String)),
+    date_expec_possession: S.optional(S.Unknown),
+    date_expec_deposit_release: S.optional(S.NullOr(S.String)),
+    date_expec_agent_comm_payment: S.optional(S.NullOr(S.String)),
+    date_actual_offer: S.optional(S.NullOr(S.String)),
+    time_actual_offer: S.optional(S.Unknown),
+    date_actual_communicated: S.optional(S.Unknown),
+    time_actual_communicated: S.optional(S.Unknown),
+    date_actual_accepted: S.optional(S.Unknown),
+    system_accepted_set_at: S.optional(S.Unknown),
+    date_actual_deposit: S.optional(S.Unknown),
+    date_actual_finance: S.optional(S.Unknown),
+    date_actual_unconditional: S.optional(S.Unknown),
+    system_unconditional_set_at: S.optional(S.Unknown),
+    date_actual_settlement: S.optional(S.Unknown),
+    system_settlement_set_at: S.optional(S.Unknown),
+    date_actual_possession: S.optional(S.Unknown),
+    date_actual_fallen: S.optional(S.Unknown),
+    date_actual_withdrawn: S.optional(S.Unknown),
+    date_actual_deposit_release: S.optional(S.Unknown),
+    date_actual_agent_comm_payment: S.optional(S.Unknown),
+    system_fallen_set_at: S.optional(S.Unknown),
+    purchtenant_legal_name: S.optional(S.NullOr(S.String)),
+    purchtenant_residence: S.optional(S.NullOr(S.String)),
+    notes: S.optional(S.Unknown),
+    chattels: S.optional(S.Unknown),
+    is_backup_offer: S.optional(S.Unknown),
+    is_primary_backup_offer: S.optional(S.Unknown),
+    marketing_rebate: S.optional(S.Unknown),
+    marketing_contact_age: S.optional(S.NullOr(S.String)),
+    marketing_postcode: S.optional(S.NullOr(S.String)),
+    disclosable_interest_exists: S.optional(S.Unknown),
+    disclosable_interest_note: S.optional(S.Unknown),
+    id: S.optional(S.NullOr(S.Number)),
+    etag: S.optional(S.NullOr(S.String)),
+    system_owner_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    system_modified_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    system_created_user: S.optional(
+      S.NullOr(ContactsReadResponseSystemOwnerUser),
+    ),
+    agent: S.optional(S.NullOr(ContactsReadResponseSystemOwnerUser)),
+    listing: S.optional(S.NullOr(ContractsReadResponseListing)),
+    purchtenant_solicitor: S.optional(
+      S.NullOr(ContractsReadResponsePurchtenantSolicitor),
+    ),
+    system_verified_unconditional_by_user: S.optional(S.Unknown),
+    system_verified_settlement_by_user: S.optional(S.Unknown),
+    system_verified_fallen_by_user: S.optional(S.Unknown),
+    commission_worksheet: S.optional(S.Unknown),
+    marketing_enquiry_method: S.optional(S.Unknown),
+    marketing_enquiry_source: S.optional(
+      S.NullOr(
+        ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+      ),
+    ),
+    fallen_reason: S.optional(S.Unknown),
+    purchtenant_position: S.optional(S.Unknown),
+    detail_finance_lender_contact: S.optional(S.Unknown),
+    primary_chain_instance: S.optional(S.Unknown),
+    stability_indicator: S.optional(S.Unknown),
+    contract_status: S.optional(S.NullOr(S.String)),
+    is_accepted: S.optional(S.NullOr(S.Boolean)),
+    is_primary_accepted: S.optional(S.NullOr(S.Boolean)),
+    related: S.optional(S.NullOr(ContractsUpdateResponseRelated)),
+    security_user_rights: S.optional(
+      S.NullOr(ContractsUpdateResponseSecurityUserRightsList),
+    ),
+    is_template: S.optional(S.NullOr(S.Boolean)),
+  }),
+).annotate({
+  identifier: "ContractsUpdateResponse",
+}) as any as S.Schema<ContractsUpdateResponse>;
+
 export interface FeedbackAutocompleteRequest {
   /** The start of the map area name to autocomplete on */
   search_string: string;
@@ -16116,46 +20030,15 @@ export type ListingsReadResponseProjectStageProjectType =
 export const ListingsReadResponseProjectStageProjectType =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
-export interface ListingsReadResponseProjectStageProject {
-  id?: number | null;
-  name?: string | null;
-  type?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
-  developer_logo?: unknown;
-  estate_logo?: unknown;
-}
-export const ListingsReadResponseProjectStageProject = /*@__PURE__*/ S.suspend(
-  () =>
-    S.Struct({
-      id: S.optional(S.NullOr(S.Number)),
-      name: S.optional(S.NullOr(S.String)),
-      type: S.optional(
-        S.NullOr(
-          ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
-        ),
-      ),
-      developer_logo: S.optional(S.Unknown),
-      estate_logo: S.optional(S.Unknown),
-    }),
-).annotate({
-  identifier: "ListingsReadResponseProjectStageProject",
-}) as any as S.Schema<ListingsReadResponseProjectStageProject>;
+export type ListingsReadResponseProjectStageProject =
+  ContractsReadResponseListingProjectStageProject;
+export const ListingsReadResponseProjectStageProject =
+  ContractsReadResponseListingProjectStageProject;
 
-export interface ListingsReadResponseProjectStage {
-  id?: number | null;
-  name?: string | null;
-  project?: ListingsReadResponseProjectStageProject | null;
-  full_name?: string | null;
-}
-export const ListingsReadResponseProjectStage = /*@__PURE__*/ S.suspend(() =>
-  S.Struct({
-    id: S.optional(S.NullOr(S.Number)),
-    name: S.optional(S.NullOr(S.String)),
-    project: S.optional(S.NullOr(ListingsReadResponseProjectStageProject)),
-    full_name: S.optional(S.NullOr(S.String)),
-  }),
-).annotate({
-  identifier: "ListingsReadResponseProjectStage",
-}) as any as S.Schema<ListingsReadResponseProjectStage>;
+export type ListingsReadResponseProjectStage =
+  ContractsReadResponseListingProjectStage;
+export const ListingsReadResponseProjectStage =
+  ContractsReadResponseListingProjectStage;
 
 export type ListingsReadResponseLocation =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
@@ -16192,87 +20075,35 @@ export type ListingsReadResponsePropertySystemCreatedUser =
 export const ListingsReadResponsePropertySystemCreatedUser =
   ContactsReadResponseSystemOwnerUser;
 
-export interface ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600 {
-  uri?: string | null;
-  url?: string | null;
-}
+export type ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600 =
-  /*@__PURE__*/ S.suspend(() =>
-    S.Struct({
-      uri: S.optional(S.NullOr(S.String)),
-      url: S.optional(S.NullOr(S.String)),
-    }),
-  ).annotate({
-    identifier:
-      "ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600",
-  }) as any as S.Schema<ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600>;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
-export interface ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs {
-  _800x600?: ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600 | null;
-  _400x300?: ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600 | null;
-  _200x150?: ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600 | null;
-  _80x60?: ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600 | null;
-}
+export type ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs =
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 export const ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs =
-  /*@__PURE__*/ S.suspend(() =>
-    S.Struct({
-      _800x600: S.optional(
-        S.NullOr(
-          ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600,
-        ).pipe(T.Body("800x600")),
-      ),
-      _400x300: S.optional(
-        S.NullOr(
-          ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600,
-        ).pipe(T.Body("400x300")),
-      ),
-      _200x150: S.optional(
-        S.NullOr(
-          ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600,
-        ).pipe(T.Body("200x150")),
-      ),
-      _80x60: S.optional(
-        S.NullOr(
-          ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600,
-        ).pipe(T.Body("80x60")),
-      ),
-    }),
-  ).annotate({
-    identifier: "ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs",
-  }) as any as S.Schema<ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs>;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 
-export interface ListingsReadResponsePropertyAdrBuildingBuildingImage {
-  uri?: string | null;
-  url?: string | null;
-  thumbs?: ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs | null;
-}
+export type ListingsReadResponsePropertyAdrBuildingBuildingImage =
+  ContractsReadResponseListingListingPrimaryImage;
 export const ListingsReadResponsePropertyAdrBuildingBuildingImage =
-  /*@__PURE__*/ S.suspend(() =>
-    S.Struct({
-      uri: S.optional(S.NullOr(S.String)),
-      url: S.optional(S.NullOr(S.String)),
-      thumbs: S.optional(
-        S.NullOr(ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs),
-      ),
-    }),
-  ).annotate({
-    identifier: "ListingsReadResponsePropertyAdrBuildingBuildingImage",
-  }) as any as S.Schema<ListingsReadResponsePropertyAdrBuildingBuildingImage>;
+  ContractsReadResponseListingListingPrimaryImage;
 
 export interface ListingsReadResponsePropertyAdrBuilding {
   name?: string | null;
@@ -16283,7 +20114,7 @@ export interface ListingsReadResponsePropertyAdrBuilding {
   adr_locality?: unknown;
   adr_postcode?: string | null;
   adr_country?: string | null;
-  building_image?: ListingsReadResponsePropertyAdrBuildingBuildingImage | null;
+  building_image?: ContractsReadResponseListingListingPrimaryImage | null;
   id?: number | null;
 }
 export const ListingsReadResponsePropertyAdrBuilding = /*@__PURE__*/ S.suspend(
@@ -16298,7 +20129,7 @@ export const ListingsReadResponsePropertyAdrBuilding = /*@__PURE__*/ S.suspend(
       adr_postcode: S.optional(S.NullOr(S.String)),
       adr_country: S.optional(S.NullOr(S.String)),
       building_image: S.optional(
-        S.NullOr(ListingsReadResponsePropertyAdrBuildingBuildingImage),
+        S.NullOr(ContractsReadResponseListingListingPrimaryImage),
       ),
       id: S.optional(S.NullOr(S.Number)),
     }),
@@ -16332,34 +20163,34 @@ export const ListingsReadResponsePropertyPropertyCategory =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type ListingsReadResponsePropertyPropertyImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponsePropertyPropertyImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponsePropertyPropertyImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponsePropertyPropertyImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponsePropertyPropertyImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponsePropertyPropertyImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponsePropertyPropertyImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponsePropertyPropertyImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponsePropertyPropertyImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 export const ListingsReadResponsePropertyPropertyImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 
 export type ListingsReadResponsePropertyPropertyImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 export const ListingsReadResponsePropertyPropertyImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 
 export type ListingsReadResponsePropertySecurityUserRightsList = Array<string>;
 export const ListingsReadResponsePropertySecurityUserRightsList =
@@ -16459,7 +20290,7 @@ export interface ListingsReadResponseProperty {
   attr_tenure?: unknown;
   attr_tenure_agent?: unknown;
   property_category?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
-  property_image?: ListingsReadResponsePropertyAdrBuildingBuildingImage | null;
+  property_image?: ContractsReadResponseListingListingPrimaryImage | null;
   security_user_rights?: ListingsReadResponsePropertySecurityUserRightsList | null;
   id?: number | null;
 }
@@ -16583,7 +20414,7 @@ export const ListingsReadResponseProperty = /*@__PURE__*/ S.suspend(() =>
       ),
     ),
     property_image: S.optional(
-      S.NullOr(ListingsReadResponsePropertyAdrBuildingBuildingImage),
+      S.NullOr(ContractsReadResponseListingListingPrimaryImage),
     ),
     security_user_rights: S.optional(
       S.NullOr(ListingsReadResponsePropertySecurityUserRightsList),
@@ -16875,34 +20706,34 @@ export const ListingsReadResponseRelatedListingEventsList =
   ) as any as S.Schema<ListingsReadResponseRelatedListingEventsList>;
 
 export type ListingsReadResponseRelatedListingImagesItemThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponseRelatedListingImagesItemThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponseRelatedListingImagesItemThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponseRelatedListingImagesItemThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponseRelatedListingImagesItemThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponseRelatedListingImagesItemThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponseRelatedListingImagesItemThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponseRelatedListingImagesItemThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponseRelatedListingImagesItemThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 export const ListingsReadResponseRelatedListingImagesItemThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 
 export interface ListingsReadResponseRelatedListingImagesItem {
   uri?: string | null;
   url?: string | null;
-  thumbs?: ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs | null;
+  thumbs?: ContractsReadResponseListingListingPrimaryImageThumbs | null;
   id?: number | null;
   system_modtime?: number | null;
   priority?: string | null;
@@ -16916,7 +20747,7 @@ export const ListingsReadResponseRelatedListingImagesItem =
       uri: S.optional(S.NullOr(S.String)),
       url: S.optional(S.NullOr(S.String)),
       thumbs: S.optional(
-        S.NullOr(ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs),
+        S.NullOr(ContractsReadResponseListingListingPrimaryImageThumbs),
       ),
       id: S.optional(S.NullOr(S.Number)),
       system_modtime: S.optional(S.NullOr(S.Number)),
@@ -16949,52 +20780,52 @@ export const ListingsReadResponseRelatedListingInsurancesList =
   ) as any as S.Schema<ListingsReadResponseRelatedListingInsurancesList>;
 
 export type ListingsReadResponseRelatedListingFloorplansItemThumbs800x800 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponseRelatedListingFloorplansItemThumbs800x800 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponseRelatedListingFloorplansItemThumbs400x400 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponseRelatedListingFloorplansItemThumbs400x400 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponseRelatedListingFloorplansItemThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponseRelatedListingFloorplansItemThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsReadResponseRelatedListingFloorplansItemThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsReadResponseRelatedListingFloorplansItemThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export interface ListingsReadResponseRelatedListingFloorplansItemThumbs {
-  _800x800?: ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600 | null;
-  _400x400?: ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600 | null;
-  _800x600?: ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600 | null;
-  _80x60?: ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600 | null;
+  _800x800?: ContractsReadResponseListingListingPrimaryImageThumbs800x600 | null;
+  _400x400?: ContractsReadResponseListingListingPrimaryImageThumbs800x600 | null;
+  _800x600?: ContractsReadResponseListingListingPrimaryImageThumbs800x600 | null;
+  _80x60?: ContractsReadResponseListingListingPrimaryImageThumbs800x600 | null;
 }
 export const ListingsReadResponseRelatedListingFloorplansItemThumbs =
   /*@__PURE__*/ S.suspend(() =>
     S.Struct({
       _800x800: S.optional(
         S.NullOr(
-          ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600,
+          ContractsReadResponseListingListingPrimaryImageThumbs800x600,
         ).pipe(T.Body("800x800")),
       ),
       _400x400: S.optional(
         S.NullOr(
-          ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600,
+          ContractsReadResponseListingListingPrimaryImageThumbs800x600,
         ).pipe(T.Body("400x400")),
       ),
       _800x600: S.optional(
         S.NullOr(
-          ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600,
+          ContractsReadResponseListingListingPrimaryImageThumbs800x600,
         ).pipe(T.Body("800x600")),
       ),
       _80x60: S.optional(
         S.NullOr(
-          ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600,
+          ContractsReadResponseListingListingPrimaryImageThumbs800x600,
         ).pipe(T.Body("80x60")),
       ),
     }),
@@ -17252,7 +21083,7 @@ export interface ListingsReadResponse {
   listing_agent_1?: ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1 | null;
   listing_agent_2?: unknown;
   legal_solicitor?: ListingsReadResponseLegalSolicitor | null;
-  project_stage?: ListingsReadResponseProjectStage | null;
+  project_stage?: ContractsReadResponseListingProjectStage | null;
   location?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
   authority_type?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
   exclusivity?: unknown;
@@ -17365,7 +21196,9 @@ export const ListingsReadResponse = /*@__PURE__*/ S.suspend(() =>
     ),
     listing_agent_2: S.optional(S.Unknown),
     legal_solicitor: S.optional(S.NullOr(ListingsReadResponseLegalSolicitor)),
-    project_stage: S.optional(S.NullOr(ListingsReadResponseProjectStage)),
+    project_stage: S.optional(
+      S.NullOr(ContractsReadResponseListingProjectStage),
+    ),
     location: S.optional(
       S.NullOr(
         ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
@@ -17493,34 +21326,34 @@ export const ListingsSearchResponseRowsItemPropertySystemOwnerUser =
   ContactsReadResponseSystemOwnerUser;
 
 export type ListingsSearchResponseRowsItemPropertyAdrBuildingBuildingImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsSearchResponseRowsItemPropertyAdrBuildingBuildingImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsSearchResponseRowsItemPropertyAdrBuildingBuildingImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsSearchResponseRowsItemPropertyAdrBuildingBuildingImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsSearchResponseRowsItemPropertyAdrBuildingBuildingImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsSearchResponseRowsItemPropertyAdrBuildingBuildingImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsSearchResponseRowsItemPropertyAdrBuildingBuildingImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsSearchResponseRowsItemPropertyAdrBuildingBuildingImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsSearchResponseRowsItemPropertyAdrBuildingBuildingImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 export const ListingsSearchResponseRowsItemPropertyAdrBuildingBuildingImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 
 export type ListingsSearchResponseRowsItemPropertyAdrBuildingBuildingImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 export const ListingsSearchResponseRowsItemPropertyAdrBuildingBuildingImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 
 export type ListingsSearchResponseRowsItemPropertyAdrBuilding =
   ListingsReadResponsePropertyAdrBuilding;
@@ -17533,34 +21366,34 @@ export const ListingsSearchResponseRowsItemPropertyPropertyCategory =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type ListingsSearchResponseRowsItemPropertyPropertyImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsSearchResponseRowsItemPropertyPropertyImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsSearchResponseRowsItemPropertyPropertyImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsSearchResponseRowsItemPropertyPropertyImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsSearchResponseRowsItemPropertyPropertyImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsSearchResponseRowsItemPropertyPropertyImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsSearchResponseRowsItemPropertyPropertyImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsSearchResponseRowsItemPropertyPropertyImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsSearchResponseRowsItemPropertyPropertyImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 export const ListingsSearchResponseRowsItemPropertyPropertyImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 
 export type ListingsSearchResponseRowsItemPropertyPropertyImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 export const ListingsSearchResponseRowsItemPropertyPropertyImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 
 export interface ListingsSearchResponseRowsItemProperty {
   business_name?: unknown;
@@ -17582,7 +21415,7 @@ export interface ListingsSearchResponseRowsItemProperty {
   system_owner_user?: ContactsReadResponseSystemOwnerUser | null;
   adr_building?: ListingsReadResponsePropertyAdrBuilding | null;
   property_category?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
-  property_image?: ListingsReadResponsePropertyAdrBuildingBuildingImage | null;
+  property_image?: ContractsReadResponseListingListingPrimaryImage | null;
   etag?: string | null;
   id?: string | null;
 }
@@ -17617,7 +21450,7 @@ export const ListingsSearchResponseRowsItemProperty = /*@__PURE__*/ S.suspend(
         ),
       ),
       property_image: S.optional(
-        S.NullOr(ListingsReadResponsePropertyAdrBuildingBuildingImage),
+        S.NullOr(ContractsReadResponseListingListingPrimaryImage),
       ),
       etag: S.optional(S.NullOr(S.String)),
       id: S.optional(S.NullOr(S.String)),
@@ -17627,34 +21460,34 @@ export const ListingsSearchResponseRowsItemProperty = /*@__PURE__*/ S.suspend(
 }) as any as S.Schema<ListingsSearchResponseRowsItemProperty>;
 
 export type ListingsSearchResponseRowsItemListingPrimaryImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsSearchResponseRowsItemListingPrimaryImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsSearchResponseRowsItemListingPrimaryImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsSearchResponseRowsItemListingPrimaryImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsSearchResponseRowsItemListingPrimaryImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsSearchResponseRowsItemListingPrimaryImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsSearchResponseRowsItemListingPrimaryImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsSearchResponseRowsItemListingPrimaryImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsSearchResponseRowsItemListingPrimaryImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 export const ListingsSearchResponseRowsItemListingPrimaryImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 
 export type ListingsSearchResponseRowsItemListingPrimaryImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 export const ListingsSearchResponseRowsItemListingPrimaryImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 
 export type ListingsSearchResponseRowsItemListingAgent1 =
   ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
@@ -17677,14 +21510,14 @@ export const ListingsSearchResponseRowsItemProjectStageProjectType =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type ListingsSearchResponseRowsItemProjectStageProject =
-  ListingsReadResponseProjectStageProject;
+  ContractsReadResponseListingProjectStageProject;
 export const ListingsSearchResponseRowsItemProjectStageProject =
-  ListingsReadResponseProjectStageProject;
+  ContractsReadResponseListingProjectStageProject;
 
 export type ListingsSearchResponseRowsItemProjectStage =
-  ListingsReadResponseProjectStage;
+  ContractsReadResponseListingProjectStage;
 export const ListingsSearchResponseRowsItemProjectStage =
-  ListingsReadResponseProjectStage;
+  ContractsReadResponseListingProjectStage;
 
 export type ListingsSearchResponseRowsItemLocation =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
@@ -17785,7 +21618,7 @@ export interface ListingsSearchResponseRowsItem {
   council_tax_included_in_rent?: boolean | null;
   landlord_has_contractor?: boolean | null;
   property?: ListingsSearchResponseRowsItemProperty | null;
-  listing_primary_image?: ListingsReadResponsePropertyAdrBuildingBuildingImage | null;
+  listing_primary_image?: ContractsReadResponseListingListingPrimaryImage | null;
   under_contract?: boolean | null;
   under_application?: unknown;
   hold_status?: unknown;
@@ -17795,7 +21628,7 @@ export interface ListingsSearchResponseRowsItem {
   listing_agent_1?: ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1 | null;
   listing_agent_2?: unknown;
   legal_solicitor?: ListingsReadResponseLegalSolicitor | null;
-  project_stage?: ListingsReadResponseProjectStage | null;
+  project_stage?: ContractsReadResponseListingProjectStage | null;
   location?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
   authority_type?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
   exclusivity?: unknown;
@@ -17903,7 +21736,7 @@ export const ListingsSearchResponseRowsItem = /*@__PURE__*/ S.suspend(() =>
     landlord_has_contractor: S.optional(S.NullOr(S.Boolean)),
     property: S.optional(S.NullOr(ListingsSearchResponseRowsItemProperty)),
     listing_primary_image: S.optional(
-      S.NullOr(ListingsReadResponsePropertyAdrBuildingBuildingImage),
+      S.NullOr(ContractsReadResponseListingListingPrimaryImage),
     ),
     under_contract: S.optional(S.NullOr(S.Boolean)),
     under_application: S.optional(S.Unknown),
@@ -17918,7 +21751,9 @@ export const ListingsSearchResponseRowsItem = /*@__PURE__*/ S.suspend(() =>
     ),
     listing_agent_2: S.optional(S.Unknown),
     legal_solicitor: S.optional(S.NullOr(ListingsReadResponseLegalSolicitor)),
-    project_stage: S.optional(S.NullOr(ListingsReadResponseProjectStage)),
+    project_stage: S.optional(
+      S.NullOr(ContractsReadResponseListingProjectStage),
+    ),
     location: S.optional(
       S.NullOr(
         ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
@@ -18447,14 +22282,14 @@ export const ListingsUpdateResponseProjectStageProjectType =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type ListingsUpdateResponseProjectStageProject =
-  ListingsReadResponseProjectStageProject;
+  ContractsReadResponseListingProjectStageProject;
 export const ListingsUpdateResponseProjectStageProject =
-  ListingsReadResponseProjectStageProject;
+  ContractsReadResponseListingProjectStageProject;
 
 export type ListingsUpdateResponseProjectStage =
-  ListingsReadResponseProjectStage;
+  ContractsReadResponseListingProjectStage;
 export const ListingsUpdateResponseProjectStage =
-  ListingsReadResponseProjectStage;
+  ContractsReadResponseListingProjectStage;
 
 export type ListingsUpdateResponseLocation =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
@@ -18492,34 +22327,34 @@ export const ListingsUpdateResponsePropertySystemCreatedUser =
   ContactsReadResponseSystemOwnerUser;
 
 export type ListingsUpdateResponsePropertyAdrBuildingBuildingImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponsePropertyAdrBuildingBuildingImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponsePropertyAdrBuildingBuildingImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponsePropertyAdrBuildingBuildingImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponsePropertyAdrBuildingBuildingImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponsePropertyAdrBuildingBuildingImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponsePropertyAdrBuildingBuildingImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponsePropertyAdrBuildingBuildingImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponsePropertyAdrBuildingBuildingImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 export const ListingsUpdateResponsePropertyAdrBuildingBuildingImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 
 export type ListingsUpdateResponsePropertyAdrBuildingBuildingImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 export const ListingsUpdateResponsePropertyAdrBuildingBuildingImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 
 export type ListingsUpdateResponsePropertyAdrBuilding =
   ListingsReadResponsePropertyAdrBuilding;
@@ -18552,34 +22387,34 @@ export const ListingsUpdateResponsePropertyPropertyCategory =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type ListingsUpdateResponsePropertyPropertyImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponsePropertyPropertyImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponsePropertyPropertyImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponsePropertyPropertyImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponsePropertyPropertyImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponsePropertyPropertyImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponsePropertyPropertyImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponsePropertyPropertyImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponsePropertyPropertyImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 export const ListingsUpdateResponsePropertyPropertyImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 
 export type ListingsUpdateResponsePropertyPropertyImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 export const ListingsUpdateResponsePropertyPropertyImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 
 export type ListingsUpdateResponsePropertySecurityUserRightsList =
   Array<string>;
@@ -18680,7 +22515,7 @@ export interface ListingsUpdateResponseProperty {
   attr_tenure?: unknown;
   attr_tenure_agent?: unknown;
   property_category?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
-  property_image?: ListingsReadResponsePropertyAdrBuildingBuildingImage | null;
+  property_image?: ContractsReadResponseListingListingPrimaryImage | null;
   security_user_rights?: ListingsUpdateResponsePropertySecurityUserRightsList | null;
   id?: number | null;
 }
@@ -18804,7 +22639,7 @@ export const ListingsUpdateResponseProperty = /*@__PURE__*/ S.suspend(() =>
       ),
     ),
     property_image: S.optional(
-      S.NullOr(ListingsReadResponsePropertyAdrBuildingBuildingImage),
+      S.NullOr(ContractsReadResponseListingListingPrimaryImage),
     ),
     security_user_rights: S.optional(
       S.NullOr(ListingsUpdateResponsePropertySecurityUserRightsList),
@@ -18941,29 +22776,29 @@ export const ListingsUpdateResponseRelatedListingEventsList =
   ) as any as S.Schema<ListingsUpdateResponseRelatedListingEventsList>;
 
 export type ListingsUpdateResponseRelatedListingImagesItemThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponseRelatedListingImagesItemThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponseRelatedListingImagesItemThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponseRelatedListingImagesItemThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponseRelatedListingImagesItemThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponseRelatedListingImagesItemThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponseRelatedListingImagesItemThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponseRelatedListingImagesItemThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponseRelatedListingImagesItemThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 export const ListingsUpdateResponseRelatedListingImagesItemThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 
 export type ListingsUpdateResponseRelatedListingImagesItem =
   ListingsReadResponseRelatedListingImagesItem;
@@ -18990,24 +22825,24 @@ export const ListingsUpdateResponseRelatedListingInsurancesList =
   ) as any as S.Schema<ListingsUpdateResponseRelatedListingInsurancesList>;
 
 export type ListingsUpdateResponseRelatedListingFloorplansItemThumbs800x800 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponseRelatedListingFloorplansItemThumbs800x800 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponseRelatedListingFloorplansItemThumbs400x400 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponseRelatedListingFloorplansItemThumbs400x400 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponseRelatedListingFloorplansItemThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponseRelatedListingFloorplansItemThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponseRelatedListingFloorplansItemThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const ListingsUpdateResponseRelatedListingFloorplansItemThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type ListingsUpdateResponseRelatedListingFloorplansItemThumbs =
   ListingsReadResponseRelatedListingFloorplansItemThumbs;
@@ -19214,7 +23049,7 @@ export interface ListingsUpdateResponse {
   listing_agent_1?: ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1 | null;
   listing_agent_2?: unknown;
   legal_solicitor?: ListingsReadResponseLegalSolicitor | null;
-  project_stage?: ListingsReadResponseProjectStage | null;
+  project_stage?: ContractsReadResponseListingProjectStage | null;
   location?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
   authority_type?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
   exclusivity?: unknown;
@@ -19327,7 +23162,9 @@ export const ListingsUpdateResponse = /*@__PURE__*/ S.suspend(() =>
     ),
     listing_agent_2: S.optional(S.Unknown),
     legal_solicitor: S.optional(S.NullOr(ListingsReadResponseLegalSolicitor)),
-    project_stage: S.optional(S.NullOr(ListingsReadResponseProjectStage)),
+    project_stage: S.optional(
+      S.NullOr(ContractsReadResponseListingProjectStage),
+    ),
     location: S.optional(
       S.NullOr(
         ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
@@ -25202,34 +29039,34 @@ export const PropertiesReadResponsePropertyCategory =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type PropertiesReadResponsePropertyImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const PropertiesReadResponsePropertyImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type PropertiesReadResponsePropertyImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const PropertiesReadResponsePropertyImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type PropertiesReadResponsePropertyImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const PropertiesReadResponsePropertyImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type PropertiesReadResponsePropertyImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const PropertiesReadResponsePropertyImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type PropertiesReadResponsePropertyImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 export const PropertiesReadResponsePropertyImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 
 export type PropertiesReadResponsePropertyImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 export const PropertiesReadResponsePropertyImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 
 export type PropertiesReadResponseRelatedPropertyTagsItem =
   ContactsReadResponseRelatedContactTagsItem;
@@ -25530,7 +29367,7 @@ export interface PropertiesReadResponse {
   attr_tenure?: unknown;
   attr_tenure_agent?: unknown;
   property_category?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
-  property_image?: ListingsReadResponsePropertyAdrBuildingBuildingImage | null;
+  property_image?: ContractsReadResponseListingListingPrimaryImage | null;
   note?: unknown;
   related?: PropertiesReadResponseRelated | null;
   security_user_rights?: PropertiesReadResponseSecurityUserRightsList | null;
@@ -25700,7 +29537,7 @@ export const PropertiesReadResponse = /*@__PURE__*/ S.suspend(() =>
       ),
     ),
     property_image: S.optional(
-      S.NullOr(ListingsReadResponsePropertyAdrBuildingBuildingImage),
+      S.NullOr(ContractsReadResponseListingListingPrimaryImage),
     ),
     note: S.optional(S.Unknown),
     related: S.optional(S.NullOr(PropertiesReadResponseRelated)),
@@ -25832,34 +29669,34 @@ export const PropertiesSearchResponseRowsItemPropertyCategory =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type PropertiesSearchResponseRowsItemPropertyImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const PropertiesSearchResponseRowsItemPropertyImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type PropertiesSearchResponseRowsItemPropertyImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const PropertiesSearchResponseRowsItemPropertyImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type PropertiesSearchResponseRowsItemPropertyImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const PropertiesSearchResponseRowsItemPropertyImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type PropertiesSearchResponseRowsItemPropertyImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const PropertiesSearchResponseRowsItemPropertyImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type PropertiesSearchResponseRowsItemPropertyImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 export const PropertiesSearchResponseRowsItemPropertyImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 
 export type PropertiesSearchResponseRowsItemPropertyImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 export const PropertiesSearchResponseRowsItemPropertyImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 
 export type PropertiesSearchResponseRowsItemSecurityUserRightsList =
   Array<string>;
@@ -25893,7 +29730,7 @@ export interface PropertiesSearchResponseRowsItem {
   system_created_user?: ContactsReadResponseSystemOwnerUser | null;
   adr_building?: ContactsReadResponseRelatedContactRelnPropertyItemPropertyAdrBuilding | null;
   property_category?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
-  property_image?: ListingsReadResponsePropertyAdrBuildingBuildingImage | null;
+  property_image?: ContractsReadResponseListingListingPrimaryImage | null;
   security_user_rights?: PropertiesSearchResponseRowsItemSecurityUserRightsList | null;
   etag?: string | null;
   id?: string | null;
@@ -25939,7 +29776,7 @@ export const PropertiesSearchResponseRowsItem = /*@__PURE__*/ S.suspend(() =>
       ),
     ),
     property_image: S.optional(
-      S.NullOr(ListingsReadResponsePropertyAdrBuildingBuildingImage),
+      S.NullOr(ContractsReadResponseListingListingPrimaryImage),
     ),
     security_user_rights: S.optional(
       S.NullOr(PropertiesSearchResponseRowsItemSecurityUserRightsList),
@@ -26510,34 +30347,34 @@ export const PropertiesUpdateResponsePropertyCategory =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type PropertiesUpdateResponsePropertyImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const PropertiesUpdateResponsePropertyImageThumbs800x600 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type PropertiesUpdateResponsePropertyImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const PropertiesUpdateResponsePropertyImageThumbs400x300 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type PropertiesUpdateResponsePropertyImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const PropertiesUpdateResponsePropertyImageThumbs200x150 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type PropertiesUpdateResponsePropertyImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 export const PropertiesUpdateResponsePropertyImageThumbs80x60 =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs800x600;
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
 
 export type PropertiesUpdateResponsePropertyImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 export const PropertiesUpdateResponsePropertyImageThumbs =
-  ListingsReadResponsePropertyAdrBuildingBuildingImageThumbs;
+  ContractsReadResponseListingListingPrimaryImageThumbs;
 
 export type PropertiesUpdateResponsePropertyImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 export const PropertiesUpdateResponsePropertyImage =
-  ListingsReadResponsePropertyAdrBuildingBuildingImage;
+  ContractsReadResponseListingListingPrimaryImage;
 
 export type PropertiesUpdateResponseRelatedPropertyTagsItem =
   ContactsReadResponseRelatedContactTagsItem;
@@ -26769,7 +30606,7 @@ export interface PropertiesUpdateResponse {
   attr_tenure?: unknown;
   attr_tenure_agent?: unknown;
   property_category?: ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null;
-  property_image?: ListingsReadResponsePropertyAdrBuildingBuildingImage | null;
+  property_image?: ContractsReadResponseListingListingPrimaryImage | null;
   note?: unknown;
   related?: PropertiesUpdateResponseRelated | null;
   security_user_rights?: PropertiesUpdateResponseSecurityUserRightsList | null;
@@ -26943,7 +30780,7 @@ export const PropertiesUpdateResponse = /*@__PURE__*/ S.suspend(() =>
       ),
     ),
     property_image: S.optional(
-      S.NullOr(ListingsReadResponsePropertyAdrBuildingBuildingImage),
+      S.NullOr(ContractsReadResponseListingListingPrimaryImage),
     ),
     note: S.optional(S.Unknown),
     related: S.optional(S.NullOr(PropertiesUpdateResponseRelated)),
@@ -27574,6 +31411,245 @@ export const contactsUpdate: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: ContactsUpdateRequest,
   output: ContactsUpdateResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsAutocompleteError = RexOpError;
+/** Autocomplete a simple search query Autocomplete records on search string */
+export const contractsAutocomplete: API.OperationMethod<
+  ContractsAutocompleteRequest,
+  ContractsAutocompleteResponse,
+  ContractsAutocompleteError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsAutocompleteRequest,
+  output: ContractsAutocompleteResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsCreateError = RexOpError;
+/** Create a record and return a reference to the id Create a record and return a reference to the id */
+export const contractsCreate: API.OperationMethod<
+  ContractsCreateRequest,
+  ContractsCreateResponse,
+  ContractsCreateError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsCreateRequest,
+  output: ContractsCreateResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsCreateOfferHistoryEntryError = RexOpError;
+/** Add / create offer history entry + update offer details Add / create offer history entry + update offer details */
+export const contractsCreateOfferHistoryEntry: API.OperationMethod<
+  ContractsCreateOfferHistoryEntryRequest,
+  ContractsCreateOfferHistoryEntryResponse,
+  ContractsCreateOfferHistoryEntryError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsCreateOfferHistoryEntryRequest,
+  output: ContractsCreateOfferHistoryEntryResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsDescribeError = RexOpError;
+/** Describes the class and its methods - simply or in detail Describes the class and its methods - simply or in detail */
+export const contractsDescribe: API.OperationMethod<
+  ContractsDescribeRequest,
+  ContractsDescribeResponse,
+  ContractsDescribeError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsDescribeRequest,
+  output: ContractsDescribeResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsDescribeDeleteModesError = RexOpError;
+/** Describes available delete modes Describes available delete modes */
+export const contractsDescribeDeleteModes: API.OperationMethod<
+  ContractsDescribeDeleteModesRequest,
+  ContractsDescribeDeleteModesResponse,
+  ContractsDescribeDeleteModesError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsDescribeDeleteModesRequest,
+  output: ContractsDescribeDeleteModesResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsDescribeModelError = RexOpError;
+/** Describes certain characteristics of the model including searchable fields, orderby fields and delete modes Describes certain characteristics of the model including searchable fields, orderby fields and delete modes */
+export const contractsDescribeModel: API.OperationMethod<
+  ContractsDescribeModelRequest,
+  ContractsDescribeModelResponse,
+  ContractsDescribeModelError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsDescribeModelRequest,
+  output: ContractsDescribeModelResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsDescribeSearchFieldsError = RexOpError;
+/** Describes search fields Describes search fields */
+export const contractsDescribeSearchFields: API.OperationMethod<
+  ContractsDescribeSearchFieldsRequest,
+  ContractsDescribeSearchFieldsResponse,
+  ContractsDescribeSearchFieldsError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsDescribeSearchFieldsRequest,
+  output: ContractsDescribeSearchFieldsResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsDuplicateTemplateContractError = RexOpError;
+/** Duplicate a template contract Duplicate a template contract */
+export const contractsDuplicateTemplateContract: API.OperationMethod<
+  ContractsDuplicateTemplateContractRequest,
+  ContractsDuplicateTemplateContractResponse,
+  ContractsDuplicateTemplateContractError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsDuplicateTemplateContractRequest,
+  output: ContractsDuplicateTemplateContractResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsGetComplianceInfoError = RexOpError;
+export const contractsGetComplianceInfo: API.OperationMethod<
+  ContractsGetComplianceInfoRequest,
+  ContractsGetComplianceInfoResponse,
+  ContractsGetComplianceInfoError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsGetComplianceInfoRequest,
+  output: ContractsGetComplianceInfoResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsGetConditionsForListingError = RexOpError;
+/** Get conditions that can be added to a contract for a listing Get conditions that can be added to a contract for a listing */
+export const contractsGetConditionsForListing: API.OperationMethod<
+  ContractsGetConditionsForListingRequest,
+  ContractsGetConditionsForListingResponse,
+  ContractsGetConditionsForListingError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsGetConditionsForListingRequest,
+  output: ContractsGetConditionsForListingResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsGetOfferHistoryError = RexOpError;
+/** Get offer history for a contract Get offer history for a contract */
+export const contractsGetOfferHistory: API.OperationMethod<
+  ContractsGetOfferHistoryRequest,
+  ContractsGetOfferHistoryResponse,
+  ContractsGetOfferHistoryError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsGetOfferHistoryRequest,
+  output: ContractsGetOfferHistoryResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsPurgeError = RexOpError;
+/** Truly and fully deletes the record from the database. Truly and fully deletes the record from the database. */
+export const contractsPurge: API.OperationMethod<
+  ContractsPurgeRequest,
+  ContractsPurgeResponse,
+  ContractsPurgeError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsPurgeRequest,
+  output: ContractsPurgeResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsReadError = RexOpError;
+/** Read a record by id */
+export const contractsRead: API.OperationMethod<
+  ContractsReadRequest,
+  ContractsReadResponse,
+  ContractsReadError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsReadRequest,
+  output: ContractsReadResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsSearchError = RexOpError;
+/** Perform a search Perform a search */
+export const contractsSearch: API.OperationMethod<
+  ContractsSearchRequest,
+  ContractsSearchResponse,
+  ContractsSearchError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsSearchRequest,
+  output: ContractsSearchResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsSearchWithPolicyError = RexOpError;
+/** Visibility-filtered search: excludes restricted pre-unconditional contract rows from the result set and returns an accurate `total` reflecting only visible contracts. Visibility-filtered search: excludes restricted pre-unconditional contract rows from the result set and returns an accurate `total` reflecting only visible contracts. */
+export const contractsSearchWithPolicy: API.OperationMethod<
+  ContractsSearchWithPolicyRequest,
+  ContractsSearchWithPolicyResponse,
+  ContractsSearchWithPolicyError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsSearchWithPolicyRequest,
+  output: ContractsSearchWithPolicyResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type ContractsUpdateError = RexOpError;
+/** Update the record. To remove sub records include the _destroy flag Update the record. To remove sub records include the _destroy flag */
+export const contractsUpdate: API.OperationMethod<
+  ContractsUpdateRequest,
+  ContractsUpdateResponse,
+  ContractsUpdateError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: ContractsUpdateRequest,
+  output: ContractsUpdateResponse,
   errors: [UnknownRexError, RexApiError],
   protocol: RexProtocol,
   retry: Retry.Retry,

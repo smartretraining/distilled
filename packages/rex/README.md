@@ -151,7 +151,7 @@ Re-running `bun run generate` with unchanged specs is idempotent.
 ### Adding more Rex services
 
 Rex has ~272 services. This package generates **Listings**, **Properties**,
-**AdminWebhooks**, **Feedback**, **Contacts**, **Notes** and
+**AdminWebhooks**, **Feedback**, **Contacts**, **Notes**, **Contracts** and
 **AdminValueLists**. To add another:
 
 1. Append the service name to the `SERVICES` array in `scripts/scrape-specs.ts`.

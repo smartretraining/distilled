@@ -52,6 +52,11 @@ const SERVICES = [
   // listing-bound. Generated rather than hand-modelled because Notes ships a
   // full `openapi` block, so the types are real.
   "Notes",
+  // Rex's sale object. There is no `Sales`, `Offers`, `ListingSales` or
+  // `Commissions` service — all four 400 — so a sale's price, its offer /
+  // unconditional / settlement / fallen dates and its `contract_status` are
+  // reachable only through Contracts.
+  "Contracts",
   // The only route to `enquiry_source`, whose valuelist is declared
   // `source: "remote"` — its permitted values are per-account and exist
   // nowhere in the spec, so they can only be read at runtime.
