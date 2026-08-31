@@ -9,11 +9,7 @@ export default {
     include: ["test/**/*.test.ts"],
     testTimeout: 120000,
     // Rex's testing account is shared; run serially to stay friendly.
+    fileParallelism: false,
     pool: "forks",
-    poolOptions: {
-      forks: {
-        singleFork: true,
-      },
-    },
   },
 };

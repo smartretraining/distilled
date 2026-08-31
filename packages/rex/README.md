@@ -31,6 +31,20 @@ const program = Effect.gen(function* () {
 const rows = await Effect.runPromise(program.pipe(Effect.provide(RexLive)));
 ```
 
+The published listing feed used by website and import workflows is available
+through `publishedListingsSearch`:
+
+```typescript
+import { publishedListingsSearch } from "@smartretraining/rex-effect";
+
+const page = yield* publishedListingsSearch({
+  criteria: [{ system_listing_state: "current" }],
+  order_by: { system_ctime: "desc" },
+  limit: 20,
+  offset: 0,
+});
+```
+
 Every operation is a function `Op(input) => Effect<Output, Error, ...>`. The
 Rex `{ result, error, correlation }` envelope is unwrapped automatically by the
 client — generated output schemas describe just the inner `result` payload.
@@ -134,28 +148,30 @@ and `specs/rex/_catalog.json`.
 ### 2. Generate
 
 ```bash
+bun run convert
 bun run generate
 ```
 
-This chains three steps:
+The generation pipeline runs three steps:
 
 1. `scripts/build-openapi.ts` — transforms the scraped `specs/rex/*.describe.json`
-   files into a single OpenAPI 3.1 document at `specs/openapi.generated.json`.
-2. `scripts/generate.ts` — runs the shared `@distilled.cloud/core` OpenAPI
-   generator over that document, emitting one module per Rex method into
-   `src/services/` and rewriting the `index.ts` barrel.
+   files into a single OpenAPI 3.1 document at `specs/openapi.generated.json`,
+   then `scripts/convert.ts` converts it to the Smithy model.
+2. `scripts/generate.ts` — runs the shared `@distilled.cloud/core` generator
+   over that model, emitting one module per Rex method into `src/services/`
+   and rewriting the `index.ts` barrel.
 3. `oxlint --fix` + `oxfmt` — lint and format the generated code.
 
 Re-running `bun run generate` with unchanged specs is idempotent.
 
 ### Adding more Rex services
 
-Rex has ~272 services. This package generates **Listings**, **Properties**,
-**AdminWebhooks**, **Feedback**, **Contacts**, **Notes**, **Contracts** and
-**AdminValueLists**. To add another:
+Rex has ~272 services. This package generates **Listings**,
+**PublishedListings**, **Properties**, **AdminWebhooks**, **Feedback**,
+**Contacts**, **Notes**, **Contracts** and **AdminValueLists**. To add another:
 
 1. Append the service name to the `SERVICES` array in `scripts/scrape-specs.ts`.
-2. Run `bun run specs:scrape` then `bun run generate`.
+2. Run `bun run specs:scrape`, `bun run convert`, then `bun run generate`.
 
 **Diff `specs/rex/` before committing a re-scrape.** Rex's introspection
 drifts in both directions and neither direction announces itself. Measured

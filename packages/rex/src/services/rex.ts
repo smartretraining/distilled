@@ -4571,6 +4571,15 @@ export const AdminWebhooksReadResponse = /*@__PURE__*/ S.suspend(() =>
   identifier: "AdminWebhooksReadResponse",
 }) as any as S.Schema<AdminWebhooksReadResponse>;
 
+/** An array keyed by field name with a value of either ASC|DESC */
+export type AdminWebhooksSearchRequestOrderByMap = {
+  [key: string]: string | undefined;
+};
+export const AdminWebhooksSearchRequestOrderByMap = /*@__PURE__*/ S.Record(
+  S.String,
+  S.String,
+) as any as S.Schema<AdminWebhooksSearchRequestOrderByMap>;
+
 /** An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service. */
 export type AdminWebhooksSearchRequestExtraOptionsList = Array<unknown>;
 export const AdminWebhooksSearchRequestExtraOptionsList = /*@__PURE__*/ S.Array(
@@ -4581,7 +4590,7 @@ export interface AdminWebhooksSearchRequest {
   /** An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value) */
   criteria?: unknown;
   /** An array keyed by field name with a value of either ASC|DESC */
-  order_by?: string;
+  order_by?: AdminWebhooksSearchRequestOrderByMap;
   /** The number of rows to offset */
   offset?: number;
   /** The number of rows to return */
@@ -4600,7 +4609,7 @@ export interface AdminWebhooksSearchRequest {
 export const AdminWebhooksSearchRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     criteria: S.optional(S.Unknown),
-    order_by: S.optional(S.String),
+    order_by: S.optional(AdminWebhooksSearchRequestOrderByMap),
     offset: S.optional(S.Number),
     limit: S.optional(S.Number),
     create_viewstate: S.optional(S.Boolean),
@@ -8021,6 +8030,15 @@ export const ContactsRecoverFromTrashResponse = /*@__PURE__*/ S.suspend(() =>
   identifier: "ContactsRecoverFromTrashResponse",
 }) as any as S.Schema<ContactsRecoverFromTrashResponse>;
 
+/** An array keyed by field name with a value of either ASC|DESC */
+export type ContactsSearchRequestOrderByMap = {
+  [key: string]: string | undefined;
+};
+export const ContactsSearchRequestOrderByMap = /*@__PURE__*/ S.Record(
+  S.String,
+  S.String,
+) as any as S.Schema<ContactsSearchRequestOrderByMap>;
+
 /** An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service. */
 export type ContactsSearchRequestExtraOptionsList = Array<unknown>;
 export const ContactsSearchRequestExtraOptionsList = /*@__PURE__*/ S.Array(
@@ -8031,7 +8049,7 @@ export interface ContactsSearchRequest {
   /** An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value) */
   criteria?: unknown;
   /** An array keyed by field name with a value of either ASC|DESC */
-  order_by?: string;
+  order_by?: ContactsSearchRequestOrderByMap;
   /** The number of rows to offset */
   offset?: number;
   /** The number of rows to return */
@@ -8050,7 +8068,7 @@ export interface ContactsSearchRequest {
 export const ContactsSearchRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     criteria: S.optional(S.Unknown),
-    order_by: S.optional(S.String),
+    order_by: S.optional(ContactsSearchRequestOrderByMap),
     offset: S.optional(S.Number),
     limit: S.optional(S.Number),
     create_viewstate: S.optional(S.Boolean),
@@ -11890,6 +11908,15 @@ export const ContractsReadResponse = /*@__PURE__*/ S.suspend(() =>
   identifier: "ContractsReadResponse",
 }) as any as S.Schema<ContractsReadResponse>;
 
+/** An array keyed by field name with a value of either ASC|DESC */
+export type ContractsSearchRequestOrderByMap = {
+  [key: string]: string | undefined;
+};
+export const ContractsSearchRequestOrderByMap = /*@__PURE__*/ S.Record(
+  S.String,
+  S.String,
+) as any as S.Schema<ContractsSearchRequestOrderByMap>;
+
 /** An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service. */
 export type ContractsSearchRequestExtraOptionsList = Array<unknown>;
 export const ContractsSearchRequestExtraOptionsList = /*@__PURE__*/ S.Array(
@@ -11900,7 +11927,7 @@ export interface ContractsSearchRequest {
   /** An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value) */
   criteria?: unknown;
   /** An array keyed by field name with a value of either ASC|DESC */
-  order_by?: string;
+  order_by?: ContractsSearchRequestOrderByMap;
   /** The number of rows to offset */
   offset?: number;
   /** The number of rows to return */
@@ -11919,7 +11946,7 @@ export interface ContractsSearchRequest {
 export const ContractsSearchRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     criteria: S.optional(S.Unknown),
-    order_by: S.optional(S.String),
+    order_by: S.optional(ContractsSearchRequestOrderByMap),
     offset: S.optional(S.Number),
     limit: S.optional(S.Number),
     create_viewstate: S.optional(S.Boolean),
@@ -12272,9 +12299,18 @@ export const ContractsSearchResponse = /*@__PURE__*/ S.suspend(() =>
   identifier: "ContractsSearchResponse",
 }) as any as S.Schema<ContractsSearchResponse>;
 
+export type ContractsSearchWithPolicyRequestOrderByMap = {
+  [key: string]: string | undefined;
+};
+export const ContractsSearchWithPolicyRequestOrderByMap =
+  /*@__PURE__*/ S.Record(
+    S.String,
+    S.String,
+  ) as any as S.Schema<ContractsSearchWithPolicyRequestOrderByMap>;
+
 export interface ContractsSearchWithPolicyRequest {
   criteria?: unknown;
-  order_by?: unknown;
+  order_by?: ContractsSearchWithPolicyRequestOrderByMap;
   create_viewstate?: unknown;
   search_state?: unknown;
   result_format?: unknown;
@@ -12285,7 +12321,7 @@ export interface ContractsSearchWithPolicyRequest {
 export const ContractsSearchWithPolicyRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     criteria: S.optional(S.Unknown),
-    order_by: S.optional(S.Unknown),
+    order_by: S.optional(ContractsSearchWithPolicyRequestOrderByMap),
     create_viewstate: S.optional(S.Unknown),
     search_state: S.optional(S.Unknown),
     result_format: S.optional(S.Unknown),
@@ -15846,6 +15882,15 @@ export const FeedbackRecoverFromTrashResponse = /*@__PURE__*/ S.suspend(() =>
   identifier: "FeedbackRecoverFromTrashResponse",
 }) as any as S.Schema<FeedbackRecoverFromTrashResponse>;
 
+/** An array keyed by field name with a value of either ASC|DESC */
+export type FeedbackSearchRequestOrderByMap = {
+  [key: string]: string | undefined;
+};
+export const FeedbackSearchRequestOrderByMap = /*@__PURE__*/ S.Record(
+  S.String,
+  S.String,
+) as any as S.Schema<FeedbackSearchRequestOrderByMap>;
+
 /** An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service. */
 export type FeedbackSearchRequestExtraOptionsList = Array<unknown>;
 export const FeedbackSearchRequestExtraOptionsList = /*@__PURE__*/ S.Array(
@@ -15856,7 +15901,7 @@ export interface FeedbackSearchRequest {
   /** An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value) */
   criteria?: unknown;
   /** An array keyed by field name with a value of either ASC|DESC */
-  order_by?: string;
+  order_by?: FeedbackSearchRequestOrderByMap;
   /** The number of rows to offset */
   offset?: number;
   /** The number of rows to return */
@@ -15875,7 +15920,7 @@ export interface FeedbackSearchRequest {
 export const FeedbackSearchRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     criteria: S.optional(S.Unknown),
-    order_by: S.optional(S.String),
+    order_by: S.optional(FeedbackSearchRequestOrderByMap),
     offset: S.optional(S.Number),
     limit: S.optional(S.Number),
     create_viewstate: S.optional(S.Boolean),
@@ -21239,6 +21284,15 @@ export const ListingsReadResponse = /*@__PURE__*/ S.suspend(() =>
   identifier: "ListingsReadResponse",
 }) as any as S.Schema<ListingsReadResponse>;
 
+/** An array keyed by field name with a value of either ASC|DESC */
+export type ListingsSearchRequestOrderByMap = {
+  [key: string]: string | undefined;
+};
+export const ListingsSearchRequestOrderByMap = /*@__PURE__*/ S.Record(
+  S.String,
+  S.String,
+) as any as S.Schema<ListingsSearchRequestOrderByMap>;
+
 /** An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service. */
 export type ListingsSearchRequestExtraOptionsList = Array<unknown>;
 export const ListingsSearchRequestExtraOptionsList = /*@__PURE__*/ S.Array(
@@ -21249,7 +21303,7 @@ export interface ListingsSearchRequest {
   /** An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value) */
   criteria?: unknown;
   /** An array keyed by field name with a value of either ASC|DESC */
-  order_by?: string;
+  order_by?: ListingsSearchRequestOrderByMap;
   /** The number of rows to offset */
   offset?: number;
   /** The number of rows to return */
@@ -21268,7 +21322,7 @@ export interface ListingsSearchRequest {
 export const ListingsSearchRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     criteria: S.optional(S.Unknown),
-    order_by: S.optional(S.String),
+    order_by: S.optional(ListingsSearchRequestOrderByMap),
     offset: S.optional(S.Number),
     limit: S.optional(S.Number),
     create_viewstate: S.optional(S.Boolean),
@@ -25665,6 +25719,15 @@ export const NotesRecoverFromTrashResponse = /*@__PURE__*/ S.suspend(() =>
   identifier: "NotesRecoverFromTrashResponse",
 }) as any as S.Schema<NotesRecoverFromTrashResponse>;
 
+/** An array keyed by field name with a value of either ASC|DESC */
+export type NotesSearchRequestOrderByMap = {
+  [key: string]: string | undefined;
+};
+export const NotesSearchRequestOrderByMap = /*@__PURE__*/ S.Record(
+  S.String,
+  S.String,
+) as any as S.Schema<NotesSearchRequestOrderByMap>;
+
 /** An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service. */
 export type NotesSearchRequestExtraOptionsList = Array<unknown>;
 export const NotesSearchRequestExtraOptionsList = /*@__PURE__*/ S.Array(
@@ -25675,7 +25738,7 @@ export interface NotesSearchRequest {
   /** An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value) */
   criteria?: unknown;
   /** An array keyed by field name with a value of either ASC|DESC */
-  order_by?: string;
+  order_by?: NotesSearchRequestOrderByMap;
   /** The number of rows to offset */
   offset?: number;
   /** The number of rows to return */
@@ -25694,7 +25757,7 @@ export interface NotesSearchRequest {
 export const NotesSearchRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     criteria: S.optional(S.Unknown),
-    order_by: S.optional(S.String),
+    order_by: S.optional(NotesSearchRequestOrderByMap),
     offset: S.optional(S.Number),
     limit: S.optional(S.Number),
     create_viewstate: S.optional(S.Boolean),
@@ -29599,6 +29662,15 @@ export const PropertiesRecoverFromTrashResponse = /*@__PURE__*/ S.suspend(() =>
   identifier: "PropertiesRecoverFromTrashResponse",
 }) as any as S.Schema<PropertiesRecoverFromTrashResponse>;
 
+/** An array keyed by field name with a value of either ASC|DESC */
+export type PropertiesSearchRequestOrderByMap = {
+  [key: string]: string | undefined;
+};
+export const PropertiesSearchRequestOrderByMap = /*@__PURE__*/ S.Record(
+  S.String,
+  S.String,
+) as any as S.Schema<PropertiesSearchRequestOrderByMap>;
+
 /** An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service. */
 export type PropertiesSearchRequestExtraOptionsList = Array<unknown>;
 export const PropertiesSearchRequestExtraOptionsList = /*@__PURE__*/ S.Array(
@@ -29609,7 +29681,7 @@ export interface PropertiesSearchRequest {
   /** An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value) */
   criteria?: unknown;
   /** An array keyed by field name with a value of either ASC|DESC */
-  order_by?: string;
+  order_by?: PropertiesSearchRequestOrderByMap;
   /** The number of rows to offset */
   offset?: number;
   /** The number of rows to return */
@@ -29628,7 +29700,7 @@ export interface PropertiesSearchRequest {
 export const PropertiesSearchRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     criteria: S.optional(S.Unknown),
-    order_by: S.optional(S.String),
+    order_by: S.optional(PropertiesSearchRequestOrderByMap),
     offset: S.optional(S.Number),
     limit: S.optional(S.Number),
     create_viewstate: S.optional(S.Boolean),
@@ -30791,6 +30863,11585 @@ export const PropertiesUpdateResponse = /*@__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "PropertiesUpdateResponse",
 }) as any as S.Schema<PropertiesUpdateResponse>;
+
+/** An array of states that the results should be filtered to (current/withdrawn/sold/leased) */
+export type PublishedListingsAutocompleteRequestListingStatesList =
+  Array<unknown>;
+export const PublishedListingsAutocompleteRequestListingStatesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsAutocompleteRequestListingStatesList>;
+
+export interface PublishedListingsAutocompleteRequest {
+  /** The start of the address we're searching for */
+  search_string?: string;
+  /** An array of states that the results should be filtered to (current/withdrawn/sold/leased) */
+  listing_states?: PublishedListingsAutocompleteRequestListingStatesList;
+  /** Max 50 (default 20) */
+  limit?: number;
+  return_viewstate?: unknown;
+}
+export const PublishedListingsAutocompleteRequest = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      search_string: S.optional(S.String),
+      listing_states: S.optional(
+        PublishedListingsAutocompleteRequestListingStatesList,
+      ),
+      limit: S.optional(S.Number),
+      return_viewstate: S.optional(S.Unknown),
+    }).pipe(
+      T.Http({
+        method: "POST",
+        uri: "/v1/rex/PublishedListings::autocomplete",
+        code: 200,
+      }),
+    ),
+).annotate({
+  identifier: "PublishedListingsAutocompleteRequest",
+}) as any as S.Schema<PublishedListingsAutocompleteRequest>;
+
+export type PublishedListingsAutocompleteResponse = unknown;
+export const PublishedListingsAutocompleteResponse = /*@__PURE__*/ S.suspend(
+  () => S.Unknown.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "PublishedListingsAutocompleteResponse",
+}) as any as S.Schema<PublishedListingsAutocompleteResponse>;
+
+export interface PublishedListingsDescribeRequest {
+  /** True if detailed descriptions of each method should be included */
+  include_detail?: boolean;
+}
+export const PublishedListingsDescribeRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    include_detail: S.optional(S.Boolean),
+  }).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/PublishedListings::describe",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "PublishedListingsDescribeRequest",
+}) as any as S.Schema<PublishedListingsDescribeRequest>;
+
+export type PublishedListingsDescribeResponseMethodsAutocompleteParametersSearchString =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const PublishedListingsDescribeResponseMethodsAutocompleteParametersSearchString =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStatesDefaultValueList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStatesDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStatesDefaultValueList>;
+
+export interface PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStates {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStatesDefaultValueList | null;
+  required?: boolean | null;
+}
+export const PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStates =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStatesDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStates",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStates>;
+
+export type PublishedListingsDescribeResponseMethodsAutocompleteParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+export const PublishedListingsDescribeResponseMethodsAutocompleteParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+
+export interface PublishedListingsDescribeResponseMethodsAutocompleteParameters {
+  search_string?: AdminValueListsDescribeResponseMethodsArchiveParametersId | null;
+  listing_states?: PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStates | null;
+  limit?: AdminValueListsDescribeResponseMethodsSearchParametersOffset | null;
+}
+export const PublishedListingsDescribeResponseMethodsAutocompleteParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      search_string: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParametersId),
+      ),
+      listing_states: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStates,
+        ),
+      ),
+      limit: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsSearchParametersOffset),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsAutocompleteParameters",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteParameters>;
+
+export interface PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchStringDefinition {
+  description?: string | null;
+  type?: string | null;
+  default?: unknown;
+}
+export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchStringDefinition =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default: S.optional(S.Unknown),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchStringDefinition",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchStringDefinition>;
+
+export interface PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString {
+  required?: boolean | null;
+  definition?: PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchStringDefinition | null;
+}
+export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      required: S.optional(S.NullOr(S.Boolean)),
+      definition: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchStringDefinition,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString>;
+
+export type PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinitionDefaultList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinitionDefaultList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinitionDefaultList>;
+
+export interface PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinition {
+  description?: string | null;
+  type?: string | null;
+  default?: PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinitionDefaultList | null;
+}
+export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinition =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinitionDefaultList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinition",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinition>;
+
+export interface PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStates {
+  required?: boolean | null;
+  definition?: PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinition | null;
+}
+export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStates =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      required: S.optional(S.NullOr(S.Boolean)),
+      definition: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinition,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStates",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStates>;
+
+export type PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersLimitDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersLimitDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+
+export type PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+
+export interface PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParameters {
+  search_string?: PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString | null;
+  listing_states?: PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStates | null;
+  limit?: AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset | null;
+}
+export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      search_string: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString,
+        ),
+      ),
+      listing_states: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStates,
+        ),
+      ),
+      limit: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParameters",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParameters>;
+
+export type PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParameters | null;
+  examples?: PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParameters,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequest>;
+
+export type PublishedListingsDescribeResponseMethodsAutocompleteOpenapiResponseExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiResponseExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteOpenapiResponseExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsAutocompleteOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsAutocompleteOpenapiResponseExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteOpenapiResponseExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsAutocompleteOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsAutocompleteOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsAutocompleteOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsAutocompleteOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsAutocomplete {
+  description?: string | null;
+  parameters?: PublishedListingsDescribeResponseMethodsAutocompleteParameters | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsAutocompleteOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsAutocomplete =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteParameters,
+        ),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsAutocompleteOpenapi),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsAutocomplete",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocomplete>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeParametersIncludeDetail =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+export const PublishedListingsDescribeResponseMethodsDescribeParametersIncludeDetail =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeParameters {
+  include_detail?: AdminValueListsDescribeResponseMethodsCreateParametersReturnId | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      include_detail: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsCreateParametersReturnId,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsDescribeParameters",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeParameters>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParametersIncludeDetailDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParametersIncludeDetailDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParametersIncludeDetail =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParametersIncludeDetail =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParameters {
+  include_detail?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      include_detail: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParameters",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParameters>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamplesExample1 {
+  include_detail?: boolean | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamplesExample1 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      include_detail: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamplesExample1",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamplesExample1>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamples {
+  Example1?: PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamplesExample1 | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamplesExample1,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamples",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamples>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParameters | null;
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParameters,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequestParametersList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequestParametersList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequestParametersList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequestExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequestExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequestExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequestParametersList | null;
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequestExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequestParametersList,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequestExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequest>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiResponseExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiResponseExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiResponseExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiResponseExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiResponseExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocomplete {
+  description?: string | null;
+  parameters?: string | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocomplete =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(S.NullOr(S.String)),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocompleteOpenapi,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocomplete",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocomplete>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiRequestParametersIncludeDetailDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiRequestParametersIncludeDetailDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiRequestParametersIncludeDetail =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiRequestParametersIncludeDetail =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiRequestParameters =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParameters;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiRequestParameters =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParameters;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiRequestExamplesExample1 =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamplesExample1;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiRequestExamplesExample1 =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamplesExample1;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiRequestExamples =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamples;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiRequestExamples =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamples;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiRequest =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiRequest =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1ExampleResult {
+  name?: string | null;
+  description?: string | null;
+  detail?: string | null;
+  methods?: unknown | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1ExampleResult =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      description: S.optional(S.NullOr(S.String)),
+      detail: S.optional(S.NullOr(S.String)),
+      methods: S.optional(S.NullOr(S.Unknown)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1ExampleResult",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1ExampleResult>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1Example {
+  result?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1ExampleResult | null;
+  error?: unknown;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1Example =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      result: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1ExampleResult,
+        ),
+      ),
+      error: S.optional(S.Unknown),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1Example",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1Example>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1 {
+  code?: string | null;
+  summary?: string | null;
+  example?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1Example | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      code: S.optional(S.NullOr(S.String)),
+      summary: S.optional(S.NullOr(S.String)),
+      example: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1Example,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamples {
+  Example1?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1 | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamplesExample1,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamples",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamples>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponseExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapi {
+  available?: boolean | null;
+  description?: unknown;
+  request?: PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.Unknown),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribe {
+  description?: string | null;
+  parameters?: string | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribe =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(S.NullOr(S.String)),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeOpenapi,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribe",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribe>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequestParametersList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequestParametersList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequestParametersList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequestExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequestExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequestExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequestParametersList | null;
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequestExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequestParametersList,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequestExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequest>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1ExampleResultList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1ExampleResultList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1ExampleResultList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1Example {
+  result?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1ExampleResultList | null;
+  error?: unknown;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1Example =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      result: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1ExampleResultList,
+        ),
+      ),
+      error: S.optional(S.Unknown),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1Example",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1Example>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1 {
+  code?: string | null;
+  summary?: string | null;
+  example?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1Example | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      code: S.optional(S.NullOr(S.String)),
+      summary: S.optional(S.NullOr(S.String)),
+      example: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1Example,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamples {
+  Example1?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1 | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamplesExample1,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamples",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamples>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponseExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapi {
+  available?: boolean | null;
+  description?: unknown;
+  request?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.Unknown),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModes {
+  description?: string | null;
+  parameters?: string | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModes =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(S.NullOr(S.String)),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModesOpenapi,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModes",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModes>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequestParametersList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequestParametersList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequestParametersList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequestExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequestExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequestExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequestParametersList | null;
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequestExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequestParametersList,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequestExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequest>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultSearchResultFormatsList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultSearchResultFormatsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultSearchResultFormatsList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultDeleteModesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultDeleteModesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultDeleteModesList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultOrderbyFieldsList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultOrderbyFieldsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultOrderbyFieldsList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultExportOptionsList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultExportOptionsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultExportOptionsList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResult {
+  search_result_formats?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultSearchResultFormatsList | null;
+  delete_modes?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultDeleteModesList | null;
+  data_structure?: unknown | null;
+  read_fields?: unknown | null;
+  read_extra_fields?: unknown | null;
+  searchable_fields?: unknown | null;
+  orderby_fields?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultOrderbyFieldsList | null;
+  export_options?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultExportOptionsList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResult =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      search_result_formats: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultSearchResultFormatsList,
+        ),
+      ),
+      delete_modes: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultDeleteModesList,
+        ),
+      ),
+      data_structure: S.optional(S.NullOr(S.Unknown)),
+      read_fields: S.optional(S.NullOr(S.Unknown)),
+      read_extra_fields: S.optional(S.NullOr(S.Unknown)),
+      searchable_fields: S.optional(S.NullOr(S.Unknown)),
+      orderby_fields: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultOrderbyFieldsList,
+        ),
+      ),
+      export_options: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResultExportOptionsList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResult",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResult>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1Example {
+  result?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResult | null;
+  error?: unknown;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1Example =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      result: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1ExampleResult,
+        ),
+      ),
+      error: S.optional(S.Unknown),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1Example",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1Example>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1 {
+  code?: string | null;
+  summary?: string | null;
+  example?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1Example | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      code: S.optional(S.NullOr(S.String)),
+      summary: S.optional(S.NullOr(S.String)),
+      example: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1Example,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamples {
+  Example1?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1 | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamplesExample1,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamples",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamples>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponseExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapi {
+  available?: boolean | null;
+  description?: unknown;
+  request?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.Unknown),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModel {
+  description?: string | null;
+  parameters?: string | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModel =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(S.NullOr(S.String)),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModelOpenapi,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModel",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModel>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiRequestParametersIncludeDetailDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiRequestParametersIncludeDetailDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiRequestParametersIncludeDetail =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiRequestParametersIncludeDetail =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiRequestParameters =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParameters;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiRequestParameters =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParameters;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiRequestExamplesExample1 =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamplesExample1;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiRequestExamplesExample1 =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamplesExample1;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiRequestExamples =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamples;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiRequestExamples =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamples;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiRequest =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiRequest =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1Example {
+  result?: unknown | null;
+  error?: unknown;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1Example =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      result: S.optional(S.NullOr(S.Unknown)),
+      error: S.optional(S.Unknown),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1Example",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1Example>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1 {
+  code?: string | null;
+  summary?: string | null;
+  example?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1Example | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      code: S.optional(S.NullOr(S.String)),
+      summary: S.optional(S.NullOr(S.String)),
+      example: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1Example,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamples {
+  Example1?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1 | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamples",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamples>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponseExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapi {
+  available?: boolean | null;
+  description?: unknown;
+  request?: PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.Unknown),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFields {
+  description?: string | null;
+  parameters?: string | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(S.NullOr(S.String)),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFieldsOpenapi,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFields",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFields>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequestParametersList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequestParametersList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequestParametersList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequestExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequestExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequestExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequestParametersList | null;
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequestExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequestParametersList,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequestExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequest>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiResponseExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiResponseExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiResponseExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiResponseExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiResponseExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbs {
+  description?: string | null;
+  parameters?: string | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbs =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(S.NullOr(S.String)),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbsOpenapi,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbs",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbs>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequestParametersList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequestParametersList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequestParametersList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequestExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequestExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequestExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequestParametersList | null;
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequestExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequestParametersList,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequestExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequest>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiResponseExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiResponseExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiResponseExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiResponseExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiResponseExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLink {
+  description?: string | null;
+  parameters?: string | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLink =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(S.NullOr(S.String)),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLinkOpenapi,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLink",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLink>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequestParametersList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequestParametersList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequestParametersList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequestExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequestExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequestExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequestParametersList | null;
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequestExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequestParametersList,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequestExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequest>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiResponseExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiResponseExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiResponseExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiResponseExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiResponseExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsRead {
+  description?: string | null;
+  parameters?: string | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsRead =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(S.NullOr(S.String)),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsReadOpenapi,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsRead",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsRead>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersCriteriaDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersCriteriaDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersCriteria =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersCriteria =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersOrderByDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersOrderByDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersOrderBy =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersOrderBy =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersOffsetDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersOffsetDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersLimitDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersLimitDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersCreateViewstateDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersCreateViewstateDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersResultFormatDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersResultFormatDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersExtraOptionsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersExtraOptionsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersExtraOptions =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParametersExtraOptions =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParameters;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestParameters =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParameters;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamplesExample1;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamplesExample1;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamples;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamples;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequest;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiRequest =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequest;
+
+export type PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamplesExample1ExampleList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamplesExample1ExampleList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamplesExample1ExampleList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamplesExample1 {
+  code?: string | null;
+  summary?: string | null;
+  example?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamplesExample1ExampleList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamplesExample1 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      code: S.optional(S.NullOr(S.String)),
+      summary: S.optional(S.NullOr(S.String)),
+      example: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamplesExample1ExampleList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamplesExample1",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamplesExample1>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamples {
+  Example1?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamplesExample1 | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamplesExample1,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamples",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamples>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponseExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: AdminValueListsDescribeResponseMethodsSearchOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsSearchOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearch {
+  description?: string | null;
+  parameters?: string | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearch =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(S.NullOr(S.String)),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearchOpenapi,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearch",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearch>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethods {
+  autocomplete?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocomplete | null;
+  describe?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribe | null;
+  describeDeleteModes?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModes | null;
+  describeModel?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModel | null;
+  describeSearchFields?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFields | null;
+  getUniqueListingSuburbs?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbs | null;
+  link?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLink | null;
+  read?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsRead | null;
+  search?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearch | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethods =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      autocomplete: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsAutocomplete,
+        ),
+      ),
+      describe: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribe,
+        ),
+      ),
+      describeDeleteModes: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeDeleteModes,
+        ),
+      ),
+      describeModel: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeModel,
+        ),
+      ),
+      describeSearchFields: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsDescribeSearchFields,
+        ),
+      ),
+      getUniqueListingSuburbs: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsGetUniqueListingSuburbs,
+        ),
+      ),
+      link: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsLink,
+        ),
+      ),
+      read: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsRead,
+        ),
+      ),
+      search: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethodsSearch,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethods",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethods>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1Example {
+  name?: string | null;
+  description?: string | null;
+  detail?: string | null;
+  methods?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethods | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1Example =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      description: S.optional(S.NullOr(S.String)),
+      detail: S.optional(S.NullOr(S.String)),
+      methods: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1ExampleMethods,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1Example",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1Example>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1 {
+  code?: string | null;
+  summary?: string | null;
+  example?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1Example | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      code: S.optional(S.NullOr(S.String)),
+      summary: S.optional(S.NullOr(S.String)),
+      example: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1Example,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamples {
+  Example1?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1 | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamplesExample1,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamples",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamples>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponseExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeOpenapi {
+  available?: boolean | null;
+  description?: unknown;
+  request?: PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsDescribeOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.Unknown),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsDescribeOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribe {
+  description?: string | null;
+  parameters?: PublishedListingsDescribeResponseMethodsDescribeParameters | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsDescribeOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribe =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsDescribeParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsDescribeOpenapi),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsDescribe",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribe>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeDeleteModesParametersList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeDeleteModesParametersList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeDeleteModesParametersList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequestParametersList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequestParametersList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequestParametersList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequestExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequestExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequestExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequestParametersList | null;
+  examples?: PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequestExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequestParametersList,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequestExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequest>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamplesExample1ExampleList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamplesExample1ExampleList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamplesExample1ExampleList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamplesExample1 {
+  code?: string | null;
+  summary?: string | null;
+  example?: PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamplesExample1ExampleList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamplesExample1 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      code: S.optional(S.NullOr(S.String)),
+      summary: S.optional(S.NullOr(S.String)),
+      example: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamplesExample1ExampleList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamplesExample1",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamplesExample1>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamples {
+  Example1?: PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamplesExample1 | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamplesExample1,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamples",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamples>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponseExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapi {
+  available?: boolean | null;
+  description?: unknown;
+  request?: PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.Unknown),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeDeleteModes {
+  description?: string | null;
+  parameters?: PublishedListingsDescribeResponseMethodsDescribeDeleteModesParametersList | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeDeleteModes =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeDeleteModesParametersList,
+        ),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeDeleteModesOpenapi,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsDescribeDeleteModes",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeDeleteModes>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelParametersList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeModelParametersList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelParametersList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequestParametersList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequestParametersList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequestParametersList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequestExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequestExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequestExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequestParametersList | null;
+  examples?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequestExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequestParametersList,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequestExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequest>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchResultFormatsItem =
+  AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchResultFormatsItem =
+  AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchResultFormatsList =
+  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchResultFormatsList =
+  /*@__PURE__*/ S.Array(
+    AdminWebhooksDescribeModelResponseSearchResultFormatsItem,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchResultFormatsList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptionsExtraFieldsFields {
+  contract?: string | null;
+  idealfors?: string | null;
+  allowances?: string | null;
+  events?: string | null;
+  links?: string | null;
+  bookings?: string | null;
+  images?: string | null;
+  floorplans?: string | null;
+  highlights?: string | null;
+  rooms?: string | null;
+  tags?: string | null;
+  features?: string | null;
+  views?: string | null;
+  advert_internet?: string | null;
+  advert_brochure?: string | null;
+  advert_stocklist?: string | null;
+  rural?: string | null;
+  documents?: string | null;
+  subcategories?: string | null;
+  meta?: string | null;
+  epc?: string | null;
+  portal_watermarks?: string | null;
+  portal_main_image_index?: string | null;
+  cf_properties__?: string | null;
+  cf_listings__?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptionsExtraFieldsFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      contract: S.optional(S.NullOr(S.String)),
+      idealfors: S.optional(S.NullOr(S.String)),
+      allowances: S.optional(S.NullOr(S.String)),
+      events: S.optional(S.NullOr(S.String)),
+      links: S.optional(S.NullOr(S.String)),
+      bookings: S.optional(S.NullOr(S.String)),
+      images: S.optional(S.NullOr(S.String)),
+      floorplans: S.optional(S.NullOr(S.String)),
+      highlights: S.optional(S.NullOr(S.String)),
+      rooms: S.optional(S.NullOr(S.String)),
+      tags: S.optional(S.NullOr(S.String)),
+      features: S.optional(S.NullOr(S.String)),
+      views: S.optional(S.NullOr(S.String)),
+      advert_internet: S.optional(S.NullOr(S.String)),
+      advert_brochure: S.optional(S.NullOr(S.String)),
+      advert_stocklist: S.optional(S.NullOr(S.String)),
+      rural: S.optional(S.NullOr(S.String)),
+      documents: S.optional(S.NullOr(S.String)),
+      subcategories: S.optional(S.NullOr(S.String)),
+      meta: S.optional(S.NullOr(S.String)),
+      epc: S.optional(S.NullOr(S.String)),
+      portal_watermarks: S.optional(S.NullOr(S.String)),
+      portal_main_image_index: S.optional(S.NullOr(S.String)),
+      cf_properties__: S.optional(
+        S.NullOr(S.String).pipe(T.Body("cf.properties.*")),
+      ),
+      cf_listings__: S.optional(
+        S.NullOr(S.String).pipe(T.Body("cf.listings.*")),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptionsExtraFieldsFields",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptionsExtraFieldsFields>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptionsExtraFields {
+  description?: string | null;
+  fields?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptionsExtraFieldsFields | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptionsExtraFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      fields: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptionsExtraFieldsFields,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptionsExtraFields",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptionsExtraFields>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptions {
+  extra_fields?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptionsExtraFields | null;
+  include_unpublished?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptions =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      extra_fields: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptionsExtraFields,
+        ),
+      ),
+      include_unpublished: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptions",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptions>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertySystemSearchKey =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertySystemSearchKey =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrUnitNumber =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrUnitNumber =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrStreetNumber =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrStreetNumber =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrStreetName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrStreetName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrStateOrRegion =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrStateOrRegion =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrLocality =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrLocality =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrSuburbOrTown =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrSuburbOrTown =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcode =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcode =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeAreaLimitToRegionsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeAreaLimitToRegionsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeAreaLimitToRegionsList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeArea {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  limit_to_regions?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeAreaLimitToRegionsList | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeArea =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      limit_to_regions: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeAreaLimitToRegionsList,
+        ),
+      ),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeArea",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeArea>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrictLimitToRegionsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrictLimitToRegionsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrictLimitToRegionsList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrict {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  limit_to_regions?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrictLimitToRegionsList | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrict =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      limit_to_regions: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrictLimitToRegionsList,
+        ),
+      ),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrict",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrict>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSectorLimitToRegionsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSectorLimitToRegionsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSectorLimitToRegionsList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSector {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  limit_to_regions?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSectorLimitToRegionsList | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSector =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      limit_to_regions: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSectorLimitToRegionsList,
+        ),
+      ),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSector",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSector>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrEstateName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrEstateName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrEstateStage =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrEstateStage =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrBuildingId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrBuildingId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyBuildingName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyBuildingName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrExteriorIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrExteriorIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrExteriorId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrExteriorId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoofIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoofIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoofId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoofId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrWholePartIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrWholePartIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrWholePartId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrWholePartId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrBedrooms =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrBedrooms =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrBathrooms =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrBathrooms =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrEnsuites =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrEnsuites =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrToilets =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrToilets =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLivingAreas =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLivingAreas =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrGarages =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrGarages =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrCarports =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrCarports =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrOpenSpaces =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrOpenSpaces =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTotalCarAccom =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTotalCarAccom =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrBuildareaM2 =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrBuildareaM2 =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandareaM2 =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandareaM2 =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrEnergyRating =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrEnergyRating =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrBuildYear =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrBuildYear =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrSleeps =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrSleeps =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions {
+  format?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      format: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  options?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions | null;
+  real_field?: boolean | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      options: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions,
+        ),
+      ),
+      real_field: S.optional(S.NullOr(S.Boolean)),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTakingsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTakingsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTakings =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTakings =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrIsHouseLand =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrIsHouseLand =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrIsFranchise =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrIsFranchise =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandDepthRear =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandDepthRear =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandDepthLeft =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandDepthLeft =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandDepthRight =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandDepthRight =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandFrontage =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandFrontage =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandCrossoverIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandCrossoverIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandCrossoverId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrLandCrossoverId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyCarAccom =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyCarAccom =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrIsCornerBlock =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrIsCornerBlock =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions {
+  multi?: boolean | null;
+  source?: string | null;
+  list?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      multi: S.optional(S.NullOr(S.Boolean)),
+      source: S.optional(S.NullOr(S.String)),
+      list: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  options?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      options: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions,
+        ),
+      ),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyViewsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyViewsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyViews =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyViews =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTagsOptions {
+  multi?: boolean | null;
+  tag_type?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTagsOptions =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      multi: S.optional(S.NullOr(S.Boolean)),
+      tag_type: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTagsOptions",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTagsOptions>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  options?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTagsOptions | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      options: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTagsOptions,
+        ),
+      ),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyPropertyCategoryIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyPropertyCategoryIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyPropertyCategoryId {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  options?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyPropertyCategoryId =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      options: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions,
+        ),
+      ),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyPropertyCategoryId",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyPropertyCategoryId>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureAgentId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureAgentId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureExpiryYear =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureExpiryYear =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureGroundRentOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureGroundRentOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureGroundRent =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureGroundRent =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureServiceChargeOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureServiceChargeOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureServiceCharge =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureServiceCharge =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureOther =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrTenureOther =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentAppraisal =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentAppraisal =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentListing =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentListing =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAuthorityTypeIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAuthorityTypeIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAuthorityTypeId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAuthorityTypeId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingUnderContract =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingUnderContract =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingOnHold =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingOnHold =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAccountIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAccountIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAccountId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAccountId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingLocationIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingLocationIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingLocationId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingLocationId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingCategoryIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingCategoryIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingCategoryId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingCategoryId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceRentPerM2Options =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceRentPerM2Options =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceRentPerM2 =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceRentPerM2 =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatch =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatch =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchSaleOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchSaleOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchSale =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchSale =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxWeekOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxWeekOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxWeek =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxWeek =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxFortnightOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxFortnightOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxFortnight =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxFortnight =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxMonthOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxMonthOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxMonth =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxMonth =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTaxOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTax =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPriceMatchRentPaIncTax =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemOverpaymentBalanceOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemOverpaymentBalanceOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemOverpaymentBalance =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemOverpaymentBalance =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemHasPreuploadErrors =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemHasPreuploadErrors =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAvailableFromDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAvailableFromDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAuthorityDateExpires =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAuthorityDateExpires =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAuthorityDateStart =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAuthorityDateStart =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingInboundUniqueId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingInboundUniqueId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId {
+  name?: string | null;
+  label?: string | null;
+  options?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions | null;
+  type?: string | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      options: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions,
+        ),
+      ),
+      type: S.optional(S.NullOr(S.String)),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1IdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1IdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id {
+  name?: string | null;
+  label?: string | null;
+  options?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions | null;
+  type?: string | null;
+  real_field?: boolean | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      options: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions,
+        ),
+      ),
+      type: S.optional(S.NullOr(S.String)),
+      real_field: S.optional(S.NullOr(S.Boolean)),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent2IdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent2IdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent2Id =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent2Id =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAllowancesOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAllowancesOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAllowances =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingAllowances =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingIdealforsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingIdealforsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingIdealfors =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingIdealfors =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSubcategoriesOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSubcategoriesOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSubcategories =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSubcategories =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcCurrentEer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcCurrentEer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcPotentialEer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcPotentialEer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcCurrentEir =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcCurrentEir =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcPotentialEir =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcPotentialEir =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcLodgementDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcLodgementDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcExpiryDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcExpiryDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcNotRequired =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcNotRequired =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcNotRequiredReason =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEpcNotRequiredReason =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingCommStructureId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingCommStructureId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingNewHome =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingNewHome =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingLetAgreed =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingLetAgreed =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEventAuctionDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEventAuctionDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEventOpenDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEventOpenDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEventDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingEventDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemListingStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemListingStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemListingState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemListingState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemPublicationStatusOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemPublicationStatusOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemPublicationStatus =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemPublicationStatus =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemPublicationTime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingSystemPublicationTime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateChangeTimestamp =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateChangeTimestamp =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPublishToPortals =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPublishToPortals =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPublishToAutomatch =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPublishToAutomatch =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPublishToExternal =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPublishToExternal =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPublishToGeneral =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingPublishToGeneral =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePriceOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePriceOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  real_field?: boolean | null;
+  options?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      real_field: S.optional(S.NullOr(S.Boolean)),
+      options: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions,
+        ),
+      ),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingProjectStageId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingProjectStageId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStatusIsNotForSale =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStatusIsNotForSale =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingBaselinePriceOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingBaselinePriceOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingBaselinePrice =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingBaselinePrice =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageFullName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageFullName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageConstructionStartDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageConstructionStartDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageConstructionDateQuoted =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageConstructionDateQuoted =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageConstructionCurrentProjection =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageConstructionCurrentProjection =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageConstructionLastUpdated =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageConstructionLastUpdated =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageConstructionActualFinishedDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageConstructionActualFinishedDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageTitleDateQuoted =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageTitleDateQuoted =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageTitleCurrentProjection =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageTitleCurrentProjection =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageTitleLastUpdated =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageTitleLastUpdated =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageTitleActualFinishedDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageTitleActualFinishedDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageReleaseDateQuoted =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageReleaseDateQuoted =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageReleaseCurrentProjection =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageReleaseCurrentProjection =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageReleaseLastUpdated =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageReleaseLastUpdated =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageReleaseActualFinishedDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectStageReleaseActualFinishedDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectTagsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTagsOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectTagsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTagsOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectTags =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsProjectTags =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer {
+  name?: string | null;
+  type?: string | null;
+  label?: string | null;
+  real_field?: boolean | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      real_field: S.optional(S.NullOr(S.Boolean)),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsPrimaryBackupOffer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsPrimaryBackupOffer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsActive =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsActive =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsActivePrimary =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsActivePrimary =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsActiveBackup =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsActiveBackup =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecDeposit =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecDeposit =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecFinance =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecFinance =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecUnconditional =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecUnconditional =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecSettlement =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecSettlement =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecPossession =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecPossession =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualAccepted =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualAccepted =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicatedLimitToRegionsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicatedLimitToRegionsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicatedLimitToRegionsList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicated {
+  name?: string | null;
+  type?: string | null;
+  label?: string | null;
+  real_field?: boolean | null;
+  limit_to_regions?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicatedLimitToRegionsList | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicated =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      real_field: S.optional(S.NullOr(S.Boolean)),
+      limit_to_regions: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicatedLimitToRegionsList,
+        ),
+      ),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicated",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicated>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualDeposit =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualDeposit =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualFinance =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualFinance =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualUnconditional =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualUnconditional =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualSettlement =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualSettlement =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualPossession =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualPossession =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualFallen =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualFallen =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualWithdrawn =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualWithdrawn =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualOffer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualOffer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecAndIncomplete {
+  name?: string | null;
+  type?: string | null;
+  label?: string | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecAndIncomplete =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecAndIncomplete",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecAndIncomplete>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingLocationIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingLocationIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingLocationId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingLocationId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingOrContractAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingOrContractAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingOrContractAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractListingOrContractAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorIdLimitToRegionsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorIdLimitToRegionsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorIdLimitToRegionsList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorId {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  options?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions | null;
+  limit_to_regions?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorIdLimitToRegionsList | null;
+  real_field?: boolean | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorId =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      options: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions,
+        ),
+      ),
+      limit_to_regions: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorIdLimitToRegionsList,
+        ),
+      ),
+      real_field: S.optional(S.NullOr(S.Boolean)),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorId",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorId>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFields {
+  system_owner_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_created_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_modified_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_ctime?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  system_modtime?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_system_search_key?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_unit_number?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_street_number?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_street_name?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_state_or_region?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_locality?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_suburb_or_town?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_postcode?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_postcode_area?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeArea | null;
+  property_adr_postcode_district?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrict | null;
+  property_adr_postcode_sector?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSector | null;
+  property_adr_estate_name?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_estate_stage?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_building_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_building_name?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_exterior_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  property_attr_roof_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  property_attr_whole_part_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  property_attr_bedrooms?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_bathrooms?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_ensuites?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_toilets?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_living_areas?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_garages?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_carports?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_open_spaces?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_total_car_accom?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_buildarea_m2?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_landarea_m2?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_energy_rating?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_build_year?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_sleeps?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_roi_pa?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  property_attr_takings?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  property_attr_is_house_land?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_is_franchise?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_land_depth_rear?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_land_depth_left?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_land_depth_right?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_land_frontage?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_land_crossover_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  property_car_accom?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_is_corner_block?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_features?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures | null;
+  property_views?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures | null;
+  property_tags?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags | null;
+  property_property_category_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyPropertyCategoryId | null;
+  property_attr_tenure_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  property_attr_tenure_agent_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_tenure_expiry_year?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_tenure_ground_rent?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  property_attr_tenure_service_charge?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  property_attr_tenure_other?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_status_is_current_oab?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  property_status_is_current_appraisal?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  property_status_is_current_listing?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_authority_type_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  listing_under_contract?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_on_hold?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_account_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  listing_location_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  listing_listing_category_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  listing_price_rent_per_m2?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_price_match?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_price_match_sale?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_price_match_rent_pa_inc_tax_week?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_price_match_rent_pa_inc_tax_fortnight?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_price_match_rent_pa_inc_tax_month?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_price_match_rent_pa_inc_tax?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_system_overpayment_balance?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_system_has_preupload_errors?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_available_from_date?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_authority_date_expires?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_authority_date_start?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_inbound_unique_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_listing_agent_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId | null;
+  listing_listing_agent_1_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id | null;
+  listing_listing_agent_2_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id | null;
+  listing_allowances?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures | null;
+  listing_idealfors?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures | null;
+  listing_subcategories?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures | null;
+  listing_epc_current_eer?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_potential_eer?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_current_eir?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_potential_eir?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_lodgement_date?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_expiry_date?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_not_required?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_not_required_reason?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_comm_structure_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_new_home?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_let_agreed?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_event_auction_date?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_event_open_date?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_event_date?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_system_listing_state?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  listing_system_publication_status?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  listing_system_publication_time?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_state_change_timestamp?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_publish_to_portals?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_publish_to_automatch?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_publish_to_external?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_publish_to_general?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_state_date?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_state_value_price?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice | null;
+  listing_project_stage_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_status_is_not_for_sale?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_baseline_price?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice | null;
+  project_stage_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_name?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_full_name?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_construction_start_date?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_construction_date_quoted?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_construction_current_projection?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_construction_last_updated?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_construction_actual_finished_date?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_title_date_quoted?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_title_current_projection?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_title_last_updated?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_title_actual_finished_date?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_release_date_quoted?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_release_current_projection?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_release_last_updated?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_release_actual_finished_date?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_name?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_tags?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags | null;
+  contract_is_backup_offer?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_is_primary_backup_offer?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_is_active?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_is_active_primary?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_is_active_backup?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_expec_deposit?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_expec_finance?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_expec_unconditional?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_expec_settlement?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_expec_possession?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_accepted?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_communicated?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicated | null;
+  contract_date_actual_deposit?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_finance?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_unconditional?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_settlement?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_possession?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_fallen?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_withdrawn?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_offer?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_listing_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  listing_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_expec_and_incomplete?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecAndIncomplete | null;
+  contract_agent_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id | null;
+  contract_listing_agent_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId | null;
+  contract_listing_location_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  contract_listing_or_contract_agent_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId | null;
+  contract_stability_indicator_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorId | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      system_owner_user_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+      system_created_user_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+      system_modified_user_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+      system_ctime: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      system_modtime: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      id: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      property_id: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      property_system_search_key: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.system_search_key")),
+      ),
+      property_adr_unit_number: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_unit_number")),
+      ),
+      property_adr_street_number: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_street_number")),
+      ),
+      property_adr_street_name: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_street_name")),
+      ),
+      property_adr_state_or_region: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_state_or_region")),
+      ),
+      property_adr_locality: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_locality")),
+      ),
+      property_adr_suburb_or_town: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_suburb_or_town")),
+      ),
+      property_adr_postcode: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_postcode")),
+      ),
+      property_adr_postcode_area: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeArea,
+        ).pipe(T.Body("property.adr_postcode_area")),
+      ),
+      property_adr_postcode_district: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrict,
+        ).pipe(T.Body("property.adr_postcode_district")),
+      ),
+      property_adr_postcode_sector: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSector,
+        ).pipe(T.Body("property.adr_postcode_sector")),
+      ),
+      property_adr_estate_name: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_estate_name")),
+      ),
+      property_adr_estate_stage: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_estate_stage")),
+      ),
+      property_adr_building_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_building_id")),
+      ),
+      property_building_name: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.building_name")),
+      ),
+      property_attr_exterior_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("property.attr_exterior_id")),
+      ),
+      property_attr_roof_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("property.attr_roof_id")),
+      ),
+      property_attr_whole_part_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("property.attr_whole_part_id")),
+      ),
+      property_attr_bedrooms: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_bedrooms")),
+      ),
+      property_attr_bathrooms: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_bathrooms")),
+      ),
+      property_attr_ensuites: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_ensuites")),
+      ),
+      property_attr_toilets: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_toilets")),
+      ),
+      property_attr_living_areas: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_living_areas")),
+      ),
+      property_attr_garages: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_garages")),
+      ),
+      property_attr_carports: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_carports")),
+      ),
+      property_attr_open_spaces: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_open_spaces")),
+      ),
+      property_attr_total_car_accom: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_total_car_accom")),
+      ),
+      property_attr_buildarea_m2: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_buildarea_m2")),
+      ),
+      property_attr_landarea_m2: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_landarea_m2")),
+      ),
+      property_attr_energy_rating: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_energy_rating")),
+      ),
+      property_attr_build_year: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_build_year")),
+      ),
+      property_attr_sleeps: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_sleeps")),
+      ),
+      property_attr_roi_pa: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("property.attr_roi_pa")),
+      ),
+      property_attr_takings: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("property.attr_takings")),
+      ),
+      property_attr_is_house_land: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_is_house_land")),
+      ),
+      property_attr_is_franchise: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_is_franchise")),
+      ),
+      property_attr_land_depth_rear: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_land_depth_rear")),
+      ),
+      property_attr_land_depth_left: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_land_depth_left")),
+      ),
+      property_attr_land_depth_right: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_land_depth_right")),
+      ),
+      property_attr_land_frontage: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_land_frontage")),
+      ),
+      property_attr_land_crossover_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("property.attr_land_crossover_id")),
+      ),
+      property_car_accom: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.car_accom")),
+      ),
+      property_attr_is_corner_block: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_is_corner_block")),
+      ),
+      property_features: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures,
+        ).pipe(T.Body("property.features")),
+      ),
+      property_views: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures,
+        ).pipe(T.Body("property.views")),
+      ),
+      property_tags: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags,
+        ).pipe(T.Body("property.tags")),
+      ),
+      property_property_category_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyPropertyCategoryId,
+        ).pipe(T.Body("property.property_category_id")),
+      ),
+      property_attr_tenure_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("property.attr_tenure_id")),
+      ),
+      property_attr_tenure_agent_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_tenure_agent_id")),
+      ),
+      property_attr_tenure_expiry_year: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_tenure_expiry_year")),
+      ),
+      property_attr_tenure_ground_rent: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("property.attr_tenure_ground_rent")),
+      ),
+      property_attr_tenure_service_charge: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("property.attr_tenure_service_charge")),
+      ),
+      property_attr_tenure_other: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_tenure_other")),
+      ),
+      property_status_is_current_oab: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("property.status_is_current_oab")),
+      ),
+      property_status_is_current_appraisal: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("property.status_is_current_appraisal")),
+      ),
+      property_status_is_current_listing: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("property.status_is_current_listing")),
+      ),
+      listing_authority_type_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("listing.authority_type_id")),
+      ),
+      listing_under_contract: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.under_contract")),
+      ),
+      listing_on_hold: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.on_hold")),
+      ),
+      listing_account_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("listing.account_id")),
+      ),
+      listing_location_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("listing.location_id")),
+      ),
+      listing_listing_category_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("listing.listing_category_id")),
+      ),
+      listing_price_rent_per_m2: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_rent_per_m2")),
+      ),
+      listing_price_match: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_match")),
+      ),
+      listing_price_match_sale: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_match_sale")),
+      ),
+      listing_price_match_rent_pa_inc_tax_week: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_match_rent_pa_inc_tax_week")),
+      ),
+      listing_price_match_rent_pa_inc_tax_fortnight: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_match_rent_pa_inc_tax_fortnight")),
+      ),
+      listing_price_match_rent_pa_inc_tax_month: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_match_rent_pa_inc_tax_month")),
+      ),
+      listing_price_match_rent_pa_inc_tax: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_match_rent_pa_inc_tax")),
+      ),
+      listing_system_overpayment_balance: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.system_overpayment_balance")),
+      ),
+      listing_system_has_preupload_errors: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.system_has_preupload_errors")),
+      ),
+      listing_available_from_date: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.available_from_date")),
+      ),
+      listing_authority_date_expires: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.authority_date_expires")),
+      ),
+      listing_authority_date_start: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.authority_date_start")),
+      ),
+      listing_inbound_unique_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.inbound_unique_id")),
+      ),
+      listing_listing_agent_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId,
+        ).pipe(T.Body("listing.listing_agent_id")),
+      ),
+      listing_listing_agent_1_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id,
+        ).pipe(T.Body("listing.listing_agent_1_id")),
+      ),
+      listing_listing_agent_2_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id,
+        ).pipe(T.Body("listing.listing_agent_2_id")),
+      ),
+      listing_allowances: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures,
+        ).pipe(T.Body("listing.allowances")),
+      ),
+      listing_idealfors: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures,
+        ).pipe(T.Body("listing.idealfors")),
+      ),
+      listing_subcategories: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures,
+        ).pipe(T.Body("listing.subcategories")),
+      ),
+      listing_epc_current_eer: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_current_eer")),
+      ),
+      listing_epc_potential_eer: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_potential_eer")),
+      ),
+      listing_epc_current_eir: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_current_eir")),
+      ),
+      listing_epc_potential_eir: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_potential_eir")),
+      ),
+      listing_epc_lodgement_date: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_lodgement_date")),
+      ),
+      listing_epc_expiry_date: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_expiry_date")),
+      ),
+      listing_epc_not_required: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_not_required")),
+      ),
+      listing_epc_not_required_reason: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_not_required_reason")),
+      ),
+      listing_comm_structure_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.comm_structure_id")),
+      ),
+      listing_new_home: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.new_home")),
+      ),
+      listing_let_agreed: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.let_agreed")),
+      ),
+      listing_event_auction_date: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.event_auction_date")),
+      ),
+      listing_event_open_date: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.event_open_date")),
+      ),
+      listing_event_date: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.event_date")),
+      ),
+      listing_system_listing_state: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("listing.system_listing_state")),
+      ),
+      listing_system_publication_status: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("listing.system_publication_status")),
+      ),
+      listing_system_publication_time: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.system_publication_time")),
+      ),
+      listing_state_change_timestamp: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.state_change_timestamp")),
+      ),
+      listing_publish_to_portals: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.publish_to_portals")),
+      ),
+      listing_publish_to_automatch: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.publish_to_automatch")),
+      ),
+      listing_publish_to_external: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.publish_to_external")),
+      ),
+      listing_publish_to_general: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.publish_to_general")),
+      ),
+      listing_state_date: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.state_date")),
+      ),
+      listing_state_value_price: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice,
+        ).pipe(T.Body("listing.state_value_price")),
+      ),
+      listing_project_stage_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.project_stage_id")),
+      ),
+      listing_status_is_not_for_sale: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.status_is_not_for_sale")),
+      ),
+      listing_baseline_price: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice,
+        ).pipe(T.Body("listing.baseline_price")),
+      ),
+      project_stage_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.id")),
+      ),
+      project_stage_name: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.name")),
+      ),
+      project_stage_full_name: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.full_name")),
+      ),
+      project_stage_construction_start_date: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.construction_start_date")),
+      ),
+      project_stage_construction_date_quoted: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.construction_date_quoted")),
+      ),
+      project_stage_construction_current_projection: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.construction_current_projection")),
+      ),
+      project_stage_construction_last_updated: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.construction_last_updated")),
+      ),
+      project_stage_construction_actual_finished_date: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.construction_actual_finished_date")),
+      ),
+      project_stage_title_date_quoted: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.title_date_quoted")),
+      ),
+      project_stage_title_current_projection: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.title_current_projection")),
+      ),
+      project_stage_title_last_updated: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.title_last_updated")),
+      ),
+      project_stage_title_actual_finished_date: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.title_actual_finished_date")),
+      ),
+      project_stage_release_date_quoted: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.release_date_quoted")),
+      ),
+      project_stage_release_current_projection: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.release_current_projection")),
+      ),
+      project_stage_release_last_updated: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.release_last_updated")),
+      ),
+      project_stage_release_actual_finished_date: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.release_actual_finished_date")),
+      ),
+      project_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project.id")),
+      ),
+      project_name: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project.name")),
+      ),
+      project_tags: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags,
+        ).pipe(T.Body("project.tags")),
+      ),
+      contract_is_backup_offer: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.is_backup_offer")),
+      ),
+      contract_is_primary_backup_offer: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.is_primary_backup_offer")),
+      ),
+      contract_is_active: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.is_active")),
+      ),
+      contract_is_active_primary: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.is_active_primary")),
+      ),
+      contract_is_active_backup: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.is_active_backup")),
+      ),
+      contract_date_expec_deposit: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_expec_deposit")),
+      ),
+      contract_date_expec_finance: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_expec_finance")),
+      ),
+      contract_date_expec_unconditional: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_expec_unconditional")),
+      ),
+      contract_date_expec_settlement: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_expec_settlement")),
+      ),
+      contract_date_expec_possession: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_expec_possession")),
+      ),
+      contract_date_actual_accepted: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_accepted")),
+      ),
+      contract_date_actual_communicated: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicated,
+        ).pipe(T.Body("contract.date_actual_communicated")),
+      ),
+      contract_date_actual_deposit: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_deposit")),
+      ),
+      contract_date_actual_finance: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_finance")),
+      ),
+      contract_date_actual_unconditional: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_unconditional")),
+      ),
+      contract_date_actual_settlement: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_settlement")),
+      ),
+      contract_date_actual_possession: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_possession")),
+      ),
+      contract_date_actual_fallen: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_fallen")),
+      ),
+      contract_date_actual_withdrawn: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_withdrawn")),
+      ),
+      contract_date_actual_offer: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_offer")),
+      ),
+      contract_listing_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.listing_id")),
+      ),
+      listing_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ),
+      ),
+      contract_date_expec_and_incomplete: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecAndIncomplete,
+        ).pipe(T.Body("contract.date_expec_and_incomplete")),
+      ),
+      contract_agent_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id,
+        ).pipe(T.Body("contract.agent_id")),
+      ),
+      contract_listing_agent_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId,
+        ).pipe(T.Body("contract.listing_agent_id")),
+      ),
+      contract_listing_location_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("contract.listing_location_id")),
+      ),
+      contract_listing_or_contract_agent_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId,
+        ).pipe(T.Body("contract.listing_or_contract_agent_id")),
+      ),
+      contract_stability_indicator_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorId,
+        ).pipe(T.Body("contract.stability_indicator_id")),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFields",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFields>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleOrderbyFieldsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleOrderbyFieldsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleOrderbyFieldsList>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleExportOptionsList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleExportOptionsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleExportOptionsList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1Example {
+  search_result_formats?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchResultFormatsList | null;
+  search_extra_options?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptions | null;
+  searchable_fields?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFields | null;
+  orderby_fields?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleOrderbyFieldsList | null;
+  export_options?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleExportOptionsList | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1Example =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      search_result_formats: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchResultFormatsList,
+        ),
+      ),
+      search_extra_options: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptions,
+        ),
+      ),
+      searchable_fields: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFields,
+        ),
+      ),
+      orderby_fields: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleOrderbyFieldsList,
+        ),
+      ),
+      export_options: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleExportOptionsList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1Example",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1Example>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1 {
+  code?: string | null;
+  summary?: string | null;
+  example?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1Example | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      code: S.optional(S.NullOr(S.String)),
+      summary: S.optional(S.NullOr(S.String)),
+      example: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1Example,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamples {
+  Example1?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1 | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamples",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamples>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapi {
+  available?: boolean | null;
+  description?: unknown;
+  request?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.Unknown),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsDescribeModelOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeModel {
+  description?: string | null;
+  parameters?: PublishedListingsDescribeResponseMethodsDescribeModelParametersList | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeModel =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelParametersList,
+        ),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsDescribeModelOpenapi),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsDescribeModel",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModel>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsParametersIncludeDetail =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsParametersIncludeDetail =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsParameters =
+  PublishedListingsDescribeResponseMethodsDescribeParameters;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsParameters =
+  PublishedListingsDescribeResponseMethodsDescribeParameters;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiRequestParametersIncludeDetailDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiRequestParametersIncludeDetailDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiRequestParametersIncludeDetail =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiRequestParametersIncludeDetail =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiRequestParameters =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParameters;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiRequestParameters =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestParameters;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiRequestExamplesExample1 =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamplesExample1;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiRequestExamplesExample1 =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamplesExample1;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiRequestExamples =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamples;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiRequestExamples =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequestExamples;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiRequest =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiRequest =
+  PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertySystemSearchKey =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertySystemSearchKey =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrUnitNumber =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrUnitNumber =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrStreetNumber =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrStreetNumber =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrStreetName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrStreetName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrStateOrRegion =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrStateOrRegion =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrLocality =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrLocality =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrSuburbOrTown =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrSuburbOrTown =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcode =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcode =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeAreaLimitToRegionsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeAreaLimitToRegionsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeAreaLimitToRegionsList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeArea {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  limit_to_regions?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeAreaLimitToRegionsList | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeArea =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      limit_to_regions: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeAreaLimitToRegionsList,
+        ),
+      ),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeArea",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeArea>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrictLimitToRegionsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrictLimitToRegionsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrictLimitToRegionsList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrict {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  limit_to_regions?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrictLimitToRegionsList | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrict =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      limit_to_regions: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrictLimitToRegionsList,
+        ),
+      ),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrict",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrict>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSectorLimitToRegionsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSectorLimitToRegionsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSectorLimitToRegionsList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSector {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  limit_to_regions?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSectorLimitToRegionsList | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSector =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      limit_to_regions: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSectorLimitToRegionsList,
+        ),
+      ),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSector",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSector>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrEstateName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrEstateName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrEstateStage =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrEstateStage =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrBuildingId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrBuildingId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyBuildingName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyBuildingName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrExteriorIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrExteriorIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrExteriorId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrExteriorId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrRoofIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrRoofIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrRoofId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrRoofId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrWholePartIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrWholePartIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrWholePartId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrWholePartId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrBedrooms =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrBedrooms =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrBathrooms =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrBathrooms =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrEnsuites =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrEnsuites =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrToilets =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrToilets =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLivingAreas =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLivingAreas =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrGarages =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrGarages =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrCarports =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrCarports =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrOpenSpaces =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrOpenSpaces =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTotalCarAccom =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTotalCarAccom =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrBuildareaM2 =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrBuildareaM2 =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandareaM2 =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandareaM2 =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrEnergyRating =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrEnergyRating =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrBuildYear =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrBuildYear =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrSleeps =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrSleeps =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrRoiPaOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrRoiPaOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrRoiPa =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrRoiPa =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTakingsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTakingsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTakings =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTakings =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrIsHouseLand =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrIsHouseLand =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrIsFranchise =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrIsFranchise =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandDepthRear =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandDepthRear =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandDepthLeft =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandDepthLeft =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandDepthRight =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandDepthRight =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandFrontage =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandFrontage =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandCrossoverIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandCrossoverIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandCrossoverId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrLandCrossoverId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyCarAccom =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyCarAccom =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrIsCornerBlock =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrIsCornerBlock =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyFeaturesOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyFeaturesOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyFeatures =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyFeatures =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyViewsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyViewsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyViews =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyViews =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyTagsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTagsOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyTagsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTagsOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyTags =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyTags =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyPropertyCategoryIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyPropertyCategoryIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyPropertyCategoryId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyPropertyCategoryId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyPropertyCategoryId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyPropertyCategoryId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureAgentId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureAgentId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureExpiryYear =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureExpiryYear =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureGroundRentOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureGroundRentOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureGroundRent =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureGroundRent =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureServiceChargeOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureServiceChargeOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureServiceCharge =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureServiceCharge =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureOther =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAttrTenureOther =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyStatusIsCurrentOab =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyStatusIsCurrentOab =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyStatusIsCurrentAppraisal =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyStatusIsCurrentAppraisal =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyStatusIsCurrentListing =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyStatusIsCurrentListing =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAuthorityTypeIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAuthorityTypeIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAuthorityTypeId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAuthorityTypeId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingUnderContract =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingUnderContract =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingOnHold =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingOnHold =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAccountIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAccountIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAccountId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAccountId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingLocationIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingLocationIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingLocationId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingLocationId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingCategoryIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingCategoryIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingCategoryId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingCategoryId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceRentPerM2Options =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceRentPerM2Options =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceRentPerM2 =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceRentPerM2 =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatch =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatch =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchSaleOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchSaleOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchSale =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchSale =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxWeekOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxWeekOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxWeek =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxWeek =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxFortnightOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxFortnightOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxFortnight =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxFortnight =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxMonthOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxMonthOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxMonth =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxMonth =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTaxOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTax =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPriceMatchRentPaIncTax =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemOverpaymentBalanceOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemOverpaymentBalanceOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemOverpaymentBalance =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemOverpaymentBalance =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemHasPreuploadErrors =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemHasPreuploadErrors =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAvailableFromDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAvailableFromDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAuthorityDateExpires =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAuthorityDateExpires =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAuthorityDateStart =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAuthorityDateStart =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingInboundUniqueId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingInboundUniqueId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingAgent1IdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingAgent1IdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingAgent1Id =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingAgent1Id =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingAgent2IdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingAgent2IdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingAgent2Id =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingListingAgent2Id =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAllowancesOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAllowancesOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAllowances =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingAllowances =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingIdealforsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingIdealforsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingIdealfors =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingIdealfors =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSubcategoriesOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSubcategoriesOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeaturesOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSubcategories =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSubcategories =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcCurrentEer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcCurrentEer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcPotentialEer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcPotentialEer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcCurrentEir =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcCurrentEir =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcPotentialEir =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcPotentialEir =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcLodgementDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcLodgementDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcExpiryDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcExpiryDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcNotRequired =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcNotRequired =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcNotRequiredReason =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEpcNotRequiredReason =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingCommStructureId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingCommStructureId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingNewHome =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingNewHome =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingLetAgreed =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingLetAgreed =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEventAuctionDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEventAuctionDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEventOpenDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEventOpenDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEventDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingEventDate =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemListingStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemListingStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemListingState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemListingState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemPublicationStatusOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemPublicationStatusOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemPublicationStatus =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemPublicationStatus =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemPublicationTime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingSystemPublicationTime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingStateChangeTimestamp =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingStateChangeTimestamp =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPublishToPortals =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPublishToPortals =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPublishToAutomatch =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPublishToAutomatch =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPublishToExternal =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPublishToExternal =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPublishToGeneral =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingPublishToGeneral =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingStateDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingStateDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingStateValuePriceOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingStateValuePriceOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingStateValuePrice =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingStateValuePrice =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingProjectStageId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingProjectStageId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingStatusIsNotForSale =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingStatusIsNotForSale =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingBaselinePriceOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingBaselinePriceOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPaOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingBaselinePrice =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingBaselinePrice =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageFullName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageFullName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageConstructionStartDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageConstructionStartDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageConstructionDateQuoted =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageConstructionDateQuoted =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageConstructionCurrentProjection =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageConstructionCurrentProjection =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageConstructionLastUpdated =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageConstructionLastUpdated =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageConstructionActualFinishedDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageConstructionActualFinishedDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageTitleDateQuoted =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageTitleDateQuoted =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageTitleCurrentProjection =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageTitleCurrentProjection =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageTitleLastUpdated =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageTitleLastUpdated =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageTitleActualFinishedDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageTitleActualFinishedDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageReleaseDateQuoted =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageReleaseDateQuoted =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageReleaseCurrentProjection =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageReleaseCurrentProjection =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageReleaseLastUpdated =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageReleaseLastUpdated =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageReleaseActualFinishedDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectStageReleaseActualFinishedDate =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectName =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectTagsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTagsOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectTagsOptions =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTagsOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectTags =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleProjectTags =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractIsBackupOffer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractIsBackupOffer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractIsPrimaryBackupOffer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractIsPrimaryBackupOffer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractIsActive =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractIsActive =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractIsActivePrimary =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractIsActivePrimary =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractIsActiveBackup =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractIsActiveBackup =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateExpecDeposit =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateExpecDeposit =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateExpecFinance =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateExpecFinance =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateExpecUnconditional =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateExpecUnconditional =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateExpecSettlement =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateExpecSettlement =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateExpecPossession =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateExpecPossession =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualAccepted =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualAccepted =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicatedLimitToRegionsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicatedLimitToRegionsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicatedLimitToRegionsList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicated {
+  name?: string | null;
+  type?: string | null;
+  label?: string | null;
+  real_field?: boolean | null;
+  limit_to_regions?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicatedLimitToRegionsList | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicated =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      real_field: S.optional(S.NullOr(S.Boolean)),
+      limit_to_regions: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicatedLimitToRegionsList,
+        ),
+      ),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicated",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicated>;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualDeposit =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualDeposit =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualFinance =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualFinance =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualUnconditional =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualUnconditional =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualSettlement =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualSettlement =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualPossession =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualPossession =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualFallen =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualFallen =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualWithdrawn =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualWithdrawn =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualOffer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualOffer =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleListingId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateExpecAndIncomplete =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecAndIncomplete;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateExpecAndIncomplete =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecAndIncomplete;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingLocationIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingLocationIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingLocationId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingLocationId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingOrContractAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingOrContractAgentIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingOrContractAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractListingOrContractAgentId =
+  PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorIdLimitToRegionsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorIdLimitToRegionsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorIdLimitToRegionsList>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorId {
+  name?: string | null;
+  label?: string | null;
+  type?: string | null;
+  options?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions | null;
+  limit_to_regions?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorIdLimitToRegionsList | null;
+  real_field?: boolean | null;
+  category?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorId =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      name: S.optional(S.NullOr(S.String)),
+      label: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      options: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions,
+        ),
+      ),
+      limit_to_regions: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorIdLimitToRegionsList,
+        ),
+      ),
+      real_field: S.optional(S.NullOr(S.Boolean)),
+      category: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorId",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorId>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1Example {
+  system_owner_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_created_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_modified_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_ctime?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  system_modtime?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_system_search_key?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_unit_number?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_street_number?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_street_name?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_state_or_region?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_locality?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_suburb_or_town?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_postcode?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_postcode_area?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeArea | null;
+  property_adr_postcode_district?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrict | null;
+  property_adr_postcode_sector?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSector | null;
+  property_adr_estate_name?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_estate_stage?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_adr_building_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_building_name?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_exterior_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  property_attr_roof_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  property_attr_whole_part_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  property_attr_bedrooms?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_bathrooms?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_ensuites?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_toilets?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_living_areas?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_garages?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_carports?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_open_spaces?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_total_car_accom?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_buildarea_m2?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_landarea_m2?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_energy_rating?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_build_year?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_sleeps?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_roi_pa?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  property_attr_takings?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  property_attr_is_house_land?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_is_franchise?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_land_depth_rear?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_land_depth_left?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_land_depth_right?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_land_frontage?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_land_crossover_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  property_car_accom?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_is_corner_block?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_features?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures | null;
+  property_views?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures | null;
+  property_tags?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags | null;
+  property_property_category_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyPropertyCategoryId | null;
+  property_attr_tenure_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  property_attr_tenure_agent_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_tenure_expiry_year?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_attr_tenure_ground_rent?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  property_attr_tenure_service_charge?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  property_attr_tenure_other?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  property_status_is_current_oab?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  property_status_is_current_appraisal?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  property_status_is_current_listing?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_authority_type_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  listing_under_contract?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_on_hold?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_account_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  listing_location_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  listing_listing_category_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  listing_price_rent_per_m2?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_price_match?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_price_match_sale?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_price_match_rent_pa_inc_tax_week?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_price_match_rent_pa_inc_tax_fortnight?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_price_match_rent_pa_inc_tax_month?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_price_match_rent_pa_inc_tax?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_system_overpayment_balance?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa | null;
+  listing_system_has_preupload_errors?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_available_from_date?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_authority_date_expires?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_authority_date_start?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_inbound_unique_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_listing_agent_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId | null;
+  listing_listing_agent_1_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id | null;
+  listing_listing_agent_2_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id | null;
+  listing_allowances?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures | null;
+  listing_idealfors?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures | null;
+  listing_subcategories?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures | null;
+  listing_epc_current_eer?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_potential_eer?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_current_eir?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_potential_eir?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_lodgement_date?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_expiry_date?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_not_required?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_epc_not_required_reason?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_comm_structure_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_new_home?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_let_agreed?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_event_auction_date?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_event_open_date?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_event_date?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab | null;
+  listing_system_listing_state?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  listing_system_publication_status?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  listing_system_publication_time?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_state_change_timestamp?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_publish_to_portals?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_publish_to_automatch?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_publish_to_external?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_publish_to_general?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_state_date?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_state_value_price?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice | null;
+  listing_project_stage_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_status_is_not_for_sale?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  listing_baseline_price?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice | null;
+  project_stage_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_name?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_full_name?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_construction_start_date?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_construction_date_quoted?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_construction_current_projection?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_construction_last_updated?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_construction_actual_finished_date?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_title_date_quoted?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_title_current_projection?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_title_last_updated?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_title_actual_finished_date?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_release_date_quoted?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_release_current_projection?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_release_last_updated?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_stage_release_actual_finished_date?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_name?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  project_tags?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags | null;
+  contract_is_backup_offer?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_is_primary_backup_offer?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_is_active?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_is_active_primary?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_is_active_backup?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_expec_deposit?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_expec_finance?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_expec_unconditional?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_expec_settlement?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_expec_possession?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_accepted?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_communicated?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicated | null;
+  contract_date_actual_deposit?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_finance?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_unconditional?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_settlement?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_possession?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_fallen?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_withdrawn?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_actual_offer?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_listing_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  listing_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer | null;
+  contract_date_expec_and_incomplete?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecAndIncomplete | null;
+  contract_agent_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id | null;
+  contract_listing_agent_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId | null;
+  contract_listing_location_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  contract_listing_or_contract_agent_id?: PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId | null;
+  contract_stability_indicator_id?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorId | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1Example =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      system_owner_user_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+      system_created_user_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+      system_modified_user_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+      system_ctime: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      system_modtime: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      id: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      property_id: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      property_system_search_key: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.system_search_key")),
+      ),
+      property_adr_unit_number: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_unit_number")),
+      ),
+      property_adr_street_number: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_street_number")),
+      ),
+      property_adr_street_name: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_street_name")),
+      ),
+      property_adr_state_or_region: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_state_or_region")),
+      ),
+      property_adr_locality: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_locality")),
+      ),
+      property_adr_suburb_or_town: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_suburb_or_town")),
+      ),
+      property_adr_postcode: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_postcode")),
+      ),
+      property_adr_postcode_area: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeArea,
+        ).pipe(T.Body("property.adr_postcode_area")),
+      ),
+      property_adr_postcode_district: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrict,
+        ).pipe(T.Body("property.adr_postcode_district")),
+      ),
+      property_adr_postcode_sector: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSector,
+        ).pipe(T.Body("property.adr_postcode_sector")),
+      ),
+      property_adr_estate_name: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_estate_name")),
+      ),
+      property_adr_estate_stage: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_estate_stage")),
+      ),
+      property_adr_building_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.adr_building_id")),
+      ),
+      property_building_name: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.building_name")),
+      ),
+      property_attr_exterior_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("property.attr_exterior_id")),
+      ),
+      property_attr_roof_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("property.attr_roof_id")),
+      ),
+      property_attr_whole_part_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("property.attr_whole_part_id")),
+      ),
+      property_attr_bedrooms: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_bedrooms")),
+      ),
+      property_attr_bathrooms: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_bathrooms")),
+      ),
+      property_attr_ensuites: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_ensuites")),
+      ),
+      property_attr_toilets: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_toilets")),
+      ),
+      property_attr_living_areas: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_living_areas")),
+      ),
+      property_attr_garages: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_garages")),
+      ),
+      property_attr_carports: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_carports")),
+      ),
+      property_attr_open_spaces: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_open_spaces")),
+      ),
+      property_attr_total_car_accom: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_total_car_accom")),
+      ),
+      property_attr_buildarea_m2: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_buildarea_m2")),
+      ),
+      property_attr_landarea_m2: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_landarea_m2")),
+      ),
+      property_attr_energy_rating: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_energy_rating")),
+      ),
+      property_attr_build_year: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_build_year")),
+      ),
+      property_attr_sleeps: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_sleeps")),
+      ),
+      property_attr_roi_pa: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("property.attr_roi_pa")),
+      ),
+      property_attr_takings: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("property.attr_takings")),
+      ),
+      property_attr_is_house_land: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_is_house_land")),
+      ),
+      property_attr_is_franchise: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_is_franchise")),
+      ),
+      property_attr_land_depth_rear: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_land_depth_rear")),
+      ),
+      property_attr_land_depth_left: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_land_depth_left")),
+      ),
+      property_attr_land_depth_right: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_land_depth_right")),
+      ),
+      property_attr_land_frontage: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_land_frontage")),
+      ),
+      property_attr_land_crossover_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("property.attr_land_crossover_id")),
+      ),
+      property_car_accom: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.car_accom")),
+      ),
+      property_attr_is_corner_block: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_is_corner_block")),
+      ),
+      property_features: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures,
+        ).pipe(T.Body("property.features")),
+      ),
+      property_views: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures,
+        ).pipe(T.Body("property.views")),
+      ),
+      property_tags: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags,
+        ).pipe(T.Body("property.tags")),
+      ),
+      property_property_category_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyPropertyCategoryId,
+        ).pipe(T.Body("property.property_category_id")),
+      ),
+      property_attr_tenure_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("property.attr_tenure_id")),
+      ),
+      property_attr_tenure_agent_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_tenure_agent_id")),
+      ),
+      property_attr_tenure_expiry_year: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_tenure_expiry_year")),
+      ),
+      property_attr_tenure_ground_rent: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("property.attr_tenure_ground_rent")),
+      ),
+      property_attr_tenure_service_charge: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("property.attr_tenure_service_charge")),
+      ),
+      property_attr_tenure_other: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("property.attr_tenure_other")),
+      ),
+      property_status_is_current_oab: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("property.status_is_current_oab")),
+      ),
+      property_status_is_current_appraisal: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("property.status_is_current_appraisal")),
+      ),
+      property_status_is_current_listing: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("property.status_is_current_listing")),
+      ),
+      listing_authority_type_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("listing.authority_type_id")),
+      ),
+      listing_under_contract: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.under_contract")),
+      ),
+      listing_on_hold: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.on_hold")),
+      ),
+      listing_account_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("listing.account_id")),
+      ),
+      listing_location_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("listing.location_id")),
+      ),
+      listing_listing_category_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("listing.listing_category_id")),
+      ),
+      listing_price_rent_per_m2: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_rent_per_m2")),
+      ),
+      listing_price_match: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_match")),
+      ),
+      listing_price_match_sale: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_match_sale")),
+      ),
+      listing_price_match_rent_pa_inc_tax_week: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_match_rent_pa_inc_tax_week")),
+      ),
+      listing_price_match_rent_pa_inc_tax_fortnight: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_match_rent_pa_inc_tax_fortnight")),
+      ),
+      listing_price_match_rent_pa_inc_tax_month: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_match_rent_pa_inc_tax_month")),
+      ),
+      listing_price_match_rent_pa_inc_tax: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.price_match_rent_pa_inc_tax")),
+      ),
+      listing_system_overpayment_balance: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAttrRoiPa,
+        ).pipe(T.Body("listing.system_overpayment_balance")),
+      ),
+      listing_system_has_preupload_errors: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.system_has_preupload_errors")),
+      ),
+      listing_available_from_date: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.available_from_date")),
+      ),
+      listing_authority_date_expires: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.authority_date_expires")),
+      ),
+      listing_authority_date_start: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.authority_date_start")),
+      ),
+      listing_inbound_unique_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.inbound_unique_id")),
+      ),
+      listing_listing_agent_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId,
+        ).pipe(T.Body("listing.listing_agent_id")),
+      ),
+      listing_listing_agent_1_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id,
+        ).pipe(T.Body("listing.listing_agent_1_id")),
+      ),
+      listing_listing_agent_2_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id,
+        ).pipe(T.Body("listing.listing_agent_2_id")),
+      ),
+      listing_allowances: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures,
+        ).pipe(T.Body("listing.allowances")),
+      ),
+      listing_idealfors: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures,
+        ).pipe(T.Body("listing.idealfors")),
+      ),
+      listing_subcategories: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyFeatures,
+        ).pipe(T.Body("listing.subcategories")),
+      ),
+      listing_epc_current_eer: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_current_eer")),
+      ),
+      listing_epc_potential_eer: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_potential_eer")),
+      ),
+      listing_epc_current_eir: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_current_eir")),
+      ),
+      listing_epc_potential_eir: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_potential_eir")),
+      ),
+      listing_epc_lodgement_date: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_lodgement_date")),
+      ),
+      listing_epc_expiry_date: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_expiry_date")),
+      ),
+      listing_epc_not_required: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_not_required")),
+      ),
+      listing_epc_not_required_reason: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.epc_not_required_reason")),
+      ),
+      listing_comm_structure_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.comm_structure_id")),
+      ),
+      listing_new_home: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.new_home")),
+      ),
+      listing_let_agreed: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.let_agreed")),
+      ),
+      listing_event_auction_date: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.event_auction_date")),
+      ),
+      listing_event_open_date: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.event_open_date")),
+      ),
+      listing_event_date: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyStatusIsCurrentOab,
+        ).pipe(T.Body("listing.event_date")),
+      ),
+      listing_system_listing_state: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("listing.system_listing_state")),
+      ),
+      listing_system_publication_status: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("listing.system_publication_status")),
+      ),
+      listing_system_publication_time: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.system_publication_time")),
+      ),
+      listing_state_change_timestamp: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.state_change_timestamp")),
+      ),
+      listing_publish_to_portals: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.publish_to_portals")),
+      ),
+      listing_publish_to_automatch: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.publish_to_automatch")),
+      ),
+      listing_publish_to_external: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.publish_to_external")),
+      ),
+      listing_publish_to_general: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.publish_to_general")),
+      ),
+      listing_state_date: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.state_date")),
+      ),
+      listing_state_value_price: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice,
+        ).pipe(T.Body("listing.state_value_price")),
+      ),
+      listing_project_stage_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.project_stage_id")),
+      ),
+      listing_status_is_not_for_sale: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("listing.status_is_not_for_sale")),
+      ),
+      listing_baseline_price: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingStateValuePrice,
+        ).pipe(T.Body("listing.baseline_price")),
+      ),
+      project_stage_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.id")),
+      ),
+      project_stage_name: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.name")),
+      ),
+      project_stage_full_name: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.full_name")),
+      ),
+      project_stage_construction_start_date: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.construction_start_date")),
+      ),
+      project_stage_construction_date_quoted: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.construction_date_quoted")),
+      ),
+      project_stage_construction_current_projection: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.construction_current_projection")),
+      ),
+      project_stage_construction_last_updated: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.construction_last_updated")),
+      ),
+      project_stage_construction_actual_finished_date: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.construction_actual_finished_date")),
+      ),
+      project_stage_title_date_quoted: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.title_date_quoted")),
+      ),
+      project_stage_title_current_projection: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.title_current_projection")),
+      ),
+      project_stage_title_last_updated: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.title_last_updated")),
+      ),
+      project_stage_title_actual_finished_date: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.title_actual_finished_date")),
+      ),
+      project_stage_release_date_quoted: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.release_date_quoted")),
+      ),
+      project_stage_release_current_projection: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.release_current_projection")),
+      ),
+      project_stage_release_last_updated: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.release_last_updated")),
+      ),
+      project_stage_release_actual_finished_date: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project_stage.release_actual_finished_date")),
+      ),
+      project_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project.id")),
+      ),
+      project_name: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime,
+        ).pipe(T.Body("project.name")),
+      ),
+      project_tags: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyTags,
+        ).pipe(T.Body("project.tags")),
+      ),
+      contract_is_backup_offer: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.is_backup_offer")),
+      ),
+      contract_is_primary_backup_offer: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.is_primary_backup_offer")),
+      ),
+      contract_is_active: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.is_active")),
+      ),
+      contract_is_active_primary: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.is_active_primary")),
+      ),
+      contract_is_active_backup: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.is_active_backup")),
+      ),
+      contract_date_expec_deposit: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_expec_deposit")),
+      ),
+      contract_date_expec_finance: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_expec_finance")),
+      ),
+      contract_date_expec_unconditional: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_expec_unconditional")),
+      ),
+      contract_date_expec_settlement: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_expec_settlement")),
+      ),
+      contract_date_expec_possession: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_expec_possession")),
+      ),
+      contract_date_actual_accepted: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_accepted")),
+      ),
+      contract_date_actual_communicated: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicated,
+        ).pipe(T.Body("contract.date_actual_communicated")),
+      ),
+      contract_date_actual_deposit: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_deposit")),
+      ),
+      contract_date_actual_finance: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_finance")),
+      ),
+      contract_date_actual_unconditional: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_unconditional")),
+      ),
+      contract_date_actual_settlement: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_settlement")),
+      ),
+      contract_date_actual_possession: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_possession")),
+      ),
+      contract_date_actual_fallen: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_fallen")),
+      ),
+      contract_date_actual_withdrawn: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_withdrawn")),
+      ),
+      contract_date_actual_offer: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.date_actual_offer")),
+      ),
+      contract_listing_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ).pipe(T.Body("contract.listing_id")),
+      ),
+      listing_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer,
+        ),
+      ),
+      contract_date_expec_and_incomplete: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateExpecAndIncomplete,
+        ).pipe(T.Body("contract.date_expec_and_incomplete")),
+      ),
+      contract_agent_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgent1Id,
+        ).pipe(T.Body("contract.agent_id")),
+      ),
+      contract_listing_agent_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId,
+        ).pipe(T.Body("contract.listing_agent_id")),
+      ),
+      contract_listing_location_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ).pipe(T.Body("contract.listing_location_id")),
+      ),
+      contract_listing_or_contract_agent_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsListingListingAgentId,
+        ).pipe(T.Body("contract.listing_or_contract_agent_id")),
+      ),
+      contract_stability_indicator_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorId,
+        ).pipe(T.Body("contract.stability_indicator_id")),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1Example",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1Example>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1 {
+  code?: string | null;
+  summary?: string | null;
+  example?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1Example | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      code: S.optional(S.NullOr(S.String)),
+      summary: S.optional(S.NullOr(S.String)),
+      example: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1Example,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamples {
+  Example1?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1 | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamples",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamples>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapi {
+  available?: boolean | null;
+  description?: unknown;
+  request?: PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.Unknown),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsDescribeSearchFields {
+  description?: string | null;
+  parameters?: PublishedListingsDescribeResponseMethodsDescribeParameters | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsDescribeSearchFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsDescribeParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapi,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsDescribeSearchFields",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFields>;
+
+export type PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsParametersIncludeArchived =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+export const PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsParametersIncludeArchived =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+
+export interface PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsParameters {
+  include_archived?: AdminValueListsDescribeResponseMethodsCreateParametersReturnId | null;
+}
+export const PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      include_archived: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsCreateParametersReturnId,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsParameters",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsParameters>;
+
+export type PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestParametersIncludeArchivedDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+export const PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestParametersIncludeArchivedDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestParametersIncludeArchived =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+export const PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestParametersIncludeArchived =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+
+export interface PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestParameters {
+  include_archived?: AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId | null;
+}
+export const PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      include_archived: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestParameters",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestParameters>;
+
+export type PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestParameters | null;
+  examples?: PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestParameters,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequestExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequest>;
+
+export type PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiResponseExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiResponseExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiResponseExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiResponseExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiResponseExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiRequest,
+        ),
+      ),
+      response: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapiResponse,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbs {
+  description?: string | null;
+  parameters?: PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsParameters | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbs =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsParameters,
+        ),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbsOpenapi,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbs",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbs>;
+
+export type PublishedListingsDescribeResponseMethodsLinkParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const PublishedListingsDescribeResponseMethodsLinkParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type PublishedListingsDescribeResponseMethodsLinkParametersRelatedListingId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const PublishedListingsDescribeResponseMethodsLinkParametersRelatedListingId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export interface PublishedListingsDescribeResponseMethodsLinkParameters {
+  id?: AdminValueListsDescribeResponseMethodsArchiveParametersId | null;
+  related_listing_id?: AdminValueListsDescribeResponseMethodsArchiveParametersId | null;
+}
+export const PublishedListingsDescribeResponseMethodsLinkParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParametersId),
+      ),
+      related_listing_id: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParametersId),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsLinkParameters",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsLinkParameters>;
+
+export type PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParametersIdDefinition =
+  PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchStringDefinition;
+export const PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParametersIdDefinition =
+  PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchStringDefinition;
+
+export type PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParametersId =
+  PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString;
+export const PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParametersId =
+  PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString;
+
+export type PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParametersRelatedListingIdDefinition =
+  PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchStringDefinition;
+export const PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParametersRelatedListingIdDefinition =
+  PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchStringDefinition;
+
+export type PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParametersRelatedListingId =
+  PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString;
+export const PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParametersRelatedListingId =
+  PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString;
+
+export interface PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParameters {
+  id?: PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString | null;
+  related_listing_id?: PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString | null;
+}
+export const PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString,
+        ),
+      ),
+      related_listing_id: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParameters",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParameters>;
+
+export type PublishedListingsDescribeResponseMethodsLinkOpenapiRequestExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsLinkOpenapiRequestExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsLinkOpenapiRequestExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsLinkOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParameters | null;
+  examples?: PublishedListingsDescribeResponseMethodsLinkOpenapiRequestExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsLinkOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsLinkOpenapiRequestParameters,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsLinkOpenapiRequestExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsLinkOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsLinkOpenapiRequest>;
+
+export type PublishedListingsDescribeResponseMethodsLinkOpenapiResponseExamplesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsLinkOpenapiResponseExamplesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsLinkOpenapiResponseExamplesList>;
+
+export interface PublishedListingsDescribeResponseMethodsLinkOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsLinkOpenapiResponseExamplesList | null;
+}
+export const PublishedListingsDescribeResponseMethodsLinkOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsLinkOpenapiResponseExamplesList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsLinkOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsLinkOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsLinkOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: PublishedListingsDescribeResponseMethodsLinkOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsLinkOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsLinkOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsLinkOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsLinkOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsLinkOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsLinkOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsLink {
+  description?: string | null;
+  parameters?: PublishedListingsDescribeResponseMethodsLinkParameters | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsLinkOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsLink =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsLinkParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsLinkOpenapi),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsLink",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsLink>;
+
+export type PublishedListingsDescribeResponseMethodsReadParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const PublishedListingsDescribeResponseMethodsReadParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export type PublishedListingsDescribeResponseMethodsReadParametersSearchArgumentsDefaultValueList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsReadParametersSearchArgumentsDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadParametersSearchArgumentsDefaultValueList>;
+
+export interface PublishedListingsDescribeResponseMethodsReadParametersSearchArguments {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: PublishedListingsDescribeResponseMethodsReadParametersSearchArgumentsDefaultValueList | null;
+  required?: boolean | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadParametersSearchArguments =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadParametersSearchArgumentsDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadParametersSearchArguments",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadParametersSearchArguments>;
+
+export type PublishedListingsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList>;
+
+export interface PublishedListingsDescribeResponseMethodsReadParametersExtraFields {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: PublishedListingsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList | null;
+  required?: boolean | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadParametersExtraFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadParametersExtraFields",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadParametersExtraFields>;
+
+export type PublishedListingsDescribeResponseMethodsReadParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+export const PublishedListingsDescribeResponseMethodsReadParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsArchiveParametersId;
+
+export interface PublishedListingsDescribeResponseMethodsReadParameters {
+  id?: AdminValueListsDescribeResponseMethodsArchiveParametersId | null;
+  search_arguments?: PublishedListingsDescribeResponseMethodsReadParametersSearchArguments | null;
+  extra_fields?: PublishedListingsDescribeResponseMethodsReadParametersExtraFields | null;
+  result_format?: AdminValueListsDescribeResponseMethodsArchiveParametersId | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParametersId),
+      ),
+      search_arguments: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadParametersSearchArguments,
+        ),
+      ),
+      extra_fields: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadParametersExtraFields,
+        ),
+      ),
+      result_format: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsArchiveParametersId),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsReadParameters",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadParameters>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersIdDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersId =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersSearchArgumentsDefinition {
+  description?: string | null;
+  type?: string | null;
+  default?: unknown;
+  nullable?: boolean | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersSearchArgumentsDefinition =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default: S.optional(S.Unknown),
+      nullable: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersSearchArgumentsDefinition",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersSearchArgumentsDefinition>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersSearchArguments {
+  required?: boolean | null;
+  definition?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersSearchArgumentsDefinition | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersSearchArguments =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      required: S.optional(S.NullOr(S.Boolean)),
+      definition: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersSearchArgumentsDefinition,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersSearchArguments",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersSearchArguments>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFieldsDefinitionDefaultList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFieldsDefinitionDefaultList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFieldsDefinitionDefaultList>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFieldsDefinition {
+  description?: string | null;
+  type?: string | null;
+  default?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFieldsDefinitionDefaultList | null;
+  nullable?: boolean | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFieldsDefinition =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFieldsDefinitionDefaultList,
+        ),
+      ),
+      nullable: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFieldsDefinition",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFieldsDefinition>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFields {
+  required?: boolean | null;
+  definition?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFieldsDefinition | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFields =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      required: S.optional(S.NullOr(S.Boolean)),
+      definition: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFieldsDefinition,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFields",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFields>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormatDefinitionDefaultList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormatDefinitionDefaultList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormatDefinitionDefaultList>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormatDefinition {
+  description?: string | null;
+  type?: string | null;
+  default?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormatDefinitionDefaultList | null;
+  nullable?: boolean | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormatDefinition =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormatDefinitionDefaultList,
+        ),
+      ),
+      nullable: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormatDefinition",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormatDefinition>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormat {
+  required?: boolean | null;
+  definition?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormatDefinition | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormat =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      required: S.optional(S.NullOr(S.Boolean)),
+      definition: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormatDefinition,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormat",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormat>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiRequestParameters {
+  id?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId | null;
+  search_arguments?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersSearchArguments | null;
+  extra_fields?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFields | null;
+  result_format?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormat | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId,
+        ),
+      ),
+      search_arguments: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersSearchArguments,
+        ),
+      ),
+      extra_fields: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersExtraFields,
+        ),
+      ),
+      result_format: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestParametersResultFormat,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiRequestParameters",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestParameters>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1ExtraFieldsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1ExtraFieldsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1ExtraFieldsList>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1SearchArgumentsExtraOptions {
+  include_unpublished?: number | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1SearchArgumentsExtraOptions =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      include_unpublished: S.optional(S.NullOr(S.Number)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1SearchArgumentsExtraOptions",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1SearchArgumentsExtraOptions>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1SearchArguments {
+  extra_options?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1SearchArgumentsExtraOptions | null;
+  result_format?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1SearchArguments =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      extra_options: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1SearchArgumentsExtraOptions,
+        ),
+      ),
+      result_format: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1SearchArguments",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1SearchArguments>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1 {
+  id?: number | null;
+  extra_fields?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1ExtraFieldsList | null;
+  search_arguments?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1SearchArguments | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.Number)),
+      extra_fields: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1ExtraFieldsList,
+        ),
+      ),
+      search_arguments: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1SearchArguments,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamples {
+  Example1?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1 | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamples",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamples>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestParameters | null;
+  examples?: PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestParameters,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsReadOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequest>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount {
+  id?: string | null;
+  name?: string | null;
+  country_id?: string | null;
+  country_region_id?: string | null;
+  timezone_id?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.String)),
+      name: S.optional(S.NullOr(S.String)),
+      country_id: S.optional(S.NullOr(S.String)),
+      country_region_id: S.optional(S.NullOr(S.String)),
+      timezone_id: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocationLogoImageThumbsList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocationLogoImageThumbsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocationLogoImageThumbsList>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocationLogoImage {
+  url?: string | null;
+  thumbs?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocationLogoImageThumbsList | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocationLogoImage =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      url: S.optional(S.NullOr(S.String)),
+      thumbs: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocationLogoImageThumbsList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocationLogoImage",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocationLogoImage>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocation {
+  id?: string | null;
+  location_name?: string | null;
+  website?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  fax?: unknown;
+  address_physical?: string | null;
+  report_color?: string | null;
+  logo_image?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocationLogoImage | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocation =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.String)),
+      location_name: S.optional(S.NullOr(S.String)),
+      website: S.optional(S.NullOr(S.String)),
+      email: S.optional(S.NullOr(S.String)),
+      phone: S.optional(S.NullOr(S.String)),
+      fax: S.optional(S.Unknown),
+      address_physical: S.optional(S.NullOr(S.String)),
+      report_color: S.optional(S.NullOr(S.String)),
+      logo_image: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocationLogoImage,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocation",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocation>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuildingBuildingImageThumbs800x600 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuildingBuildingImageThumbs800x600 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuildingBuildingImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuildingBuildingImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuildingBuildingImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuildingBuildingImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuildingBuildingImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuildingBuildingImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuildingBuildingImageThumbs =
+  ContractsReadResponseListingListingPrimaryImageThumbs;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuildingBuildingImageThumbs =
+  ContractsReadResponseListingListingPrimaryImageThumbs;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuildingBuildingImage =
+  ContractsReadResponseListingListingPrimaryImage;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuildingBuildingImage =
+  ContractsReadResponseListingListingPrimaryImage;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuilding =
+  ListingsReadResponsePropertyAdrBuilding;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressBuilding =
+  ListingsReadResponsePropertyAdrBuilding;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressFormats {
+  street_name_number?: string | null;
+  street_name_number_w_suburb?: string | null;
+  full_address?: string | null;
+  full_address_w_building_name?: string | null;
+  hidden_address?: string | null;
+  display_address?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressFormats =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      street_name_number: S.optional(S.NullOr(S.String)),
+      street_name_number_w_suburb: S.optional(S.NullOr(S.String)),
+      full_address: S.optional(S.NullOr(S.String)),
+      full_address_w_building_name: S.optional(S.NullOr(S.String)),
+      hidden_address: S.optional(S.NullOr(S.String)),
+      display_address: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressFormats",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressFormats>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress {
+  latitude?: string | null;
+  longitude?: string | null;
+  unit_number?: string | null;
+  street_number?: string | null;
+  street_name?: string | null;
+  state_or_region?: string | null;
+  locality?: unknown;
+  suburb_or_town?: string | null;
+  postcode?: string | null;
+  country?: string | null;
+  estate_name?: unknown;
+  estate_stage?: unknown;
+  hide_address?: string | null;
+  building?: ListingsReadResponsePropertyAdrBuilding | null;
+  formats?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressFormats | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      latitude: S.optional(S.NullOr(S.String)),
+      longitude: S.optional(S.NullOr(S.String)),
+      unit_number: S.optional(S.NullOr(S.String)),
+      street_number: S.optional(S.NullOr(S.String)),
+      street_name: S.optional(S.NullOr(S.String)),
+      state_or_region: S.optional(S.NullOr(S.String)),
+      locality: S.optional(S.Unknown),
+      suburb_or_town: S.optional(S.NullOr(S.String)),
+      postcode: S.optional(S.NullOr(S.String)),
+      country: S.optional(S.NullOr(S.String)),
+      estate_name: S.optional(S.Unknown),
+      estate_stage: S.optional(S.Unknown),
+      hide_address: S.optional(S.NullOr(S.String)),
+      building: S.optional(S.NullOr(ListingsReadResponsePropertyAdrBuilding)),
+      formats: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressFormats,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAttributes {
+  bedrooms?: string | null;
+  bathrooms?: string | null;
+  ensuites?: string | null;
+  toilets?: string | null;
+  living_areas?: string | null;
+  garages?: string | null;
+  carports?: string | null;
+  open_spaces?: string | null;
+  total_car_accom?: string | null;
+  buildarea?: string | null;
+  buildarea_m2?: string | null;
+  landarea?: string | null;
+  landarea_m2?: string | null;
+  energy_rating?: string | null;
+  build_year?: string | null;
+  sleeps?: unknown;
+  roi_pa?: unknown;
+  takings?: unknown;
+  valuation_date?: string | null;
+  valuation_amount?: string | null;
+  valuation_land_amount?: unknown;
+  tenure_expiry_year?: unknown;
+  is_house_land?: unknown;
+  is_corner_block?: unknown;
+  is_franchise?: unknown;
+  land_depth_rear?: unknown;
+  land_depth_left?: unknown;
+  land_depth_right?: unknown;
+  land_frontage?: unknown;
+  buildarea_unit?: string | null;
+  landarea_unit?: string | null;
+  land_crossover?: unknown;
+  roof?: string | null;
+  exterior?: string | null;
+  whole_part?: unknown;
+  tenure?: unknown;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAttributes =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      bedrooms: S.optional(S.NullOr(S.String)),
+      bathrooms: S.optional(S.NullOr(S.String)),
+      ensuites: S.optional(S.NullOr(S.String)),
+      toilets: S.optional(S.NullOr(S.String)),
+      living_areas: S.optional(S.NullOr(S.String)),
+      garages: S.optional(S.NullOr(S.String)),
+      carports: S.optional(S.NullOr(S.String)),
+      open_spaces: S.optional(S.NullOr(S.String)),
+      total_car_accom: S.optional(S.NullOr(S.String)),
+      buildarea: S.optional(S.NullOr(S.String)),
+      buildarea_m2: S.optional(S.NullOr(S.String)),
+      landarea: S.optional(S.NullOr(S.String)),
+      landarea_m2: S.optional(S.NullOr(S.String)),
+      energy_rating: S.optional(S.NullOr(S.String)),
+      build_year: S.optional(S.NullOr(S.String)),
+      sleeps: S.optional(S.Unknown),
+      roi_pa: S.optional(S.Unknown),
+      takings: S.optional(S.Unknown),
+      valuation_date: S.optional(S.NullOr(S.String)),
+      valuation_amount: S.optional(S.NullOr(S.String)),
+      valuation_land_amount: S.optional(S.Unknown),
+      tenure_expiry_year: S.optional(S.Unknown),
+      is_house_land: S.optional(S.Unknown),
+      is_corner_block: S.optional(S.Unknown),
+      is_franchise: S.optional(S.Unknown),
+      land_depth_rear: S.optional(S.Unknown),
+      land_depth_left: S.optional(S.Unknown),
+      land_depth_right: S.optional(S.Unknown),
+      land_frontage: S.optional(S.Unknown),
+      buildarea_unit: S.optional(S.NullOr(S.String)),
+      landarea_unit: S.optional(S.NullOr(S.String)),
+      land_crossover: S.optional(S.Unknown),
+      roof: S.optional(S.NullOr(S.String)),
+      exterior: S.optional(S.NullOr(S.String)),
+      whole_part: S.optional(S.Unknown),
+      tenure: S.optional(S.Unknown),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAttributes",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAttributes>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultRuralList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultRuralList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultRuralList>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract {
+  status?: string | null;
+  date_accepted?: string | null;
+  date_settlement?: unknown;
+  date_unconditional?: unknown;
+  price?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      status: S.optional(S.NullOr(S.String)),
+      date_accepted: S.optional(S.NullOr(S.String)),
+      date_settlement: S.optional(S.Unknown),
+      date_unconditional: S.optional(S.Unknown),
+      price: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultMeta {
+  other_features?: string | null;
+  highlight_1?: unknown;
+  highlight_2?: unknown;
+  highlight_3?: unknown;
+  rates_business?: string | null;
+  rates_council?: string | null;
+  rates_bodycorp?: string | null;
+  rates_water?: string | null;
+  parking_notes?: unknown;
+  zone?: unknown;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultMeta =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      other_features: S.optional(S.NullOr(S.String)),
+      highlight_1: S.optional(S.Unknown),
+      highlight_2: S.optional(S.Unknown),
+      highlight_3: S.optional(S.Unknown),
+      rates_business: S.optional(S.NullOr(S.String)),
+      rates_council: S.optional(S.NullOr(S.String)),
+      rates_bodycorp: S.optional(S.NullOr(S.String)),
+      rates_water: S.optional(S.NullOr(S.String)),
+      parking_notes: S.optional(S.Unknown),
+      zone: S.optional(S.Unknown),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultMeta",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultMeta>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultTagsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultTagsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultTagsList>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFeaturesList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFeaturesList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFeaturesList>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultViewsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultViewsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultViewsList>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultIdealforsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultIdealforsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultIdealforsList>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAllowancesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAllowancesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAllowancesList>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItemEventAgent =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItemEventAgent =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem {
+  id?: string | null;
+  event_type?: string | null;
+  event_type_display?: string | null;
+  event_date?: string | null;
+  event_time_start?: string | null;
+  event_time_end?: string | null;
+  event_duration_minutes?: string | null;
+  event_datetime_start?: string | null;
+  event_datetime_end?: string | null;
+  event_agent?: ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1 | null;
+  event_venue?: unknown;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.String)),
+      event_type: S.optional(S.NullOr(S.String)),
+      event_type_display: S.optional(S.NullOr(S.String)),
+      event_date: S.optional(S.NullOr(S.String)),
+      event_time_start: S.optional(S.NullOr(S.String)),
+      event_time_end: S.optional(S.NullOr(S.String)),
+      event_duration_minutes: S.optional(S.NullOr(S.String)),
+      event_datetime_start: S.optional(S.NullOr(S.String)),
+      event_datetime_end: S.optional(S.NullOr(S.String)),
+      event_agent: S.optional(
+        S.NullOr(
+          ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1,
+        ),
+      ),
+      event_venue: S.optional(S.Unknown),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsList>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem {
+  link_type?: string | null;
+  link_url?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      link_type: S.optional(S.NullOr(S.String)),
+      link_url: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksList>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultBookingsList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultBookingsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultBookingsList>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItemThumbs {
+  _800x600?: string | null;
+  _400x300?: string | null;
+  _200x150?: string | null;
+  _80x60?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItemThumbs =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      _800x600: S.optional(S.NullOr(S.String).pipe(T.Body("800x600"))),
+      _400x300: S.optional(S.NullOr(S.String).pipe(T.Body("400x300"))),
+      _200x150: S.optional(S.NullOr(S.String).pipe(T.Body("200x150"))),
+      _80x60: S.optional(S.NullOr(S.String).pipe(T.Body("80x60"))),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItemThumbs",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItemThumbs>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem {
+  url?: string | null;
+  thumbs?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItemThumbs | null;
+  modtime?: string | null;
+  dimensions?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      url: S.optional(S.NullOr(S.String)),
+      thumbs: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItemThumbs,
+        ),
+      ),
+      modtime: S.optional(S.NullOr(S.String)),
+      dimensions: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesList>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItemThumbs {
+  _800x800?: string | null;
+  _400x400?: string | null;
+  _800x600?: string | null;
+  _80x60?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItemThumbs =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      _800x800: S.optional(S.NullOr(S.String).pipe(T.Body("800x800"))),
+      _400x400: S.optional(S.NullOr(S.String).pipe(T.Body("400x400"))),
+      _800x600: S.optional(S.NullOr(S.String).pipe(T.Body("800x600"))),
+      _80x60: S.optional(S.NullOr(S.String).pipe(T.Body("80x60"))),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItemThumbs",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItemThumbs>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem {
+  url?: string | null;
+  thumbs?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItemThumbs | null;
+  modtime?: string | null;
+  dimensions?: unknown;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      url: S.optional(S.NullOr(S.String)),
+      thumbs: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItemThumbs,
+        ),
+      ),
+      modtime: S.optional(S.NullOr(S.String)),
+      dimensions: S.optional(S.Unknown),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansList>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet {
+  heading?: string | null;
+  body?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      heading: S.optional(S.NullOr(S.String)),
+      body: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertBrochure =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertBrochure =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertStocklist =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertStocklist =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultDocumentsList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultDocumentsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultDocumentsList>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultSubcategoriesList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultSubcategoriesList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultSubcategoriesList>;
+
+export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultCustomFieldsList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultCustomFieldsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultCustomFieldsList>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResult {
+  property_id?: string | null;
+  system_listing_state?: string | null;
+  system_publication_timestamp?: string | null;
+  system_modtime?: string | null;
+  system_ctime?: string | null;
+  listing_category_id?: string | null;
+  price_advertise_as?: string | null;
+  price_match?: string | null;
+  price_match_rent_pa_inc_tax?: unknown;
+  price_match_sale?: string | null;
+  price_rent?: unknown;
+  price_rent_per_m2?: unknown;
+  price_est_rent_pw?: unknown;
+  price_bond?: unknown;
+  outgoings_annual?: unknown;
+  outgoings_rent_is_plus?: unknown;
+  state_value_price?: unknown;
+  state_value_price_display?: string | null;
+  state_date?: unknown;
+  state_hide_price?: string | null;
+  inbound_unique_id?: unknown;
+  available_from_date?: unknown;
+  authority_date_start?: string | null;
+  authority_date_expires?: string | null;
+  authority_duration_days?: string | null;
+  new_home?: unknown;
+  parent_listing_id?: unknown;
+  under_contract?: string | null;
+  hold_status?: unknown;
+  hold_deposit_amount?: unknown;
+  property_category?: string | null;
+  business_name?: unknown;
+  ebrochure_link?: string | null;
+  ebrochure_custom_link?: unknown;
+  account?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount | null;
+  location?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocation | null;
+  project_stage?: unknown;
+  authority_type?: string | null;
+  exclusivity?: unknown;
+  price_rent_period?: unknown;
+  price_rent_tax?: unknown;
+  listing_agent_1?: ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1 | null;
+  listing_agent_2?: unknown;
+  default_external_id?: string | null;
+  listing_category?: string | null;
+  listing_sale_or_rental?: string | null;
+  authority_type_id?: string | null;
+  project_listing_status?: string | null;
+  address?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress | null;
+  attributes?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAttributes | null;
+  rural?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultRuralList | null;
+  contract?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract | null;
+  meta?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultMeta | null;
+  tags?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultTagsList | null;
+  features?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFeaturesList | null;
+  views?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultViewsList | null;
+  idealfors?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultIdealforsList | null;
+  allowances?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAllowancesList | null;
+  events?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsList | null;
+  links?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksList | null;
+  bookings?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultBookingsList | null;
+  images?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesList | null;
+  floorplans?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansList | null;
+  advert_internet?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet | null;
+  advert_brochure?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet | null;
+  advert_stocklist?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet | null;
+  documents?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultDocumentsList | null;
+  subcategories?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultSubcategoriesList | null;
+  custom_fields?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultCustomFieldsList | null;
+  etag?: string | null;
+  id?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResult =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      property_id: S.optional(S.NullOr(S.String)),
+      system_listing_state: S.optional(S.NullOr(S.String)),
+      system_publication_timestamp: S.optional(S.NullOr(S.String)),
+      system_modtime: S.optional(S.NullOr(S.String)),
+      system_ctime: S.optional(S.NullOr(S.String)),
+      listing_category_id: S.optional(S.NullOr(S.String)),
+      price_advertise_as: S.optional(S.NullOr(S.String)),
+      price_match: S.optional(S.NullOr(S.String)),
+      price_match_rent_pa_inc_tax: S.optional(S.Unknown),
+      price_match_sale: S.optional(S.NullOr(S.String)),
+      price_rent: S.optional(S.Unknown),
+      price_rent_per_m2: S.optional(S.Unknown),
+      price_est_rent_pw: S.optional(S.Unknown),
+      price_bond: S.optional(S.Unknown),
+      outgoings_annual: S.optional(S.Unknown),
+      outgoings_rent_is_plus: S.optional(S.Unknown),
+      state_value_price: S.optional(S.Unknown),
+      state_value_price_display: S.optional(S.NullOr(S.String)),
+      state_date: S.optional(S.Unknown),
+      state_hide_price: S.optional(S.NullOr(S.String)),
+      inbound_unique_id: S.optional(S.Unknown),
+      available_from_date: S.optional(S.Unknown),
+      authority_date_start: S.optional(S.NullOr(S.String)),
+      authority_date_expires: S.optional(S.NullOr(S.String)),
+      authority_duration_days: S.optional(S.NullOr(S.String)),
+      new_home: S.optional(S.Unknown),
+      parent_listing_id: S.optional(S.Unknown),
+      under_contract: S.optional(S.NullOr(S.String)),
+      hold_status: S.optional(S.Unknown),
+      hold_deposit_amount: S.optional(S.Unknown),
+      property_category: S.optional(S.NullOr(S.String)),
+      business_name: S.optional(S.Unknown),
+      ebrochure_link: S.optional(S.NullOr(S.String)),
+      ebrochure_custom_link: S.optional(S.Unknown),
+      account: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount,
+        ),
+      ),
+      location: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLocation,
+        ),
+      ),
+      project_stage: S.optional(S.Unknown),
+      authority_type: S.optional(S.NullOr(S.String)),
+      exclusivity: S.optional(S.Unknown),
+      price_rent_period: S.optional(S.Unknown),
+      price_rent_tax: S.optional(S.Unknown),
+      listing_agent_1: S.optional(
+        S.NullOr(
+          ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1,
+        ),
+      ),
+      listing_agent_2: S.optional(S.Unknown),
+      default_external_id: S.optional(S.NullOr(S.String)),
+      listing_category: S.optional(S.NullOr(S.String)),
+      listing_sale_or_rental: S.optional(S.NullOr(S.String)),
+      authority_type_id: S.optional(S.NullOr(S.String)),
+      project_listing_status: S.optional(S.NullOr(S.String)),
+      address: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress,
+        ),
+      ),
+      attributes: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAttributes,
+        ),
+      ),
+      rural: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultRuralList,
+        ),
+      ),
+      contract: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract,
+        ),
+      ),
+      meta: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultMeta,
+        ),
+      ),
+      tags: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultTagsList,
+        ),
+      ),
+      features: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFeaturesList,
+        ),
+      ),
+      views: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultViewsList,
+        ),
+      ),
+      idealfors: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultIdealforsList,
+        ),
+      ),
+      allowances: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAllowancesList,
+        ),
+      ),
+      events: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsList,
+        ),
+      ),
+      links: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksList,
+        ),
+      ),
+      bookings: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultBookingsList,
+        ),
+      ),
+      images: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesList,
+        ),
+      ),
+      floorplans: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansList,
+        ),
+      ),
+      advert_internet: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet,
+        ),
+      ),
+      advert_brochure: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet,
+        ),
+      ),
+      advert_stocklist: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet,
+        ),
+      ),
+      documents: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultDocumentsList,
+        ),
+      ),
+      subcategories: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultSubcategoriesList,
+        ),
+      ),
+      custom_fields: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultCustomFieldsList,
+        ),
+      ),
+      etag: S.optional(S.NullOr(S.String)),
+      id: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResult",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResult>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1Example {
+  result?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResult | null;
+  error?: unknown;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1Example =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      result: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResult,
+        ),
+      ),
+      error: S.optional(S.Unknown),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1Example",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1Example>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1 {
+  code?: string | null;
+  summary?: string | null;
+  example?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1Example | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      code: S.optional(S.NullOr(S.String)),
+      summary: S.optional(S.NullOr(S.String)),
+      example: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1Example,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamples {
+  Example1?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1 | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamples",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamples>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsReadOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsReadOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: PublishedListingsDescribeResponseMethodsReadOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsReadOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsReadOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsReadOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsReadOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsReadOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsRead {
+  description?: string | null;
+  parameters?: PublishedListingsDescribeResponseMethodsReadParameters | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsReadOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsRead =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsReadParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsReadOpenapi),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsRead",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsRead>;
+
+export type PublishedListingsDescribeResponseMethodsSearchParametersCriteriaDefaultValueList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsSearchParametersCriteriaDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchParametersCriteriaDefaultValueList>;
+
+export interface PublishedListingsDescribeResponseMethodsSearchParametersCriteria {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: PublishedListingsDescribeResponseMethodsSearchParametersCriteriaDefaultValueList | null;
+  required?: boolean | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchParametersCriteria =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchParametersCriteriaDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsSearchParametersCriteria",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchParametersCriteria>;
+
+export type PublishedListingsDescribeResponseMethodsSearchParametersOrderByDefaultValueList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsSearchParametersOrderByDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchParametersOrderByDefaultValueList>;
+
+export interface PublishedListingsDescribeResponseMethodsSearchParametersOrderBy {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: PublishedListingsDescribeResponseMethodsSearchParametersOrderByDefaultValueList | null;
+  required?: boolean | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchParametersOrderBy =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchParametersOrderByDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsSearchParametersOrderBy",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchParametersOrderBy>;
+
+export type PublishedListingsDescribeResponseMethodsSearchParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+export const PublishedListingsDescribeResponseMethodsSearchParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+
+export type PublishedListingsDescribeResponseMethodsSearchParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+export const PublishedListingsDescribeResponseMethodsSearchParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchParametersOffset;
+
+export type PublishedListingsDescribeResponseMethodsSearchParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+export const PublishedListingsDescribeResponseMethodsSearchParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+
+export type PublishedListingsDescribeResponseMethodsSearchParametersSearchState =
+  AdminValueListsDescribeResponseMethodsSearchParametersSearchState;
+export const PublishedListingsDescribeResponseMethodsSearchParametersSearchState =
+  AdminValueListsDescribeResponseMethodsSearchParametersSearchState;
+
+export type PublishedListingsDescribeResponseMethodsSearchParametersIdsOnly =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+export const PublishedListingsDescribeResponseMethodsSearchParametersIdsOnly =
+  AdminValueListsDescribeResponseMethodsCreateParametersReturnId;
+
+export type PublishedListingsDescribeResponseMethodsSearchParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchParametersSearchState;
+export const PublishedListingsDescribeResponseMethodsSearchParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchParametersSearchState;
+
+export type PublishedListingsDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList>;
+
+export interface PublishedListingsDescribeResponseMethodsSearchParametersExtraOptions {
+  comment?: string | null;
+  type?: string | null;
+  default_value?: PublishedListingsDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList | null;
+  required?: boolean | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchParametersExtraOptions =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      comment: S.optional(S.NullOr(S.String)),
+      type: S.optional(S.NullOr(S.String)),
+      default_value: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchParametersExtraOptionsDefaultValueList,
+        ),
+      ),
+      required: S.optional(S.NullOr(S.Boolean)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsSearchParametersExtraOptions",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchParametersExtraOptions>;
+
+export interface PublishedListingsDescribeResponseMethodsSearchParameters {
+  criteria?: PublishedListingsDescribeResponseMethodsSearchParametersCriteria | null;
+  order_by?: PublishedListingsDescribeResponseMethodsSearchParametersOrderBy | null;
+  offset?: AdminValueListsDescribeResponseMethodsSearchParametersOffset | null;
+  limit?: AdminValueListsDescribeResponseMethodsSearchParametersOffset | null;
+  create_viewstate?: AdminValueListsDescribeResponseMethodsCreateParametersReturnId | null;
+  search_state?: AdminValueListsDescribeResponseMethodsSearchParametersSearchState | null;
+  ids_only?: AdminValueListsDescribeResponseMethodsCreateParametersReturnId | null;
+  result_format?: AdminValueListsDescribeResponseMethodsSearchParametersSearchState | null;
+  extra_options?: PublishedListingsDescribeResponseMethodsSearchParametersExtraOptions | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      criteria: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchParametersCriteria,
+        ),
+      ),
+      order_by: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchParametersOrderBy,
+        ),
+      ),
+      offset: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsSearchParametersOffset),
+      ),
+      limit: S.optional(
+        S.NullOr(AdminValueListsDescribeResponseMethodsSearchParametersOffset),
+      ),
+      create_viewstate: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsCreateParametersReturnId,
+        ),
+      ),
+      search_state: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsSearchParametersSearchState,
+        ),
+      ),
+      ids_only: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsCreateParametersReturnId,
+        ),
+      ),
+      result_format: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsSearchParametersSearchState,
+        ),
+      ),
+      extra_options: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchParametersExtraOptions,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsSearchParameters",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchParameters>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersCriteriaDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersCriteriaDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersCriteria =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersCriteria =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersOrderByDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersOrderByDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersOrderBy =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersOrderBy =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersOffset =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersLimitDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersLimitDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffsetDefinition;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersLimit =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersCreateViewstateDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersCreateViewstateDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersCreateViewstate =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersExtraOptionsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersExtraOptionsDefinition =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersExtraOptions =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersExtraOptions =
+  AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersSearchStateDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersSearchStateDefinition =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormatDefinition;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersSearchState =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersSearchState =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersIdsOnlyDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersIdsOnlyDefinition =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnIdDefinition;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersIdsOnly =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParametersIdsOnly =
+  AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId;
+
+export interface PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParameters {
+  criteria?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId | null;
+  order_by?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId | null;
+  offset?: AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset | null;
+  limit?: AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset | null;
+  create_viewstate?: AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId | null;
+  result_format?: AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat | null;
+  extra_options?: AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId | null;
+  search_state?: AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat | null;
+  ids_only?: AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParameters =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      criteria: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId,
+        ),
+      ),
+      order_by: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId,
+        ),
+      ),
+      offset: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset,
+        ),
+      ),
+      limit: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersOffset,
+        ),
+      ),
+      create_viewstate: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId,
+        ),
+      ),
+      result_format: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat,
+        ),
+      ),
+      extra_options: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsArchiveOpenapiRequestParametersId,
+        ),
+      ),
+      search_state: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsSearchOpenapiRequestParametersResultFormat,
+        ),
+      ),
+      ids_only: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsCreateOpenapiRequestParametersReturnId,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParameters",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParameters>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamplesExample1;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestExamplesExample1 =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamplesExample1;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamples;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequestExamples =
+  AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamples;
+
+export interface PublishedListingsDescribeResponseMethodsSearchOpenapiRequest {
+  parameters?: PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParameters | null;
+  examples?: AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      parameters: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiRequestParameters,
+        ),
+      ),
+      examples: S.optional(
+        S.NullOr(
+          AdminValueListsDescribeResponseMethodsSearchOpenapiRequestExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsSearchOpenapiRequest",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiRequest>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAccount =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAccount =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocationLogoImageThumbsList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocationLogoImageThumbsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocationLogoImageThumbsList>;
+
+export interface PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocationLogoImage {
+  url?: string | null;
+  thumbs?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocationLogoImageThumbsList | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocationLogoImage =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      url: S.optional(S.NullOr(S.String)),
+      thumbs: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocationLogoImageThumbsList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocationLogoImage",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocationLogoImage>;
+
+export interface PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocation {
+  id?: string | null;
+  location_name?: string | null;
+  website?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  fax?: unknown;
+  address_physical?: string | null;
+  report_color?: string | null;
+  logo_image?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocationLogoImage | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocation =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.String)),
+      location_name: S.optional(S.NullOr(S.String)),
+      website: S.optional(S.NullOr(S.String)),
+      email: S.optional(S.NullOr(S.String)),
+      phone: S.optional(S.NullOr(S.String)),
+      fax: S.optional(S.Unknown),
+      address_physical: S.optional(S.NullOr(S.String)),
+      report_color: S.optional(S.NullOr(S.String)),
+      logo_image: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocationLogoImage,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocation",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocation>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuildingBuildingImageThumbs800x600 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuildingBuildingImageThumbs800x600 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuildingBuildingImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuildingBuildingImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuildingBuildingImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuildingBuildingImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuildingBuildingImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuildingBuildingImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuildingBuildingImageThumbs =
+  ContractsReadResponseListingListingPrimaryImageThumbs;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuildingBuildingImageThumbs =
+  ContractsReadResponseListingListingPrimaryImageThumbs;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuildingBuildingImage =
+  ContractsReadResponseListingListingPrimaryImage;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuildingBuildingImage =
+  ContractsReadResponseListingListingPrimaryImage;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuilding =
+  ListingsReadResponsePropertyAdrBuilding;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressBuilding =
+  ListingsReadResponsePropertyAdrBuilding;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressFormats =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressFormats;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddressFormats =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressFormats;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddress =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAddress =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAttributes =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAttributes;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAttributes =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAttributes;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemRuralList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemRuralList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemRuralList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemContract =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemContract =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemMeta =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultMeta;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemMeta =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultMeta;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemTagsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemTagsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemTagsList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFeaturesList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFeaturesList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFeaturesList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemViewsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemViewsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemViewsList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemIdealforsList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemIdealforsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemIdealforsList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAllowancesList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAllowancesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAllowancesList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsItemEventAgent =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsItemEventAgent =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemBookingsList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemBookingsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemBookingsList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesItemThumbs =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItemThumbs;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesItemThumbs =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItemThumbs;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansItemThumbs =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItemThumbs;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansItemThumbs =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItemThumbs;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAdvertInternet =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAdvertInternet =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAdvertBrochure =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAdvertBrochure =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAdvertStocklist =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAdvertStocklist =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemDocumentsList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemDocumentsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemDocumentsList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemSubcategoriesList =
+  Array<string>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemSubcategoriesList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemSubcategoriesList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemCustomFieldsList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemCustomFieldsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemCustomFieldsList>;
+
+export interface PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItem {
+  property_id?: string | null;
+  system_listing_state?: string | null;
+  system_publication_timestamp?: string | null;
+  system_modtime?: string | null;
+  system_ctime?: string | null;
+  listing_category_id?: string | null;
+  price_advertise_as?: string | null;
+  price_match?: string | null;
+  price_match_rent_pa_inc_tax?: unknown;
+  price_match_sale?: string | null;
+  price_rent?: unknown;
+  price_rent_per_m2?: unknown;
+  price_est_rent_pw?: unknown;
+  price_bond?: unknown;
+  outgoings_annual?: unknown;
+  outgoings_rent_is_plus?: unknown;
+  state_value_price?: unknown;
+  state_value_price_display?: string | null;
+  state_date?: unknown;
+  state_hide_price?: string | null;
+  inbound_unique_id?: unknown;
+  available_from_date?: unknown;
+  authority_date_start?: string | null;
+  authority_date_expires?: string | null;
+  authority_duration_days?: string | null;
+  new_home?: unknown;
+  parent_listing_id?: unknown;
+  under_contract?: string | null;
+  hold_status?: unknown;
+  hold_deposit_amount?: unknown;
+  property_category?: string | null;
+  business_name?: unknown;
+  ebrochure_link?: string | null;
+  ebrochure_custom_link?: unknown;
+  account?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount | null;
+  location?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocation | null;
+  project_stage?: unknown;
+  authority_type?: string | null;
+  exclusivity?: unknown;
+  price_rent_period?: unknown;
+  price_rent_tax?: unknown;
+  listing_agent_1?: ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1 | null;
+  listing_agent_2?: unknown;
+  default_external_id?: string | null;
+  listing_category?: string | null;
+  listing_sale_or_rental?: string | null;
+  authority_type_id?: string | null;
+  project_listing_status?: string | null;
+  address?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress | null;
+  attributes?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAttributes | null;
+  rural?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemRuralList | null;
+  contract?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract | null;
+  meta?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultMeta | null;
+  tags?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemTagsList | null;
+  features?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFeaturesList | null;
+  views?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemViewsList | null;
+  idealfors?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemIdealforsList | null;
+  allowances?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAllowancesList | null;
+  events?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsList | null;
+  links?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksList | null;
+  bookings?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemBookingsList | null;
+  images?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesList | null;
+  floorplans?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansList | null;
+  advert_internet?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet | null;
+  advert_brochure?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet | null;
+  advert_stocklist?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet | null;
+  documents?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemDocumentsList | null;
+  subcategories?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemSubcategoriesList | null;
+  custom_fields?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemCustomFieldsList | null;
+  etag?: string | null;
+  id?: string | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItem =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      property_id: S.optional(S.NullOr(S.String)),
+      system_listing_state: S.optional(S.NullOr(S.String)),
+      system_publication_timestamp: S.optional(S.NullOr(S.String)),
+      system_modtime: S.optional(S.NullOr(S.String)),
+      system_ctime: S.optional(S.NullOr(S.String)),
+      listing_category_id: S.optional(S.NullOr(S.String)),
+      price_advertise_as: S.optional(S.NullOr(S.String)),
+      price_match: S.optional(S.NullOr(S.String)),
+      price_match_rent_pa_inc_tax: S.optional(S.Unknown),
+      price_match_sale: S.optional(S.NullOr(S.String)),
+      price_rent: S.optional(S.Unknown),
+      price_rent_per_m2: S.optional(S.Unknown),
+      price_est_rent_pw: S.optional(S.Unknown),
+      price_bond: S.optional(S.Unknown),
+      outgoings_annual: S.optional(S.Unknown),
+      outgoings_rent_is_plus: S.optional(S.Unknown),
+      state_value_price: S.optional(S.Unknown),
+      state_value_price_display: S.optional(S.NullOr(S.String)),
+      state_date: S.optional(S.Unknown),
+      state_hide_price: S.optional(S.NullOr(S.String)),
+      inbound_unique_id: S.optional(S.Unknown),
+      available_from_date: S.optional(S.Unknown),
+      authority_date_start: S.optional(S.NullOr(S.String)),
+      authority_date_expires: S.optional(S.NullOr(S.String)),
+      authority_duration_days: S.optional(S.NullOr(S.String)),
+      new_home: S.optional(S.Unknown),
+      parent_listing_id: S.optional(S.Unknown),
+      under_contract: S.optional(S.NullOr(S.String)),
+      hold_status: S.optional(S.Unknown),
+      hold_deposit_amount: S.optional(S.Unknown),
+      property_category: S.optional(S.NullOr(S.String)),
+      business_name: S.optional(S.Unknown),
+      ebrochure_link: S.optional(S.NullOr(S.String)),
+      ebrochure_custom_link: S.optional(S.Unknown),
+      account: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount,
+        ),
+      ),
+      location: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLocation,
+        ),
+      ),
+      project_stage: S.optional(S.Unknown),
+      authority_type: S.optional(S.NullOr(S.String)),
+      exclusivity: S.optional(S.Unknown),
+      price_rent_period: S.optional(S.Unknown),
+      price_rent_tax: S.optional(S.Unknown),
+      listing_agent_1: S.optional(
+        S.NullOr(
+          ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1,
+        ),
+      ),
+      listing_agent_2: S.optional(S.Unknown),
+      default_external_id: S.optional(S.NullOr(S.String)),
+      listing_category: S.optional(S.NullOr(S.String)),
+      listing_sale_or_rental: S.optional(S.NullOr(S.String)),
+      authority_type_id: S.optional(S.NullOr(S.String)),
+      project_listing_status: S.optional(S.NullOr(S.String)),
+      address: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress,
+        ),
+      ),
+      attributes: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAttributes,
+        ),
+      ),
+      rural: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemRuralList,
+        ),
+      ),
+      contract: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract,
+        ),
+      ),
+      meta: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultMeta,
+        ),
+      ),
+      tags: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemTagsList,
+        ),
+      ),
+      features: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFeaturesList,
+        ),
+      ),
+      views: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemViewsList,
+        ),
+      ),
+      idealfors: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemIdealforsList,
+        ),
+      ),
+      allowances: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAllowancesList,
+        ),
+      ),
+      events: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsList,
+        ),
+      ),
+      links: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksList,
+        ),
+      ),
+      bookings: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemBookingsList,
+        ),
+      ),
+      images: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesList,
+        ),
+      ),
+      floorplans: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansList,
+        ),
+      ),
+      advert_internet: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet,
+        ),
+      ),
+      advert_brochure: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet,
+        ),
+      ),
+      advert_stocklist: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet,
+        ),
+      ),
+      documents: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemDocumentsList,
+        ),
+      ),
+      subcategories: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemSubcategoriesList,
+        ),
+      ),
+      custom_fields: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemCustomFieldsList,
+        ),
+      ),
+      etag: S.optional(S.NullOr(S.String)),
+      id: S.optional(S.NullOr(S.String)),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItem",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItem>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsList =
+  Array<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItem>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItem,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaItem =
+  ContactsSearchResponseCriteriaItem;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaItem =
+  ContactsSearchResponseCriteriaItem;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaList =
+  Array<ContactsSearchResponseCriteriaItem>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaList =
+  /*@__PURE__*/ S.Array(
+    ContactsSearchResponseCriteriaItem,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaList>;
+
+export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultOrderByList =
+  Array<unknown>;
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultOrderByList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultOrderByList>;
+
+export interface PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResult {
+  rows?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsList | null;
+  total?: number | null;
+  viewstate_id?: unknown;
+  criteria?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaList | null;
+  order_by?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultOrderByList | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResult =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      rows: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsList,
+        ),
+      ),
+      total: S.optional(S.NullOr(S.Number)),
+      viewstate_id: S.optional(S.Unknown),
+      criteria: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaList,
+        ),
+      ),
+      order_by: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultOrderByList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResult",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResult>;
+
+export interface PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1Example {
+  result?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResult | null;
+  error?: unknown;
+}
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1Example =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      result: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResult,
+        ),
+      ),
+      error: S.optional(S.Unknown),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1Example",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1Example>;
+
+export interface PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1 {
+  code?: string | null;
+  summary?: string | null;
+  example?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1Example | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1 =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      code: S.optional(S.NullOr(S.String)),
+      summary: S.optional(S.NullOr(S.String)),
+      example: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1Example,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1>;
+
+export interface PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamples {
+  Example1?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1 | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamples =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      Example1: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier:
+      "PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamples",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamples>;
+
+export interface PublishedListingsDescribeResponseMethodsSearchOpenapiResponse {
+  examples?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamples | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      examples: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamples,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsSearchOpenapiResponse",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponse>;
+
+export interface PublishedListingsDescribeResponseMethodsSearchOpenapi {
+  available?: boolean | null;
+  description?: string | null;
+  request?: PublishedListingsDescribeResponseMethodsSearchOpenapiRequest | null;
+  response?: PublishedListingsDescribeResponseMethodsSearchOpenapiResponse | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearchOpenapi =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      available: S.optional(S.NullOr(S.Boolean)),
+      description: S.optional(S.NullOr(S.String)),
+      request: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsSearchOpenapiRequest),
+      ),
+      response: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsSearchOpenapiResponse),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsSearchOpenapi",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapi>;
+
+export interface PublishedListingsDescribeResponseMethodsSearch {
+  description?: string | null;
+  parameters?: PublishedListingsDescribeResponseMethodsSearchParameters | null;
+  returns?: string | null;
+  openapi?: PublishedListingsDescribeResponseMethodsSearchOpenapi | null;
+}
+export const PublishedListingsDescribeResponseMethodsSearch =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      parameters: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsSearchParameters),
+      ),
+      returns: S.optional(S.NullOr(S.String)),
+      openapi: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsSearchOpenapi),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeResponseMethodsSearch",
+  }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearch>;
+
+export interface PublishedListingsDescribeResponseMethods {
+  autocomplete?: PublishedListingsDescribeResponseMethodsAutocomplete | null;
+  describe?: PublishedListingsDescribeResponseMethodsDescribe | null;
+  describeDeleteModes?: PublishedListingsDescribeResponseMethodsDescribeDeleteModes | null;
+  describeModel?: PublishedListingsDescribeResponseMethodsDescribeModel | null;
+  describeSearchFields?: PublishedListingsDescribeResponseMethodsDescribeSearchFields | null;
+  getUniqueListingSuburbs?: PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbs | null;
+  link?: PublishedListingsDescribeResponseMethodsLink | null;
+  read?: PublishedListingsDescribeResponseMethodsRead | null;
+  search?: PublishedListingsDescribeResponseMethodsSearch | null;
+}
+export const PublishedListingsDescribeResponseMethods = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      autocomplete: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsAutocomplete),
+      ),
+      describe: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsDescribe),
+      ),
+      describeDeleteModes: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsDescribeDeleteModes),
+      ),
+      describeModel: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsDescribeModel),
+      ),
+      describeSearchFields: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsDescribeSearchFields),
+      ),
+      getUniqueListingSuburbs: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsGetUniqueListingSuburbs,
+        ),
+      ),
+      link: S.optional(S.NullOr(PublishedListingsDescribeResponseMethodsLink)),
+      read: S.optional(S.NullOr(PublishedListingsDescribeResponseMethodsRead)),
+      search: S.optional(
+        S.NullOr(PublishedListingsDescribeResponseMethodsSearch),
+      ),
+    }),
+).annotate({
+  identifier: "PublishedListingsDescribeResponseMethods",
+}) as any as S.Schema<PublishedListingsDescribeResponseMethods>;
+
+export interface PublishedListingsDescribeResponse {
+  name?: string | null;
+  description?: string | null;
+  detail?: string | null;
+  methods?: PublishedListingsDescribeResponseMethods | null;
+}
+export const PublishedListingsDescribeResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    name: S.optional(S.NullOr(S.String)),
+    description: S.optional(S.NullOr(S.String)),
+    detail: S.optional(S.NullOr(S.String)),
+    methods: S.optional(S.NullOr(PublishedListingsDescribeResponseMethods)),
+  }),
+).annotate({
+  identifier: "PublishedListingsDescribeResponse",
+}) as any as S.Schema<PublishedListingsDescribeResponse>;
+
+export interface PublishedListingsDescribeDeleteModesRequest {}
+export const PublishedListingsDescribeDeleteModesRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({}).pipe(
+      T.Http({
+        method: "POST",
+        uri: "/v1/rex/PublishedListings::describeDeleteModes",
+        code: 200,
+      }),
+    ),
+  ).annotate({
+    identifier: "PublishedListingsDescribeDeleteModesRequest",
+  }) as any as S.Schema<PublishedListingsDescribeDeleteModesRequest>;
+
+export type PublishedListingsDescribeDeleteModesResponseBodyList =
+  Array<string>;
+export const PublishedListingsDescribeDeleteModesResponseBodyList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeDeleteModesResponseBodyList>;
+
+export type PublishedListingsDescribeDeleteModesResponse =
+  PublishedListingsDescribeDeleteModesResponseBodyList;
+export const PublishedListingsDescribeDeleteModesResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    PublishedListingsDescribeDeleteModesResponseBodyList.pipe(
+      T.RawResponseRoot(),
+    ),
+  ).annotate({
+    identifier: "PublishedListingsDescribeDeleteModesResponse",
+  }) as any as S.Schema<PublishedListingsDescribeDeleteModesResponse>;
+
+export interface PublishedListingsDescribeModelRequest {}
+export const PublishedListingsDescribeModelRequest = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({}).pipe(
+      T.Http({
+        method: "POST",
+        uri: "/v1/rex/PublishedListings::describeModel",
+        code: 200,
+      }),
+    ),
+).annotate({
+  identifier: "PublishedListingsDescribeModelRequest",
+}) as any as S.Schema<PublishedListingsDescribeModelRequest>;
+
+export type PublishedListingsDescribeModelResponseSearchResultFormatsItem =
+  AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
+export const PublishedListingsDescribeModelResponseSearchResultFormatsItem =
+  AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
+
+export type PublishedListingsDescribeModelResponseSearchResultFormatsList =
+  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
+export const PublishedListingsDescribeModelResponseSearchResultFormatsList =
+  /*@__PURE__*/ S.Array(
+    AdminWebhooksDescribeModelResponseSearchResultFormatsItem,
+  ) as any as S.Schema<PublishedListingsDescribeModelResponseSearchResultFormatsList>;
+
+export type PublishedListingsDescribeModelResponseDeleteModesList =
+  Array<string>;
+export const PublishedListingsDescribeModelResponseDeleteModesList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeModelResponseDeleteModesList>;
+
+export type PublishedListingsDescribeModelResponseDataStructureStructureList =
+  Array<string>;
+export const PublishedListingsDescribeModelResponseDataStructureStructureList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeModelResponseDataStructureStructureList>;
+
+export interface PublishedListingsDescribeModelResponseDataStructure {
+  description?: string | null;
+  structure?: PublishedListingsDescribeModelResponseDataStructureStructureList | null;
+}
+export const PublishedListingsDescribeModelResponseDataStructure =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      description: S.optional(S.NullOr(S.String)),
+      structure: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeModelResponseDataStructureStructureList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeModelResponseDataStructure",
+  }) as any as S.Schema<PublishedListingsDescribeModelResponseDataStructure>;
+
+export type PublishedListingsDescribeModelResponseReadFields =
+  AdminWebhooksDescribeModelResponseReadFields;
+export const PublishedListingsDescribeModelResponseReadFields =
+  AdminWebhooksDescribeModelResponseReadFields;
+
+export type PublishedListingsDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeModelResponseSearchableFieldsSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeModelResponseSearchableFieldsSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeModelResponseSearchableFieldsSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeModelResponseSearchableFieldsSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeModelResponseSearchableFieldsSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeModelResponseSearchableFieldsSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeModelResponseSearchableFieldsSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeModelResponseSearchableFieldsSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeModelResponseSearchableFieldsSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeModelResponseSearchableFieldsSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeModelResponseSearchableFieldsSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeModelResponseSearchableFieldsSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeModelResponseSearchableFieldsSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeModelResponseSearchableFieldsSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeModelResponseSearchableFieldsId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeModelResponseSearchableFieldsId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeModelResponseSearchableFieldsSystemRecordStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeModelResponseSearchableFieldsSystemRecordStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeModelResponseSearchableFieldsSystemRecordState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeModelResponseSearchableFieldsSystemRecordState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeModelResponseSearchableFields =
+  AdminWebhooksDescribeModelResponseSearchableFields;
+export const PublishedListingsDescribeModelResponseSearchableFields =
+  AdminWebhooksDescribeModelResponseSearchableFields;
+
+export type PublishedListingsDescribeModelResponseOrderbyFieldsList =
+  Array<string>;
+export const PublishedListingsDescribeModelResponseOrderbyFieldsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsDescribeModelResponseOrderbyFieldsList>;
+
+export type PublishedListingsDescribeModelResponseExportOptionsList =
+  Array<unknown>;
+export const PublishedListingsDescribeModelResponseExportOptionsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsDescribeModelResponseExportOptionsList>;
+
+export interface PublishedListingsDescribeModelResponse {
+  search_result_formats?: PublishedListingsDescribeModelResponseSearchResultFormatsList | null;
+  delete_modes?: PublishedListingsDescribeModelResponseDeleteModesList | null;
+  data_structure?: PublishedListingsDescribeModelResponseDataStructure | null;
+  read_fields?: AdminWebhooksDescribeModelResponseReadFields | null;
+  read_extra_fields?: unknown | null;
+  searchable_fields?: AdminWebhooksDescribeModelResponseSearchableFields | null;
+  orderby_fields?: PublishedListingsDescribeModelResponseOrderbyFieldsList | null;
+  export_options?: PublishedListingsDescribeModelResponseExportOptionsList | null;
+}
+export const PublishedListingsDescribeModelResponse = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      search_result_formats: S.optional(
+        S.NullOr(PublishedListingsDescribeModelResponseSearchResultFormatsList),
+      ),
+      delete_modes: S.optional(
+        S.NullOr(PublishedListingsDescribeModelResponseDeleteModesList),
+      ),
+      data_structure: S.optional(
+        S.NullOr(PublishedListingsDescribeModelResponseDataStructure),
+      ),
+      read_fields: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseReadFields),
+      ),
+      read_extra_fields: S.optional(S.NullOr(S.Unknown)),
+      searchable_fields: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFields),
+      ),
+      orderby_fields: S.optional(
+        S.NullOr(PublishedListingsDescribeModelResponseOrderbyFieldsList),
+      ),
+      export_options: S.optional(
+        S.NullOr(PublishedListingsDescribeModelResponseExportOptionsList),
+      ),
+    }),
+).annotate({
+  identifier: "PublishedListingsDescribeModelResponse",
+}) as any as S.Schema<PublishedListingsDescribeModelResponse>;
+
+export interface PublishedListingsDescribeSearchFieldsRequest {
+  /** True if detail about the fields should be included */
+  include_detail?: boolean;
+}
+export const PublishedListingsDescribeSearchFieldsRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      include_detail: S.optional(S.Boolean),
+    }).pipe(
+      T.Http({
+        method: "POST",
+        uri: "/v1/rex/PublishedListings::describeSearchFields",
+        code: 200,
+      }),
+    ),
+  ).annotate({
+    identifier: "PublishedListingsDescribeSearchFieldsRequest",
+  }) as any as S.Schema<PublishedListingsDescribeSearchFieldsRequest>;
+
+export type PublishedListingsDescribeSearchFieldsResponseId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeSearchFieldsResponseId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeSearchFieldsResponseSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeSearchFieldsResponseSystemOwnerUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeSearchFieldsResponseSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeSearchFieldsResponseSystemOwnerUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeSearchFieldsResponseSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeSearchFieldsResponseSystemCreatedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeSearchFieldsResponseSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeSearchFieldsResponseSystemCreatedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeSearchFieldsResponseSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeSearchFieldsResponseSystemModifiedUserIdOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeSearchFieldsResponseSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeSearchFieldsResponseSystemModifiedUserId =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export type PublishedListingsDescribeSearchFieldsResponseSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeSearchFieldsResponseSystemCtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeSearchFieldsResponseSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+export const PublishedListingsDescribeSearchFieldsResponseSystemModtime =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
+
+export type PublishedListingsDescribeSearchFieldsResponseSystemRecordStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+export const PublishedListingsDescribeSearchFieldsResponseSystemRecordStateOptions =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
+
+export type PublishedListingsDescribeSearchFieldsResponseSystemRecordState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+export const PublishedListingsDescribeSearchFieldsResponseSystemRecordState =
+  AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId;
+
+export interface PublishedListingsDescribeSearchFieldsResponse {
+  id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  system_owner_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_created_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_modified_user_id?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+  system_ctime?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  system_modtime?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime | null;
+  system_record_state?: AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId | null;
+}
+export const PublishedListingsDescribeSearchFieldsResponse =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      system_owner_user_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+      system_created_user_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+      system_modified_user_id: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+      system_ctime: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      system_modtime: S.optional(
+        S.NullOr(AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime),
+      ),
+      system_record_state: S.optional(
+        S.NullOr(
+          AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserId,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsDescribeSearchFieldsResponse",
+  }) as any as S.Schema<PublishedListingsDescribeSearchFieldsResponse>;
+
+export interface PublishedListingsGetUniqueListingSuburbsRequest {
+  /** True to include sold / leased suburbs */
+  include_archived?: boolean;
+}
+export const PublishedListingsGetUniqueListingSuburbsRequest =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      include_archived: S.optional(S.Boolean),
+    }).pipe(
+      T.Http({
+        method: "POST",
+        uri: "/v1/rex/PublishedListings::getUniqueListingSuburbs",
+        code: 200,
+      }),
+    ),
+  ).annotate({
+    identifier: "PublishedListingsGetUniqueListingSuburbsRequest",
+  }) as any as S.Schema<PublishedListingsGetUniqueListingSuburbsRequest>;
+
+export type PublishedListingsGetUniqueListingSuburbsResponse = unknown;
+export const PublishedListingsGetUniqueListingSuburbsResponse =
+  /*@__PURE__*/ S.suspend(() => S.Unknown.pipe(T.RawResponseRoot())).annotate({
+    identifier: "PublishedListingsGetUniqueListingSuburbsResponse",
+  }) as any as S.Schema<PublishedListingsGetUniqueListingSuburbsResponse>;
+
+export interface PublishedListingsLinkRequest {
+  id: unknown;
+  related_listing_id: unknown;
+}
+export const PublishedListingsLinkRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.Unknown,
+    related_listing_id: S.Unknown,
+  }).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/PublishedListings::link",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "PublishedListingsLinkRequest",
+}) as any as S.Schema<PublishedListingsLinkRequest>;
+
+export type PublishedListingsLinkResponse = unknown;
+export const PublishedListingsLinkResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Unknown.pipe(T.RawResponseRoot()),
+).annotate({
+  identifier: "PublishedListingsLinkResponse",
+}) as any as S.Schema<PublishedListingsLinkResponse>;
+
+/** An array of arguments to be passed through to search (id restriction is included by default) */
+export type PublishedListingsReadRequestSearchArgumentsList = Array<unknown>;
+export const PublishedListingsReadRequestSearchArgumentsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsReadRequestSearchArgumentsList>;
+
+/** This is a proxy to search_arguments['extra_options']['extra_fields'] for consistency */
+export type PublishedListingsReadRequestExtraFieldsList = Array<unknown>;
+export const PublishedListingsReadRequestExtraFieldsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsReadRequestExtraFieldsList>;
+
+/** The search result format to return (could also be included as a search argument). Any search result format accepted by PublishedListings::search */
+export type PublishedListingsReadRequestResultFormatList = Array<unknown>;
+export const PublishedListingsReadRequestResultFormatList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsReadRequestResultFormatList>;
+
+export interface PublishedListingsReadRequest {
+  /** The record id to read */
+  id: number;
+  /** An array of arguments to be passed through to search (id restriction is included by default) */
+  search_arguments?: PublishedListingsReadRequestSearchArgumentsList | null;
+  /** This is a proxy to search_arguments['extra_options']['extra_fields'] for consistency */
+  extra_fields?: PublishedListingsReadRequestExtraFieldsList | null;
+  /** The search result format to return (could also be included as a search argument). Any search result format accepted by PublishedListings::search */
+  result_format?: PublishedListingsReadRequestResultFormatList | null;
+}
+export const PublishedListingsReadRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    id: S.Number,
+    search_arguments: S.optional(
+      S.NullOr(PublishedListingsReadRequestSearchArgumentsList),
+    ),
+    extra_fields: S.optional(
+      S.NullOr(PublishedListingsReadRequestExtraFieldsList),
+    ),
+    result_format: S.optional(
+      S.NullOr(PublishedListingsReadRequestResultFormatList),
+    ),
+  }).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/PublishedListings::read",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "PublishedListingsReadRequest",
+}) as any as S.Schema<PublishedListingsReadRequest>;
+
+export type PublishedListingsReadResponseAccount =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount;
+export const PublishedListingsReadResponseAccount =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount;
+
+export type PublishedListingsReadResponseLocationLogoImageThumbsList =
+  Array<unknown>;
+export const PublishedListingsReadResponseLocationLogoImageThumbsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsReadResponseLocationLogoImageThumbsList>;
+
+export interface PublishedListingsReadResponseLocationLogoImage {
+  url?: string | null;
+  thumbs?: PublishedListingsReadResponseLocationLogoImageThumbsList | null;
+}
+export const PublishedListingsReadResponseLocationLogoImage =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      url: S.optional(S.NullOr(S.String)),
+      thumbs: S.optional(
+        S.NullOr(PublishedListingsReadResponseLocationLogoImageThumbsList),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsReadResponseLocationLogoImage",
+  }) as any as S.Schema<PublishedListingsReadResponseLocationLogoImage>;
+
+export interface PublishedListingsReadResponseLocation {
+  id?: string | null;
+  location_name?: string | null;
+  website?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  fax?: unknown;
+  address_physical?: string | null;
+  report_color?: string | null;
+  logo_image?: PublishedListingsReadResponseLocationLogoImage | null;
+}
+export const PublishedListingsReadResponseLocation = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.String)),
+      location_name: S.optional(S.NullOr(S.String)),
+      website: S.optional(S.NullOr(S.String)),
+      email: S.optional(S.NullOr(S.String)),
+      phone: S.optional(S.NullOr(S.String)),
+      fax: S.optional(S.Unknown),
+      address_physical: S.optional(S.NullOr(S.String)),
+      report_color: S.optional(S.NullOr(S.String)),
+      logo_image: S.optional(
+        S.NullOr(PublishedListingsReadResponseLocationLogoImage),
+      ),
+    }),
+).annotate({
+  identifier: "PublishedListingsReadResponseLocation",
+}) as any as S.Schema<PublishedListingsReadResponseLocation>;
+
+export type PublishedListingsReadResponseListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+export const PublishedListingsReadResponseListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+
+export type PublishedListingsReadResponseAddressBuildingBuildingImageThumbs800x600 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsReadResponseAddressBuildingBuildingImageThumbs800x600 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsReadResponseAddressBuildingBuildingImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsReadResponseAddressBuildingBuildingImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsReadResponseAddressBuildingBuildingImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsReadResponseAddressBuildingBuildingImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsReadResponseAddressBuildingBuildingImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsReadResponseAddressBuildingBuildingImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsReadResponseAddressBuildingBuildingImageThumbs =
+  ContractsReadResponseListingListingPrimaryImageThumbs;
+export const PublishedListingsReadResponseAddressBuildingBuildingImageThumbs =
+  ContractsReadResponseListingListingPrimaryImageThumbs;
+
+export type PublishedListingsReadResponseAddressBuildingBuildingImage =
+  ContractsReadResponseListingListingPrimaryImage;
+export const PublishedListingsReadResponseAddressBuildingBuildingImage =
+  ContractsReadResponseListingListingPrimaryImage;
+
+export type PublishedListingsReadResponseAddressBuilding =
+  ListingsReadResponsePropertyAdrBuilding;
+export const PublishedListingsReadResponseAddressBuilding =
+  ListingsReadResponsePropertyAdrBuilding;
+
+export type PublishedListingsReadResponseAddressFormats =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressFormats;
+export const PublishedListingsReadResponseAddressFormats =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressFormats;
+
+export type PublishedListingsReadResponseAddress =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress;
+export const PublishedListingsReadResponseAddress =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress;
+
+export interface PublishedListingsReadResponseAttributes {
+  bedrooms?: string | null;
+  bathrooms?: string | null;
+  ensuites?: string | null;
+  toilets?: string | null;
+  living_areas?: string | null;
+  garages?: string | null;
+  carports?: string | null;
+  open_spaces?: string | null;
+  total_car_accom?: string | null;
+  buildarea?: string | null;
+  buildarea_m2?: string | null;
+  landarea?: string | null;
+  landarea_m2?: string | null;
+  energy_rating?: string | null;
+  build_year?: string | null;
+  sleeps?: unknown;
+  roi_pa?: unknown;
+  takings?: unknown;
+  valuation_date?: string | null;
+  valuation_amount?: string | null;
+  valuation_land_amount?: unknown;
+  tenure_expiry_year?: unknown;
+  is_house_land?: unknown;
+  is_corner_block?: unknown;
+  is_franchise?: unknown;
+  land_depth_rear?: unknown;
+  land_depth_left?: unknown;
+  land_depth_right?: unknown;
+  land_frontage?: unknown;
+  buildarea_unit?: string | null;
+  landarea_unit?: string | null;
+  land_crossover?: unknown;
+  roof?: string | null;
+  exterior?: string | null;
+  whole_part?: unknown;
+  tenure?: string | null;
+  tenure_ground_rent?: number | null;
+  tenure_ground_rent_review_year?: number | null;
+  tenure_ground_rent_increase_percentage?: number | null;
+  tenure_service_charge?: number | null;
+  shared_ownership_percentage?: number | null;
+  shared_ownership?: string | null;
+  shared_ownership_rent?: number | null;
+  shared_ownership_rent_period?: string | null;
+}
+export const PublishedListingsReadResponseAttributes = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      bedrooms: S.optional(S.NullOr(S.String)),
+      bathrooms: S.optional(S.NullOr(S.String)),
+      ensuites: S.optional(S.NullOr(S.String)),
+      toilets: S.optional(S.NullOr(S.String)),
+      living_areas: S.optional(S.NullOr(S.String)),
+      garages: S.optional(S.NullOr(S.String)),
+      carports: S.optional(S.NullOr(S.String)),
+      open_spaces: S.optional(S.NullOr(S.String)),
+      total_car_accom: S.optional(S.NullOr(S.String)),
+      buildarea: S.optional(S.NullOr(S.String)),
+      buildarea_m2: S.optional(S.NullOr(S.String)),
+      landarea: S.optional(S.NullOr(S.String)),
+      landarea_m2: S.optional(S.NullOr(S.String)),
+      energy_rating: S.optional(S.NullOr(S.String)),
+      build_year: S.optional(S.NullOr(S.String)),
+      sleeps: S.optional(S.Unknown),
+      roi_pa: S.optional(S.Unknown),
+      takings: S.optional(S.Unknown),
+      valuation_date: S.optional(S.NullOr(S.String)),
+      valuation_amount: S.optional(S.NullOr(S.String)),
+      valuation_land_amount: S.optional(S.Unknown),
+      tenure_expiry_year: S.optional(S.Unknown),
+      is_house_land: S.optional(S.Unknown),
+      is_corner_block: S.optional(S.Unknown),
+      is_franchise: S.optional(S.Unknown),
+      land_depth_rear: S.optional(S.Unknown),
+      land_depth_left: S.optional(S.Unknown),
+      land_depth_right: S.optional(S.Unknown),
+      land_frontage: S.optional(S.Unknown),
+      buildarea_unit: S.optional(S.NullOr(S.String)),
+      landarea_unit: S.optional(S.NullOr(S.String)),
+      land_crossover: S.optional(S.Unknown),
+      roof: S.optional(S.NullOr(S.String)),
+      exterior: S.optional(S.NullOr(S.String)),
+      whole_part: S.optional(S.Unknown),
+      tenure: S.optional(S.NullOr(S.String)),
+      tenure_ground_rent: S.optional(S.NullOr(S.Number)),
+      tenure_ground_rent_review_year: S.optional(S.NullOr(S.Number)),
+      tenure_ground_rent_increase_percentage: S.optional(S.NullOr(S.Number)),
+      tenure_service_charge: S.optional(S.NullOr(S.Number)),
+      shared_ownership_percentage: S.optional(S.NullOr(S.Number)),
+      shared_ownership: S.optional(S.NullOr(S.String)),
+      shared_ownership_rent: S.optional(S.NullOr(S.Number)),
+      shared_ownership_rent_period: S.optional(S.NullOr(S.String)),
+    }),
+).annotate({
+  identifier: "PublishedListingsReadResponseAttributes",
+}) as any as S.Schema<PublishedListingsReadResponseAttributes>;
+
+export type PublishedListingsReadResponseRuralList = Array<unknown>;
+export const PublishedListingsReadResponseRuralList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<PublishedListingsReadResponseRuralList>;
+
+export type PublishedListingsReadResponseContract =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract;
+export const PublishedListingsReadResponseContract =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract;
+
+export interface PublishedListingsReadResponseApplication {
+  date_communicated?: unknown;
+  date_accepted?: unknown;
+  offer_amount?: unknown;
+  offer_amount_period?: unknown;
+}
+export const PublishedListingsReadResponseApplication = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      date_communicated: S.optional(S.Unknown),
+      date_accepted: S.optional(S.Unknown),
+      offer_amount: S.optional(S.Unknown),
+      offer_amount_period: S.optional(S.Unknown),
+    }),
+).annotate({
+  identifier: "PublishedListingsReadResponseApplication",
+}) as any as S.Schema<PublishedListingsReadResponseApplication>;
+
+export interface PublishedListingsReadResponseMeta {
+  other_features?: string | null;
+  highlight_1?: unknown;
+  highlight_2?: unknown;
+  highlight_3?: unknown;
+  rates_business?: string | null;
+  rates_council_exempt?: string | null;
+  rates_council?: string | null;
+  rates_bodycorp?: string | null;
+  rates_water?: string | null;
+  rates_domestic?: number | null;
+  parking_notes?: unknown;
+  zone?: unknown;
+}
+export const PublishedListingsReadResponseMeta = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    other_features: S.optional(S.NullOr(S.String)),
+    highlight_1: S.optional(S.Unknown),
+    highlight_2: S.optional(S.Unknown),
+    highlight_3: S.optional(S.Unknown),
+    rates_business: S.optional(S.NullOr(S.String)),
+    rates_council_exempt: S.optional(S.NullOr(S.String)),
+    rates_council: S.optional(S.NullOr(S.String)),
+    rates_bodycorp: S.optional(S.NullOr(S.String)),
+    rates_water: S.optional(S.NullOr(S.String)),
+    rates_domestic: S.optional(S.NullOr(S.Number)),
+    parking_notes: S.optional(S.Unknown),
+    zone: S.optional(S.Unknown),
+  }),
+).annotate({
+  identifier: "PublishedListingsReadResponseMeta",
+}) as any as S.Schema<PublishedListingsReadResponseMeta>;
+
+export type PublishedListingsReadResponseTagsList = Array<string>;
+export const PublishedListingsReadResponseTagsList = /*@__PURE__*/ S.Array(
+  S.String,
+) as any as S.Schema<PublishedListingsReadResponseTagsList>;
+
+export type PublishedListingsReadResponseFeaturesList = Array<string>;
+export const PublishedListingsReadResponseFeaturesList = /*@__PURE__*/ S.Array(
+  S.String,
+) as any as S.Schema<PublishedListingsReadResponseFeaturesList>;
+
+export type PublishedListingsReadResponseViewsList = Array<string>;
+export const PublishedListingsReadResponseViewsList = /*@__PURE__*/ S.Array(
+  S.String,
+) as any as S.Schema<PublishedListingsReadResponseViewsList>;
+
+export type PublishedListingsReadResponseIdealforsList = Array<string>;
+export const PublishedListingsReadResponseIdealforsList = /*@__PURE__*/ S.Array(
+  S.String,
+) as any as S.Schema<PublishedListingsReadResponseIdealforsList>;
+
+export type PublishedListingsReadResponseAllowancesList = Array<unknown>;
+export const PublishedListingsReadResponseAllowancesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsReadResponseAllowancesList>;
+
+export type PublishedListingsReadResponseEventsItemEventAgent =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+export const PublishedListingsReadResponseEventsItemEventAgent =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+
+export type PublishedListingsReadResponseEventsItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem;
+export const PublishedListingsReadResponseEventsItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem;
+
+export type PublishedListingsReadResponseEventsList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem>;
+export const PublishedListingsReadResponseEventsList = /*@__PURE__*/ S.Array(
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem,
+) as any as S.Schema<PublishedListingsReadResponseEventsList>;
+
+export interface PublishedListingsReadResponseLinksItem {
+  link_type?: string | null;
+  link_url?: string | null;
+  link_label?: string | null;
+}
+export const PublishedListingsReadResponseLinksItem = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      link_type: S.optional(S.NullOr(S.String)),
+      link_url: S.optional(S.NullOr(S.String)),
+      link_label: S.optional(S.NullOr(S.String)),
+    }),
+).annotate({
+  identifier: "PublishedListingsReadResponseLinksItem",
+}) as any as S.Schema<PublishedListingsReadResponseLinksItem>;
+
+export type PublishedListingsReadResponseLinksList =
+  Array<PublishedListingsReadResponseLinksItem>;
+export const PublishedListingsReadResponseLinksList = /*@__PURE__*/ S.Array(
+  PublishedListingsReadResponseLinksItem,
+) as any as S.Schema<PublishedListingsReadResponseLinksList>;
+
+export type PublishedListingsReadResponseBookingsList = Array<unknown>;
+export const PublishedListingsReadResponseBookingsList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<PublishedListingsReadResponseBookingsList>;
+
+export type PublishedListingsReadResponseImagesItemThumbs =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItemThumbs;
+export const PublishedListingsReadResponseImagesItemThumbs =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItemThumbs;
+
+export type PublishedListingsReadResponseImagesItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem;
+export const PublishedListingsReadResponseImagesItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem;
+
+export type PublishedListingsReadResponseImagesList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem>;
+export const PublishedListingsReadResponseImagesList = /*@__PURE__*/ S.Array(
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem,
+) as any as S.Schema<PublishedListingsReadResponseImagesList>;
+
+export type PublishedListingsReadResponseFloorplansItemThumbs =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItemThumbs;
+export const PublishedListingsReadResponseFloorplansItemThumbs =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItemThumbs;
+
+export type PublishedListingsReadResponseFloorplansItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem;
+export const PublishedListingsReadResponseFloorplansItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem;
+
+export type PublishedListingsReadResponseFloorplansList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem>;
+export const PublishedListingsReadResponseFloorplansList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem,
+  ) as any as S.Schema<PublishedListingsReadResponseFloorplansList>;
+
+export type PublishedListingsReadResponseAdvertInternet =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+export const PublishedListingsReadResponseAdvertInternet =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+
+export type PublishedListingsReadResponseAdvertBrochure =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+export const PublishedListingsReadResponseAdvertBrochure =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+
+export type PublishedListingsReadResponseAdvertStocklist =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+export const PublishedListingsReadResponseAdvertStocklist =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+
+export type PublishedListingsReadResponseDocumentsList = Array<unknown>;
+export const PublishedListingsReadResponseDocumentsList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<PublishedListingsReadResponseDocumentsList>;
+
+export type PublishedListingsReadResponseSubcategoriesList = Array<string>;
+export const PublishedListingsReadResponseSubcategoriesList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsReadResponseSubcategoriesList>;
+
+export type PublishedListingsReadResponseCustomFieldsList = Array<unknown>;
+export const PublishedListingsReadResponseCustomFieldsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsReadResponseCustomFieldsList>;
+
+export interface PublishedListingsReadResponse {
+  property_id?: string | null;
+  system_listing_state?: string | null;
+  system_publication_timestamp?: string | null;
+  system_modtime?: string | null;
+  system_ctime?: string | null;
+  listing_category_id?: string | null;
+  price_advertise_as?: string | null;
+  price_match?: string | null;
+  price_match_rent_pa_inc_tax?: unknown;
+  price_match_sale?: string | null;
+  price_rent?: unknown;
+  price_rent_per_m2?: unknown;
+  price_est_rent_pw?: unknown;
+  price_bond?: unknown;
+  outgoings_annual?: unknown;
+  outgoings_rent_is_plus?: unknown;
+  state_value_price?: unknown;
+  state_value_price_display?: string | null;
+  state_date?: unknown;
+  state_hide_price?: string | null;
+  inbound_unique_id?: unknown;
+  available_from_date?: unknown;
+  authority_date_start?: string | null;
+  authority_date_expires?: string | null;
+  authority_duration_days?: string | null;
+  new_home?: unknown;
+  let_agreed?: unknown;
+  permit_number?: unknown;
+  parent_listing_id?: unknown;
+  under_contract?: string | null;
+  under_application?: string | null;
+  application_status?: unknown;
+  hold_status?: unknown;
+  hold_deposit_amount?: unknown;
+  property_category?: string | null;
+  business_name?: unknown;
+  ebrochure_link?: string | null;
+  ebrochure_custom_link?: unknown;
+  rea_project_profile_id?: string | null;
+  account?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount | null;
+  location?: PublishedListingsReadResponseLocation | null;
+  project_stage?: unknown;
+  authority_type?: string | null;
+  exclusivity?: unknown;
+  price_rent_period?: unknown;
+  price_rent_tax?: unknown;
+  listing_agent_1?: ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1 | null;
+  listing_agent_2?: unknown;
+  default_external_id?: string | null;
+  listing_category?: string | null;
+  listing_sale_or_rental?: string | null;
+  authority_type_id?: string | null;
+  project_listing_status?: string | null;
+  address?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress | null;
+  attributes?: PublishedListingsReadResponseAttributes | null;
+  rural?: PublishedListingsReadResponseRuralList | null;
+  contract?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract | null;
+  application?: PublishedListingsReadResponseApplication | null;
+  meta?: PublishedListingsReadResponseMeta | null;
+  tags?: PublishedListingsReadResponseTagsList | null;
+  features?: PublishedListingsReadResponseFeaturesList | null;
+  views?: PublishedListingsReadResponseViewsList | null;
+  idealfors?: PublishedListingsReadResponseIdealforsList | null;
+  allowances?: PublishedListingsReadResponseAllowancesList | null;
+  events?: PublishedListingsReadResponseEventsList | null;
+  links?: PublishedListingsReadResponseLinksList | null;
+  bookings?: PublishedListingsReadResponseBookingsList | null;
+  images?: PublishedListingsReadResponseImagesList | null;
+  floorplans?: PublishedListingsReadResponseFloorplansList | null;
+  advert_internet?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet | null;
+  advert_brochure?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet | null;
+  advert_stocklist?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet | null;
+  documents?: PublishedListingsReadResponseDocumentsList | null;
+  subcategories?: PublishedListingsReadResponseSubcategoriesList | null;
+  custom_fields?: PublishedListingsReadResponseCustomFieldsList | null;
+  etag?: string | null;
+  id?: string | null;
+}
+export const PublishedListingsReadResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    property_id: S.optional(S.NullOr(S.String)),
+    system_listing_state: S.optional(S.NullOr(S.String)),
+    system_publication_timestamp: S.optional(S.NullOr(S.String)),
+    system_modtime: S.optional(S.NullOr(S.String)),
+    system_ctime: S.optional(S.NullOr(S.String)),
+    listing_category_id: S.optional(S.NullOr(S.String)),
+    price_advertise_as: S.optional(S.NullOr(S.String)),
+    price_match: S.optional(S.NullOr(S.String)),
+    price_match_rent_pa_inc_tax: S.optional(S.Unknown),
+    price_match_sale: S.optional(S.NullOr(S.String)),
+    price_rent: S.optional(S.Unknown),
+    price_rent_per_m2: S.optional(S.Unknown),
+    price_est_rent_pw: S.optional(S.Unknown),
+    price_bond: S.optional(S.Unknown),
+    outgoings_annual: S.optional(S.Unknown),
+    outgoings_rent_is_plus: S.optional(S.Unknown),
+    state_value_price: S.optional(S.Unknown),
+    state_value_price_display: S.optional(S.NullOr(S.String)),
+    state_date: S.optional(S.Unknown),
+    state_hide_price: S.optional(S.NullOr(S.String)),
+    inbound_unique_id: S.optional(S.Unknown),
+    available_from_date: S.optional(S.Unknown),
+    authority_date_start: S.optional(S.NullOr(S.String)),
+    authority_date_expires: S.optional(S.NullOr(S.String)),
+    authority_duration_days: S.optional(S.NullOr(S.String)),
+    new_home: S.optional(S.Unknown),
+    let_agreed: S.optional(S.Unknown),
+    permit_number: S.optional(S.Unknown),
+    parent_listing_id: S.optional(S.Unknown),
+    under_contract: S.optional(S.NullOr(S.String)),
+    under_application: S.optional(S.NullOr(S.String)),
+    application_status: S.optional(S.Unknown),
+    hold_status: S.optional(S.Unknown),
+    hold_deposit_amount: S.optional(S.Unknown),
+    property_category: S.optional(S.NullOr(S.String)),
+    business_name: S.optional(S.Unknown),
+    ebrochure_link: S.optional(S.NullOr(S.String)),
+    ebrochure_custom_link: S.optional(S.Unknown),
+    rea_project_profile_id: S.optional(S.NullOr(S.String)),
+    account: S.optional(
+      S.NullOr(
+        PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount,
+      ),
+    ),
+    location: S.optional(S.NullOr(PublishedListingsReadResponseLocation)),
+    project_stage: S.optional(S.Unknown),
+    authority_type: S.optional(S.NullOr(S.String)),
+    exclusivity: S.optional(S.Unknown),
+    price_rent_period: S.optional(S.Unknown),
+    price_rent_tax: S.optional(S.Unknown),
+    listing_agent_1: S.optional(
+      S.NullOr(
+        ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1,
+      ),
+    ),
+    listing_agent_2: S.optional(S.Unknown),
+    default_external_id: S.optional(S.NullOr(S.String)),
+    listing_category: S.optional(S.NullOr(S.String)),
+    listing_sale_or_rental: S.optional(S.NullOr(S.String)),
+    authority_type_id: S.optional(S.NullOr(S.String)),
+    project_listing_status: S.optional(S.NullOr(S.String)),
+    address: S.optional(
+      S.NullOr(
+        PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress,
+      ),
+    ),
+    attributes: S.optional(S.NullOr(PublishedListingsReadResponseAttributes)),
+    rural: S.optional(S.NullOr(PublishedListingsReadResponseRuralList)),
+    contract: S.optional(
+      S.NullOr(
+        PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract,
+      ),
+    ),
+    application: S.optional(S.NullOr(PublishedListingsReadResponseApplication)),
+    meta: S.optional(S.NullOr(PublishedListingsReadResponseMeta)),
+    tags: S.optional(S.NullOr(PublishedListingsReadResponseTagsList)),
+    features: S.optional(S.NullOr(PublishedListingsReadResponseFeaturesList)),
+    views: S.optional(S.NullOr(PublishedListingsReadResponseViewsList)),
+    idealfors: S.optional(S.NullOr(PublishedListingsReadResponseIdealforsList)),
+    allowances: S.optional(
+      S.NullOr(PublishedListingsReadResponseAllowancesList),
+    ),
+    events: S.optional(S.NullOr(PublishedListingsReadResponseEventsList)),
+    links: S.optional(S.NullOr(PublishedListingsReadResponseLinksList)),
+    bookings: S.optional(S.NullOr(PublishedListingsReadResponseBookingsList)),
+    images: S.optional(S.NullOr(PublishedListingsReadResponseImagesList)),
+    floorplans: S.optional(
+      S.NullOr(PublishedListingsReadResponseFloorplansList),
+    ),
+    advert_internet: S.optional(
+      S.NullOr(
+        PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet,
+      ),
+    ),
+    advert_brochure: S.optional(
+      S.NullOr(
+        PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet,
+      ),
+    ),
+    advert_stocklist: S.optional(
+      S.NullOr(
+        PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet,
+      ),
+    ),
+    documents: S.optional(S.NullOr(PublishedListingsReadResponseDocumentsList)),
+    subcategories: S.optional(
+      S.NullOr(PublishedListingsReadResponseSubcategoriesList),
+    ),
+    custom_fields: S.optional(
+      S.NullOr(PublishedListingsReadResponseCustomFieldsList),
+    ),
+    etag: S.optional(S.NullOr(S.String)),
+    id: S.optional(S.NullOr(S.String)),
+  }),
+).annotate({
+  identifier: "PublishedListingsReadResponse",
+}) as any as S.Schema<PublishedListingsReadResponse>;
+
+/** An array keyed by field name with a value of either ASC|DESC */
+export type PublishedListingsSearchRequestOrderByMap = {
+  [key: string]: string | undefined;
+};
+export const PublishedListingsSearchRequestOrderByMap = /*@__PURE__*/ S.Record(
+  S.String,
+  S.String,
+) as any as S.Schema<PublishedListingsSearchRequestOrderByMap>;
+
+/** An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service. */
+export type PublishedListingsSearchRequestExtraOptionsList = Array<unknown>;
+export const PublishedListingsSearchRequestExtraOptionsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsSearchRequestExtraOptionsList>;
+
+export interface PublishedListingsSearchRequest {
+  /** An array of criteria definitions (name,type,value) or for a simple lazy field=value search, a simple form criteria definition (name=>value) */
+  criteria?: unknown;
+  /** An array keyed by field name with a value of either ASC|DESC */
+  order_by?: PublishedListingsSearchRequestOrderByMap;
+  /** The number of rows to offset */
+  offset?: number;
+  /** The number of rows to return */
+  limit?: number;
+  /** True if a viewstate should be created, false to just return the records */
+  create_viewstate?: boolean;
+  /** Any of the search result formats available for this service */
+  result_format?: string;
+  /** An array of extra options (only used for certain services). Call describeModel for more info - if the search_extra_options key is not present, it is not support for that service. */
+  extra_options?: PublishedListingsSearchRequestExtraOptionsList;
+  /** (DEPRECATED - provide system_record_state as a criteria instead) */
+  search_state?: unknown;
+  /** (DEPRECATED - use search_result_format:'ids' instead) If set to true, returns ids of matching records only - no actual rows */
+  ids_only?: boolean;
+}
+export const PublishedListingsSearchRequest = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    criteria: S.optional(S.Unknown),
+    order_by: S.optional(PublishedListingsSearchRequestOrderByMap),
+    offset: S.optional(S.Number),
+    limit: S.optional(S.Number),
+    create_viewstate: S.optional(S.Boolean),
+    result_format: S.optional(S.String),
+    extra_options: S.optional(PublishedListingsSearchRequestExtraOptionsList),
+    search_state: S.optional(S.Unknown),
+    ids_only: S.optional(S.Boolean),
+  }).pipe(
+    T.Http({
+      method: "POST",
+      uri: "/v1/rex/PublishedListings::search",
+      code: 200,
+    }),
+  ),
+).annotate({
+  identifier: "PublishedListingsSearchRequest",
+}) as any as S.Schema<PublishedListingsSearchRequest>;
+
+export type PublishedListingsSearchResponseRowsItemAccount =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount;
+export const PublishedListingsSearchResponseRowsItemAccount =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount;
+
+export type PublishedListingsSearchResponseRowsItemLocationLogoImageThumbsList =
+  Array<unknown>;
+export const PublishedListingsSearchResponseRowsItemLocationLogoImageThumbsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemLocationLogoImageThumbsList>;
+
+export interface PublishedListingsSearchResponseRowsItemLocationLogoImage {
+  url?: string | null;
+  thumbs?: PublishedListingsSearchResponseRowsItemLocationLogoImageThumbsList | null;
+}
+export const PublishedListingsSearchResponseRowsItemLocationLogoImage =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      url: S.optional(S.NullOr(S.String)),
+      thumbs: S.optional(
+        S.NullOr(
+          PublishedListingsSearchResponseRowsItemLocationLogoImageThumbsList,
+        ),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsSearchResponseRowsItemLocationLogoImage",
+  }) as any as S.Schema<PublishedListingsSearchResponseRowsItemLocationLogoImage>;
+
+export interface PublishedListingsSearchResponseRowsItemLocation {
+  id?: string | null;
+  location_name?: string | null;
+  website?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  fax?: unknown;
+  address_physical?: string | null;
+  report_color?: string | null;
+  logo_image?: PublishedListingsSearchResponseRowsItemLocationLogoImage | null;
+}
+export const PublishedListingsSearchResponseRowsItemLocation =
+  /*@__PURE__*/ S.suspend(() =>
+    S.Struct({
+      id: S.optional(S.NullOr(S.String)),
+      location_name: S.optional(S.NullOr(S.String)),
+      website: S.optional(S.NullOr(S.String)),
+      email: S.optional(S.NullOr(S.String)),
+      phone: S.optional(S.NullOr(S.String)),
+      fax: S.optional(S.Unknown),
+      address_physical: S.optional(S.NullOr(S.String)),
+      report_color: S.optional(S.NullOr(S.String)),
+      logo_image: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemLocationLogoImage),
+      ),
+    }),
+  ).annotate({
+    identifier: "PublishedListingsSearchResponseRowsItemLocation",
+  }) as any as S.Schema<PublishedListingsSearchResponseRowsItemLocation>;
+
+export type PublishedListingsSearchResponseRowsItemListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+export const PublishedListingsSearchResponseRowsItemListingAgent1 =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+
+export type PublishedListingsSearchResponseRowsItemAddressBuildingBuildingImageThumbs800x600 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsSearchResponseRowsItemAddressBuildingBuildingImageThumbs800x600 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsSearchResponseRowsItemAddressBuildingBuildingImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsSearchResponseRowsItemAddressBuildingBuildingImageThumbs400x300 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsSearchResponseRowsItemAddressBuildingBuildingImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsSearchResponseRowsItemAddressBuildingBuildingImageThumbs200x150 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsSearchResponseRowsItemAddressBuildingBuildingImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+export const PublishedListingsSearchResponseRowsItemAddressBuildingBuildingImageThumbs80x60 =
+  ContractsReadResponseListingListingPrimaryImageThumbs800x600;
+
+export type PublishedListingsSearchResponseRowsItemAddressBuildingBuildingImageThumbs =
+  ContractsReadResponseListingListingPrimaryImageThumbs;
+export const PublishedListingsSearchResponseRowsItemAddressBuildingBuildingImageThumbs =
+  ContractsReadResponseListingListingPrimaryImageThumbs;
+
+export type PublishedListingsSearchResponseRowsItemAddressBuildingBuildingImage =
+  ContractsReadResponseListingListingPrimaryImage;
+export const PublishedListingsSearchResponseRowsItemAddressBuildingBuildingImage =
+  ContractsReadResponseListingListingPrimaryImage;
+
+export type PublishedListingsSearchResponseRowsItemAddressBuilding =
+  ListingsReadResponsePropertyAdrBuilding;
+export const PublishedListingsSearchResponseRowsItemAddressBuilding =
+  ListingsReadResponsePropertyAdrBuilding;
+
+export type PublishedListingsSearchResponseRowsItemAddressFormats =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressFormats;
+export const PublishedListingsSearchResponseRowsItemAddressFormats =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddressFormats;
+
+export type PublishedListingsSearchResponseRowsItemAddress =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress;
+export const PublishedListingsSearchResponseRowsItemAddress =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress;
+
+export type PublishedListingsSearchResponseRowsItemAttributes =
+  PublishedListingsReadResponseAttributes;
+export const PublishedListingsSearchResponseRowsItemAttributes =
+  PublishedListingsReadResponseAttributes;
+
+export type PublishedListingsSearchResponseRowsItemRuralList = Array<unknown>;
+export const PublishedListingsSearchResponseRowsItemRuralList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemRuralList>;
+
+export type PublishedListingsSearchResponseRowsItemContract =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract;
+export const PublishedListingsSearchResponseRowsItemContract =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract;
+
+export type PublishedListingsSearchResponseRowsItemApplication =
+  PublishedListingsReadResponseApplication;
+export const PublishedListingsSearchResponseRowsItemApplication =
+  PublishedListingsReadResponseApplication;
+
+export type PublishedListingsSearchResponseRowsItemMeta =
+  PublishedListingsReadResponseMeta;
+export const PublishedListingsSearchResponseRowsItemMeta =
+  PublishedListingsReadResponseMeta;
+
+export type PublishedListingsSearchResponseRowsItemTagsList = Array<string>;
+export const PublishedListingsSearchResponseRowsItemTagsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemTagsList>;
+
+export type PublishedListingsSearchResponseRowsItemFeaturesList = Array<string>;
+export const PublishedListingsSearchResponseRowsItemFeaturesList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemFeaturesList>;
+
+export type PublishedListingsSearchResponseRowsItemViewsList = Array<string>;
+export const PublishedListingsSearchResponseRowsItemViewsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemViewsList>;
+
+export type PublishedListingsSearchResponseRowsItemIdealforsList =
+  Array<string>;
+export const PublishedListingsSearchResponseRowsItemIdealforsList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemIdealforsList>;
+
+export type PublishedListingsSearchResponseRowsItemAllowancesList =
+  Array<unknown>;
+export const PublishedListingsSearchResponseRowsItemAllowancesList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemAllowancesList>;
+
+export type PublishedListingsSearchResponseRowsItemEventsItemEventAgent =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+export const PublishedListingsSearchResponseRowsItemEventsItemEventAgent =
+  ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1;
+
+export type PublishedListingsSearchResponseRowsItemEventsItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem;
+export const PublishedListingsSearchResponseRowsItemEventsItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem;
+
+export type PublishedListingsSearchResponseRowsItemEventsList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem>;
+export const PublishedListingsSearchResponseRowsItemEventsList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemEventsList>;
+
+export type PublishedListingsSearchResponseRowsItemLinksItem =
+  PublishedListingsReadResponseLinksItem;
+export const PublishedListingsSearchResponseRowsItemLinksItem =
+  PublishedListingsReadResponseLinksItem;
+
+export type PublishedListingsSearchResponseRowsItemLinksList =
+  Array<PublishedListingsReadResponseLinksItem>;
+export const PublishedListingsSearchResponseRowsItemLinksList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsReadResponseLinksItem,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemLinksList>;
+
+export type PublishedListingsSearchResponseRowsItemBookingsList =
+  Array<unknown>;
+export const PublishedListingsSearchResponseRowsItemBookingsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemBookingsList>;
+
+export type PublishedListingsSearchResponseRowsItemImagesItemThumbs =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItemThumbs;
+export const PublishedListingsSearchResponseRowsItemImagesItemThumbs =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItemThumbs;
+
+export type PublishedListingsSearchResponseRowsItemImagesItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem;
+export const PublishedListingsSearchResponseRowsItemImagesItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem;
+
+export type PublishedListingsSearchResponseRowsItemImagesList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem>;
+export const PublishedListingsSearchResponseRowsItemImagesList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemImagesList>;
+
+export type PublishedListingsSearchResponseRowsItemFloorplansItemThumbs =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItemThumbs;
+export const PublishedListingsSearchResponseRowsItemFloorplansItemThumbs =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItemThumbs;
+
+export type PublishedListingsSearchResponseRowsItemFloorplansItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem;
+export const PublishedListingsSearchResponseRowsItemFloorplansItem =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem;
+
+export type PublishedListingsSearchResponseRowsItemFloorplansList =
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem>;
+export const PublishedListingsSearchResponseRowsItemFloorplansList =
+  /*@__PURE__*/ S.Array(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemFloorplansList>;
+
+export type PublishedListingsSearchResponseRowsItemAdvertInternet =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+export const PublishedListingsSearchResponseRowsItemAdvertInternet =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+
+export type PublishedListingsSearchResponseRowsItemAdvertBrochure =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+export const PublishedListingsSearchResponseRowsItemAdvertBrochure =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+
+export type PublishedListingsSearchResponseRowsItemAdvertStocklist =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+export const PublishedListingsSearchResponseRowsItemAdvertStocklist =
+  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet;
+
+export type PublishedListingsSearchResponseRowsItemDocumentsList =
+  Array<unknown>;
+export const PublishedListingsSearchResponseRowsItemDocumentsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemDocumentsList>;
+
+export type PublishedListingsSearchResponseRowsItemSubcategoriesList =
+  Array<string>;
+export const PublishedListingsSearchResponseRowsItemSubcategoriesList =
+  /*@__PURE__*/ S.Array(
+    S.String,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemSubcategoriesList>;
+
+export type PublishedListingsSearchResponseRowsItemCustomFieldsList =
+  Array<unknown>;
+export const PublishedListingsSearchResponseRowsItemCustomFieldsList =
+  /*@__PURE__*/ S.Array(
+    S.Unknown,
+  ) as any as S.Schema<PublishedListingsSearchResponseRowsItemCustomFieldsList>;
+
+export interface PublishedListingsSearchResponseRowsItem {
+  property_id?: string | null;
+  system_listing_state?: string | null;
+  system_publication_timestamp?: string | null;
+  system_modtime?: string | null;
+  system_ctime?: string | null;
+  listing_category_id?: string | null;
+  price_advertise_as?: string | null;
+  price_match?: string | null;
+  price_match_rent_pa_inc_tax?: unknown;
+  price_match_sale?: string | null;
+  price_rent?: unknown;
+  price_rent_per_m2?: unknown;
+  price_est_rent_pw?: unknown;
+  price_bond?: unknown;
+  outgoings_annual?: unknown;
+  outgoings_rent_is_plus?: unknown;
+  state_value_price?: unknown;
+  state_value_price_display?: string | null;
+  state_date?: unknown;
+  state_hide_price?: string | null;
+  inbound_unique_id?: unknown;
+  available_from_date?: unknown;
+  authority_date_start?: string | null;
+  authority_date_expires?: string | null;
+  authority_duration_days?: string | null;
+  rea_project_profile_id?: string | null;
+  new_home?: unknown;
+  let_agreed?: unknown;
+  permit_number?: unknown;
+  parent_listing_id?: unknown;
+  under_contract?: string | null;
+  under_application?: string | null;
+  application_status?: unknown;
+  hold_status?: unknown;
+  hold_deposit_amount?: unknown;
+  property_category?: string | null;
+  business_name?: unknown;
+  ebrochure_link?: string | null;
+  ebrochure_custom_link?: unknown;
+  account?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount | null;
+  location?: PublishedListingsSearchResponseRowsItemLocation | null;
+  project_stage?: unknown;
+  authority_type?: string | null;
+  exclusivity?: unknown;
+  price_rent_period?: unknown;
+  price_rent_tax?: unknown;
+  listing_agent_1?: ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1 | null;
+  listing_agent_2?: unknown;
+  default_external_id?: string | null;
+  listing_category?: string | null;
+  listing_sale_or_rental?: string | null;
+  authority_type_id?: string | null;
+  project_listing_status?: string | null;
+  address?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress | null;
+  attributes?: PublishedListingsReadResponseAttributes | null;
+  rural?: PublishedListingsSearchResponseRowsItemRuralList | null;
+  contract?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract | null;
+  application?: PublishedListingsReadResponseApplication | null;
+  meta?: PublishedListingsReadResponseMeta | null;
+  tags?: PublishedListingsSearchResponseRowsItemTagsList | null;
+  features?: PublishedListingsSearchResponseRowsItemFeaturesList | null;
+  views?: PublishedListingsSearchResponseRowsItemViewsList | null;
+  idealfors?: PublishedListingsSearchResponseRowsItemIdealforsList | null;
+  allowances?: PublishedListingsSearchResponseRowsItemAllowancesList | null;
+  events?: PublishedListingsSearchResponseRowsItemEventsList | null;
+  links?: PublishedListingsSearchResponseRowsItemLinksList | null;
+  bookings?: PublishedListingsSearchResponseRowsItemBookingsList | null;
+  images?: PublishedListingsSearchResponseRowsItemImagesList | null;
+  floorplans?: PublishedListingsSearchResponseRowsItemFloorplansList | null;
+  advert_internet?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet | null;
+  advert_brochure?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet | null;
+  advert_stocklist?: PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet | null;
+  documents?: PublishedListingsSearchResponseRowsItemDocumentsList | null;
+  subcategories?: PublishedListingsSearchResponseRowsItemSubcategoriesList | null;
+  custom_fields?: PublishedListingsSearchResponseRowsItemCustomFieldsList | null;
+  etag?: string | null;
+  id?: string | null;
+}
+export const PublishedListingsSearchResponseRowsItem = /*@__PURE__*/ S.suspend(
+  () =>
+    S.Struct({
+      property_id: S.optional(S.NullOr(S.String)),
+      system_listing_state: S.optional(S.NullOr(S.String)),
+      system_publication_timestamp: S.optional(S.NullOr(S.String)),
+      system_modtime: S.optional(S.NullOr(S.String)),
+      system_ctime: S.optional(S.NullOr(S.String)),
+      listing_category_id: S.optional(S.NullOr(S.String)),
+      price_advertise_as: S.optional(S.NullOr(S.String)),
+      price_match: S.optional(S.NullOr(S.String)),
+      price_match_rent_pa_inc_tax: S.optional(S.Unknown),
+      price_match_sale: S.optional(S.NullOr(S.String)),
+      price_rent: S.optional(S.Unknown),
+      price_rent_per_m2: S.optional(S.Unknown),
+      price_est_rent_pw: S.optional(S.Unknown),
+      price_bond: S.optional(S.Unknown),
+      outgoings_annual: S.optional(S.Unknown),
+      outgoings_rent_is_plus: S.optional(S.Unknown),
+      state_value_price: S.optional(S.Unknown),
+      state_value_price_display: S.optional(S.NullOr(S.String)),
+      state_date: S.optional(S.Unknown),
+      state_hide_price: S.optional(S.NullOr(S.String)),
+      inbound_unique_id: S.optional(S.Unknown),
+      available_from_date: S.optional(S.Unknown),
+      authority_date_start: S.optional(S.NullOr(S.String)),
+      authority_date_expires: S.optional(S.NullOr(S.String)),
+      authority_duration_days: S.optional(S.NullOr(S.String)),
+      rea_project_profile_id: S.optional(S.NullOr(S.String)),
+      new_home: S.optional(S.Unknown),
+      let_agreed: S.optional(S.Unknown),
+      permit_number: S.optional(S.Unknown),
+      parent_listing_id: S.optional(S.Unknown),
+      under_contract: S.optional(S.NullOr(S.String)),
+      under_application: S.optional(S.NullOr(S.String)),
+      application_status: S.optional(S.Unknown),
+      hold_status: S.optional(S.Unknown),
+      hold_deposit_amount: S.optional(S.Unknown),
+      property_category: S.optional(S.NullOr(S.String)),
+      business_name: S.optional(S.Unknown),
+      ebrochure_link: S.optional(S.NullOr(S.String)),
+      ebrochure_custom_link: S.optional(S.Unknown),
+      account: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAccount,
+        ),
+      ),
+      location: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemLocation),
+      ),
+      project_stage: S.optional(S.Unknown),
+      authority_type: S.optional(S.NullOr(S.String)),
+      exclusivity: S.optional(S.Unknown),
+      price_rent_period: S.optional(S.Unknown),
+      price_rent_tax: S.optional(S.Unknown),
+      listing_agent_1: S.optional(
+        S.NullOr(
+          ContactsReadResponseRelatedContactRelnListingItemListingListingAgent1,
+        ),
+      ),
+      listing_agent_2: S.optional(S.Unknown),
+      default_external_id: S.optional(S.NullOr(S.String)),
+      listing_category: S.optional(S.NullOr(S.String)),
+      listing_sale_or_rental: S.optional(S.NullOr(S.String)),
+      authority_type_id: S.optional(S.NullOr(S.String)),
+      project_listing_status: S.optional(S.NullOr(S.String)),
+      address: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAddress,
+        ),
+      ),
+      attributes: S.optional(S.NullOr(PublishedListingsReadResponseAttributes)),
+      rural: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemRuralList),
+      ),
+      contract: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultContract,
+        ),
+      ),
+      application: S.optional(
+        S.NullOr(PublishedListingsReadResponseApplication),
+      ),
+      meta: S.optional(S.NullOr(PublishedListingsReadResponseMeta)),
+      tags: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemTagsList),
+      ),
+      features: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemFeaturesList),
+      ),
+      views: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemViewsList),
+      ),
+      idealfors: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemIdealforsList),
+      ),
+      allowances: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemAllowancesList),
+      ),
+      events: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemEventsList),
+      ),
+      links: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemLinksList),
+      ),
+      bookings: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemBookingsList),
+      ),
+      images: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemImagesList),
+      ),
+      floorplans: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemFloorplansList),
+      ),
+      advert_internet: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet,
+        ),
+      ),
+      advert_brochure: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet,
+        ),
+      ),
+      advert_stocklist: S.optional(
+        S.NullOr(
+          PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet,
+        ),
+      ),
+      documents: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemDocumentsList),
+      ),
+      subcategories: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemSubcategoriesList),
+      ),
+      custom_fields: S.optional(
+        S.NullOr(PublishedListingsSearchResponseRowsItemCustomFieldsList),
+      ),
+      etag: S.optional(S.NullOr(S.String)),
+      id: S.optional(S.NullOr(S.String)),
+    }),
+).annotate({
+  identifier: "PublishedListingsSearchResponseRowsItem",
+}) as any as S.Schema<PublishedListingsSearchResponseRowsItem>;
+
+export type PublishedListingsSearchResponseRowsList =
+  Array<PublishedListingsSearchResponseRowsItem>;
+export const PublishedListingsSearchResponseRowsList = /*@__PURE__*/ S.Array(
+  PublishedListingsSearchResponseRowsItem,
+) as any as S.Schema<PublishedListingsSearchResponseRowsList>;
+
+export type PublishedListingsSearchResponseCriteriaItem =
+  ContactsSearchResponseCriteriaItem;
+export const PublishedListingsSearchResponseCriteriaItem =
+  ContactsSearchResponseCriteriaItem;
+
+export type PublishedListingsSearchResponseCriteriaList =
+  Array<ContactsSearchResponseCriteriaItem>;
+export const PublishedListingsSearchResponseCriteriaList =
+  /*@__PURE__*/ S.Array(
+    ContactsSearchResponseCriteriaItem,
+  ) as any as S.Schema<PublishedListingsSearchResponseCriteriaList>;
+
+export type PublishedListingsSearchResponseOrderByList = Array<unknown>;
+export const PublishedListingsSearchResponseOrderByList = /*@__PURE__*/ S.Array(
+  S.Unknown,
+) as any as S.Schema<PublishedListingsSearchResponseOrderByList>;
+
+export interface PublishedListingsSearchResponse {
+  rows?: PublishedListingsSearchResponseRowsList | null;
+  total?: number | null;
+  viewstate_id?: unknown;
+  criteria?: PublishedListingsSearchResponseCriteriaList | null;
+  order_by?: PublishedListingsSearchResponseOrderByList | null;
+}
+export const PublishedListingsSearchResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    rows: S.optional(S.NullOr(PublishedListingsSearchResponseRowsList)),
+    total: S.optional(S.NullOr(S.Number)),
+    viewstate_id: S.optional(S.Unknown),
+    criteria: S.optional(S.NullOr(PublishedListingsSearchResponseCriteriaList)),
+    order_by: S.optional(S.NullOr(PublishedListingsSearchResponseOrderByList)),
+  }),
+).annotate({
+  identifier: "PublishedListingsSearchResponse",
+}) as any as S.Schema<PublishedListingsSearchResponse>;
 
 export type AdminValueListsAddValueToListError = RexOpError;
 /** Adds a value to a list Adds a value to a list */
@@ -32878,6 +44529,141 @@ export const propertiesUpdate: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: PropertiesUpdateRequest,
   output: PropertiesUpdateResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type PublishedListingsAutocompleteError = RexOpError;
+/** Similar to listing auto complete except the image node comes back in a publication style image node Similar to listing auto complete except the image node comes back in a publication style image node */
+export const publishedListingsAutocomplete: API.OperationMethod<
+  PublishedListingsAutocompleteRequest,
+  PublishedListingsAutocompleteResponse,
+  PublishedListingsAutocompleteError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: PublishedListingsAutocompleteRequest,
+  output: PublishedListingsAutocompleteResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type PublishedListingsDescribeError = RexOpError;
+/** Describes the class and its methods - simply or in detail Describes the class and its methods - simply or in detail */
+export const publishedListingsDescribe: API.OperationMethod<
+  PublishedListingsDescribeRequest,
+  PublishedListingsDescribeResponse,
+  PublishedListingsDescribeError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: PublishedListingsDescribeRequest,
+  output: PublishedListingsDescribeResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type PublishedListingsDescribeDeleteModesError = RexOpError;
+/** Describes available delete modes Describes available delete modes */
+export const publishedListingsDescribeDeleteModes: API.OperationMethod<
+  PublishedListingsDescribeDeleteModesRequest,
+  PublishedListingsDescribeDeleteModesResponse,
+  PublishedListingsDescribeDeleteModesError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: PublishedListingsDescribeDeleteModesRequest,
+  output: PublishedListingsDescribeDeleteModesResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type PublishedListingsDescribeModelError = RexOpError;
+/** Describes certain characteristics of the model including searchable fields, orderby fields and delete modes Describes certain characteristics of the model including searchable fields, orderby fields and delete modes */
+export const publishedListingsDescribeModel: API.OperationMethod<
+  PublishedListingsDescribeModelRequest,
+  PublishedListingsDescribeModelResponse,
+  PublishedListingsDescribeModelError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: PublishedListingsDescribeModelRequest,
+  output: PublishedListingsDescribeModelResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type PublishedListingsDescribeSearchFieldsError = RexOpError;
+/** Describes search fields Describes search fields */
+export const publishedListingsDescribeSearchFields: API.OperationMethod<
+  PublishedListingsDescribeSearchFieldsRequest,
+  PublishedListingsDescribeSearchFieldsResponse,
+  PublishedListingsDescribeSearchFieldsError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: PublishedListingsDescribeSearchFieldsRequest,
+  output: PublishedListingsDescribeSearchFieldsResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type PublishedListingsGetUniqueListingSuburbsError = RexOpError;
+/** Get unique suburbs for current listings Get unique suburbs for current listings */
+export const publishedListingsGetUniqueListingSuburbs: API.OperationMethod<
+  PublishedListingsGetUniqueListingSuburbsRequest,
+  PublishedListingsGetUniqueListingSuburbsResponse,
+  PublishedListingsGetUniqueListingSuburbsError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: PublishedListingsGetUniqueListingSuburbsRequest,
+  output: PublishedListingsGetUniqueListingSuburbsResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type PublishedListingsLinkError = RexOpError;
+/** Link one listing to another Only applicable for commercial listings Needed for reaxml uploads, where same commercial listing can be sale and rental at the same time Link one listing to another Only applicable for commercial listings Needed for reaxml uploads, where same commercial listing can be sale and rental at the same time */
+export const publishedListingsLink: API.OperationMethod<
+  PublishedListingsLinkRequest,
+  PublishedListingsLinkResponse,
+  PublishedListingsLinkError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: PublishedListingsLinkRequest,
+  output: PublishedListingsLinkResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type PublishedListingsReadError = RexOpError;
+/** This is not a standard read method but a proxy method to the search method for retrieving a single row Read a record by id */
+export const publishedListingsRead: API.OperationMethod<
+  PublishedListingsReadRequest,
+  PublishedListingsReadResponse,
+  PublishedListingsReadError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: PublishedListingsReadRequest,
+  output: PublishedListingsReadResponse,
+  errors: [UnknownRexError, RexApiError],
+  protocol: RexProtocol,
+  retry: Retry.Retry,
+}));
+
+export type PublishedListingsSearchError = RexOpError;
+/** Perform a search Perform a search */
+export const publishedListingsSearch: API.OperationMethod<
+  PublishedListingsSearchRequest,
+  PublishedListingsSearchResponse,
+  PublishedListingsSearchError,
+  RexOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: PublishedListingsSearchRequest,
+  output: PublishedListingsSearchResponse,
   errors: [UnknownRexError, RexApiError],
   protocol: RexProtocol,
   retry: Retry.Retry,

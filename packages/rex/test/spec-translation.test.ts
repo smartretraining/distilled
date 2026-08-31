@@ -3,11 +3,10 @@ import { describe, expect, it } from "vitest";
 import {
   FeedbackCreateRequest,
   FeedbackCreateResponse,
+  PublishedListingsSearchRequest,
+  PublishedListingsSearchResponse,
 } from "../src/services/rex.ts";
 
-// These guard the three ways Rex's self-description misleads `build-openapi.ts`.
-// Every one of them shipped a client that could not make the call at all, and
-// nothing caught it because the rest of the suite needs live credentials.
 describe("Rex spec translation", () => {
   const decode = Schema.decodeUnknownSync(FeedbackCreateRequest);
 
@@ -64,5 +63,81 @@ describe("Rex spec translation", () => {
       id: 1,
       date_of: "2026-07-27",
     });
+  });
+
+  it("accepts Rex's object-shaped search ordering", () => {
+    const decode = Schema.decodeUnknownSync(PublishedListingsSearchRequest);
+
+    expect(
+      decode({
+        criteria: [{ system_listing_state: "current" }],
+        order_by: { system_ctime: "desc" },
+        limit: 20,
+        offset: 0,
+      }).order_by,
+    ).toEqual({ system_ctime: "desc" });
+    expect(() => decode({ order_by: "system_ctime desc" })).toThrow();
+  });
+
+  it("decodes the published-listing slice used by listing imports", () => {
+    const decode = Schema.decodeUnknownSync(PublishedListingsSearchResponse);
+    const page = decode({
+      rows: [
+        {
+          id: "123",
+          etag: "etag-123",
+          property_id: "456",
+          system_listing_state: "current",
+          listing_category_id: "residential_sale",
+          price_advertise_as: "$900,000",
+          authority_date_start: "2026-08-01",
+          authority_date_expires: null,
+          authority_duration_days: "90",
+          property_category: "House",
+          listing_agent_1: {
+            id: "7",
+            name: "Alex Agent",
+            first_name: "Alex",
+            last_name: "Agent",
+            email_address: "alex@example.com",
+            phone_direct: null,
+            phone_mobile: "0400000000",
+            position: "Sales Agent",
+          },
+          listing_agent_2: null,
+          address: {
+            longitude: "153.0251",
+            latitude: "-27.4698",
+            unit_number: null,
+            street_number: "1",
+            street_name: "Example Street",
+            state_or_region: "QLD",
+            locality: null,
+            suburb_or_town: "Brisbane City",
+            postcode: "4000",
+            country: "au",
+            estate_name: null,
+            estate_stage: null,
+            hide_address: "0",
+            building: null,
+            formats: {
+              street_name_number: "1 Example Street",
+              street_name_number_w_suburb: "1 Example Street, Brisbane City",
+              full_address: "1 Example Street, Brisbane City QLD 4000",
+              full_address_w_building_name:
+                "1 Example Street, Brisbane City QLD 4000",
+              hidden_address: "Brisbane City QLD 4000",
+              display_address: "1 Example Street, Brisbane City",
+            },
+          },
+        },
+      ],
+      total: 1,
+    });
+
+    expect(page.rows?.[0]?.listing_agent_1?.id).toBe("7");
+    expect(page.rows?.[0]?.address?.formats?.display_address).toBe(
+      "1 Example Street, Brisbane City",
+    );
   });
 });
