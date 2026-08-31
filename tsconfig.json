@@ -50,6 +50,8 @@
     { "path": "./packages/turso/tsconfig.scripts.json" },
     { "path": "./packages/typesense/tsconfig.json" },
     { "path": "./packages/typesense/tsconfig.scripts.json" },
+    { "path": "./packages/vaultre/tsconfig.json" },
+    { "path": "./packages/vaultre/tsconfig.scripts.json" },
     { "path": "./packages/workos/tsconfig.json" },
     { "path": "./packages/workos/tsconfig.scripts.json" }
   ]

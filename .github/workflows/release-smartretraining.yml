@@ -58,7 +58,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  PACKAGES: packages/rex packages/reapit packages/boxdice
+  PACKAGES: packages/rex packages/reapit packages/boxdice packages/vaultre
 
 jobs:
   release:

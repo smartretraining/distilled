@@ -1,14 +1,14 @@
 {
-  "name": "@smartretraining/reapit-effect",
+  "name": "@smartretraining/vaultre-effect",
   "version": "0.9.0",
-  "description": "Effect-native SDK for the Reapit Sales API (Agentbox), generated from the OpenAPI document with response schemas repaired against the live API.",
+  "description": "Effect-native SDK for the VaultRE API, generated from the vendor's published OpenAPI document.",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/smartretraining/distilled.git",
-    "directory": "packages/reapit"
+    "directory": "packages/vaultre"
   },
-  "homepage": "https://github.com/smartretraining/distilled/tree/main/packages/reapit",
+  "homepage": "https://github.com/smartretraining/distilled/tree/main/packages/vaultre",
   "bugs": {
     "url": "https://github.com/smartretraining/distilled/issues"
   },
@@ -74,9 +74,9 @@
   "scripts": {
     "build": "tsc -b",
     "typecheck": "tsc -p tsconfig.json",
-    "convert": "bun scripts/build-spec.ts && bun scripts/convert.ts",
+    "convert": "bun scripts/convert.ts",
     "generate": "bun scripts/generate.ts",
-    "specs:capture": "bun scripts/capture-samples.ts",
+    "specs:fetch": "bun scripts/fetch-spec.ts",
     "test": "bunx vitest run test"
   },
   "dependencies": {
@@ -87,7 +87,8 @@
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "dotenv": "^16.5.0",
-    "vitest": "^3.2.3"
+    "vitest": "^3.2.3",
+    "yaml": "^2.8.1"
   },
   "peerDependencies": {
     "effect": ">=4.0.0-beta.104 || >=4.0.0"
