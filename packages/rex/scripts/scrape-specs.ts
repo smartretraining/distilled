@@ -42,6 +42,7 @@ function appIdentifier(): string {
 /** Services to scrape. Extend this list to add more Rex models. */
 const SERVICES = [
   "Listings",
+  "PublishedListings",
   "Properties",
   "AdminWebhooks",
   "Feedback",

@@ -108,7 +108,7 @@ interface JsonSchema {
   properties?: Record<string, JsonSchema>;
   required?: string[];
   items?: JsonSchema;
-  additionalProperties?: boolean;
+  additionalProperties?: boolean | JsonSchema;
 }
 
 interface OpenApiDoc {
@@ -313,7 +313,19 @@ function buildRequestSchema(openapi: RexOpenApiBlock): {
 
   if (params && !Array.isArray(params)) {
     for (const [name, param] of Object.entries(params)) {
-      schema.properties![name] = convertDefinition(param.definition);
+      const definition = convertDefinition(param.definition);
+      // Rex declares `order_by` as a string, but its documented and live wire
+      // shape is a field-to-direction object such as `{ system_ctime: "desc" }`.
+      // Leaving the introspected type untouched prevents consumers from making
+      // every sorted search call.
+      schema.properties![name] =
+        name === "order_by"
+          ? {
+              type: "object",
+              description: definition.description,
+              additionalProperties: { type: "string" },
+            }
+          : definition;
       if (param.required === true) required.push(name);
     }
   }
