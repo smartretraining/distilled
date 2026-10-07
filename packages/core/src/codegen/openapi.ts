@@ -7,20 +7,28 @@
  * `generateService` compiler. Conversion fidelity follows distilled v0's
  * `generate-openapi.ts` feature matrix:
  *
- *   • one operation per (path × get/post/put/patch/delete), deprecated
- *     skipped by default; op shape name = PascalCase(operationId)
+ *   • one operation per (path × get/post/put/patch/delete — plus head/options
+ *     when a provider opts in via `extraHttpMethods`), deprecated skipped by
+ *     default; op shape name = PascalCase(operationId), or verbNoun
+ *     (`Apps_list` → `ListApps`) when {@link OpenApiConvertOptions.operationNaming}
+ *     is `"verbNoun"`
  *   • input `<Op>Request`: path params → `smithy.api#httpLabel` (+required),
- *     query params → `smithy.api#httpQuery`, header/cookie params dropped,
- *     body properties flattened alongside (labels win, then query, then body);
+ *     query params → `smithy.api#httpQuery`, header params →
+ *     `smithy.api#httpHeader` when `headerParams` is on (dropped otherwise,
+ *     as cookie params always are),
+ *     body properties flattened alongside
+ *     (labels win, then query, then headers, then body);
  *     non-object bodies become a sole `body` member with `smithy.api#httpPayload`
  *   • `$ref`s become NAMED shapes (`components/schemas/X` → `<ns>#X`), reused
  *     across operations; anonymous nested objects synthesize names from the
  *     parent + member path
- *   • responses: 200 → 201 → 204 precedence, `application/json` only; object
+ *   • responses: 200 → 201 → 204 precedence (`successStatuses` overrides),
+ *     JSON or opt-in binary `application/octet-stream`; object
  *     results become `<Op>Response` structures (a sole `$ref` reuses the named
  *     shape); bare array/scalar results wrap in a structure whose single
  *     member carries `com.distilled.openapi#rawResponse` (the SdkSpec maps it
- *     to a root pipe); no schema → `smithy.api#Unit`
+ *     to a root pipe); no schema → `smithy.api#Unit`; `head` is always
+ *     `smithy.api#Unit`, whatever content the spec declares
  *   • nullability (3.0 `nullable`, 3.1 `type: [..., "null"]`, 2.0
  *     `x-nullable`, `oneOf`/`anyOf` null branches) → member-level
  *     `com.distilled.openapi#nullable` trait
@@ -35,6 +43,15 @@
  *     first top-level array property) → `smithy.api#paginated` on the op
  *     (with the non-standard `mode` member the core runtime dispatches on)
  */
+
+import {
+  isMechanicalOperationId,
+  isVerbatimRouteId,
+  pathToVerbNoun,
+  resolveOperationName,
+  toVerbNoun,
+  type OperationIdRewrite,
+} from "./rewrite-operation-ids.ts";
 
 // ============================================================================
 // Trait ids (the `com.distilled.openapi` vocabulary)
@@ -123,6 +140,43 @@ export interface OpenApiConvertOptions {
   /** Skip operations marked `deprecated: true`. Default true. */
   readonly skipDeprecated?: boolean;
   /**
+   * HTTP methods to convert IN ADDITION to get/post/put/patch/delete —
+   * currently `"head"` and `"options"`. Opt-in, so a provider that models
+   * them (Vercel probes cache artifacts and sandbox files with HEAD) gets
+   * them without every other provider silently gaining operations.
+   *
+   * `head` operations always output `smithy.api#Unit` — see the output-shape
+   * comment in {@link convertOpenApiToSmithy} for why a declared response
+   * body on a HEAD can never arrive.
+   */
+  readonly extraHttpMethods?: readonly ("head" | "options")[];
+  /**
+   * Emit `in: header` parameters as `smithy.api#httpHeader` members instead
+   * of dropping them. Opt-in for the same reason as
+   * {@link extraHttpMethods}: turning it on adds input members to every
+   * operation whose spec declares a header parameter, and most providers
+   * declare ones the protocol already sends itself (Accept, Authorization,
+   * an API-version pin). Providers whose headers are real per-call inputs
+   * — Vercel's `x-Artifact-*` remote-cache metadata, `x-Vercel-Digest` —
+   * ask for them.
+   */
+  readonly headerParams?: boolean;
+  /**
+   * Convert `format: binary` strings to blobs and include binary
+   * `application/octet-stream` responses. Opt in only when the provider's
+   * generator and protocol support binary inputs and outputs. Default false.
+   */
+  readonly binaryTypes?: boolean;
+  /**
+   * Response statuses to read the operation's output shape from, most
+   * preferred first. Default `["200", "201", "204"]`. Extend it for an API
+   * that answers asynchronous work with a body under another status — Vercel
+   * returns `202 Accepted` with a payload from nine endpoints (artifact
+   * upload, account deletion, VCR blob/manifest writes), which would
+   * otherwise generate as a `void` output.
+   */
+  readonly successStatuses?: readonly string[];
+  /**
    * Azure-style fixed `api-version`: drops `api-version` query params and
    * stamps {@link API_VERSION_TRAIT} on every operation.
    */
@@ -140,6 +194,29 @@ export interface OpenApiConvertOptions {
    * {@link ERROR_MATCHERS_TRAIT} traits; overrides are merged over it.
    */
   readonly errorShapes?: Readonly<Record<string, any>>;
+  /**
+   * How to turn an OpenAPI `operationId` into the Smithy/SDK operation name.
+   * This is a convert policy, not a spec patch — the OpenAPI document is
+   * left alone.
+   *
+   * - `"verbNoun"` (default): `Apps_list` / `ConfigsList` / `showContact` →
+   *   `listApps` / `listConfigs` / `getApp`. Already verb-first ids stay.
+   *   An operation with no `operationId`, or a mechanical one that only
+   *   restates the method and path (`get-api-card`, `post_v1_users`), is
+   *   named from the route instead: `GET /users` → `listUsers`,
+   *   `GET /users/{id}` → `getUser`, `POST /users/{id}/reset` →
+   *   `resetUser`.
+   * - `"as-is"`: `PascalCase(operationId)` (`Apps_list` → `AppsList`).
+   *
+   * {@link operationNames} overrides win (lookup by `"METHOD path"`, then
+   * operationId).
+   */
+  readonly operationNaming?: "as-is" | "verbNoun";
+  /**
+   * Per-operation name overrides for {@link operationNaming}. Use
+   * `"METHOD path"` keys when two methods share an `operationId`.
+   */
+  readonly operationNames?: OperationIdRewrite;
 }
 
 export interface SmithyModel {
@@ -155,6 +232,7 @@ export interface SmithyModel {
 const PRELUDE = {
   Unit: "smithy.api#Unit",
   String: "smithy.api#String",
+  Blob: "smithy.api#Blob",
   Boolean: "smithy.api#Boolean",
   Double: "smithy.api#Double",
   Integer: "smithy.api#Integer",
@@ -175,6 +253,24 @@ const memberIdent = (name: string): string => {
   let out = name.replace(/[^A-Za-z0-9_]/g, "_");
   if (/^[0-9]/.test(out)) out = `_${out}`;
   return out || "_";
+};
+
+/**
+ * Header name → member identifier (`x-Artifact-Tag` → `xArtifactTag`). The
+ * wire name is carried by the `smithy.api#httpHeader` trait, so the member
+ * can read like the rest of the input rather than like a header.
+ */
+const headerMemberName = (name: string): string => {
+  const parts = name.split(/[^A-Za-z0-9]+/).filter(Boolean);
+  if (parts.length === 0) return "_";
+  const out = parts
+    .map((p, i) =>
+      i === 0
+        ? p.charAt(0).toLowerCase() + p.slice(1)
+        : p.charAt(0).toUpperCase() + p.slice(1),
+    )
+    .join("");
+  return /^[0-9]/.test(out) ? `_${out}` : out;
 };
 
 const enumMemberName = (value: string): string => {
@@ -219,6 +315,7 @@ interface Ctx {
    */
   readonly dirSensitiveRefs: Map<Dir, ReadonlySet<string>>;
   readonly sensitivePatterns: readonly RegExp[];
+  readonly binaryTypes: boolean;
 }
 
 interface Converted {
@@ -763,7 +860,14 @@ const convertSchema = (
     const item = convertSchema(ctx, def.items, `${hint}Item`, depth + 1, dir);
     return {
       target: emit(
-        { type: "list", member: { target: item.target }, traits: docTraits },
+        {
+          type: "list",
+          member: {
+            target: item.target,
+            ...(item.nullable ? { traits: { [NULLABLE_TRAIT]: {} } } : {}),
+          },
+          traits: docTraits,
+        },
         reservedId !== undefined ? hint : `${hint}List`,
       ),
       nullable,
@@ -800,7 +904,10 @@ const convertSchema = (
           {
             type: "map",
             key: { target: PRELUDE.String },
-            value: { target: value.target },
+            value: {
+              target: value.target,
+              ...(value.nullable ? { traits: { [NULLABLE_TRAIT]: {} } } : {}),
+            },
             traits: docTraits,
           },
           reservedId !== undefined ? hint : `${hint}Map`,
@@ -814,7 +921,12 @@ const convertSchema = (
   // --- scalars --------------------------------------------------------------
   switch (t) {
     case "string":
-      return inline(PRELUDE.String, nullable);
+      return inline(
+        ctx.binaryTypes && def.format === "binary"
+          ? PRELUDE.Blob
+          : PRELUDE.String,
+        nullable,
+      );
     case "boolean":
       return inline(PRELUDE.Boolean, nullable);
     case "integer":
@@ -937,7 +1049,11 @@ const collectParams = (ctx: Ctx, pathItem: any, op: any): Param[] => {
     byKey.set(`${p.in} ${p.name}`, p);
   }
   return [...byKey.values()].filter(
-    (p) => p.in === "path" || p.in === "query" || p.in === "body",
+    (p) =>
+      p.in === "path" ||
+      p.in === "query" ||
+      p.in === "body" ||
+      p.in === "header",
   );
 };
 
@@ -1001,12 +1117,13 @@ const opDoc = (op: any): string | undefined => {
 // Responses
 // ============================================================================
 
-/** 200 → 201 → 204 precedence; response-level `$ref` resolved; JSON only. */
+/** First declared status wins; resolve response refs and preserve JSON or binary bodies. */
 const successSchema = (
   ctx: Ctx,
   responses: any,
+  order: readonly string[],
 ): { schema: any | undefined } => {
-  for (const code of ["200", "201", "204"]) {
+  for (const code of order) {
     const raw = responses?.[code];
     if (!raw) continue;
     const resp = raw.$ref ? resolvePointer(ctx.spec, raw.$ref) : raw;
@@ -1014,9 +1131,48 @@ const successSchema = (
     if (ctx.version === "2.0") {
       return { schema: resp.schema };
     }
-    return { schema: resp.content?.["application/json"]?.schema };
+    const json = resp.content?.["application/json"]?.schema;
+    const binary = resp.content?.["application/octet-stream"]?.schema;
+    return {
+      schema:
+        json ??
+        (ctx.binaryTypes && deref(ctx, binary)?.format === "binary"
+          ? binary
+          : undefined),
+    };
   }
   return { schema: undefined };
+};
+
+/**
+ * Whether the success body is a collection: an array, or an object whose
+ * array members outnumber its scalar ones (envelopes like `{ data: [] }`,
+ * `{ items: [], total }`). `undefined` when there is no body to judge.
+ */
+const responseIsCollection = (
+  ctx: Ctx,
+  responses: any,
+  order: readonly string[],
+): boolean | undefined => {
+  const { schema } = successSchema(ctx, responses, order);
+  if (!schema) return undefined;
+  const s = deref(ctx, schema);
+  if (!s || typeof s !== "object") return undefined;
+  if (s.type === "array" || s.items) return true;
+  const props = s.properties;
+  if (!props || typeof props !== "object") {
+    return s.allOf || s.oneOf || s.anyOf ? undefined : false;
+  }
+  let arrays = 0;
+  let others = 0;
+  for (const prop of Object.values(props)) {
+    const p = deref(ctx, prop);
+    if (p?.type === "array" || p?.items) arrays++;
+    else others++;
+  }
+  if (arrays === 0) return false;
+  // `{ data: [...] }`, `{ items, next_cursor }`, `{ results, count, page }`
+  return arrays >= 1 && others <= 3;
 };
 
 // ============================================================================
@@ -1099,6 +1255,14 @@ const detectPagination = (
 
 const HTTP_METHODS = ["get", "post", "put", "patch", "delete"] as const;
 
+/**
+ * Methods a spec may declare beyond {@link HTTP_METHODS}, opt-in via
+ * {@link OpenApiConvertOptions.extraHttpMethods} — a provider that models
+ * `head` (Vercel's cache-artifact and file existence probes) asks for it
+ * rather than every provider silently gaining operations on regeneration.
+ */
+const OPTIONAL_HTTP_METHODS = ["head", "options"] as const;
+
 const DEFAULT_STATUS_TO_ERROR_CLASS: Readonly<Record<string, string>> = {
   "400": "BadRequest",
   "403": "Forbidden",
@@ -1108,6 +1272,8 @@ const DEFAULT_STATUS_TO_ERROR_CLASS: Readonly<Record<string, string>> = {
 };
 
 const DEFAULT_ERROR_STATUSES = ["401", "429", "500", "503"];
+
+const DEFAULT_SUCCESS_STATUSES = ["200", "201", "204"];
 
 export const convertOpenApiToSmithy = (
   spec: unknown,
@@ -1124,6 +1290,7 @@ export const convertOpenApiToSmithy = (
     refs: new Map(),
     dirSensitiveRefs: new Map(),
     sensitivePatterns: options.sensitivePatterns ?? SENSITIVE_FIELD_PATTERNS,
+    binaryTypes: options.binaryTypes ?? false,
   };
   const statusToErrorClass =
     options.statusToErrorClass ?? DEFAULT_STATUS_TO_ERROR_CLASS;
@@ -1131,6 +1298,13 @@ export const convertOpenApiToSmithy = (
     options.defaultErrorStatuses ?? DEFAULT_ERROR_STATUSES,
   );
   const skipDeprecated = options.skipDeprecated ?? true;
+  const successStatuses = options.successStatuses ?? DEFAULT_SUCCESS_STATUSES;
+  const httpMethods = [
+    ...HTTP_METHODS,
+    ...OPTIONAL_HTTP_METHODS.filter((m) =>
+      options.extraHttpMethods?.includes(m),
+    ),
+  ];
 
   // Error class names and the service name are reserved up front so schema
   // components can never steal them.
@@ -1145,16 +1319,65 @@ export const convertOpenApiToSmithy = (
 
   for (const [rawPath, pathItem] of Object.entries(doc.paths ?? {})) {
     if (!pathItem || typeof pathItem !== "object") continue;
-    for (const method of HTTP_METHODS) {
+    for (const method of httpMethods) {
       const op = (pathItem as any)[method];
       if (!op || typeof op !== "object") continue;
       if (skipDeprecated && op.deprecated === true) continue;
 
-      const opName = pascal(
+      const rawOperationId =
         typeof op.operationId === "string" && op.operationId
           ? op.operationId
-          : `${method}_${rawPath}`,
-      );
+          : `${method}_${rawPath}`;
+      const idCtx = { path: rawPath, method };
+      const naming = options.operationNaming ?? "verbNoun";
+      let named =
+        options.operationNames !== undefined
+          ? resolveOperationName(options.operationNames, rawOperationId, idCtx)
+          : undefined;
+      if (named === undefined && naming === "verbNoun") {
+        // A mechanical id (`get-api-card`, or none at all) is named from
+        // the route. A hand-chosen one that merely starts with the method
+        // and reads the route in order (`get-feeds` on /feeds) keeps its
+        // own nouns; only the HTTP-method verb is normalised.
+        if (typeof op.operationId !== "string" || !op.operationId) {
+          // No id: everything comes from the route, including whether a
+          // GET on a collection route is `list` or `get`.
+          named = pathToVerbNoun(idCtx, {
+            returnsCollection: responseIsCollection(
+              ctx,
+              op.responses,
+              successStatuses,
+            ),
+          });
+        } else if (isMechanicalOperationId(op.operationId, idCtx)) {
+          // Method-prefixed and reading the route (`get-feeds`,
+          // `postV1AppsByAppIdPromote`, `deleteProjectJWKS`): keep the
+          // author's tokens and casing; normalise `post`/`patch`, drop
+          // parameter clauses (`ByAppId`, `ById`) and api/version roots.
+          named = pathToVerbNoun(idCtx, {
+            nouns: op.operationId,
+            verbatim: isVerbatimRouteId(op.operationId, idCtx),
+          });
+        } else {
+          named = toVerbNoun(rawOperationId);
+        }
+      }
+      let resolved: string = named ?? rawOperationId;
+      // Two routes can derive the same name (`/collections/{slug}` and
+      // `/collections/{slug}-{id}`); suffix the trailing parameter rather
+      // than a counter.
+      if (
+        naming === "verbNoun" &&
+        ctx.names.has(pascal(resolved)) &&
+        isMechanicalOperationId(
+          typeof op.operationId === "string" ? op.operationId : undefined,
+          idCtx,
+        )
+      ) {
+        const lastParam = /\{([^}]+)\}[^/]*$/.exec(rawPath)?.[1];
+        if (lastParam) resolved = `${resolved}By${pascal(lastParam)}`;
+      }
+      const opName = pascal(resolved);
 
       const params = collectParams(ctx, pathItem, op);
 
@@ -1210,6 +1433,32 @@ export const convertOpenApiToSmithy = (
               : {}),
           },
         });
+      }
+
+      // ---- Header params (opt-in) ----
+      if (options.headerParams) {
+        for (const p of params) {
+          if (p.in !== "header") continue;
+          const conv = convertSchema(
+            ctx,
+            p.schema,
+            `${opName}Request${pascal(p.name)}`,
+            0,
+            "in",
+          );
+          addMember(headerMemberName(p.name), {
+            target: conv.target,
+            traits: {
+              // The wire name rides on the trait, so the member is free to be
+              // a normal identifier.
+              "smithy.api#httpHeader": p.name,
+              ...(p.required ? { "smithy.api#required": {} } : {}),
+              ...(p.description
+                ? { "smithy.api#documentation": p.description }
+                : {}),
+            },
+          });
+        }
       }
 
       // ---- Request body (json > form-urlencoded > multipart) ----
@@ -1289,7 +1538,19 @@ export const convertOpenApiToSmithy = (
           : PRELUDE.Unit;
 
       // ---- Output shape ----
-      const { schema: respSchema } = successSchema(ctx, op.responses);
+      // A HEAD response carries no content, and not merely by convention:
+      // HTTP/1.1 framing terminates it at the end of the header section
+      // "regardless of the header fields present in the message" (RFC 9112
+      // §6.3), so a declared `Content-Length` describes what a GET *would*
+      // return and no body can reach the client. Specs declare one anyway —
+      // Vercel mirrors the GET's schema onto two of its HEAD probes and
+      // gives the other two a bare `{"nullable": true}` — and honouring it
+      // generates an output struct with required members that then fails to
+      // decode against the empty body on every successful call.
+      const { schema: respSchema } =
+        method === "head"
+          ? { schema: undefined }
+          : successSchema(ctx, op.responses, successStatuses);
       let outputTarget: string = PRELUDE.Unit;
       if (respSchema !== undefined) {
         const flat = flattenObject(ctx, respSchema);

@@ -19,13 +19,13 @@
  */
 import * as Effect from "effect/Effect";
 import type * as Layer from "effect/Layer";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
 import type * as API from "@distilled.cloud/core/api";
 import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
 import type { API_ERRORS, ConfigError } from "@distilled.cloud/core/errors";
 import { Credentials, formatHeaders, type Config } from "./credentials.ts";
-import { UnknownPlanetScaleError } from "./errors.ts";
+import { UnknownPlanetScaleError, PlanetScaleParseError } from "./errors.ts";
 
 /**
  * Error channel shared by every generated PlanetScale operation. Generated
@@ -37,7 +37,8 @@ export type PlanetScaleOpError =
   | InstanceType<(typeof API_ERRORS)[number]>
   | UnknownPlanetScaleError
   | ConfigError
-  | HttpClientError.HttpClientError;
+  | HttpClientError.HttpClientError
+  | PlanetScaleParseError;
 
 /** Context (requirements) shared by every generated PlanetScale operation. */
 export type PlanetScaleOpContext = Credentials | HttpClient.HttpClient;
@@ -65,4 +66,5 @@ export const PlanetScaleProtocol: Layer.Layer<API.Protocol> =
         message,
         body,
       }),
+    parseError: ({ body, cause }) => new PlanetScaleParseError({ body, cause }),
   });

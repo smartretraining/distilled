@@ -6,12 +6,13 @@
  * tied to the v4 response envelope.
  *
  * Generic traits (Body / Header / Query / DeepQuery / Label / Http / ResponseCode /
- * HttpBody / FormDataFile / KeyDictionary / UnionCases / error matchers)
+ * HttpBody / FormDataFile / StringEncoded / KeyDictionary / UnionCases /
+ * error matchers)
  * live in `@distilled.cloud/core/trait` because any REST protocol reuses
  * them. Anything tied to Cloudflare's response envelope lives here.
  */
 import { makeAnnotation } from "@distilled.cloud/core/trait";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
+import type * as HttpClientError from "effect/http/HttpClientError";
 import type * as Stream from "effect/Stream";
 
 export {
@@ -24,6 +25,7 @@ export {
   ResponseCode,
   HttpBody,
   FormDataFile,
+  StringEncoded,
   KeyDictionary,
   UnionCases,
   applyErrorMatchers,
@@ -39,6 +41,7 @@ export {
   responseCodeSymbol,
   httpBodySymbol,
   formDataFileSymbol,
+  stringEncodedSymbol,
   keyDictionarySymbol,
   unionCasesSymbol,
   errorMatchersSymbol,

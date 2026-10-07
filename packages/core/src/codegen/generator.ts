@@ -55,6 +55,10 @@ import {
 } from "./operations.ts";
 import { memberBases, smithyWireName } from "./members.ts";
 import { validatePaginated } from "./pagination.ts";
+import {
+  booleanStringEnums,
+  STRING_ENCODED_TRAIT,
+} from "./boolean-string-enums.ts";
 
 const PAGINATED_TRAIT = "smithy.api#paginated";
 
@@ -192,6 +196,8 @@ export interface SdkSpec {
   readonly prelude?: Record<string, string>;
   /** Prelude scalar → TS type map. Default {@link TS_JSON_PRELUDE}. */
   readonly tsPrelude?: Record<string, string>;
+  /** Use Codec for service-free, same-type schemas; Schema leaves services unspecified. */
+  readonly schemaType?: "Schema" | "Codec";
   /** Wire member name → TS-facing name. Default: identity. */
   readonly memberName?: (name: string) => string;
   /** Operation shape name → exported const name. Default: lowerFirst. */
@@ -268,6 +274,11 @@ export interface SdkSpec {
   readonly memberExtraPipes?: (m: EmittedMember) => string[];
   /** Full override of member pipe emission (rarely needed). */
   readonly memberPipes?: (m: EmittedMember) => string[];
+  /** Override the value schema before nullability, bindings and optionality. */
+  readonly memberSchema?: (
+    m: EmittedMember,
+    ref: (target: string) => string,
+  ) => string | undefined;
   /** Function override for member TS types beyond the binding table. */
   readonly memberTsType?: (
     m: EmittedMember,
@@ -349,8 +360,10 @@ export interface SdkSpec {
    * and the schema is `S.Unknown.pipe(T.UnionCases([...case key sets]))` —
    * the protocol discriminates by key-set at decode time (for APIs that
    * return every case's keys with nulls, like Cloudflare's).
+   * `"untagged"`: validate the value directly against the case schemas.
+   * `"primitive"`: emit unwrapped unions of primitive or enum values.
    */
-  readonly unionStyle?: "opaque-cases";
+  readonly unionStyle?: "opaque-cases" | "untagged" | "primitive";
   /** Full override of union emission. */
   readonly union?: (ctx: {
     readonly name: string;
@@ -403,13 +416,26 @@ export interface SdkSpec {
     /** Error classes appended to every op's `errors: [...]` list. */
     readonly commonErrorClasses: readonly string[];
     readonly protocol: string;
-    /** The retry tag expression (e.g. `Retry.Retry`). */
-    readonly retry: string;
+    /** The retry tag expression (e.g. `Retry.Retry`). Omit to disable retries. */
+    readonly retry?: string;
     /**
      * Extra config lines inserted before the pagination entry (e.g. AWS's
      * `operationName` and `endpointHostPrefix`).
      */
     readonly extraConfig?: (ctx: OperationEmit) => string[];
+    /**
+     * Per-operation `protocol` / `contextType` replacing the declared
+     * defaults, e.g. an unauthenticated login endpoint on a public protocol
+     * whose context has no credentials. Return `undefined` for the defaults.
+     * The header only imports the defaults; a spec that overrides must add
+     * the extra imports itself (see {@link SdkSpec.postProcess}).
+     */
+    readonly overrides?: (ctx: OperationEmit) =>
+      | {
+          readonly protocol?: string;
+          readonly contextType?: string;
+        }
+      | undefined;
   };
   /** Full override of operation const emission. */
   readonly operation?: (ctx: OperationEmit) => string;
@@ -447,6 +473,9 @@ export const generateService = (
   model: any,
   spec: SdkSpec,
 ): GeneratedService => {
+  // `"true" | "false"` request members become real booleans that travel as
+  // their string spelling (see boolean-string-enums.ts).
+  booleanStringEnums(model);
   const shapes: ShapeMap = model.shapes;
   const pure = spec.pure ?? PURE;
   const prelude = spec.prelude ?? JSON_PRELUDE;
@@ -625,6 +654,50 @@ export const generateService = (
       };
     });
 
+  /** The single value a one-value enum shape fixes, if `target` is one. */
+  const soleEnumValue = (target: string): string | undefined => {
+    const d = shapes[target];
+    if (d?.type !== "enum") return undefined;
+    const values = Object.values(d.members ?? {}).map(
+      (m: any) => m.traits?.["smithy.api#enumValue"],
+    );
+    return values.length === 1 && typeof values[0] === "string"
+      ? values[0]
+      : undefined;
+  };
+
+  /**
+   * The member every case of a union pins to a different literal — the tag
+   * the API itself discriminates by (`type: "zone"`, `id: "browser_check"`).
+   * Undefined unless every case is a structure carrying that member and no
+   * two cases claim the same value.
+   */
+  const unionDiscriminator = (
+    caseTargets: readonly string[],
+  ): { key: string; values: string[] } | undefined => {
+    if (caseTargets.length < 2) return undefined;
+    const perCase = caseTargets.map((t) => {
+      const cd = shapes[t];
+      if (cd?.type !== "structure") return undefined;
+      const tags = new Map<string, string>();
+      for (const mi of memberInfos(cd)) {
+        const value = soleEnumValue(mi.target);
+        if (value !== undefined) tags.set(mi.tsName, value);
+      }
+      return tags;
+    });
+    if (perCase.some((tags) => tags === undefined || tags.size === 0)) {
+      return undefined;
+    }
+    for (const key of perCase[0]!.keys()) {
+      const values = perCase.map((tags) => tags!.get(key));
+      if (values.some((v) => v === undefined)) continue;
+      if (new Set(values).size !== values.length) continue;
+      return { key, values: values as string[] };
+    }
+    return undefined;
+  };
+
   // Generic pipes for the smithy bindings (the SDK's traits module exports
   // core's Label/Query/Header/HttpBody/Body builders under these names);
   // provider bindings and member traits append theirs via memberExtraPipes.
@@ -668,6 +741,7 @@ export const generateService = (
           ([trait, builder]) =>
             `${builder}(${JSON.stringify(info.traits[trait])})`,
         ),
+      ...(STRING_ENCODED_TRAIT in info.traits ? ["T.StringEncoded()"] : []),
       ...(spec.memberExtraPipes?.(info) ?? []),
     ]);
 
@@ -681,7 +755,9 @@ export const generateService = (
     )?.tsType;
 
   const emitMember = (info: EmittedMember, selfIdx: number): string => {
-    let expr = ref(info.target, selfIdx);
+    let expr =
+      spec.memberSchema?.(info, (target) => ref(target, selfIdx)) ??
+      ref(info.target, selfIdx);
     if (info.nullable) expr = `S.NullOr(${expr})`;
     const pipes = memberPipes(info);
     if (pipes.length) expr = `${expr}.pipe(${pipes.join(", ")})`;
@@ -866,6 +942,7 @@ export const generateService = (
             pure,
             multiline: true,
             annotateIdentifier: true,
+            castTo: `S.${spec.schemaType ?? "Schema"}<${name}>`,
             expr: `${ref(m.target, i)}.pipe(${rootPipes.join(", ")})`,
           }),
         );
@@ -944,21 +1021,32 @@ export const generateService = (
             pure,
             multiline: true,
             annotateIdentifier: true,
+            castTo: `S.${spec.schemaType ?? "Schema"}<${name}>`,
             expr: `${struct}${tail}`,
           }),
         );
       }
     } else if (d.type === "list") {
-      out.push(`export type ${name} = Array<${tsRefAt(d.member.target, id)}>;`);
+      const nullable =
+        spec.nullableTrait !== undefined &&
+        spec.nullableTrait in (d.member.traits ?? {});
+      const item = ref(d.member.target, i);
       out.push(
-        `export const ${name} = ${pure}S.Array(${ref(d.member.target, i)}) as any as S.Schema<${name}>;\n`,
+        `export type ${name} = Array<${tsRefAt(d.member.target, id)}${nullable ? " | null" : ""}>;`,
+      );
+      out.push(
+        `export const ${name} = ${pure}S.Array(${nullable ? `S.NullOr(${item})` : item}) as any as S.${spec.schemaType ?? "Schema"}<${name}>;\n`,
       );
     } else if (d.type === "map") {
+      const nullable =
+        spec.nullableTrait !== undefined &&
+        spec.nullableTrait in (d.value.traits ?? {});
+      const value = ref(d.value.target, i);
       out.push(
-        `export type ${name} = { [key: string]: ${tsRefAt(d.value.target, id)} | undefined };`,
+        `export type ${name} = { [key: string]: ${tsRefAt(d.value.target, id)}${nullable ? " | null" : ""} | undefined };`,
       );
       out.push(
-        `export const ${name} = ${pure}S.Record(S.String, ${ref(d.value.target, i)}) as any as S.Schema<${name}>;\n`,
+        `export const ${name} = ${pure}S.Record(S.String, ${nullable ? `S.NullOr(${value})` : value}) as any as S.${spec.schemaType ?? "Schema"}<${name}>;\n`,
       );
     } else if (d.type === "union") {
       // A union arm targeting the union itself carries no information
@@ -977,10 +1065,38 @@ export const generateService = (
       });
       if (spec.union) {
         out.push(...spec.union({ name, caseTargets, caseKeys, tsRef }));
+      } else if (spec.unionStyle === "untagged") {
+        out.push(
+          `export type ${name} = ${caseTargets.map((t) => tsRefAt(t, id)).join(" | ") || "never"};`,
+          `export const ${name} = ${pure}S.Union([${caseTargets.map((t) => ref(t, i)).join(", ")}]) as any as S.${spec.schemaType ?? "Schema"}<${name}>;\n`,
+        );
+      } else if (
+        spec.unionStyle === "primitive" &&
+        caseTargets.length > 0 &&
+        caseTargets.every(
+          (target) =>
+            ["string", "number", "boolean"].includes(tsRef(target)) ||
+            shapes[target]?.type === "enum" ||
+            shapes[target]?.type === "intEnum",
+        )
+      ) {
+        // Primitive unions keep response enums open to match S.String/S.Number.
+        const primitiveType = (target: string) => {
+          const type = tsRef(target);
+          if (shapes[target]?.type === "enum") return `${type} | (string & {})`;
+          if (shapes[target]?.type === "intEnum")
+            return `${type} | (number & {})`;
+          return type;
+        };
+        out.push(
+          `export type ${name} = ${caseTargets.map(primitiveType).join(" | ")};`,
+          `export const ${name}: S.Codec<${name}> = ${pure}S.Union([${caseTargets.map((t) => ref(t, i)).join(", ")}]);\n`,
+        );
       } else if (spec.unionStyle === "opaque-cases") {
+        const disc = unionDiscriminator(caseTargets);
         out.push(
           `export type ${name} = ${caseTargets.map((t) => tsRefAt(t, id)).join(" | ") || "unknown"};`,
-          `export const ${name} = ${pure}S.Unknown.pipe(T.UnionCases(${JSON.stringify(caseKeys)}));\n`,
+          `export const ${name} = ${pure}S.Unknown.pipe(T.UnionCases(${JSON.stringify(caseKeys)}${disc ? `, ${JSON.stringify(disc)}` : ""}));\n`,
         );
       } else {
         throw new Error(
@@ -1002,7 +1118,7 @@ export const generateService = (
       const union = values.length ? values.join(" | ") : "number";
       out.push(
         `export type ${name} = ${union};`,
-        `export const ${name} = ${pure}S.Number;\n`,
+        `export const ${name} = S.Number;\n`,
       );
     }
   });
@@ -1060,6 +1176,9 @@ export const generateService = (
         throw new Error("SdkSpec needs either operationDecl or operation");
       }
       const errList = [...ctx.errorNames, ...decl.commonErrorClasses];
+      const overrides = decl.overrides?.(ctx);
+      const contextType = overrides?.contextType ?? decl.contextType;
+      const protocol = overrides?.protocol ?? decl.protocol;
       const paginated = ctx.pagination !== undefined;
       const itemTsType = paginated
         ? paginatedItemTsType(
@@ -1072,7 +1191,7 @@ export const generateService = (
         `  ${ctx.inputName},\n` +
         `  ${ctx.outputTsType},\n` +
         `  ${ctx.opName}Error,\n` +
-        `  ${decl.contextType}` +
+        `  ${contextType}` +
         (itemTsType ? `,\n  ${itemTsType}\n` : `\n`) +
         `>`;
       const config =
@@ -1080,8 +1199,8 @@ export const generateService = (
         `  input: ${ctx.inputName},\n` +
         `  output: ${ctx.outputSchema},\n` +
         `  errors: [${errList.join(", ")}],\n` +
-        `  protocol: ${(paginated && opProfile.get(ctx.op.id)?.protocol) || decl.protocol},\n` +
-        `  retry: ${decl.retry},\n` +
+        `  protocol: ${(paginated && opProfile.get(ctx.op.id)?.protocol) || protocol},\n` +
+        (decl.retry ? `  retry: ${decl.retry},\n` : "") +
         (decl.extraConfig?.(ctx) ?? []).map((l) => `  ${l},\n`).join("") +
         (paginated
           ? `  pagination: ${JSON.stringify(ctx.pagination)} as const,\n`
@@ -1155,7 +1274,7 @@ export const generateService = (
         "the default header needs operationDecl — or pass header",
       );
     }
-    const retryNs = decl.retry.split(".")[0];
+    const retryNs = decl.retry?.split(".")[0];
     // Imports the used pagination profiles pull in: their protocol consts
     // (from the protocol module) and strategy/injected-member names (from
     // the pagination module).
@@ -1193,8 +1312,10 @@ export const generateService = (
       (ctx.hasPaginated && pagImports.length
         ? `import { ${pagImports.join(", ")} } from "../pagination.ts";\n`
         : "") +
-      `import { ${[...decl.commonErrorClasses].sort().join(", ")} } from "../errors.ts";\n` +
-      `import * as ${retryNs} from "../retry.ts";\n\n` +
+      (decl.commonErrorClasses.length
+        ? `import { ${[...decl.commonErrorClasses].sort().join(", ")} } from "../errors.ts";\n`
+        : "") +
+      (retryNs ? `import * as ${retryNs} from "../retry.ts";\n\n` : "\n") +
       // Re-exported so inferred provider types downstream can always name them.
       `export type { ${decl.commonErrorType}, ${decl.contextType} };\n\n` +
       (spec.rootKeyDictionary

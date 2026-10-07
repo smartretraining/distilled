@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
 import { AwsProtocol } from "../protocol.ts";
@@ -226,7 +226,7 @@ export type RescoreExecutionPlanStatus =
   | "DELETING"
   | "FAILED"
   | (string & {});
-export const RescoreExecutionPlanStatus = /*@__PURE__*/ S.String;
+export const RescoreExecutionPlanStatus = S.String;
 
 export type ErrorMessage = string;
 export interface DescribeRescoreExecutionPlanResponse {

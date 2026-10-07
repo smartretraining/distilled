@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as redacted from "effect/Redacted";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
@@ -113,7 +113,7 @@ export type ConnectionState =
   | "failed"
   | "updating"
   | (string & {});
-export const ConnectionState = /*@__PURE__*/ S.String;
+export const ConnectionState = S.String;
 
 export type ConnectionSharedId = string;
 export type BillingTier = number;
@@ -280,7 +280,7 @@ export type EnvironmentState =
   | "limited"
   | "unavailable"
   | (string & {});
-export const EnvironmentState = /*@__PURE__*/ S.String;
+export const EnvironmentState = S.String;
 
 export type BandwidthList = string[];
 export const BandwidthList = /*@__PURE__*/ S.Array(S.String);
@@ -295,7 +295,7 @@ export const Bandwidths = /*@__PURE__*/ S.suspend(() =>
   }),
 ).annotate({ identifier: "Bandwidths" }) as any as S.Schema<Bandwidths>;
 export type RemoteAccountIdentifierType = "account" | "email" | (string & {});
-export const RemoteAccountIdentifierType = /*@__PURE__*/ S.String;
+export const RemoteAccountIdentifierType = S.String;
 
 export interface Environment {
   provider: Provider;
@@ -346,7 +346,7 @@ export const ListAttachPointsRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "ListAttachPointsRequest",
 }) as any as S.Schema<ListAttachPointsRequest>;
 export type AttachPointType = "DirectConnectGateway" | (string & {});
-export const AttachPointType = /*@__PURE__*/ S.String;
+export const AttachPointType = S.String;
 
 export interface AttachPointDescriptor {
   type: AttachPointType;

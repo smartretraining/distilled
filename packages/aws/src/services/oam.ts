@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
 import { AwsProtocol } from "../protocol.ts";
@@ -173,7 +173,7 @@ export type ResourceType =
   | "AWS::ApplicationSignals::Service"
   | "AWS::ApplicationSignals::ServiceLevelObjective"
   | (string & {});
-export const ResourceType = /*@__PURE__*/ S.String;
+export const ResourceType = S.String;
 
 export type ResourceTypesInput = ResourceType[];
 export const ResourceTypesInput = /*@__PURE__*/ S.Array(ResourceType);

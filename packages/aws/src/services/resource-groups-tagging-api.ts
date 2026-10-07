@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
 import { AwsProtocol } from "../protocol.ts";
@@ -164,7 +164,7 @@ export type GroupByAttribute =
   | "REGION"
   | "RESOURCE_TYPE"
   | (string & {});
-export const GroupByAttribute = /*@__PURE__*/ S.String;
+export const GroupByAttribute = S.String;
 
 export type GroupBy = GroupByAttribute[];
 export const GroupBy = /*@__PURE__*/ S.Array(GroupByAttribute);
@@ -203,7 +203,7 @@ export const GetComplianceSummaryInput = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetComplianceSummaryInput>;
 export type LastUpdated = string;
 export type TargetIdType = "ACCOUNT" | "OU" | "ROOT" | (string & {});
-export const TargetIdType = /*@__PURE__*/ S.String;
+export const TargetIdType = S.String;
 
 export type NonCompliantResources = number;
 export interface Summary {
@@ -516,7 +516,7 @@ export type ErrorCode =
   | "InternalServiceException"
   | "InvalidParameterException"
   | (string & {});
-export const ErrorCode = /*@__PURE__*/ S.String;
+export const ErrorCode = S.String;
 
 export interface FailureInfo {
   StatusCode?: number;

@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
 import { AwsProtocol } from "../protocol.ts";
@@ -249,7 +249,7 @@ export type FilterType =
   | "ANY_OF"
   | "NONE_OF"
   | (string & {});
-export const FilterType = /*@__PURE__*/ S.String;
+export const FilterType = S.String;
 
 export type Field = string;
 export type Value = string;

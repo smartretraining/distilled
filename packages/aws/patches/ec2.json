@@ -346,6 +346,7 @@
     "revokeSecurityGroupIngress": {
       "errors": [
         "RequestLimitExceeded",
+        "InvalidSecurityGroupRuleId.NotFound",
         "InvalidGroup.NotFound",
         "InvalidGroupId.Malformed",
         "InvalidPermission.NotFound",
@@ -548,6 +549,7 @@
     "revokeSecurityGroupEgress": {
       "errors": [
         "RequestLimitExceeded",
+        "InvalidSecurityGroupRuleId.NotFound",
         "InvalidGroup.NotFound",
         "InvalidGroupId.Malformed",
         "InvalidParameterValue",
@@ -1245,6 +1247,7 @@
     "deleteLaunchTemplate": {
       "errors": [
         "RequestLimitExceeded",
+        "InvalidLaunchTemplateId.NotFound",
         "InvalidLaunchTemplateName.NotFoundException",
         "MissingParameter",
         "UnauthorizedOperation"
@@ -1414,6 +1417,8 @@
       "errors": [
         "RequestLimitExceeded",
         "InvalidClientVpnEndpointId.NotFound",
+        "IncorrectState",
+        "DependencyViolation",
         "UnauthorizedOperation"
       ]
     },
@@ -1571,6 +1576,9 @@
       "errors": [
         "RequestLimitExceeded",
         "MissingParameter",
+        "InvalidParameterValue",
+        "InvalidVpcID.NotFound",
+        "ClientVpnEndpointLimitExceeded",
         "UnauthorizedOperation"
       ]
     },
@@ -1800,8 +1808,10 @@
     "modifySecurityGroupRules": {
       "errors": [
         "RequestLimitExceeded",
+        "InvalidParameterValue",
         "MissingParameter",
-        "UnauthorizedOperation"
+        "UnauthorizedOperation",
+        "InvalidSecurityGroupRuleId.NotFound"
       ]
     },
     "allocateAddress": {
@@ -2112,6 +2122,13 @@
       "errors": [
         "RequestLimitExceeded",
         "InvalidSubnetID.Malformed",
+        "InvalidClientVpnEndpointId.NotFound",
+        "ClientVpnEndpointAssociationExists",
+        "InvalidClientVpnDuplicateAssociationException",
+        "InvalidClientVpnSubnetId.DuplicateAz",
+        "InvalidClientVpnSubnetId.OverlappingCidr",
+        "InvalidClientVpnSubnetId.NotFound",
+        "IncorrectState",
         "MissingParameter",
         "UnauthorizedOperation"
       ]
@@ -2120,6 +2137,8 @@
       "errors": [
         "RequestLimitExceeded",
         "InvalidClientVpnEndpointId.NotFound",
+        "InvalidClientVpnAssociationIdNotFound",
+        "IncorrectState",
         "MissingParameter",
         "UnauthorizedOperation"
       ]
@@ -2814,6 +2833,8 @@
       "errors": [
         "RequestLimitExceeded",
         "InvalidClientVpnEndpointId.NotFound",
+        "InvalidClientVpnRouteNotFound",
+        "IncorrectState",
         "UnauthorizedOperation"
       ]
     },
@@ -3025,6 +3046,11 @@
       "errors": [
         "RequestLimitExceeded",
         "InvalidClientVpnEndpointId.NotFound",
+        "InvalidClientVpnDuplicateRoute",
+        "InvalidClientVpnActiveAssociationNotFound",
+        "ClientVpnRouteLimitExceeded",
+        "InvalidParameterValue",
+        "IncorrectState",
         "UnauthorizedOperation"
       ]
     },
@@ -4911,6 +4937,11 @@
       "errors": [
         "RequestLimitExceeded",
         "MissingParameter",
+        "InvalidClientVpnEndpointId.NotFound",
+        "InvalidClientVpnDuplicateAuthorizationRule",
+        "ClientVpnAuthorizationRuleLimitExceeded",
+        "InvalidParameterValue",
+        "IncorrectState",
         "UnauthorizedOperation"
       ]
     },
@@ -5016,6 +5047,8 @@
       "errors": [
         "RequestLimitExceeded",
         "InvalidClientVpnEndpointId.NotFound",
+        "InvalidParameterValue",
+        "IncorrectState",
         "UnauthorizedOperation"
       ]
     },
@@ -5219,6 +5252,9 @@
       "errors": [
         "RequestLimitExceeded",
         "MissingParameter",
+        "InvalidClientVpnEndpointId.NotFound",
+        "InvalidClientVpnEndpointAuthorizationRuleNotFound",
+        "IncorrectState",
         "UnauthorizedOperation"
       ]
     },

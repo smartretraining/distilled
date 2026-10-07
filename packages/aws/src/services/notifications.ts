@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
 import { AwsProtocol } from "../protocol.ts";
@@ -1177,7 +1177,7 @@ export type AccessStatus =
   | "PENDING"
   | "FAILED"
   | (string & {});
-export const AccessStatus = /*@__PURE__*/ S.String;
+export const AccessStatus = S.String;
 
 export interface NotificationsAccessForOrganization {
   accessStatus: AccessStatus;

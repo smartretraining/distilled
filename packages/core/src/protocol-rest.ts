@@ -12,7 +12,9 @@
  *             values first)
  *
  *   response: 2xx JSON → optional `transformResponse` → recursive wire→TS
- *             key mapping (`mapKeys`) → `Redacted` wrapping of members
+ *             key mapping (`mapKeys`) → in strict mode, a schema check
+ *             failing with the provider's `parseError` (see
+ *             `core/response-validation`) → `Redacted` wrapping of members
  *             marked with {@link SensitiveValue}; non-2xx → typed error:
  *             per-op matcher classes (`matchTypedError`), then the status
  *             map (default `HTTP_STATUS_MAP`), then an `InternalServerError`
@@ -27,12 +29,13 @@ import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Redacted from "effect/Redacted";
 import type * as AST from "effect/SchemaAST";
-import type * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
-import type * as HttpClientResponse from "effect/unstable/http/HttpClientResponse";
+import type * as HttpClientRequest from "effect/http/HttpClientRequest";
+import type * as HttpClientResponse from "effect/http/HttpClientResponse";
 import * as API from "./api.ts";
-import { makeAnnotation } from "./trait.ts";
+import { httpSymbol, makeAnnotation, type HttpTrait } from "./trait.ts";
 import {
   buildRequest,
+  getAnn,
   getPropAnn,
   getProps,
   isOpaqueValue,
@@ -42,6 +45,7 @@ import {
 } from "./protocol-http.ts";
 import { HTTP_STATUS_MAP, InternalServerError } from "./errors.ts";
 import { parseRetryAfterForStatus } from "./retry-after.ts";
+import { validateResponse } from "./response-validation.ts";
 
 // =============================================================================
 // Traits
@@ -81,6 +85,13 @@ export const rawResponseRootSymbol = Symbol.for(
  */
 export const RawResponseRoot = () =>
   makeAnnotation(rawResponseRootSymbol, true);
+
+export const binaryResponseSymbol = Symbol.for(
+  "@distilled.cloud/core/binary-response",
+);
+
+/** Decode a successful raw binary response as bytes, without text conversion. */
+export const BinaryResponse = () => makeAnnotation(binaryResponseSymbol, true);
 
 // =============================================================================
 // Value helpers
@@ -124,6 +135,13 @@ export const wrapSensitive = (ast: AST.AST, value: unknown): unknown => {
     return value;
   }
   const node = resolveNode(ast);
+  if (node._tag === "Union") {
+    // Redact every possible sensitive member, including in partial responses.
+    return node.types.reduce<unknown>(
+      (redacted, arm) => wrapSensitive(arm, redacted),
+      value,
+    );
+  }
   if (node._tag === "Arrays") {
     if (!Array.isArray(value)) return value;
     const elem = (node as any).rest?.[0] as AST.AST | undefined;
@@ -168,6 +186,12 @@ export interface RestErrorInfo {
   readonly headers: Record<string, string | undefined>;
 }
 
+/** A 2xx body that failed strict validation, for the `parseError` option. */
+export interface RestParseErrorInfo {
+  readonly body: unknown;
+  readonly cause: unknown;
+}
+
 export interface RestErrorEnvelope {
   readonly code?: string | number;
   readonly message?: string;
@@ -185,8 +209,18 @@ export interface RestProtocolOptions<C> {
    * `<Sdk>OpContext` annotations.
    */
   readonly credentials: Effect.Effect<C, any, any>;
-  /** API base URL from the resolved credentials. */
-  readonly baseUrl: (credentials: C) => string;
+  /**
+   * API base URL from the resolved credentials. Receives the operation's
+   * route so APIs with more than one endpoint (e.g. S2's account vs
+   * per-basin hosts, chosen by path) can route per request; single-endpoint
+   * providers ignore the argument. A THROWN error (e.g. a required scope
+   * missing from the credentials) is caught and surfaced on the calling
+   * effect's error channel rather than dying as a defect.
+   */
+  readonly baseUrl: (
+    credentials: C,
+    target: { readonly uri: string; readonly method: string },
+  ) => string;
   /** Auth (and any fixed) headers from the resolved credentials. */
   readonly headers: (credentials: C) => Record<string, string>;
   /**
@@ -204,6 +238,13 @@ export interface RestProtocolOptions<C> {
   readonly statusMap?: Readonly<Record<number, new (args: any) => any>>;
   /** Fallback error for failures nothing else matched. */
   readonly unknownError: (info: RestErrorInfo) => unknown;
+  /**
+   * The SDK's `<Sdk>ParseError`, raised when a 2xx body does not match the
+   * operation's output schema in strict mode (see
+   * `core/response-validation`). `body` is the parsed JSON, or the raw text
+   * when the body wasn't JSON; `cause` is the schema error.
+   */
+  readonly parseError: (info: RestParseErrorInfo) => unknown;
   /** Transform the parsed 2xx JSON before decoding (e.g. stripNulls). */
   readonly transformResponse?: (body: unknown) => unknown;
   /** Passed through to `buildRequest` (member-header transforms). */
@@ -257,10 +298,23 @@ export const makeRestProtocol = <C>(
   }) =>
     Effect.gen(function* () {
       const creds = yield* options.credentials as Effect.Effect<C>;
+      const http = getAnn(inputAst, httpSymbol) as HttpTrait | undefined;
+      let baseUrl: string;
+      try {
+        baseUrl = options.baseUrl(creds, {
+          uri: http?.uri ?? "",
+          method: http?.method ?? "",
+        });
+      } catch (e) {
+        // A baseUrl that refuses the route (missing scope in the
+        // credentials) fails the call with that error, typed for callers by
+        // the operation's declared error channel.
+        return yield* Effect.fail(e);
+      }
       return buildRequest({
         input: unwrapRedactedDeep(input),
         inputAst,
-        baseUrl: options.baseUrl(creds),
+        baseUrl,
         headers: options.headers(creds),
         mapMemberHeader: options.mapMemberHeader,
         unknownKeyToWire: options.unknownKeyToWire,
@@ -277,12 +331,18 @@ export const makeRestProtocol = <C>(
     readonly errors: ReadonlyArray<unknown>;
   }) =>
     Effect.gen(function* () {
+      if (
+        response.status >= 200 &&
+        response.status < 300 &&
+        getAnn(outputAst, binaryResponseSymbol) !== undefined
+      ) {
+        const bytes = yield* response.arrayBuffer.pipe(Effect.orDie);
+        return new Uint8Array(bytes);
+      }
       // Read as text and parse tolerantly — error pages are often non-JSON.
       const text = (yield* response.text.pipe(Effect.orDie)) ?? "";
       if (process.env.DISTILLED_DEBUG_HTTP) {
-        console.error(
-          `[distilled] <- ${response.status} ${text.slice(0, 400)}`,
-        );
+        console.error(`[distilled] <- ${response.status}`);
       }
       let json: unknown;
       let nonJson = false;
@@ -303,12 +363,17 @@ export const makeRestProtocol = <C>(
           (nonJson && text.trim() ? text.trim() : `HTTP ${status}`);
 
         // 1. Per-operation typed error (matcher metadata on the class).
-        const typed = matchTypedError(errorClasses, status, [
-          {
-            code: typeof env.code === "number" ? env.code : undefined,
-            message,
-          },
-        ]);
+        const typed = matchTypedError(
+          errorClasses,
+          status,
+          [
+            {
+              code: typeof env.code === "number" ? env.code : undefined,
+              message,
+            },
+          ],
+          { body: nonJson ? text : json, headers },
+        );
         if (typed !== undefined) return yield* fail(typed);
 
         // 2. Status-mapped class (retryAfter only stamps on retryable
@@ -349,9 +414,17 @@ export const makeRestProtocol = <C>(
       // 2xx: the response body IS the payload (no envelope). Wire→TS key
       // mapping is schema-driven; `RawResponseRoot` responses are the body
       // verbatim (mapKeys handles arrays/scalars structurally either way).
+      // Strict mode (core/response-validation) checks the mapped body against
+      // the output schema — a non-JSON body reaches it as a string and fails
+      // there unless the operation's output is itself a string.
       let body: unknown = nonJson ? text : (json ?? {});
       if (options.transformResponse) body = options.transformResponse(body);
-      return wrapSensitive(outputAst, mapKeys(outputAst, body, "decode"));
+      const mapped = yield* validateResponse(
+        outputAst,
+        mapKeys(outputAst, body, "decode"),
+        (cause) => options.parseError({ body: nonJson ? text : json, cause }),
+      ).pipe(Effect.catch(fail));
+      return wrapSensitive(outputAst, mapped);
     });
 
   return Layer.succeed(

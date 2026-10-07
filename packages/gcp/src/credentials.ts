@@ -17,6 +17,11 @@ import * as Redacted from "effect/Redacted";
 export interface Config {
   readonly accessToken: Redacted.Redacted<string>;
   readonly project?: string;
+  /**
+   * Default region that comes with the credentials (e.g. a profile's
+   * region). `Region` overrides it; see `./region.ts`.
+   */
+  readonly region?: string;
 }
 
 export class Credentials extends Context.Service<
@@ -25,8 +30,8 @@ export class Credentials extends Context.Service<
 >()("GCPCredentials") {}
 
 const envConfig = EffectConfig.all({
-  accessToken: EffectConfig.string("GOOGLE_ACCESS_TOKEN"),
-  project: EffectConfig.option(EffectConfig.string("GOOGLE_PROJECT_ID")),
+  accessToken: EffectConfig.String("GOOGLE_ACCESS_TOKEN"),
+  project: EffectConfig.option(EffectConfig.String("GOOGLE_PROJECT_ID")),
 });
 
 export const CredentialsFromEnv = Layer.succeed(
@@ -50,11 +55,13 @@ export const CredentialsFromEnv = Layer.succeed(
 export const fromAccessToken = (config: {
   readonly accessToken: string;
   readonly project?: string;
+  readonly region?: string;
 }): Layer.Layer<Credentials> =>
   Layer.succeed(
     Credentials,
     Effect.succeed({
       accessToken: Redacted.make(config.accessToken),
       project: config.project,
+      region: config.region,
     }),
   );

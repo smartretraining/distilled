@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
 import { AwsProtocol } from "../protocol.ts";
@@ -107,7 +107,7 @@ export type AccountColor =
   | "orange"
   | "red"
   | (string & {});
-export const AccountColor = /*@__PURE__*/ S.String;
+export const AccountColor = S.String;
 
 export type Service = string;
 export type ServiceList = string[];

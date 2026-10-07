@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
 import { AwsProtocol } from "../protocol.ts";
@@ -175,7 +175,7 @@ export const GetRoutingControlStateRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "GetRoutingControlStateRequest",
 }) as any as S.Schema<GetRoutingControlStateRequest>;
 export type RoutingControlState = "On" | "Off" | (string & {});
-export const RoutingControlState = /*@__PURE__*/ S.String;
+export const RoutingControlState = S.String;
 
 export type RoutingControlName = string;
 export interface GetRoutingControlStateResponse {
@@ -311,7 +311,7 @@ export type ValidationExceptionReason =
   | "fieldValidationFailed"
   | "other"
   | (string & {});
-export const ValidationExceptionReason = /*@__PURE__*/ S.String;
+export const ValidationExceptionReason = S.String;
 
 export interface ValidationExceptionField {
   name: string;

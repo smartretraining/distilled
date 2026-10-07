@@ -11,7 +11,9 @@
  * - Errors wrapped in <ErrorResponse><Error>...</Error><RequestId>...</RequestId></ErrorResponse>
  */
 
+import { failIfStrict } from "@distilled.cloud/core/response-validation";
 import * as Effect from "effect/Effect";
+import * as Result from "effect/Result";
 import * as S from "effect/Schema";
 import type * as AST from "effect/SchemaAST";
 import type { Operation } from "../client/operation.ts";
@@ -113,7 +115,12 @@ export const awsQueryProtocol: Protocol = (
 
       // Parse body XML
       if (bodyText) {
-        const parsed = parseXml(bodyText);
+        const read = yield* Effect.result(parseXml(bodyText));
+        // Lenient mode returns the body as read.
+        if (Result.isFailure(read)) {
+          return yield* failIfStrict(read.failure, bodyText);
+        }
+        const parsed = read.success;
 
         // AWS Query response structure:
         // <{OperationName}Response xmlns="...">
@@ -155,7 +162,7 @@ export const awsQueryProtocol: Protocol = (
       }
 
       // Parse XML body
-      const parsed = parseXml(bodyText);
+      const parsed = yield* parseXml(bodyText);
 
       // AWS Query error structure:
       // <ErrorResponse>

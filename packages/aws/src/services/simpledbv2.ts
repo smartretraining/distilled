@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
 import { AwsProtocol } from "../protocol.ts";
@@ -157,14 +157,14 @@ export type ExportStatus =
   | "SUCCEEDED"
   | "FAILED"
   | (string & {});
-export const ExportStatus = /*@__PURE__*/ S.String;
+export const ExportStatus = S.String;
 
 export type DomainName = string;
 export type RequestedAt = Date;
 export type S3BucketName = string;
 export type S3KeyPrefix = string;
 export type S3SseAlgorithm = "AES256" | "KMS" | (string & {});
-export const S3SseAlgorithm = /*@__PURE__*/ S.String;
+export const S3SseAlgorithm = S.String;
 
 export type S3SseKmsKeyId = string;
 export type AwsAccountId = string;

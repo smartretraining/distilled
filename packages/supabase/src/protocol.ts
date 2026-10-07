@@ -28,11 +28,11 @@
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import type * as AST from "effect/SchemaAST";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
-import type * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
-import type * as HttpClientResponse from "effect/unstable/http/HttpClientResponse";
-import * as HttpClientRequestModule from "effect/unstable/http/HttpClientRequest";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
+import type * as HttpClientRequest from "effect/http/HttpClientRequest";
+import type * as HttpClientResponse from "effect/http/HttpClientResponse";
+import * as HttpClientRequestModule from "effect/http/HttpClientRequest";
 import * as API from "@distilled.cloud/core/api";
 import { httpSymbol, type HttpTrait } from "@distilled.cloud/core/trait";
 import {
@@ -50,11 +50,13 @@ import {
   HTTP_STATUS_MAP,
   InternalServerError,
 } from "@distilled.cloud/core/errors";
+import { validateResponse } from "@distilled.cloud/core/response-validation";
 import { parseRetryAfterForStatus } from "@distilled.cloud/core/retry-after";
 import { Credentials, formatHeaders, type Config } from "./credentials.ts";
 import {
   type DefaultErrors,
   FreeProjectLimitReached,
+  SupabaseParseError,
   UnknownSupabaseError,
 } from "./errors.ts";
 
@@ -189,9 +191,12 @@ const decode = ({
       const effectiveStatus = status === 406 ? 404 : status;
 
       // 2. Per-operation typed error (matcher metadata on the class).
-      const typed = matchTypedError(errorClasses, effectiveStatus, [
-        { message },
-      ]);
+      const typed = matchTypedError(
+        errorClasses,
+        effectiveStatus,
+        [{ message }],
+        { body: nonJson ? text : json, headers },
+      );
       if (typed !== undefined) return yield* fail(typed);
 
       // 3. HTTP-status classes from the shared core map (retryAfter only
@@ -224,8 +229,15 @@ const decode = ({
     // 2xx: the response body IS the payload (no envelope). Wire→TS key
     // mapping is schema-driven; `RawResponseRoot` responses are the body
     // verbatim (mapKeys handles arrays/scalars structurally either way).
+    // Strict mode (core/response-validation) checks the mapped body against
+    // the output schema.
     const body: unknown = nonJson ? text : (json ?? {});
-    return wrapSensitive(outputAst, mapKeys(outputAst, body, "decode"));
+    const mapped = yield* validateResponse(
+      outputAst,
+      mapKeys(outputAst, body, "decode"),
+      (cause) => new SupabaseParseError({ body: nonJson ? text : json, cause }),
+    ).pipe(Effect.catch(fail));
+    return wrapSensitive(outputAst, mapped);
   });
 
 export const SupabaseProtocol: Layer.Layer<API.Protocol> = Layer.succeed(

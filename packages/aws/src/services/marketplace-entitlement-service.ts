@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
 import { AwsProtocol } from "../protocol.ts";
@@ -138,7 +138,7 @@ export type GetEntitlementFilterName =
   | "CUSTOMER_AWS_ACCOUNT_ID"
   | "LICENSE_ARN"
   | (string & {});
-export const GetEntitlementFilterName = /*@__PURE__*/ S.String;
+export const GetEntitlementFilterName = S.String;
 
 export type FilterValue = string;
 export type FilterValueList = string[];

@@ -23,7 +23,7 @@ The submodule is therefore **sparse-checked-out to the one file we consume**.
 ### Fetching it
 
 ```bash
-bun run specs:fetch
+pnpm specs:fetch
 ```
 
 Run this from `packages/github`. It initialises the submodule, narrows it to
@@ -34,7 +34,7 @@ the single description file, and leaves ~13 MB on disk.
 Sparse-checkout config lives in **local git config**, not in the repository,
 so it does not travel with a clone. Two consequences:
 
-- A fresh **`bun run specs:sync` at the repo root** — which does a plain
+- A fresh **`pnpm specs:sync` at the repo root** — which does a plain
   `git submodule update --init --recursive` across every package — expands
   this submodule to the full 6.7 GB. It is not wrong, just very expensive.
 - `specs:fetch` itself checks out *before* it narrows, so it also passes
@@ -59,3 +59,37 @@ The real fix is to mirror the one file we consume into
 `alchemy-run/distilled-spec-github`, the pattern `neon` / `gcp` / `supabase`
 already use, which removes the sharp edge entirely. Tracked in
 [`todo.md`](../../todo.md).
+
+
+## Usage
+
+## Installation
+
+```bash
+npm install @distilled.cloud/github effect
+```
+
+## Quick start
+
+```ts
+import { Effect, Layer } from "effect";
+import * as FetchHttpClient from "effect/http/FetchHttpClient";
+import * as Github from "@distilled.cloud/github";
+
+const program = Effect.gen(function* () {
+  const result = yield* Github.repos.get({ owner: "acme", repo: "api" });
+  return result;
+});
+
+const Live = Layer.mergeAll(
+  FetchHttpClient.layer,
+  Github.CredentialsFromEnv,
+  Github.GithubProtocol,
+);
+
+program.pipe(Effect.provide(Live), Effect.runPromise);
+```
+
+## Auth
+
+Required: `GH_TOKEN`, `GITHUB_TOKEN`. Optional: `GITHUB_API_URL`, `GITHUB_USER_AGENT`. Sent as `Authorization: Bearer`.

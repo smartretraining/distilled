@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
 import { AwsProtocol } from "../protocol.ts";
@@ -118,7 +118,7 @@ export class ThrottlingException
   ).pipe(C.withThrottlingError) {}
 export type HomeRegion = string;
 export type TargetType = "ACCOUNT" | (string & {});
-export const TargetType = /*@__PURE__*/ S.String;
+export const TargetType = S.String;
 
 export type TargetId = string;
 export interface Target {

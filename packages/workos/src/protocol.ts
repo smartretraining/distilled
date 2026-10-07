@@ -12,8 +12,8 @@
 import * as Effect from "effect/Effect";
 import type * as Layer from "effect/Layer";
 import * as Redacted from "effect/Redacted";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
 import type * as API from "@distilled.cloud/core/api";
 import type { ConfigError } from "@distilled.cloud/core/errors";
 import {
@@ -21,7 +21,11 @@ import {
   type RestErrorEnvelope,
 } from "@distilled.cloud/core/protocol-rest";
 import { Credentials, type Config } from "./credentials.ts";
-import { UnknownWorkosError, type DefaultErrors } from "./errors.ts";
+import {
+  UnknownWorkosError,
+  type DefaultErrors,
+  WorkosParseError,
+} from "./errors.ts";
 
 /**
  * Error channel shared by every generated WorkOS operation. Generated service
@@ -85,4 +89,5 @@ export const WorkosProtocol: Layer.Layer<API.Protocol> =
         message,
         body,
       }),
+    parseError: ({ body, cause }) => new WorkosParseError({ body, cause }),
   });

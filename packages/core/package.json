@@ -1,6 +1,6 @@
 {
   "name": "@distilled.cloud/core",
-  "version": "1.0.0-rc.4",
+  "version": "1.0.0-rc.13",
   "repository": {
     "type": "git",
     "url": "https://github.com/alchemy-run/distilled",
@@ -38,5 +38,8 @@
   },
   "peerDependencies": {
     "effect": "catalog:"
+  },
+  "dependencies": {
+    "graphql": "16.11.0"
   }
 }

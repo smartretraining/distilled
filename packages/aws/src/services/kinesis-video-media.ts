@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
 import { AwsProtocol } from "../protocol.ts";
@@ -129,7 +129,7 @@ export type StartSelectorType =
   | "EARLIEST"
   | "CONTINUATION_TOKEN"
   | (string & {});
-export const StartSelectorType = /*@__PURE__*/ S.String;
+export const StartSelectorType = S.String;
 
 export type FragmentNumberString = string;
 export type ContinuationToken = string;

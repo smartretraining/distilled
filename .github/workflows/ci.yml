@@ -1,4 +1,4 @@
-name: ci
+name: CI
 
 # Typecheck gate for PRs and pushes to main.
 #
@@ -8,6 +8,9 @@ name: ci
 # CI is where that cost is worth paying: `typecheck:ci` re-enables
 # checking (`tsc -b --noCheck false`) across every package, so a
 # generator or patch bug can't reach npm.
+#
+# `stacks/*` are workspace members but are NOT in the root tsconfig's project
+# references, so `tsc -b` never sees them. They get their own job.
 
 on:
   push:
@@ -26,43 +29,111 @@ permissions:
 
 jobs:
   typecheck:
-    # `ubuntu-22-large` is a leftover from the alchemy-run fork: the label
-    # resolves to nothing here, so every run sat QUEUED forever — not failed,
-    # not skipped, just never picked up. No `ci` run had ever completed on
-    # this repository.
+    name: Typecheck (all packages, generated code included)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - name: Setup pnpm, Node.js, Bun and install dependencies
+        uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
         with:
-          bun-version: latest
+          cache: true
+          install: true
+          require-lockfile: true
 
-      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      - name: Run Typecheck
+        run: pnpm typecheck:ci
+
+  typecheck-stacks:
+    name: Typecheck (deployment stacks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup pnpm, Node.js, Bun and install dependencies
+        uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
         with:
-          path: ~/.bun/install/cache
-          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-          restore-keys: bun-${{ runner.os }}-
+          cache: true
+          install: true
+          require-lockfile: true
 
-      - run: bun install --frozen-lockfile
+      # A recursive filter rather than a matrix, so a new stack is covered the
+      # day it is added. Each stack's own `typecheck` script decides what that
+      # means — distilled-submodules also checks the mirror fetch scripts.
+      - name: Run Typecheck
+        run: pnpm --filter "./stacks/*" run typecheck
 
-      - name: Typecheck (all packages, generated code included)
-        run: bun run typecheck:ci
+      # The mirror manifest, the fetch scripts, `.gitmodules` and packages/
+      # have to agree, and the same rule runs at deploy time inside the stack
+      # — but a deploy only happens after merge. Checking it here means a PR
+      # that adds a provider fails on the PR. It also fails a package that
+      # reads its specs from the gitignored `.local` working copy, which is
+      # for local iteration only.
+      - name: Check spec mirrors
+        run: pnpm specs:check
+
+      - name: Test Prisma credentials and spec mirror identities
+        run: bun test packages/prisma/test/credentials.test.ts stacks/distilled-submodules/SpecRepos.test.ts
+
+      # Every SDK's lenient/strict response-validation contract, against a
+      # mocked HttpClient (no network, no credentials).
+      - name: Test response validation
+        run: bun test ./packages/*/src/response-validation.test.ts
+
+  website:
+    name: Website (typecheck & static build)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup pnpm & Bun
+        uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2.0.2
+        with:
+          cache: true
+          install: false
+
+      - name: Install Node 24
+        run: pnpm runtime set node 24 -g
+
+      # Same filter website.yml deploys with, so a lockfile problem that would
+      # break the deploy fails here instead.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --filter "./website..."
+
+      # website/ is a workspace member but is not under stacks/* and is not
+      # in the root tsconfig project references (so `tsc -b` never sees it).
+      - name: Typecheck
+        run: pnpm --filter "./website" run typecheck
+
+      # The site reads the package catalogue, patch counts and benchmark
+      # results from the repo while it builds, so a change to any of them can
+      # break prerendering — which would otherwise only surface after merge,
+      # in the main.distilled.cloud deploy. An internal PR labelled
+      # `deploy-website` runs this exact build in website.yml to produce its
+      # preview, so skip the duplicate there.
+      - name: Build
+        if: >-
+          github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name != github.repository ||
+          !contains(github.event.pull_request.labels.*.name, 'deploy-website')
+        run: pnpm --filter "./website" run build
 
   format:
+    name: Check formatting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - name: Setup pnpm, Node.js, Bun and install dependencies
+        uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
         with:
-          bun-version: latest
+          cache: true
+          install: true
+          require-lockfile: true
 
-      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: ~/.bun/install/cache
-          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-          restore-keys: bun-${{ runner.os }}-
-
-      - run: bun install --frozen-lockfile
-      - run: bun run format:check
+      - name: Check formatting
+        run: pnpm format:check

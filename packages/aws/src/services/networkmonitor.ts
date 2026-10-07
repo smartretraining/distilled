@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
 import { AwsProtocol } from "../protocol.ts";
@@ -130,7 +130,7 @@ export type Arn = string;
 export type Destination = string;
 export type Port = number;
 export type Protocol = "TCP" | "ICMP" | (string & {});
-export const Protocol = /*@__PURE__*/ S.String;
+export const Protocol = S.String;
 
 export type PacketSize = number;
 export type TagKey = string;
@@ -200,7 +200,7 @@ export type MonitorState =
   | "ERROR"
   | "DELETING"
   | (string & {});
-export const MonitorState = /*@__PURE__*/ S.String;
+export const MonitorState = S.String;
 
 export interface CreateMonitorOutput {
   monitorArn: string;
@@ -265,7 +265,7 @@ export const CreateProbeInput = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<CreateProbeInput>;
 export type ProbeId = string;
 export type AddressFamily = "IPV4" | "IPV6" | (string & {});
-export const AddressFamily = /*@__PURE__*/ S.String;
+export const AddressFamily = S.String;
 
 export type VpcId = string;
 export type ProbeState =
@@ -276,7 +276,7 @@ export type ProbeState =
   | "DELETING"
   | "DELETED"
   | (string & {});
-export const ProbeState = /*@__PURE__*/ S.String;
+export const ProbeState = S.String;
 
 export type Iso8601Timestamp = Date;
 export interface CreateProbeOutput {

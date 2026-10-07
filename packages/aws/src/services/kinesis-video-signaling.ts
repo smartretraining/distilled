@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as redacted from "effect/Redacted";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
@@ -124,7 +124,7 @@ export class SessionExpiredException
 export type ResourceARN = string;
 export type ClientId = string;
 export type Service = "TURN" | (string & {});
-export const Service = /*@__PURE__*/ S.String;
+export const Service = S.String;
 
 export type Username = string;
 export interface GetIceServerConfigRequest {

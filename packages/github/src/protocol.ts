@@ -14,8 +14,8 @@
 import * as Effect from "effect/Effect";
 import type * as Layer from "effect/Layer";
 import * as Redacted from "effect/Redacted";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
 import type * as API from "@distilled.cloud/core/api";
 import type { ConfigError } from "@distilled.cloud/core/errors";
 import { HTTP_STATUS_MAP } from "@distilled.cloud/core/errors";
@@ -24,7 +24,12 @@ import {
   type RestErrorEnvelope,
 } from "@distilled.cloud/core/protocol-rest";
 import { Credentials, type Config } from "./credentials.ts";
-import { Gone, UnknownGithubError, type DefaultErrors } from "./errors.ts";
+import {
+  Gone,
+  UnknownGithubError,
+  type DefaultErrors,
+  GithubParseError,
+} from "./errors.ts";
 
 /**
  * The REST API version the generated services were built from — sent on
@@ -98,4 +103,5 @@ export const GithubProtocol: Layer.Layer<API.Protocol> =
         message,
         body,
       }),
+    parseError: ({ body, cause }) => new GithubParseError({ body, cause }),
   });
