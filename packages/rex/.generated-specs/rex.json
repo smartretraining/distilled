@@ -14,7 +14,8 @@
         "id": "UnreferencedShape",
         "namespace": "*"
       }
-    ]
+    ],
+    "distilled.finalized": true
   },
   "shapes": {
     "com.rexsoftware.api#AdminValueListsAddValueToListRequest": {
@@ -829,7 +830,10 @@
     "com.rexsoftware.api#AdminValueListsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -4143,7 +4147,10 @@
     "com.rexsoftware.api#AdminWebhooksDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -6458,7 +6465,10 @@
     "com.rexsoftware.api#AdminWebhooksDescribeDeleteModesResponseBodyList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -6522,21 +6532,30 @@
     "com.rexsoftware.api#AdminWebhooksDescribeModelResponseSearchResultFormatsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#AdminWebhooksDescribeModelResponseSearchResultFormatsItem"
+        "target": "com.rexsoftware.api#AdminWebhooksDescribeModelResponseSearchResultFormatsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#AdminWebhooksDescribeModelResponseDeleteModesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#AdminWebhooksDescribeModelResponseDataStructureStructureList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -6969,7 +6988,10 @@
     "com.rexsoftware.api#AdminWebhooksDescribeModelResponseOrderbyFieldsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -9129,7 +9151,10 @@
     "com.rexsoftware.api#ContactsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -11444,7 +11469,10 @@
     "com.rexsoftware.api#ContactsDescribeDeleteModesResponseBodyList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -11508,21 +11536,30 @@
     "com.rexsoftware.api#ContactsDescribeModelResponseSearchResultFormatsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsDescribeModelResponseSearchResultFormatsItem"
+        "target": "com.rexsoftware.api#ContactsDescribeModelResponseSearchResultFormatsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#ContactsDescribeModelResponseDeleteModesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#ContactsDescribeModelResponseDataStructureStructureList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -11955,7 +11992,10 @@
     "com.rexsoftware.api#ContactsDescribeModelResponseOrderbyFieldsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -12965,7 +13005,10 @@
     "com.rexsoftware.api#ContactsReadResponseRelatedContactEmailsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactEmailsItem"
+        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactEmailsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -13008,7 +13051,10 @@
     "com.rexsoftware.api#ContactsReadResponseRelatedContactNamesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactNamesItem"
+        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactNamesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -13066,7 +13112,10 @@
     "com.rexsoftware.api#ContactsReadResponseRelatedContactPhonesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactPhonesItem"
+        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactPhonesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -13091,7 +13140,10 @@
     "com.rexsoftware.api#ContactsReadResponseRelatedContactTagsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactTagsItem"
+        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactTagsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -13141,7 +13193,10 @@
     "com.rexsoftware.api#ContactsReadResponseRelatedContactMailingListsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactMailingListsItem"
+        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactMailingListsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -13373,7 +13428,10 @@
     "com.rexsoftware.api#ContactsReadResponseRelatedContactRelationshipsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactRelationshipsItem"
+        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactRelationshipsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -13650,7 +13708,10 @@
     "com.rexsoftware.api#ContactsReadResponseRelatedContactRelnPropertyList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactRelnPropertyItem"
+        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactRelnPropertyItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -13894,7 +13955,10 @@
     "com.rexsoftware.api#ContactsReadResponseRelatedContactRelnListingList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactRelnListingItem"
+        "target": "com.rexsoftware.api#ContactsReadResponseRelatedContactRelnListingItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -13999,14 +14063,20 @@
     "com.rexsoftware.api#ContactsReadResponseSmartCategoriesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#ContactsReadResponseSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -14520,7 +14590,10 @@
     "com.rexsoftware.api#ContactsSearchResponseRowsItemSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -14704,7 +14777,10 @@
     "com.rexsoftware.api#ContactsSearchResponseRowsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsSearchResponseRowsItem"
+        "target": "com.rexsoftware.api#ContactsSearchResponseRowsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -14729,7 +14805,10 @@
     "com.rexsoftware.api#ContactsSearchResponseCriteriaList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsSearchResponseCriteriaItem"
+        "target": "com.rexsoftware.api#ContactsSearchResponseCriteriaItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -15472,7 +15551,10 @@
     "com.rexsoftware.api#ContactsUpdateResponseRelatedContactEmailsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactEmailsItem"
+        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactEmailsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -15515,7 +15597,10 @@
     "com.rexsoftware.api#ContactsUpdateResponseRelatedContactNamesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactNamesItem"
+        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactNamesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -15573,7 +15658,10 @@
     "com.rexsoftware.api#ContactsUpdateResponseRelatedContactPhonesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactPhonesItem"
+        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactPhonesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -15598,7 +15686,10 @@
     "com.rexsoftware.api#ContactsUpdateResponseRelatedContactTagsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactTagsItem"
+        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactTagsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -15648,7 +15739,10 @@
     "com.rexsoftware.api#ContactsUpdateResponseRelatedContactMailingListsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactMailingListsItem"
+        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactMailingListsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -15880,7 +15974,10 @@
     "com.rexsoftware.api#ContactsUpdateResponseRelatedContactRelationshipsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactRelationshipsItem"
+        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactRelationshipsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -16157,7 +16254,10 @@
     "com.rexsoftware.api#ContactsUpdateResponseRelatedContactRelnPropertyList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactRelnPropertyItem"
+        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactRelnPropertyItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -16401,7 +16501,10 @@
     "com.rexsoftware.api#ContactsUpdateResponseRelatedContactRelnListingList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactRelnListingItem"
+        "target": "com.rexsoftware.api#ContactsUpdateResponseRelatedContactRelnListingItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -16506,7 +16609,10 @@
     "com.rexsoftware.api#ContactsUpdateResponseSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -17867,7 +17973,10 @@
     "com.rexsoftware.api#ContractsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -20182,7 +20291,10 @@
     "com.rexsoftware.api#ContractsDescribeDeleteModesResponseBodyList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -20246,21 +20358,30 @@
     "com.rexsoftware.api#ContractsDescribeModelResponseSearchResultFormatsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContractsDescribeModelResponseSearchResultFormatsItem"
+        "target": "com.rexsoftware.api#ContractsDescribeModelResponseSearchResultFormatsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#ContractsDescribeModelResponseDeleteModesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#ContractsDescribeModelResponseDataStructureStructureList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -20693,7 +20814,10 @@
     "com.rexsoftware.api#ContractsDescribeModelResponseOrderbyFieldsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -21379,7 +21503,10 @@
     "com.rexsoftware.api#ContractsGetConditionsForListingResponseBodyList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContractsGetConditionsForListingResponseBodyItem"
+        "target": "com.rexsoftware.api#ContractsGetConditionsForListingResponseBodyItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -22242,7 +22369,10 @@
     "com.rexsoftware.api#ContractsReadResponseRelatedListingContractConditionsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContractsReadResponseRelatedListingContractConditionsItem"
+        "target": "com.rexsoftware.api#ContractsReadResponseRelatedListingContractConditionsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -22309,7 +22439,10 @@
     "com.rexsoftware.api#ContractsReadResponseRelatedListingContractPurchtenantsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContractsReadResponseRelatedListingContractPurchtenantsItem"
+        "target": "com.rexsoftware.api#ContractsReadResponseRelatedListingContractPurchtenantsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -22334,7 +22467,10 @@
     "com.rexsoftware.api#ContractsReadResponseSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -22872,7 +23008,10 @@
     "com.rexsoftware.api#ContractsSearchResponseRowsItemSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -22966,7 +23105,10 @@
     "com.rexsoftware.api#ContractsSearchResponseRowsItemRelatedListingContractConditionsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContractsSearchResponseRowsItemRelatedListingContractConditionsItem"
+        "target": "com.rexsoftware.api#ContractsSearchResponseRowsItemRelatedListingContractConditionsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -23796,7 +23938,10 @@
     "com.rexsoftware.api#ContractsSearchResponseRowsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContractsSearchResponseRowsItem"
+        "target": "com.rexsoftware.api#ContractsSearchResponseRowsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -24986,7 +25131,10 @@
     "com.rexsoftware.api#ContractsUpdateResponseRelatedListingContractConditionsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContractsUpdateResponseRelatedListingContractConditionsItem"
+        "target": "com.rexsoftware.api#ContractsUpdateResponseRelatedListingContractConditionsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -25053,7 +25201,10 @@
     "com.rexsoftware.api#ContractsUpdateResponseRelatedListingContractPurchtenantsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ContractsUpdateResponseRelatedListingContractPurchtenantsItem"
+        "target": "com.rexsoftware.api#ContractsUpdateResponseRelatedListingContractPurchtenantsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -25078,7 +25229,10 @@
     "com.rexsoftware.api#ContractsUpdateResponseSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -26515,7 +26669,10 @@
     "com.rexsoftware.api#FeedbackDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -28830,7 +28987,10 @@
     "com.rexsoftware.api#FeedbackDescribeDeleteModesResponseBodyList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -28894,21 +29054,30 @@
     "com.rexsoftware.api#FeedbackDescribeModelResponseSearchResultFormatsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#FeedbackDescribeModelResponseSearchResultFormatsItem"
+        "target": "com.rexsoftware.api#FeedbackDescribeModelResponseSearchResultFormatsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#FeedbackDescribeModelResponseDeleteModesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#FeedbackDescribeModelResponseDataStructureStructureList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -29341,7 +29510,10 @@
     "com.rexsoftware.api#FeedbackDescribeModelResponseOrderbyFieldsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -29959,7 +30131,10 @@
     "com.rexsoftware.api#FeedbackGetListingFiltersResponseBodyList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#FeedbackGetListingFiltersResponseBodyItem"
+        "target": "com.rexsoftware.api#FeedbackGetListingFiltersResponseBodyItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -30783,7 +30958,10 @@
     "com.rexsoftware.api#FeedbackReadResponseListingRelatedContactRelnListingList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#FeedbackReadResponseListingRelatedContactRelnListingItem"
+        "target": "com.rexsoftware.api#FeedbackReadResponseListingRelatedContactRelnListingItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -31075,7 +31253,10 @@
     "com.rexsoftware.api#FeedbackReadResponseSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -31286,7 +31467,10 @@
     "com.rexsoftware.api#FeedbackReadResponseRelatedFeedbackContactsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#FeedbackReadResponseRelatedFeedbackContactsItem"
+        "target": "com.rexsoftware.api#FeedbackReadResponseRelatedFeedbackContactsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -32227,7 +32411,10 @@
     "com.rexsoftware.api#FeedbackSearchResponseRowsItemListingRelatedContactRelnListingList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#FeedbackSearchResponseRowsItemListingRelatedContactRelnListingItem"
+        "target": "com.rexsoftware.api#FeedbackSearchResponseRowsItemListingRelatedContactRelnListingItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -32519,7 +32706,10 @@
     "com.rexsoftware.api#FeedbackSearchResponseRowsItemSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -32730,7 +32920,10 @@
     "com.rexsoftware.api#FeedbackSearchResponseRowsItemRelatedFeedbackContactsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#FeedbackSearchResponseRowsItemRelatedFeedbackContactsItem"
+        "target": "com.rexsoftware.api#FeedbackSearchResponseRowsItemRelatedFeedbackContactsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -32927,7 +33120,10 @@
     "com.rexsoftware.api#FeedbackSearchResponseRowsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#FeedbackSearchResponseRowsItem"
+        "target": "com.rexsoftware.api#FeedbackSearchResponseRowsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -32952,7 +33148,10 @@
     "com.rexsoftware.api#FeedbackSearchResponseCriteriaList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#FeedbackSearchResponseCriteriaItem"
+        "target": "com.rexsoftware.api#FeedbackSearchResponseCriteriaItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -34139,7 +34338,10 @@
     "com.rexsoftware.api#FeedbackUpdateResponseListingRelatedContactRelnListingList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#FeedbackUpdateResponseListingRelatedContactRelnListingItem"
+        "target": "com.rexsoftware.api#FeedbackUpdateResponseListingRelatedContactRelnListingItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -34413,7 +34615,10 @@
     "com.rexsoftware.api#FeedbackUpdateResponseSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -34624,7 +34829,10 @@
     "com.rexsoftware.api#FeedbackUpdateResponseRelatedFeedbackContactsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#FeedbackUpdateResponseRelatedFeedbackContactsItem"
+        "target": "com.rexsoftware.api#FeedbackUpdateResponseRelatedFeedbackContactsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -34865,7 +35073,10 @@
     "com.rexsoftware.api#FeedbackUpdateResponseRelatedFeedbackIndividualItemContactsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#FeedbackUpdateResponseRelatedFeedbackIndividualItemContactsItem"
+        "target": "com.rexsoftware.api#FeedbackUpdateResponseRelatedFeedbackIndividualItemContactsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -34914,7 +35125,10 @@
     "com.rexsoftware.api#FeedbackUpdateResponseRelatedFeedbackIndividualList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#FeedbackUpdateResponseRelatedFeedbackIndividualItem"
+        "target": "com.rexsoftware.api#FeedbackUpdateResponseRelatedFeedbackIndividualItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -36625,7 +36839,10 @@
     "com.rexsoftware.api#ListingsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -38940,7 +39157,10 @@
     "com.rexsoftware.api#ListingsDescribeDeleteModesResponseBodyList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -39004,21 +39224,30 @@
     "com.rexsoftware.api#ListingsDescribeModelResponseSearchResultFormatsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsDescribeModelResponseSearchResultFormatsItem"
+        "target": "com.rexsoftware.api#ListingsDescribeModelResponseSearchResultFormatsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#ListingsDescribeModelResponseDeleteModesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#ListingsDescribeModelResponseDataStructureStructureList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -39451,7 +39680,10 @@
     "com.rexsoftware.api#ListingsDescribeModelResponseOrderbyFieldsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -41870,7 +42102,10 @@
     "com.rexsoftware.api#ListingsReadResponsePropertySecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -42390,7 +42625,10 @@
     "com.rexsoftware.api#ListingsReadResponseRelatedPropertyFeaturesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsReadResponseRelatedPropertyFeaturesItem"
+        "target": "com.rexsoftware.api#ListingsReadResponseRelatedPropertyFeaturesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -42445,7 +42683,10 @@
     "com.rexsoftware.api#ListingsReadResponseRelatedPropertyViewsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsReadResponseRelatedPropertyViewsItem"
+        "target": "com.rexsoftware.api#ListingsReadResponseRelatedPropertyViewsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -42470,7 +42711,10 @@
     "com.rexsoftware.api#ListingsReadResponseRelatedPropertyTagsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsReadResponseRelatedPropertyTagsItem"
+        "target": "com.rexsoftware.api#ListingsReadResponseRelatedPropertyTagsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -42687,7 +42931,10 @@
     "com.rexsoftware.api#ListingsReadResponseRelatedContactRelnListingList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsReadResponseRelatedContactRelnListingItem"
+        "target": "com.rexsoftware.api#ListingsReadResponseRelatedContactRelnListingItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -42742,7 +42989,10 @@
     "com.rexsoftware.api#ListingsReadResponseRelatedListingIdealforsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingIdealforsItem"
+        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingIdealforsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -42780,7 +43030,10 @@
     "com.rexsoftware.api#ListingsReadResponseRelatedListingAdvertsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingAdvertsItem"
+        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingAdvertsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -42886,7 +43139,10 @@
     "com.rexsoftware.api#ListingsReadResponseRelatedListingEventsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingEventsItem"
+        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingEventsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -43050,7 +43306,10 @@
     "com.rexsoftware.api#ListingsReadResponseRelatedListingImagesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingImagesItem"
+        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingImagesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -43228,7 +43487,10 @@
     "com.rexsoftware.api#ListingsReadResponseRelatedListingFloorplansList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingFloorplansItem"
+        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingFloorplansItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -43266,7 +43528,10 @@
     "com.rexsoftware.api#ListingsReadResponseRelatedListingLinksList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingLinksItem"
+        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingLinksItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -43315,7 +43580,10 @@
     "com.rexsoftware.api#ListingsReadResponseRelatedListingSubcategoriesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingSubcategoriesItem"
+        "target": "com.rexsoftware.api#ListingsReadResponseRelatedListingSubcategoriesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -43418,7 +43686,10 @@
     "com.rexsoftware.api#ListingsReadResponseSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -44154,7 +44425,10 @@
     "com.rexsoftware.api#ListingsSearchResponseRowsItemSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -45613,7 +45887,10 @@
     "com.rexsoftware.api#ListingsSearchResponseRowsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsSearchResponseRowsItem"
+        "target": "com.rexsoftware.api#ListingsSearchResponseRowsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -47548,7 +47825,10 @@
     "com.rexsoftware.api#ListingsUpdateResponsePropertySecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -48068,7 +48348,10 @@
     "com.rexsoftware.api#ListingsUpdateResponseRelatedPropertyFeaturesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedPropertyFeaturesItem"
+        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedPropertyFeaturesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -48123,7 +48406,10 @@
     "com.rexsoftware.api#ListingsUpdateResponseRelatedPropertyViewsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedPropertyViewsItem"
+        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedPropertyViewsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -48148,7 +48434,10 @@
     "com.rexsoftware.api#ListingsUpdateResponseRelatedPropertyTagsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedPropertyTagsItem"
+        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedPropertyTagsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -48365,7 +48654,10 @@
     "com.rexsoftware.api#ListingsUpdateResponseRelatedContactRelnListingList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedContactRelnListingItem"
+        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedContactRelnListingItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -48420,7 +48712,10 @@
     "com.rexsoftware.api#ListingsUpdateResponseRelatedListingIdealforsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingIdealforsItem"
+        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingIdealforsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -48458,7 +48753,10 @@
     "com.rexsoftware.api#ListingsUpdateResponseRelatedListingAdvertsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingAdvertsItem"
+        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingAdvertsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -48564,7 +48862,10 @@
     "com.rexsoftware.api#ListingsUpdateResponseRelatedListingEventsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingEventsItem"
+        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingEventsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -48728,7 +49029,10 @@
     "com.rexsoftware.api#ListingsUpdateResponseRelatedListingImagesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingImagesItem"
+        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingImagesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -48906,7 +49210,10 @@
     "com.rexsoftware.api#ListingsUpdateResponseRelatedListingFloorplansList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingFloorplansItem"
+        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingFloorplansItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -48944,7 +49251,10 @@
     "com.rexsoftware.api#ListingsUpdateResponseRelatedListingLinksList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingLinksItem"
+        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingLinksItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -48993,7 +49303,10 @@
     "com.rexsoftware.api#ListingsUpdateResponseRelatedListingSubcategoriesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingSubcategoriesItem"
+        "target": "com.rexsoftware.api#ListingsUpdateResponseRelatedListingSubcategoriesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -49096,7 +49409,10 @@
     "com.rexsoftware.api#ListingsUpdateResponseSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -50611,7 +50927,10 @@
     "com.rexsoftware.api#NotesDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -52926,7 +53245,10 @@
     "com.rexsoftware.api#NotesDescribeDeleteModesResponseBodyList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -52990,21 +53312,30 @@
     "com.rexsoftware.api#NotesDescribeModelResponseSearchResultFormatsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#NotesDescribeModelResponseSearchResultFormatsItem"
+        "target": "com.rexsoftware.api#NotesDescribeModelResponseSearchResultFormatsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#NotesDescribeModelResponseDeleteModesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#NotesDescribeModelResponseDataStructureStructureList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -53437,7 +53768,10 @@
     "com.rexsoftware.api#NotesDescribeModelResponseOrderbyFieldsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -54222,7 +54556,10 @@
     "com.rexsoftware.api#NotesReadResponseRelatedNoteContactsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#NotesReadResponseRelatedNoteContactsItem"
+        "target": "com.rexsoftware.api#NotesReadResponseRelatedNoteContactsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -54419,7 +54756,10 @@
     "com.rexsoftware.api#NotesReadResponseRelatedNotePropertiesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#NotesReadResponseRelatedNotePropertiesItem"
+        "target": "com.rexsoftware.api#NotesReadResponseRelatedNotePropertiesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -54561,7 +54901,10 @@
     "com.rexsoftware.api#NotesReadResponseSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -54793,7 +55136,10 @@
     "com.rexsoftware.api#NotesSearchResponseRowsItemSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -55022,7 +55368,10 @@
     "com.rexsoftware.api#NotesSearchResponseRowsItemRelatedNoteContactsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#NotesSearchResponseRowsItemRelatedNoteContactsItem"
+        "target": "com.rexsoftware.api#NotesSearchResponseRowsItemRelatedNoteContactsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -55219,7 +55568,10 @@
     "com.rexsoftware.api#NotesSearchResponseRowsItemRelatedNotePropertiesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#NotesSearchResponseRowsItemRelatedNotePropertiesItem"
+        "target": "com.rexsoftware.api#NotesSearchResponseRowsItemRelatedNotePropertiesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -55436,7 +55788,10 @@
     "com.rexsoftware.api#NotesSearchResponseRowsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#NotesSearchResponseRowsItem"
+        "target": "com.rexsoftware.api#NotesSearchResponseRowsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -55461,7 +55816,10 @@
     "com.rexsoftware.api#NotesSearchResponseCriteriaList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#NotesSearchResponseCriteriaItem"
+        "target": "com.rexsoftware.api#NotesSearchResponseCriteriaItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -56159,7 +56517,10 @@
     "com.rexsoftware.api#NotesUpdateResponseRelatedNoteContactsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#NotesUpdateResponseRelatedNoteContactsItem"
+        "target": "com.rexsoftware.api#NotesUpdateResponseRelatedNoteContactsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -56356,7 +56717,10 @@
     "com.rexsoftware.api#NotesUpdateResponseRelatedNotePropertiesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#NotesUpdateResponseRelatedNotePropertiesItem"
+        "target": "com.rexsoftware.api#NotesUpdateResponseRelatedNotePropertiesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -56498,7 +56862,10 @@
     "com.rexsoftware.api#NotesUpdateResponseSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -58178,7 +58545,10 @@
     "com.rexsoftware.api#PropertiesDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -60493,7 +60863,10 @@
     "com.rexsoftware.api#PropertiesDescribeDeleteModesResponseBodyList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -60557,21 +60930,30 @@
     "com.rexsoftware.api#PropertiesDescribeModelResponseSearchResultFormatsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesDescribeModelResponseSearchResultFormatsItem"
+        "target": "com.rexsoftware.api#PropertiesDescribeModelResponseSearchResultFormatsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PropertiesDescribeModelResponseDeleteModesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PropertiesDescribeModelResponseDataStructureStructureList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -61004,7 +61386,10 @@
     "com.rexsoftware.api#PropertiesDescribeModelResponseOrderbyFieldsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -62009,7 +62394,10 @@
     "com.rexsoftware.api#PropertiesReadResponseAttrPrimaryElectricitySupplyList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesReadResponseAttrPrimaryElectricitySupplyItem"
+        "target": "com.rexsoftware.api#PropertiesReadResponseAttrPrimaryElectricitySupplyItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -62034,7 +62422,10 @@
     "com.rexsoftware.api#PropertiesReadResponseAttrBroadbandList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesReadResponseAttrBroadbandItem"
+        "target": "com.rexsoftware.api#PropertiesReadResponseAttrBroadbandItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -62059,7 +62450,10 @@
     "com.rexsoftware.api#PropertiesReadResponseAttrSourcesOfFloodingList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesReadResponseAttrSourcesOfFloodingItem"
+        "target": "com.rexsoftware.api#PropertiesReadResponseAttrSourcesOfFloodingItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -62364,7 +62758,10 @@
     "com.rexsoftware.api#PropertiesReadResponseRelatedPropertyTagsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesReadResponseRelatedPropertyTagsItem"
+        "target": "com.rexsoftware.api#PropertiesReadResponseRelatedPropertyTagsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -62419,7 +62816,10 @@
     "com.rexsoftware.api#PropertiesReadResponseRelatedPropertyFeaturesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesReadResponseRelatedPropertyFeaturesItem"
+        "target": "com.rexsoftware.api#PropertiesReadResponseRelatedPropertyFeaturesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -62474,7 +62874,10 @@
     "com.rexsoftware.api#PropertiesReadResponseRelatedPropertyViewsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesReadResponseRelatedPropertyViewsItem"
+        "target": "com.rexsoftware.api#PropertiesReadResponseRelatedPropertyViewsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -62701,7 +63104,10 @@
     "com.rexsoftware.api#PropertiesReadResponseRelatedContactRelnPropertyList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesReadResponseRelatedContactRelnPropertyItem"
+        "target": "com.rexsoftware.api#PropertiesReadResponseRelatedContactRelnPropertyItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -62744,7 +63150,10 @@
     "com.rexsoftware.api#PropertiesReadResponseSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -63865,7 +64274,10 @@
     "com.rexsoftware.api#PropertiesSearchResponseRowsItemSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -64025,7 +64437,10 @@
     "com.rexsoftware.api#PropertiesSearchResponseRowsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesSearchResponseRowsItem"
+        "target": "com.rexsoftware.api#PropertiesSearchResponseRowsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -64050,7 +64465,10 @@
     "com.rexsoftware.api#PropertiesSearchResponseCriteriaList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesSearchResponseCriteriaItem"
+        "target": "com.rexsoftware.api#PropertiesSearchResponseCriteriaItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -65219,7 +65637,10 @@
     "com.rexsoftware.api#PropertiesUpdateResponseAttrPrimaryElectricitySupplyList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesUpdateResponseAttrPrimaryElectricitySupplyItem"
+        "target": "com.rexsoftware.api#PropertiesUpdateResponseAttrPrimaryElectricitySupplyItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -65244,7 +65665,10 @@
     "com.rexsoftware.api#PropertiesUpdateResponseAttrBroadbandList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesUpdateResponseAttrBroadbandItem"
+        "target": "com.rexsoftware.api#PropertiesUpdateResponseAttrBroadbandItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -65269,7 +65693,10 @@
     "com.rexsoftware.api#PropertiesUpdateResponseAttrSourcesOfFloodingList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesUpdateResponseAttrSourcesOfFloodingItem"
+        "target": "com.rexsoftware.api#PropertiesUpdateResponseAttrSourcesOfFloodingItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -65592,7 +66019,10 @@
     "com.rexsoftware.api#PropertiesUpdateResponseRelatedPropertyTagsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesUpdateResponseRelatedPropertyTagsItem"
+        "target": "com.rexsoftware.api#PropertiesUpdateResponseRelatedPropertyTagsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -65647,7 +66077,10 @@
     "com.rexsoftware.api#PropertiesUpdateResponseRelatedPropertyFeaturesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesUpdateResponseRelatedPropertyFeaturesItem"
+        "target": "com.rexsoftware.api#PropertiesUpdateResponseRelatedPropertyFeaturesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -65702,7 +66135,10 @@
     "com.rexsoftware.api#PropertiesUpdateResponseRelatedPropertyViewsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesUpdateResponseRelatedPropertyViewsItem"
+        "target": "com.rexsoftware.api#PropertiesUpdateResponseRelatedPropertyViewsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -65929,7 +66365,10 @@
     "com.rexsoftware.api#PropertiesUpdateResponseRelatedContactRelnPropertyList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PropertiesUpdateResponseRelatedContactRelnPropertyItem"
+        "target": "com.rexsoftware.api#PropertiesUpdateResponseRelatedContactRelnPropertyItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -65972,7 +66411,10 @@
     "com.rexsoftware.api#PropertiesUpdateResponseSecurityUserRightsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -66709,7 +67151,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStatesDefaultValueList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -66839,7 +67284,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinitionDefaultList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -69373,7 +69821,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchResultFormatsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchResultFormatsItem"
+        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchResultFormatsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -70186,7 +70637,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeAreaLimitToRegionsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -70229,7 +70683,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrictLimitToRegionsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -70272,7 +70729,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSectorLimitToRegionsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -75529,7 +75989,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicatedLimitToRegionsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -76214,7 +76677,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorIdLimitToRegionsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -77401,7 +77867,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleOrderbyFieldsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -78300,7 +78769,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeAreaLimitToRegionsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -78343,7 +78815,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrictLimitToRegionsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -78386,7 +78861,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSectorLimitToRegionsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -83643,7 +84121,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicatedLimitToRegionsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -84328,7 +84809,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorIdLimitToRegionsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -86471,7 +86955,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1ExtraFieldsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -87321,28 +87808,40 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultTagsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFeaturesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultViewsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultIdealforsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -87479,7 +87978,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem"
+        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -87504,7 +88006,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem"
+        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -87582,7 +88087,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem"
+        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -87650,7 +88158,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem"
+        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -87718,7 +88229,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultSubcategoriesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -89799,28 +90313,40 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemTagsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFeaturesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemViewsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemIdealforsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -89957,7 +90483,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsItem"
+        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -89982,7 +90511,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksItem"
+        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -90060,7 +90592,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesItem"
+        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -90128,7 +90663,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansItem"
+        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -90196,7 +90734,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemSubcategoriesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -90576,7 +91117,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItem"
+        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -90601,7 +91145,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaItem"
+        "target": "com.rexsoftware.api#PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -90880,7 +91427,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeDeleteModesResponseBodyList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -90944,21 +91494,30 @@
     "com.rexsoftware.api#PublishedListingsDescribeModelResponseSearchResultFormatsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsDescribeModelResponseSearchResultFormatsItem"
+        "target": "com.rexsoftware.api#PublishedListingsDescribeModelResponseSearchResultFormatsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsDescribeModelResponseDeleteModesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsDescribeModelResponseDataStructureStructureList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -91391,7 +91950,10 @@
     "com.rexsoftware.api#PublishedListingsDescribeModelResponseOrderbyFieldsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -92908,28 +93470,40 @@
     "com.rexsoftware.api#PublishedListingsReadResponseTagsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsReadResponseFeaturesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsReadResponseViewsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsReadResponseIdealforsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -93066,7 +93640,10 @@
     "com.rexsoftware.api#PublishedListingsReadResponseEventsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsReadResponseEventsItem"
+        "target": "com.rexsoftware.api#PublishedListingsReadResponseEventsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -93097,7 +93674,10 @@
     "com.rexsoftware.api#PublishedListingsReadResponseLinksList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsReadResponseLinksItem"
+        "target": "com.rexsoftware.api#PublishedListingsReadResponseLinksItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -93175,7 +93755,10 @@
     "com.rexsoftware.api#PublishedListingsReadResponseImagesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsReadResponseImagesItem"
+        "target": "com.rexsoftware.api#PublishedListingsReadResponseImagesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -93243,7 +93826,10 @@
     "com.rexsoftware.api#PublishedListingsReadResponseFloorplansList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsReadResponseFloorplansItem"
+        "target": "com.rexsoftware.api#PublishedListingsReadResponseFloorplansItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -93311,7 +93897,10 @@
     "com.rexsoftware.api#PublishedListingsReadResponseSubcategoriesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -94660,28 +95249,40 @@
     "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemTagsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemFeaturesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemViewsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemIdealforsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -94818,7 +95419,10 @@
     "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemEventsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemEventsItem"
+        "target": "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemEventsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -94849,7 +95453,10 @@
     "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemLinksList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemLinksItem"
+        "target": "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemLinksItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -94927,7 +95534,10 @@
     "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemImagesList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemImagesItem"
+        "target": "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemImagesItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -94995,7 +95605,10 @@
     "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemFloorplansList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemFloorplansItem"
+        "target": "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemFloorplansItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -95063,7 +95676,10 @@
     "com.rexsoftware.api#PublishedListingsSearchResponseRowsItemSubcategoriesList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#String"
+        "target": "smithy.api#String",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -95470,7 +96086,10 @@
     "com.rexsoftware.api#PublishedListingsSearchResponseRowsList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsSearchResponseRowsItem"
+        "target": "com.rexsoftware.api#PublishedListingsSearchResponseRowsItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -95495,7 +96114,10 @@
     "com.rexsoftware.api#PublishedListingsSearchResponseCriteriaList": {
       "type": "list",
       "member": {
-        "target": "com.rexsoftware.api#PublishedListingsSearchResponseCriteriaItem"
+        "target": "com.rexsoftware.api#PublishedListingsSearchResponseCriteriaItem",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },

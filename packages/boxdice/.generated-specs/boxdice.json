@@ -14,7 +14,8 @@
         "id": "UnreferencedShape",
         "namespace": "*"
       }
-    ]
+    ],
+    "distilled.finalized": true
   },
   "shapes": {
     "com.boxdice.ai#ListAppraisalLeadsRequest": {
@@ -927,14 +928,20 @@
     "com.boxdice.ai#CriteriaPropertyTypeIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.boxdice.ai#CriteriaPropertyCategoryIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -2522,7 +2529,10 @@
     "com.boxdice.ai#RentalListingConsultantIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -2834,7 +2844,10 @@
     "com.boxdice.ai#SalesListingConsultantIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -3470,14 +3483,20 @@
     "com.boxdice.ai#SalesListingVendorIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.boxdice.ai#SalesListingPurchaserIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -3564,7 +3583,10 @@
     "com.boxdice.ai#UpdateSalesListingRequestSalesListingVendorIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -3630,21 +3652,30 @@
     "com.boxdice.ai#CreateSearchCriteriaRequestCriteriaSuburbIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.boxdice.ai#CreateSearchCriteriaRequestCriteriaPropertyTypeIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.boxdice.ai#CreateSearchCriteriaRequestCriteriaPropertyCategoryIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -3830,21 +3861,30 @@
     "com.boxdice.ai#UpdateSearchCriteriaRequestCriteriaSuburbIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.boxdice.ai#UpdateSearchCriteriaRequestCriteriaPropertyTypeIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.boxdice.ai#UpdateSearchCriteriaRequestCriteriaPropertyCategoryIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -4182,7 +4222,10 @@
     "com.boxdice.ai#TaskContactIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -4230,7 +4273,10 @@
     "com.boxdice.ai#CreateTasksRequestTasksItemContactIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -4549,7 +4595,10 @@
     "com.boxdice.ai#AppointmentConsultantIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -5365,14 +5414,20 @@
     "com.boxdice.ai#AppraisalAppraisalConsultantIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
     "com.boxdice.ai#AppraisalContactIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -5420,7 +5475,10 @@
     "com.boxdice.ai#CreateAppraisalRequestAppraisalContactIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },
@@ -5518,7 +5576,10 @@
     "com.boxdice.ai#UpdateAppraisalRequestAppraisalContactIdsList": {
       "type": "list",
       "member": {
-        "target": "smithy.api#Integer"
+        "target": "smithy.api#Integer",
+        "traits": {
+          "com.distilled.openapi#nullable": {}
+        }
       },
       "traits": {}
     },

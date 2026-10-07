@@ -649,7 +649,7 @@ export const UpdateAddress = /*@__PURE__*/ S.suspend(() =>
 ).annotate({ identifier: "UpdateAddress" }) as any as S.Schema<UpdateAddress>;
 
 export type AreaUnits = "sqm" | "acre" | "hectare";
-export const AreaUnits = /*@__PURE__*/ S.String;
+export const AreaUnits = S.String;
 
 export interface Area {
   value?: number;
@@ -698,7 +698,7 @@ export const AddBusinessPropertyRequestExternalLinksList =
   ) as any as S.Schema<AddBusinessPropertyRequestExternalLinksList>;
 
 export type RatePeriod = "pa" | "pq";
-export const RatePeriod = /*@__PURE__*/ S.String;
+export const RatePeriod = S.String;
 
 export interface Rate {
   value?: number;
@@ -752,7 +752,7 @@ export type SetSaleDateDetails = TenderDetails;
 export const SetSaleDateDetails = TenderDetails;
 
 export type AddBusinessPropertyRequestStatus = "prospect" | "appraisal";
-export const AddBusinessPropertyRequestStatus = /*@__PURE__*/ S.String;
+export const AddBusinessPropertyRequestStatus = S.String;
 
 export interface AddBusinessPropertyRequest {
   branch?: ID;
@@ -867,11 +867,10 @@ export type AddBusinessPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const AddBusinessPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const AddBusinessPropertyResponseAddressVisibility = S.String;
 
 export type PropertyPhotoType = "Photograph" | "Floorplan";
-export const PropertyPhotoType = /*@__PURE__*/ S.String;
+export const PropertyPhotoType = S.String;
 
 export interface PropertyPhotoThumbnails {
   thumb_180?: string;
@@ -930,7 +929,7 @@ export type GeolocationAccuracy =
   | "RANGE_INTERPOLATED"
   | "GEOMETRIC_CENTER"
   | "APPROXIMATE";
-export const GeolocationAccuracy = /*@__PURE__*/ S.String;
+export const GeolocationAccuracy = S.String;
 
 export interface Geolocation {
   latitude?: number;
@@ -949,8 +948,7 @@ export type AddBusinessPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const AddBusinessPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const AddBusinessPropertyResponseCommercialListingType = S.String;
 
 export type AddBusinessPropertyResponseAccount = AccessAccount;
 export const AddBusinessPropertyResponseAccount = AccessAccount;
@@ -964,7 +962,7 @@ export type AddBusinessPropertyResponseStatus =
   | "settled"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddBusinessPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const AddBusinessPropertyResponseStatus = S.String;
 
 export type AddBusinessPropertyResponsePortalStatus =
   | "prospect"
@@ -976,7 +974,7 @@ export type AddBusinessPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddBusinessPropertyResponsePortalStatus = /*@__PURE__*/ S.String;
+export const AddBusinessPropertyResponsePortalStatus = S.String;
 
 export type AddBusinessPropertyResponseContactStaffList = Array<ID>;
 export const AddBusinessPropertyResponseContactStaffList =
@@ -1024,7 +1022,7 @@ export const ContactSearchResultEmailsList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<ContactSearchResultEmailsList>;
 
 export type PhoneNumberTypeCode = "H" | "W" | "M" | "F" | "D";
-export const PhoneNumberTypeCode = /*@__PURE__*/ S.String;
+export const PhoneNumberTypeCode = S.String;
 
 export type PhoneNumberType =
   | "Home"
@@ -1032,7 +1030,7 @@ export type PhoneNumberType =
   | "Mobile"
   | "Facsimile"
   | "Direct";
-export const PhoneNumberType = /*@__PURE__*/ S.String;
+export const PhoneNumberType = S.String;
 
 export interface PhoneNumber {
   number?: string;
@@ -1143,7 +1141,7 @@ export type SaleHistoryStatus =
   | "settled"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const SaleHistoryStatus = /*@__PURE__*/ S.String;
+export const SaleHistoryStatus = S.String;
 
 export type SaleHistoryPortalStatus =
   | "prospect"
@@ -1155,7 +1153,7 @@ export type SaleHistoryPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const SaleHistoryPortalStatus = /*@__PURE__*/ S.String;
+export const SaleHistoryPortalStatus = S.String;
 
 export type SaleHistoryContactStaffList = Array<Access>;
 export const SaleHistoryContactStaffList = /*@__PURE__*/ S.Array(
@@ -1279,7 +1277,7 @@ export const SaleHistoryDeductionsList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<SaleHistoryDeductionsList>;
 
 export type OfficeReferralPaidBy = "listers" | "sellers" | "totalShare";
-export const OfficeReferralPaidBy = /*@__PURE__*/ S.String;
+export const OfficeReferralPaidBy = S.String;
 
 export interface OfficeReferral {
   amount?: number;
@@ -1699,7 +1697,7 @@ export const AddClearingSalesPropertyRequestExternalLinksList =
   ) as any as S.Schema<AddClearingSalesPropertyRequestExternalLinksList>;
 
 export type AddClearingSalesPropertyRequestStatus = "prospect" | "appraisal";
-export const AddClearingSalesPropertyRequestStatus = /*@__PURE__*/ S.String;
+export const AddClearingSalesPropertyRequestStatus = S.String;
 
 export type AddClearingSalesPropertyRequestRates =
   AddBusinessPropertyRequestRates;
@@ -1839,8 +1837,7 @@ export type AddClearingSalesPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const AddClearingSalesPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const AddClearingSalesPropertyResponseAddressVisibility = S.String;
 
 export type AddClearingSalesPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const AddClearingSalesPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -1851,8 +1848,7 @@ export type AddClearingSalesPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const AddClearingSalesPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const AddClearingSalesPropertyResponseCommercialListingType = S.String;
 
 export type AddClearingSalesPropertyResponseAccount = AccessAccount;
 export const AddClearingSalesPropertyResponseAccount = AccessAccount;
@@ -1867,7 +1863,7 @@ export type AddClearingSalesPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddClearingSalesPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const AddClearingSalesPropertyResponseStatus = S.String;
 
 export type AddClearingSalesPropertyResponsePortalStatus =
   | "prospect"
@@ -1879,14 +1875,13 @@ export type AddClearingSalesPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddClearingSalesPropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const AddClearingSalesPropertyResponsePortalStatus = S.String;
 
 export type UserRole =
   | "commercialSalesAndLeasing"
   | "residentialSales"
   | "propertyManagement";
-export const UserRole = /*@__PURE__*/ S.String;
+export const UserRole = S.String;
 
 export type UserPhoneNumbersList = Array<PhoneNumber>;
 export const UserPhoneNumbersList = /*@__PURE__*/ S.Array(
@@ -2197,7 +2192,7 @@ export type AddCommercialDealLeaseRequestStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const AddCommercialDealLeaseRequestStatus = /*@__PURE__*/ S.String;
+export const AddCommercialDealLeaseRequestStatus = S.String;
 
 export interface AddCommercialDealLeaseRequest {
   /** ID of the property */
@@ -2280,7 +2275,7 @@ export type AddCommercialDealLeaseResponseStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const AddCommercialDealLeaseResponseStatus = /*@__PURE__*/ S.String;
+export const AddCommercialDealLeaseResponseStatus = S.String;
 
 export interface AddCommercialDealLeaseResponse {
   id?: number;
@@ -2354,7 +2349,7 @@ export type AddCommercialDealSaleRequestStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const AddCommercialDealSaleRequestStatus = /*@__PURE__*/ S.String;
+export const AddCommercialDealSaleRequestStatus = S.String;
 
 export type AddCommercialDealSaleRequestPurchasersList = Array<ContactMinimal>;
 export const AddCommercialDealSaleRequestPurchasersList = /*@__PURE__*/ S.Array(
@@ -2426,7 +2421,7 @@ export type AddCommercialDealSaleResponseStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const AddCommercialDealSaleResponseStatus = /*@__PURE__*/ S.String;
+export const AddCommercialDealSaleResponseStatus = S.String;
 
 export type AddCommercialDealSaleResponsePurchasersList = Array<ContactMinimal>;
 export const AddCommercialDealSaleResponsePurchasersList =
@@ -2501,7 +2496,7 @@ export const AddCommercialLeasePropertyRequestExternalLinksList =
   ) as any as S.Schema<AddCommercialLeasePropertyRequestExternalLinksList>;
 
 export type AddCommercialLeasePropertyRequestStatus = "prospect" | "appraisal";
-export const AddCommercialLeasePropertyRequestStatus = /*@__PURE__*/ S.String;
+export const AddCommercialLeasePropertyRequestStatus = S.String;
 
 export interface AddCommercialLeasePropertyRequestRates {
   council?: Rate;
@@ -2618,8 +2613,7 @@ export type AddCommercialLeasePropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const AddCommercialLeasePropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const AddCommercialLeasePropertyResponseAddressVisibility = S.String;
 
 export type AddCommercialLeasePropertyResponsePhotosList = Array<PropertyPhoto>;
 export const AddCommercialLeasePropertyResponsePhotosList =
@@ -2631,8 +2625,7 @@ export type AddCommercialLeasePropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const AddCommercialLeasePropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const AddCommercialLeasePropertyResponseCommercialListingType = S.String;
 
 export type AddCommercialLeasePropertyResponseAccount = AccessAccount;
 export const AddCommercialLeasePropertyResponseAccount = AccessAccount;
@@ -2647,7 +2640,7 @@ export type AddCommercialLeasePropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddCommercialLeasePropertyResponseStatus = /*@__PURE__*/ S.String;
+export const AddCommercialLeasePropertyResponseStatus = S.String;
 
 export type AddCommercialLeasePropertyResponsePortalStatus =
   | "prospect"
@@ -2659,8 +2652,7 @@ export type AddCommercialLeasePropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddCommercialLeasePropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const AddCommercialLeasePropertyResponsePortalStatus = S.String;
 
 export type AddCommercialLeasePropertyResponseContactStaffList = Array<ID>;
 export const AddCommercialLeasePropertyResponseContactStaffList =
@@ -2714,7 +2706,7 @@ export type LeaseHistoryStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const LeaseHistoryStatus = /*@__PURE__*/ S.String;
+export const LeaseHistoryStatus = S.String;
 
 export type LeaseHistoryPortalStatus =
   | "prospect"
@@ -2726,7 +2718,7 @@ export type LeaseHistoryPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const LeaseHistoryPortalStatus = /*@__PURE__*/ S.String;
+export const LeaseHistoryPortalStatus = S.String;
 
 export type LeaseHistoryContactStaffList = Array<Access>;
 export const LeaseHistoryContactStaffList = /*@__PURE__*/ S.Array(
@@ -2777,7 +2769,7 @@ export type FurnishedType =
   | "Furnished"
   | "Part Furnished"
   | "Optional";
-export const FurnishedType = /*@__PURE__*/ S.String;
+export const FurnishedType = S.String;
 
 export interface Furnished {
   id?: number;
@@ -3001,7 +2993,7 @@ export const AddCommercialSalePropertyRequestExternalLinksList =
   ) as any as S.Schema<AddCommercialSalePropertyRequestExternalLinksList>;
 
 export type AddCommercialSalePropertyRequestStatus = "prospect" | "appraisal";
-export const AddCommercialSalePropertyRequestStatus = /*@__PURE__*/ S.String;
+export const AddCommercialSalePropertyRequestStatus = S.String;
 
 export type AddCommercialSalePropertyRequestRates =
   AddBusinessPropertyRequestRates;
@@ -3135,8 +3127,7 @@ export type AddCommercialSalePropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const AddCommercialSalePropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const AddCommercialSalePropertyResponseAddressVisibility = S.String;
 
 export type AddCommercialSalePropertyResponsePhotosList = Array<PropertyPhoto>;
 export const AddCommercialSalePropertyResponsePhotosList =
@@ -3148,8 +3139,7 @@ export type AddCommercialSalePropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const AddCommercialSalePropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const AddCommercialSalePropertyResponseCommercialListingType = S.String;
 
 export type AddCommercialSalePropertyResponseAccount = AccessAccount;
 export const AddCommercialSalePropertyResponseAccount = AccessAccount;
@@ -3164,7 +3154,7 @@ export type AddCommercialSalePropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddCommercialSalePropertyResponseStatus = /*@__PURE__*/ S.String;
+export const AddCommercialSalePropertyResponseStatus = S.String;
 
 export type AddCommercialSalePropertyResponsePortalStatus =
   | "prospect"
@@ -3176,8 +3166,7 @@ export type AddCommercialSalePropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddCommercialSalePropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const AddCommercialSalePropertyResponsePortalStatus = S.String;
 
 export type AddCommercialSalePropertyResponseContactStaffList = Array<ID>;
 export const AddCommercialSalePropertyResponseContactStaffList =
@@ -3808,7 +3797,7 @@ export const AddContactNoteResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<AddContactNoteResponse>;
 
 export type AreaRangeUnits = "sqm" | "acre" | "hectare";
-export const AreaRangeUnits = /*@__PURE__*/ S.String;
+export const AreaRangeUnits = S.String;
 
 export interface AreaRange {
   minimum?: number;
@@ -3841,7 +3830,7 @@ export const AddContactRequirementRequestSuburbsList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<AddContactRequirementRequestSuburbsList>;
 
 export type AddContactRequirementRequestType = "sale" | "lease" | "saleOrLease";
-export const AddContactRequirementRequestType = /*@__PURE__*/ S.String;
+export const AddContactRequirementRequestType = S.String;
 
 export interface AddContactRequirementRequest {
   /** ID of the contact */
@@ -3905,7 +3894,7 @@ export const ContactRequirementSuburbsList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<ContactRequirementSuburbsList>;
 
 export type ContactRequirementType = "sale" | "lease" | "saleOrLease";
-export const ContactRequirementType = /*@__PURE__*/ S.String;
+export const ContactRequirementType = S.String;
 
 export interface ContactRequirement {
   id?: number;
@@ -4242,7 +4231,7 @@ export const AddHolidayRentalPropertyRequestExternalLinksList =
   ) as any as S.Schema<AddHolidayRentalPropertyRequestExternalLinksList>;
 
 export type AddHolidayRentalPropertyRequestStatus = "prospect" | "appraisal";
-export const AddHolidayRentalPropertyRequestStatus = /*@__PURE__*/ S.String;
+export const AddHolidayRentalPropertyRequestStatus = S.String;
 
 export type AddHolidayRentalPropertyRequestRates =
   AddCommercialLeasePropertyRequestRates;
@@ -4358,8 +4347,7 @@ export type AddHolidayRentalPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const AddHolidayRentalPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const AddHolidayRentalPropertyResponseAddressVisibility = S.String;
 
 export type AddHolidayRentalPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const AddHolidayRentalPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -4370,8 +4358,7 @@ export type AddHolidayRentalPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const AddHolidayRentalPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const AddHolidayRentalPropertyResponseCommercialListingType = S.String;
 
 export type AddHolidayRentalPropertyResponseAccount = AccessAccount;
 export const AddHolidayRentalPropertyResponseAccount = AccessAccount;
@@ -4386,7 +4373,7 @@ export type AddHolidayRentalPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddHolidayRentalPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const AddHolidayRentalPropertyResponseStatus = S.String;
 
 export type AddHolidayRentalPropertyResponsePortalStatus =
   | "prospect"
@@ -4398,8 +4385,7 @@ export type AddHolidayRentalPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddHolidayRentalPropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const AddHolidayRentalPropertyResponsePortalStatus = S.String;
 
 export type AddHolidayRentalPropertyResponseContactStaffList = Array<User>;
 export const AddHolidayRentalPropertyResponseContactStaffList =
@@ -4619,10 +4605,10 @@ export const AddHolidayRentalPropertyResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<AddHolidayRentalPropertyResponse>;
 
 export type AddInspectionRequestStatus = "proposed" | "scheduled" | "confirmed";
-export const AddInspectionRequestStatus = /*@__PURE__*/ S.String;
+export const AddInspectionRequestStatus = S.String;
 
 export type AddInspectionRequestType = "routine" | "ingoing" | "outgoing";
-export const AddInspectionRequestType = /*@__PURE__*/ S.String;
+export const AddInspectionRequestType = S.String;
 
 export interface AddInspectionRequest {
   /** ID of the property */
@@ -4661,13 +4647,13 @@ export const AddInspectionRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<AddInspectionRequest>;
 
 export type InspectionStatus = "proposed" | "scheduled" | "confirmed";
-export const InspectionStatus = /*@__PURE__*/ S.String;
+export const InspectionStatus = S.String;
 
 export type InspectionType = "routine" | "ingoing" | "outgoing";
-export const InspectionType = /*@__PURE__*/ S.String;
+export const InspectionType = S.String;
 
 export type InspectionTimeOfDay = "morning" | "afternoon";
-export const InspectionTimeOfDay = /*@__PURE__*/ S.String;
+export const InspectionTimeOfDay = S.String;
 
 export interface Inspection {
   id?: number;
@@ -4719,7 +4705,7 @@ export type AddLandPropertyRequestRates = AddBusinessPropertyRequestRates;
 export const AddLandPropertyRequestRates = AddBusinessPropertyRequestRates;
 
 export type AddLandPropertyRequestStatus = "prospect" | "appraisal";
-export const AddLandPropertyRequestStatus = /*@__PURE__*/ S.String;
+export const AddLandPropertyRequestStatus = S.String;
 
 export interface AddLandPropertyRequest {
   branch?: ID;
@@ -4830,7 +4816,7 @@ export type AddLandPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const AddLandPropertyResponseAddressVisibility = /*@__PURE__*/ S.String;
+export const AddLandPropertyResponseAddressVisibility = S.String;
 
 export type AddLandPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const AddLandPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -4841,8 +4827,7 @@ export type AddLandPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const AddLandPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const AddLandPropertyResponseCommercialListingType = S.String;
 
 export type AddLandPropertyResponseAccount = AccessAccount;
 export const AddLandPropertyResponseAccount = AccessAccount;
@@ -4857,7 +4842,7 @@ export type AddLandPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddLandPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const AddLandPropertyResponseStatus = S.String;
 
 export type AddLandPropertyResponsePortalStatus =
   | "prospect"
@@ -4869,7 +4854,7 @@ export type AddLandPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddLandPropertyResponsePortalStatus = /*@__PURE__*/ S.String;
+export const AddLandPropertyResponsePortalStatus = S.String;
 
 export type AddLandPropertyResponseContactStaffList = Array<ID>;
 export const AddLandPropertyResponseContactStaffList = /*@__PURE__*/ S.Array(
@@ -5054,7 +5039,7 @@ export const AddLivestockPropertyRequestExternalLinksList =
   ) as any as S.Schema<AddLivestockPropertyRequestExternalLinksList>;
 
 export type AddLivestockPropertyRequestStatus = "prospect" | "appraisal";
-export const AddLivestockPropertyRequestStatus = /*@__PURE__*/ S.String;
+export const AddLivestockPropertyRequestStatus = S.String;
 
 export type AddLivestockPropertyRequestRates = AddBusinessPropertyRequestRates;
 export const AddLivestockPropertyRequestRates = AddBusinessPropertyRequestRates;
@@ -5188,8 +5173,7 @@ export type AddLivestockPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const AddLivestockPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const AddLivestockPropertyResponseAddressVisibility = S.String;
 
 export type AddLivestockPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const AddLivestockPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -5200,8 +5184,7 @@ export type AddLivestockPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const AddLivestockPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const AddLivestockPropertyResponseCommercialListingType = S.String;
 
 export type AddLivestockPropertyResponseAccount = AccessAccount;
 export const AddLivestockPropertyResponseAccount = AccessAccount;
@@ -5216,7 +5199,7 @@ export type AddLivestockPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddLivestockPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const AddLivestockPropertyResponseStatus = S.String;
 
 export type AddLivestockPropertyResponsePortalStatus =
   | "prospect"
@@ -5228,7 +5211,7 @@ export type AddLivestockPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddLivestockPropertyResponsePortalStatus = /*@__PURE__*/ S.String;
+export const AddLivestockPropertyResponsePortalStatus = S.String;
 
 export type AddLivestockPropertyResponseContactStaffList = Array<User>;
 export const AddLivestockPropertyResponseContactStaffList =
@@ -5438,7 +5421,7 @@ export const AddMaintenanceRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<AddMaintenanceRequest>;
 
 export type MaintenanceStatus = "open" | "requested" | "sent" | "completed";
-export const MaintenanceStatus = /*@__PURE__*/ S.String;
+export const MaintenanceStatus = S.String;
 
 export interface MaintenancePhoto {
   id?: number;
@@ -5558,7 +5541,7 @@ export type MaintenanceRequestStatus =
   | "viewed"
   | "notInterested"
   | "received";
-export const MaintenanceRequestStatus = /*@__PURE__*/ S.String;
+export const MaintenanceRequestStatus = S.String;
 
 export interface MaintenanceRequest {
   id?: number;
@@ -5586,7 +5569,7 @@ export const MaintenanceRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<MaintenanceRequest>;
 
 export type AddOpenHomeRequestSalelease = "sale" | "lease";
-export const AddOpenHomeRequestSalelease = /*@__PURE__*/ S.String;
+export const AddOpenHomeRequestSalelease = S.String;
 
 export type AddOpenHomeRequestExtraAgentsList = Array<ID>;
 export const AddOpenHomeRequestExtraAgentsList = /*@__PURE__*/ S.Array(
@@ -5705,7 +5688,7 @@ export const AddPropertyActivityNoteRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<AddPropertyActivityNoteRequest>;
 
 export type AddPropertyFileLifeRequestSalelease = "sale" | "lease";
-export const AddPropertyFileLifeRequestSalelease = /*@__PURE__*/ S.String;
+export const AddPropertyFileLifeRequestSalelease = S.String;
 
 /** Assign file to these folders */
 export type AddPropertyFileLifeRequestFoldersList = Array<number>;
@@ -5748,7 +5731,7 @@ export const AddPropertyFileLifeRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<AddPropertyFileLifeRequest>;
 
 export type PropertyFileFolderDisplay = "sale" | "lease" | "saleAndLease";
-export const PropertyFileFolderDisplay = /*@__PURE__*/ S.String;
+export const PropertyFileFolderDisplay = S.String;
 
 export interface PropertyFileFolder {
   id?: number;
@@ -5802,7 +5785,7 @@ export const AddPropertyFileLifeResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<AddPropertyFileLifeResponse>;
 
 export type AddPropertyFileLifeUploadRequestSalelease = "sale" | "lease";
-export const AddPropertyFileLifeUploadRequestSalelease = /*@__PURE__*/ S.String;
+export const AddPropertyFileLifeUploadRequestSalelease = S.String;
 
 export type AddPropertyFileLifeUploadRequestFoldersList = Array<ID>;
 export const AddPropertyFileLifeUploadRequestFoldersList =
@@ -6175,7 +6158,7 @@ export const PropertyOffer = /*@__PURE__*/ S.suspend(() =>
 
 /** The type of photo */
 export type AddPropertyPhotoRequestType = "Photograph" | "Floorplan";
-export const AddPropertyPhotoRequestType = /*@__PURE__*/ S.String;
+export const AddPropertyPhotoRequestType = S.String;
 
 export interface AddPropertyPhotoRequest {
   /** ID of the property */
@@ -6209,14 +6192,14 @@ export const AddPropertyPhotoRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<AddPropertyPhotoRequest>;
 
 export type AddPropertyPhotoUploadRequestType = "Photograph" | "Floorplan";
-export const AddPropertyPhotoUploadRequestType = /*@__PURE__*/ S.String;
+export const AddPropertyPhotoUploadRequestType = S.String;
 
 export type AddPropertyPhotoUploadRequestContentType =
   | "image/jpeg"
   | "image/jpg"
   | "image/png"
   | "image/gif";
-export const AddPropertyPhotoUploadRequestContentType = /*@__PURE__*/ S.String;
+export const AddPropertyPhotoUploadRequestContentType = S.String;
 
 export interface AddPropertyPhotoUploadRequest {
   /** ID of the property */
@@ -6278,7 +6261,7 @@ export const AddResidentialLeasePropertyRequestExternalLinksList =
   ) as any as S.Schema<AddResidentialLeasePropertyRequestExternalLinksList>;
 
 export type AddResidentialLeasePropertyRequestStatus = "prospect" | "appraisal";
-export const AddResidentialLeasePropertyRequestStatus = /*@__PURE__*/ S.String;
+export const AddResidentialLeasePropertyRequestStatus = S.String;
 
 export type AddResidentialLeasePropertyRequestRates =
   AddCommercialLeasePropertyRequestRates;
@@ -6396,8 +6379,7 @@ export type AddResidentialLeasePropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const AddResidentialLeasePropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const AddResidentialLeasePropertyResponseAddressVisibility = S.String;
 
 export type AddResidentialLeasePropertyResponsePhotosList =
   Array<PropertyPhoto>;
@@ -6411,7 +6393,7 @@ export type AddResidentialLeasePropertyResponseCommercialListingType =
   | "lease"
   | "both";
 export const AddResidentialLeasePropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type AddResidentialLeasePropertyResponseAccount = AccessAccount;
 export const AddResidentialLeasePropertyResponseAccount = AccessAccount;
@@ -6426,7 +6408,7 @@ export type AddResidentialLeasePropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddResidentialLeasePropertyResponseStatus = /*@__PURE__*/ S.String;
+export const AddResidentialLeasePropertyResponseStatus = S.String;
 
 export type AddResidentialLeasePropertyResponsePortalStatus =
   | "prospect"
@@ -6438,8 +6420,7 @@ export type AddResidentialLeasePropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddResidentialLeasePropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const AddResidentialLeasePropertyResponsePortalStatus = S.String;
 
 export type AddResidentialLeasePropertyResponseContactStaffList = Array<User>;
 export const AddResidentialLeasePropertyResponseContactStaffList =
@@ -6696,7 +6677,7 @@ export const AddResidentialSalePropertyRequestExternalLinksList =
   ) as any as S.Schema<AddResidentialSalePropertyRequestExternalLinksList>;
 
 export type AddResidentialSalePropertyRequestStatus = "prospect" | "appraisal";
-export const AddResidentialSalePropertyRequestStatus = /*@__PURE__*/ S.String;
+export const AddResidentialSalePropertyRequestStatus = S.String;
 
 export type AddResidentialSalePropertyRequestRates =
   AddBusinessPropertyRequestRates;
@@ -6834,8 +6815,7 @@ export type AddResidentialSalePropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const AddResidentialSalePropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const AddResidentialSalePropertyResponseAddressVisibility = S.String;
 
 export type AddResidentialSalePropertyResponsePhotosList = Array<PropertyPhoto>;
 export const AddResidentialSalePropertyResponsePhotosList =
@@ -6847,8 +6827,7 @@ export type AddResidentialSalePropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const AddResidentialSalePropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const AddResidentialSalePropertyResponseCommercialListingType = S.String;
 
 export type AddResidentialSalePropertyResponseAccount = AccessAccount;
 export const AddResidentialSalePropertyResponseAccount = AccessAccount;
@@ -6863,7 +6842,7 @@ export type AddResidentialSalePropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddResidentialSalePropertyResponseStatus = /*@__PURE__*/ S.String;
+export const AddResidentialSalePropertyResponseStatus = S.String;
 
 export type AddResidentialSalePropertyResponsePortalStatus =
   | "prospect"
@@ -6875,8 +6854,7 @@ export type AddResidentialSalePropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddResidentialSalePropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const AddResidentialSalePropertyResponsePortalStatus = S.String;
 
 export type AddResidentialSalePropertyResponseContactStaffList = Array<User>;
 export const AddResidentialSalePropertyResponseContactStaffList =
@@ -7232,7 +7210,7 @@ export const AddRuralPropertyRequestExternalLinksList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<AddRuralPropertyRequestExternalLinksList>;
 
 export type AddRuralPropertyRequestStatus = "prospect" | "appraisal";
-export const AddRuralPropertyRequestStatus = /*@__PURE__*/ S.String;
+export const AddRuralPropertyRequestStatus = S.String;
 
 export type AddRuralPropertyRequestRates = AddBusinessPropertyRequestRates;
 export const AddRuralPropertyRequestRates = AddBusinessPropertyRequestRates;
@@ -7364,7 +7342,7 @@ export type AddRuralPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const AddRuralPropertyResponseAddressVisibility = /*@__PURE__*/ S.String;
+export const AddRuralPropertyResponseAddressVisibility = S.String;
 
 export type AddRuralPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const AddRuralPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -7375,8 +7353,7 @@ export type AddRuralPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const AddRuralPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const AddRuralPropertyResponseCommercialListingType = S.String;
 
 export type AddRuralPropertyResponseAccount = AccessAccount;
 export const AddRuralPropertyResponseAccount = AccessAccount;
@@ -7391,7 +7368,7 @@ export type AddRuralPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddRuralPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const AddRuralPropertyResponseStatus = S.String;
 
 export type AddRuralPropertyResponsePortalStatus =
   | "prospect"
@@ -7403,7 +7380,7 @@ export type AddRuralPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const AddRuralPropertyResponsePortalStatus = /*@__PURE__*/ S.String;
+export const AddRuralPropertyResponsePortalStatus = S.String;
 
 export type AddRuralPropertyResponseContactStaffList = Array<User>;
 export const AddRuralPropertyResponseContactStaffList = /*@__PURE__*/ S.Array(
@@ -7986,7 +7963,7 @@ export const AddThreadUserRequest = /*@__PURE__*/ S.suspend(() =>
 
 /** 1: Salesperson, 2: Administration, 3: Property Manager, 4: Principal */
 export type AddUserRequestStaffTypeId = 1 | 2 | 3 | 4;
-export const AddUserRequestStaffTypeId = /*@__PURE__*/ S.Number;
+export const AddUserRequestStaffTypeId = S.Number;
 
 export type AddUserRequestPhoneNumbersList = Array<PhoneNumber>;
 export const AddUserRequestPhoneNumbersList = /*@__PURE__*/ S.Array(
@@ -8060,8 +8037,7 @@ export const AttachCategoryContactRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<AttachCategoryContactRequest>;
 
 export type AttachFeedbackToPropertyLifeRequestSalelease = "sale" | "lease";
-export const AttachFeedbackToPropertyLifeRequestSalelease =
-  /*@__PURE__*/ S.String;
+export const AttachFeedbackToPropertyLifeRequestSalelease = S.String;
 
 export type AddContactNoteWithFeedbackAccessByList = Array<ID>;
 export const AddContactNoteWithFeedbackAccessByList = /*@__PURE__*/ S.Array(
@@ -8863,7 +8839,7 @@ export const DeleteMaintenancePhotoResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<DeleteMaintenancePhotoResponse>;
 
 export type DeleteOpenHomeRequestSalelease = "sale" | "lease";
-export const DeleteOpenHomeRequestSalelease = /*@__PURE__*/ S.String;
+export const DeleteOpenHomeRequestSalelease = S.String;
 
 export interface DeleteOpenHomeRequest {
   /** ID of the property */
@@ -8943,7 +8919,7 @@ export const DeletePropertyResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<DeletePropertyResponse>;
 
 export type DeletePropertyFeedbackRequestSalelease = "sale" | "lease";
-export const DeletePropertyFeedbackRequestSalelease = /*@__PURE__*/ S.String;
+export const DeletePropertyFeedbackRequestSalelease = S.String;
 
 export interface DeletePropertyFeedbackRequest {
   /** ID of the property */
@@ -8980,7 +8956,7 @@ export const DeletePropertyFeedbackResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<DeletePropertyFeedbackResponse>;
 
 export type DeletePropertyFileLifeRequestSalelease = "sale" | "lease";
-export const DeletePropertyFileLifeRequestSalelease = /*@__PURE__*/ S.String;
+export const DeletePropertyFileLifeRequestSalelease = S.String;
 
 export interface DeletePropertyFileLifeRequest {
   /** ID of the property */
@@ -9290,7 +9266,7 @@ export type AccountFranchise = AccessAccount;
 export const AccountFranchise = AccessAccount;
 
 export type AccountSpeciality = "commercial";
-export const AccountSpeciality = /*@__PURE__*/ S.String;
+export const AccountSpeciality = S.String;
 
 export type MarketingUserOrder = AccessAccount;
 export const MarketingUserOrder = AccessAccount;
@@ -9427,10 +9403,10 @@ export const GetAccountEnquirySourceRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetAccountEnquirySourceRequest>;
 
 export type GetAccountEnquirySourcesRequestSort = "name";
-export const GetAccountEnquirySourcesRequestSort = /*@__PURE__*/ S.String;
+export const GetAccountEnquirySourcesRequestSort = S.String;
 
 export type GetAccountEnquirySourcesRequestSortOrder = "asc" | "desc";
-export const GetAccountEnquirySourcesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetAccountEnquirySourcesRequestSortOrder = S.String;
 
 export interface GetAccountEnquirySourcesRequest {
   /** Field by which to sort the results. */
@@ -9472,11 +9448,10 @@ export const GetAccountEnquirySourcesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetAccountEnquirySourcesResponse>;
 
 export type GetAccountFilingCabinetFoldersRequestSort = "name";
-export const GetAccountFilingCabinetFoldersRequestSort = /*@__PURE__*/ S.String;
+export const GetAccountFilingCabinetFoldersRequestSort = S.String;
 
 export type GetAccountFilingCabinetFoldersRequestSortOrder = "asc" | "desc";
-export const GetAccountFilingCabinetFoldersRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetAccountFilingCabinetFoldersRequestSortOrder = S.String;
 
 export interface GetAccountFilingCabinetFoldersRequest {
   /** Field by which to sort the results. */
@@ -9662,10 +9637,10 @@ export const GetAccountPortalsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetAccountPortalsResponse>;
 
 export type GetAccountPrecinctsRequestSort = "name";
-export const GetAccountPrecinctsRequestSort = /*@__PURE__*/ S.String;
+export const GetAccountPrecinctsRequestSort = S.String;
 
 export type GetAccountPrecinctsRequestSortOrder = "asc" | "desc";
-export const GetAccountPrecinctsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetAccountPrecinctsRequestSortOrder = S.String;
 
 export interface GetAccountPrecinctsRequest {
   /** Page number of results */
@@ -9805,10 +9780,10 @@ export const Team = /*@__PURE__*/ S.suspend(() =>
 ).annotate({ identifier: "Team" }) as any as S.Schema<Team>;
 
 export type GetAccountTeamsRequestSort = "name";
-export const GetAccountTeamsRequestSort = /*@__PURE__*/ S.String;
+export const GetAccountTeamsRequestSort = S.String;
 
 export type GetAccountTeamsRequestSortOrder = "asc" | "desc";
-export const GetAccountTeamsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetAccountTeamsRequestSortOrder = S.String;
 
 export interface GetAccountTeamsRequest {
   /** Page number of results */
@@ -9913,10 +9888,10 @@ export const GetAccountUserRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetAccountUserRequest>;
 
 export type GetAccountUsersRequestSort = "firstname" | "lastname" | "inserted";
-export const GetAccountUsersRequestSort = /*@__PURE__*/ S.String;
+export const GetAccountUsersRequestSort = S.String;
 
 export type GetAccountUsersRequestSortOrder = "asc" | "desc";
-export const GetAccountUsersRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetAccountUsersRequestSortOrder = S.String;
 
 export interface GetAccountUsersRequest {
   /** Page number of results */
@@ -9968,10 +9943,10 @@ export const GetAccountUsersResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetAccountUsersResponse>;
 
 export type GetAccountUserTeamsRequestSort = "name";
-export const GetAccountUserTeamsRequestSort = /*@__PURE__*/ S.String;
+export const GetAccountUserTeamsRequestSort = S.String;
 
 export type GetAccountUserTeamsRequestSortOrder = "asc" | "desc";
-export const GetAccountUserTeamsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetAccountUserTeamsRequestSortOrder = S.String;
 
 export interface GetAccountUserTeamsRequest {
   /** ID of the user */
@@ -10036,11 +10011,10 @@ export const GetAdvertisingExpenseTypeRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetAdvertisingExpenseTypeRequest>;
 
 export type GetAdvertisingExpenseTypesRequestSort = "name";
-export const GetAdvertisingExpenseTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetAdvertisingExpenseTypesRequestSort = S.String;
 
 export type GetAdvertisingExpenseTypesRequestSortOrder = "asc" | "desc";
-export const GetAdvertisingExpenseTypesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetAdvertisingExpenseTypesRequestSortOrder = S.String;
 
 export interface GetAdvertisingExpenseTypesRequest {
   /** Page number of results */
@@ -10142,10 +10116,10 @@ export const AdvertisingInvoice = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<AdvertisingInvoice>;
 
 export type GetAdvertisingInvoicesRequestSort = "inserted" | "modified";
-export const GetAdvertisingInvoicesRequestSort = /*@__PURE__*/ S.String;
+export const GetAdvertisingInvoicesRequestSort = S.String;
 
 export type GetAdvertisingInvoicesRequestSortOrder = "asc" | "desc";
-export const GetAdvertisingInvoicesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetAdvertisingInvoicesRequestSortOrder = S.String;
 
 export interface GetAdvertisingInvoicesRequest {
   /** Filter results inserted since this datetime */
@@ -10211,11 +10185,10 @@ export const GetAdvertisingInvoicesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetAdvertisingInvoicesResponse>;
 
 export type GetAdvertisingPaymentTypesRequestSort = "name";
-export const GetAdvertisingPaymentTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetAdvertisingPaymentTypesRequestSort = S.String;
 
 export type GetAdvertisingPaymentTypesRequestSortOrder = "asc" | "desc";
-export const GetAdvertisingPaymentTypesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetAdvertisingPaymentTypesRequestSortOrder = S.String;
 
 export interface GetAdvertisingPaymentTypesRequest {
   /** Page number of results */
@@ -10318,10 +10291,10 @@ export const GetAdvertisingScheduleResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetAdvertisingScheduleResponse>;
 
 export type GetAdvertisingSchedulesRequestSort = "name";
-export const GetAdvertisingSchedulesRequestSort = /*@__PURE__*/ S.String;
+export const GetAdvertisingSchedulesRequestSort = S.String;
 
 export type GetAdvertisingSchedulesRequestSortOrder = "asc" | "desc";
-export const GetAdvertisingSchedulesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetAdvertisingSchedulesRequestSortOrder = S.String;
 
 export interface GetAdvertisingSchedulesRequest {
   /** Page number of results */
@@ -10386,10 +10359,10 @@ export const GetAdvertisingSupplierRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetAdvertisingSupplierRequest>;
 
 export type GetAdvertisingSuppliersRequestSort = "name";
-export const GetAdvertisingSuppliersRequestSort = /*@__PURE__*/ S.String;
+export const GetAdvertisingSuppliersRequestSort = S.String;
 
 export type GetAdvertisingSuppliersRequestSortOrder = "asc" | "desc";
-export const GetAdvertisingSuppliersRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetAdvertisingSuppliersRequestSortOrder = S.String;
 
 export interface GetAdvertisingSuppliersRequest {
   /** Page number of results */
@@ -10438,11 +10411,10 @@ export const GetAdvertisingSuppliersResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetAdvertisingSuppliersResponse>;
 
 export type GetAdvertisingTransactionTypesRequestSort = "name";
-export const GetAdvertisingTransactionTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetAdvertisingTransactionTypesRequestSort = S.String;
 
 export type GetAdvertisingTransactionTypesRequestSortOrder = "asc" | "desc";
-export const GetAdvertisingTransactionTypesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetAdvertisingTransactionTypesRequestSortOrder = S.String;
 
 export interface GetAdvertisingTransactionTypesRequest {
   /** Page number of results */
@@ -10502,10 +10474,10 @@ export const GetAdvertisingTransactionTypesResponse = /*@__PURE__*/ S.suspend(
 }) as any as S.Schema<GetAdvertisingTransactionTypesResponse>;
 
 export type GetAllMaintenanceRequestSort = "inserted" | "modified";
-export const GetAllMaintenanceRequestSort = /*@__PURE__*/ S.String;
+export const GetAllMaintenanceRequestSort = S.String;
 
 export type GetAllMaintenanceRequestSortOrder = "asc" | "desc";
-export const GetAllMaintenanceRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetAllMaintenanceRequestSortOrder = S.String;
 
 export interface GetAllMaintenanceRequest {
   /** Page number of results */
@@ -10566,10 +10538,10 @@ export const GetAMLCheckRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetAMLCheckRequest>;
 
 export type GetAMLChecksRequestSort = "inserted";
-export const GetAMLChecksRequestSort = /*@__PURE__*/ S.String;
+export const GetAMLChecksRequestSort = S.String;
 
 export type GetAMLChecksRequestSortOrder = "asc" | "desc";
-export const GetAMLChecksRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetAMLChecksRequestSortOrder = S.String;
 
 export interface GetAMLChecksRequest {
   /** Filter AML checks by contact ID */
@@ -10618,10 +10590,10 @@ export const GetAMLChecksResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetAMLChecksResponse>;
 
 export type GetAuctionTypesRequestSort = "name";
-export const GetAuctionTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetAuctionTypesRequestSort = S.String;
 
 export type GetAuctionTypesRequestSortOrder = "asc" | "desc";
-export const GetAuctionTypesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetAuctionTypesRequestSortOrder = S.String;
 
 export interface GetAuctionTypesRequest {
   /** Page number of results */
@@ -10720,11 +10692,10 @@ export type GetAvailableBusinessPropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetAvailableBusinessPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetAvailableBusinessPropertiesRequestSort = S.String;
 
 export type GetAvailableBusinessPropertiesRequestSortOrder = "asc" | "desc";
-export const GetAvailableBusinessPropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetAvailableBusinessPropertiesRequestSortOrder = S.String;
 
 export interface GetAvailableBusinessPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -10806,7 +10777,7 @@ export type BusinessPropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const BusinessPropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const BusinessPropertyAddressVisibility = S.String;
 
 export type BusinessPropertyPhotosList = Array<PropertyPhoto>;
 export const BusinessPropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -10814,7 +10785,7 @@ export const BusinessPropertyPhotosList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<BusinessPropertyPhotosList>;
 
 export type BusinessPropertyCommercialListingType = "sale" | "lease" | "both";
-export const BusinessPropertyCommercialListingType = /*@__PURE__*/ S.String;
+export const BusinessPropertyCommercialListingType = S.String;
 
 export type BusinessPropertyAccount = AccessAccount;
 export const BusinessPropertyAccount = AccessAccount;
@@ -10828,7 +10799,7 @@ export type BusinessPropertyStatus =
   | "settled"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const BusinessPropertyStatus = /*@__PURE__*/ S.String;
+export const BusinessPropertyStatus = S.String;
 
 export type BusinessPropertyPortalStatus =
   | "prospect"
@@ -10840,7 +10811,7 @@ export type BusinessPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const BusinessPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const BusinessPropertyPortalStatus = S.String;
 
 export type BusinessPropertyContactStaffList = Array<ID>;
 export const BusinessPropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -11036,14 +11007,12 @@ export type GetAvailableCommercialLeasePropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetAvailableCommercialLeasePropertiesRequestSort =
-  /*@__PURE__*/ S.String;
+export const GetAvailableCommercialLeasePropertiesRequestSort = S.String;
 
 export type GetAvailableCommercialLeasePropertiesRequestSortOrder =
   | "asc"
   | "desc";
-export const GetAvailableCommercialLeasePropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetAvailableCommercialLeasePropertiesRequestSortOrder = S.String;
 
 export interface GetAvailableCommercialLeasePropertiesRequest {
   /** Filter results modified since this datetime */
@@ -11140,7 +11109,7 @@ export type CommercialLeasePropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const CommercialLeasePropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const CommercialLeasePropertyAddressVisibility = S.String;
 
 export type CommercialLeasePropertyPhotosList = Array<PropertyPhoto>;
 export const CommercialLeasePropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -11151,8 +11120,7 @@ export type CommercialLeasePropertyCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const CommercialLeasePropertyCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const CommercialLeasePropertyCommercialListingType = S.String;
 
 export type CommercialLeasePropertyAccount = AccessAccount;
 export const CommercialLeasePropertyAccount = AccessAccount;
@@ -11167,7 +11135,7 @@ export type CommercialLeasePropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const CommercialLeasePropertyStatus = /*@__PURE__*/ S.String;
+export const CommercialLeasePropertyStatus = S.String;
 
 export type CommercialLeasePropertyPortalStatus =
   | "prospect"
@@ -11179,7 +11147,7 @@ export type CommercialLeasePropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const CommercialLeasePropertyPortalStatus = /*@__PURE__*/ S.String;
+export const CommercialLeasePropertyPortalStatus = S.String;
 
 export type CommercialLeasePropertyContactStaffList = Array<ID>;
 export const CommercialLeasePropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -11428,14 +11396,12 @@ export type GetAvailableCommercialSalePropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetAvailableCommercialSalePropertiesRequestSort =
-  /*@__PURE__*/ S.String;
+export const GetAvailableCommercialSalePropertiesRequestSort = S.String;
 
 export type GetAvailableCommercialSalePropertiesRequestSortOrder =
   | "asc"
   | "desc";
-export const GetAvailableCommercialSalePropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetAvailableCommercialSalePropertiesRequestSortOrder = S.String;
 
 export interface GetAvailableCommercialSalePropertiesRequest {
   /** Filter results modified since this datetime */
@@ -11525,7 +11491,7 @@ export type CommercialSalePropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const CommercialSalePropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const CommercialSalePropertyAddressVisibility = S.String;
 
 export type CommercialSalePropertyPhotosList = Array<PropertyPhoto>;
 export const CommercialSalePropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -11536,8 +11502,7 @@ export type CommercialSalePropertyCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const CommercialSalePropertyCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const CommercialSalePropertyCommercialListingType = S.String;
 
 export type CommercialSalePropertyAccount = AccessAccount;
 export const CommercialSalePropertyAccount = AccessAccount;
@@ -11552,7 +11517,7 @@ export type CommercialSalePropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const CommercialSalePropertyStatus = /*@__PURE__*/ S.String;
+export const CommercialSalePropertyStatus = S.String;
 
 export type CommercialSalePropertyPortalStatus =
   | "prospect"
@@ -11564,7 +11529,7 @@ export type CommercialSalePropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const CommercialSalePropertyPortalStatus = /*@__PURE__*/ S.String;
+export const CommercialSalePropertyPortalStatus = S.String;
 
 export type CommercialSalePropertyContactStaffList = Array<ID>;
 export const CommercialSalePropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -11870,14 +11835,12 @@ export type GetAvailableHolidayRentalPropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetAvailableHolidayRentalPropertiesRequestSort =
-  /*@__PURE__*/ S.String;
+export const GetAvailableHolidayRentalPropertiesRequestSort = S.String;
 
 export type GetAvailableHolidayRentalPropertiesRequestSortOrder =
   | "asc"
   | "desc";
-export const GetAvailableHolidayRentalPropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetAvailableHolidayRentalPropertiesRequestSortOrder = S.String;
 
 export interface GetAvailableHolidayRentalPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -11965,7 +11928,7 @@ export type HolidayRentalPropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const HolidayRentalPropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const HolidayRentalPropertyAddressVisibility = S.String;
 
 export type HolidayRentalPropertyPhotosList = Array<PropertyPhoto>;
 export const HolidayRentalPropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -11976,8 +11939,7 @@ export type HolidayRentalPropertyCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const HolidayRentalPropertyCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const HolidayRentalPropertyCommercialListingType = S.String;
 
 export type HolidayRentalPropertyAccount = AccessAccount;
 export const HolidayRentalPropertyAccount = AccessAccount;
@@ -11992,7 +11954,7 @@ export type HolidayRentalPropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const HolidayRentalPropertyStatus = /*@__PURE__*/ S.String;
+export const HolidayRentalPropertyStatus = S.String;
 
 export type HolidayRentalPropertyPortalStatus =
   | "prospect"
@@ -12004,7 +11966,7 @@ export type HolidayRentalPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const HolidayRentalPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const HolidayRentalPropertyPortalStatus = S.String;
 
 export type HolidayRentalPropertyContactStaffList = Array<User>;
 export const HolidayRentalPropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -12239,11 +12201,10 @@ export type GetAvailableLandPropertiesRequestSort =
   | "suburb"
   | "searchPrice"
   | "landArea";
-export const GetAvailableLandPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetAvailableLandPropertiesRequestSort = S.String;
 
 export type GetAvailableLandPropertiesRequestSortOrder = "asc" | "desc";
-export const GetAvailableLandPropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetAvailableLandPropertiesRequestSortOrder = S.String;
 
 export interface GetAvailableLandPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -12322,7 +12283,7 @@ export type LandPropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const LandPropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const LandPropertyAddressVisibility = S.String;
 
 export type LandPropertyPhotosList = Array<PropertyPhoto>;
 export const LandPropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -12330,7 +12291,7 @@ export const LandPropertyPhotosList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<LandPropertyPhotosList>;
 
 export type LandPropertyCommercialListingType = "sale" | "lease" | "both";
-export const LandPropertyCommercialListingType = /*@__PURE__*/ S.String;
+export const LandPropertyCommercialListingType = S.String;
 
 export type LandPropertyAccount = AccessAccount;
 export const LandPropertyAccount = AccessAccount;
@@ -12345,7 +12306,7 @@ export type LandPropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const LandPropertyStatus = /*@__PURE__*/ S.String;
+export const LandPropertyStatus = S.String;
 
 export type LandPropertyPortalStatus =
   | "prospect"
@@ -12357,7 +12318,7 @@ export type LandPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const LandPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const LandPropertyPortalStatus = S.String;
 
 export type LandPropertyContactStaffList = Array<ID>;
 export const LandPropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -12551,14 +12512,12 @@ export type GetAvailableResidentialLeasePropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetAvailableResidentialLeasePropertiesRequestSort =
-  /*@__PURE__*/ S.String;
+export const GetAvailableResidentialLeasePropertiesRequestSort = S.String;
 
 export type GetAvailableResidentialLeasePropertiesRequestSortOrder =
   | "asc"
   | "desc";
-export const GetAvailableResidentialLeasePropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetAvailableResidentialLeasePropertiesRequestSortOrder = S.String;
 
 export interface GetAvailableResidentialLeasePropertiesRequest {
   /** Filter results modified since this datetime */
@@ -12654,7 +12613,7 @@ export type ResidentialLeasePropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const ResidentialLeasePropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const ResidentialLeasePropertyAddressVisibility = S.String;
 
 export type ResidentialLeasePropertyPhotosList = Array<PropertyPhoto>;
 export const ResidentialLeasePropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -12665,8 +12624,7 @@ export type ResidentialLeasePropertyCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const ResidentialLeasePropertyCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const ResidentialLeasePropertyCommercialListingType = S.String;
 
 export type ResidentialLeasePropertyAccount = AccessAccount;
 export const ResidentialLeasePropertyAccount = AccessAccount;
@@ -12681,7 +12639,7 @@ export type ResidentialLeasePropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const ResidentialLeasePropertyStatus = /*@__PURE__*/ S.String;
+export const ResidentialLeasePropertyStatus = S.String;
 
 export type ResidentialLeasePropertyPortalStatus =
   | "prospect"
@@ -12693,7 +12651,7 @@ export type ResidentialLeasePropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const ResidentialLeasePropertyPortalStatus = /*@__PURE__*/ S.String;
+export const ResidentialLeasePropertyPortalStatus = S.String;
 
 export type ResidentialLeasePropertyContactStaffList = Array<User>;
 export const ResidentialLeasePropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -12944,14 +12902,12 @@ export type GetAvailableResidentialSalePropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetAvailableResidentialSalePropertiesRequestSort =
-  /*@__PURE__*/ S.String;
+export const GetAvailableResidentialSalePropertiesRequestSort = S.String;
 
 export type GetAvailableResidentialSalePropertiesRequestSortOrder =
   | "asc"
   | "desc";
-export const GetAvailableResidentialSalePropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetAvailableResidentialSalePropertiesRequestSortOrder = S.String;
 
 export interface GetAvailableResidentialSalePropertiesRequest {
   /** Filter results modified since this datetime */
@@ -13045,7 +13001,7 @@ export type ResidentialSalePropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const ResidentialSalePropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const ResidentialSalePropertyAddressVisibility = S.String;
 
 export type ResidentialSalePropertyPhotosList = Array<PropertyPhoto>;
 export const ResidentialSalePropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -13056,8 +13012,7 @@ export type ResidentialSalePropertyCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const ResidentialSalePropertyCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const ResidentialSalePropertyCommercialListingType = S.String;
 
 export type ResidentialSalePropertyAccount = AccessAccount;
 export const ResidentialSalePropertyAccount = AccessAccount;
@@ -13072,7 +13027,7 @@ export type ResidentialSalePropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const ResidentialSalePropertyStatus = /*@__PURE__*/ S.String;
+export const ResidentialSalePropertyStatus = S.String;
 
 export type ResidentialSalePropertyPortalStatus =
   | "prospect"
@@ -13084,7 +13039,7 @@ export type ResidentialSalePropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const ResidentialSalePropertyPortalStatus = /*@__PURE__*/ S.String;
+export const ResidentialSalePropertyPortalStatus = S.String;
 
 export type ResidentialSalePropertyContactStaffList = Array<User>;
 export const ResidentialSalePropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -13378,11 +13333,10 @@ export type GetAvailableRuralPropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetAvailableRuralPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetAvailableRuralPropertiesRequestSort = S.String;
 
 export type GetAvailableRuralPropertiesRequestSortOrder = "asc" | "desc";
-export const GetAvailableRuralPropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetAvailableRuralPropertiesRequestSortOrder = S.String;
 
 export interface GetAvailableRuralPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -13461,7 +13415,7 @@ export type RuralPropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const RuralPropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const RuralPropertyAddressVisibility = S.String;
 
 export type RuralPropertyPhotosList = Array<PropertyPhoto>;
 export const RuralPropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -13469,7 +13423,7 @@ export const RuralPropertyPhotosList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<RuralPropertyPhotosList>;
 
 export type RuralPropertyCommercialListingType = "sale" | "lease" | "both";
-export const RuralPropertyCommercialListingType = /*@__PURE__*/ S.String;
+export const RuralPropertyCommercialListingType = S.String;
 
 export type RuralPropertyAccount = AccessAccount;
 export const RuralPropertyAccount = AccessAccount;
@@ -13484,7 +13438,7 @@ export type RuralPropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const RuralPropertyStatus = /*@__PURE__*/ S.String;
+export const RuralPropertyStatus = S.String;
 
 export type RuralPropertyPortalStatus =
   | "prospect"
@@ -13496,7 +13450,7 @@ export type RuralPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const RuralPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const RuralPropertyPortalStatus = S.String;
 
 export type RuralPropertyContactStaffList = Array<User>;
 export const RuralPropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -13669,10 +13623,10 @@ export const GetBuildingRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetBuildingRequest>;
 
 export type GetBuildingsRequestSort = "name";
-export const GetBuildingsRequestSort = /*@__PURE__*/ S.String;
+export const GetBuildingsRequestSort = S.String;
 
 export type GetBuildingsRequestSortOrder = "asc" | "desc";
-export const GetBuildingsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetBuildingsRequestSortOrder = S.String;
 
 export interface GetBuildingsRequest {
   /** Page number of results */
@@ -13908,7 +13862,7 @@ export type GetBusinessPropertiesRequestStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetBusinessPropertiesRequestStatusItem = /*@__PURE__*/ S.String;
+export const GetBusinessPropertiesRequestStatusItem = S.String;
 
 export type GetBusinessPropertiesRequestStatusList = Array<
   GetBusinessPropertiesRequestStatusItem | (string & {})
@@ -13924,8 +13878,7 @@ export type GetBusinessPropertiesRequestPortalStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetBusinessPropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetBusinessPropertiesRequestPortalStatusItem = S.String;
 
 export type GetBusinessPropertiesRequestPortalStatusList = Array<
   GetBusinessPropertiesRequestPortalStatusItem | (string & {})
@@ -13979,10 +13932,10 @@ export type GetBusinessPropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetBusinessPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetBusinessPropertiesRequestSort = S.String;
 
 export type GetBusinessPropertiesRequestSortOrder = "asc" | "desc";
-export const GetBusinessPropertiesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetBusinessPropertiesRequestSortOrder = S.String;
 
 export interface GetBusinessPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -14125,8 +14078,7 @@ export type GetBusinessPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetBusinessPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const GetBusinessPropertyResponseAddressVisibility = S.String;
 
 export type GetBusinessPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const GetBusinessPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -14137,8 +14089,7 @@ export type GetBusinessPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const GetBusinessPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const GetBusinessPropertyResponseCommercialListingType = S.String;
 
 export type GetBusinessPropertyResponseAccount = AccessAccount;
 export const GetBusinessPropertyResponseAccount = AccessAccount;
@@ -14152,7 +14103,7 @@ export type GetBusinessPropertyResponseStatus =
   | "settled"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetBusinessPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const GetBusinessPropertyResponseStatus = S.String;
 
 export type GetBusinessPropertyResponsePortalStatus =
   | "prospect"
@@ -14164,7 +14115,7 @@ export type GetBusinessPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetBusinessPropertyResponsePortalStatus = /*@__PURE__*/ S.String;
+export const GetBusinessPropertyResponsePortalStatus = S.String;
 
 export type GetBusinessPropertyResponseContactStaffList = Array<ID>;
 export const GetBusinessPropertyResponseContactStaffList =
@@ -14350,8 +14301,7 @@ export type GetBusinessPropertyAndLifeResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetBusinessPropertyAndLifeResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const GetBusinessPropertyAndLifeResponseAddressVisibility = S.String;
 
 export type GetBusinessPropertyAndLifeResponsePhotosList = Array<PropertyPhoto>;
 export const GetBusinessPropertyAndLifeResponsePhotosList =
@@ -14363,8 +14313,7 @@ export type GetBusinessPropertyAndLifeResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const GetBusinessPropertyAndLifeResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const GetBusinessPropertyAndLifeResponseCommercialListingType = S.String;
 
 export type GetBusinessPropertyAndLifeResponseAccount = AccessAccount;
 export const GetBusinessPropertyAndLifeResponseAccount = AccessAccount;
@@ -14378,7 +14327,7 @@ export type GetBusinessPropertyAndLifeResponseStatus =
   | "settled"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetBusinessPropertyAndLifeResponseStatus = /*@__PURE__*/ S.String;
+export const GetBusinessPropertyAndLifeResponseStatus = S.String;
 
 export type GetBusinessPropertyAndLifeResponsePortalStatus =
   | "prospect"
@@ -14390,8 +14339,7 @@ export type GetBusinessPropertyAndLifeResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetBusinessPropertyAndLifeResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetBusinessPropertyAndLifeResponsePortalStatus = S.String;
 
 export type GetBusinessPropertyAndLifeResponseContactStaffList = Array<ID>;
 export const GetBusinessPropertyAndLifeResponseContactStaffList =
@@ -14600,8 +14548,7 @@ export type GetBusinessSoldPropertiesRequestStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetBusinessSoldPropertiesRequestStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetBusinessSoldPropertiesRequestStatusItem = S.String;
 
 export type GetBusinessSoldPropertiesRequestStatusList = Array<
   GetBusinessSoldPropertiesRequestStatusItem | (string & {})
@@ -14614,8 +14561,7 @@ export type GetBusinessSoldPropertiesRequestPortalStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetBusinessSoldPropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetBusinessSoldPropertiesRequestPortalStatusItem = S.String;
 
 export type GetBusinessSoldPropertiesRequestPortalStatusList = Array<
   GetBusinessSoldPropertiesRequestPortalStatusItem | (string & {})
@@ -14651,10 +14597,10 @@ export type GetBusinessSoldPropertiesRequestSort =
   | "suburb"
   | "landArea"
   | "floorArea";
-export const GetBusinessSoldPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetBusinessSoldPropertiesRequestSort = S.String;
 
 export type GetBusinessSoldPropertiesRequestSortOrder = "asc" | "desc";
-export const GetBusinessSoldPropertiesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetBusinessSoldPropertiesRequestSortOrder = S.String;
 
 export interface GetBusinessSoldPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -14783,7 +14729,7 @@ export type BusinessSoldPropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const BusinessSoldPropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const BusinessSoldPropertyAddressVisibility = S.String;
 
 export type BusinessSoldPropertyPhotosList = Array<PropertyPhoto>;
 export const BusinessSoldPropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -14794,7 +14740,7 @@ export type BusinessSoldPropertyCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const BusinessSoldPropertyCommercialListingType = /*@__PURE__*/ S.String;
+export const BusinessSoldPropertyCommercialListingType = S.String;
 
 export type BusinessSoldPropertyAccount = AccessAccount;
 export const BusinessSoldPropertyAccount = AccessAccount;
@@ -14808,7 +14754,7 @@ export type BusinessSoldPropertyStatus =
   | "settled"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const BusinessSoldPropertyStatus = /*@__PURE__*/ S.String;
+export const BusinessSoldPropertyStatus = S.String;
 
 export type BusinessSoldPropertyPortalStatus =
   | "prospect"
@@ -14820,7 +14766,7 @@ export type BusinessSoldPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const BusinessSoldPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const BusinessSoldPropertyPortalStatus = S.String;
 
 export type BusinessSoldPropertyContactStaffList = Array<ID>;
 export const BusinessSoldPropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -14975,10 +14921,10 @@ export const GetCalendarEventRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetCalendarEventRequest>;
 
 export type GetCalendarEventsRequestSort = "start";
-export const GetCalendarEventsRequestSort = /*@__PURE__*/ S.String;
+export const GetCalendarEventsRequestSort = S.String;
 
 export type GetCalendarEventsRequestSortOrder = "asc" | "desc";
-export const GetCalendarEventsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetCalendarEventsRequestSortOrder = S.String;
 
 export interface GetCalendarEventsRequest {
   /** Filter events starting on or after this datetime */
@@ -15211,10 +15157,10 @@ export const CampaignTrackingSummary = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<CampaignTrackingSummary>;
 
 export type GetCategoriesContactRequestSort = "name";
-export const GetCategoriesContactRequestSort = /*@__PURE__*/ S.String;
+export const GetCategoriesContactRequestSort = S.String;
 
 export type GetCategoriesContactRequestSortOrder = "asc" | "desc";
-export const GetCategoriesContactRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetCategoriesContactRequestSortOrder = S.String;
 
 export interface GetCategoriesContactRequest {
   /** ID of the contact */
@@ -15265,10 +15211,10 @@ export const GetCategoriesContactResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetCategoriesContactResponse>;
 
 export type GetCategoriesContactBulkRequestSort = "modified";
-export const GetCategoriesContactBulkRequestSort = /*@__PURE__*/ S.String;
+export const GetCategoriesContactBulkRequestSort = S.String;
 
 export type GetCategoriesContactBulkRequestSortOrder = "asc" | "desc";
-export const GetCategoriesContactBulkRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetCategoriesContactBulkRequestSortOrder = S.String;
 
 export interface GetCategoriesContactBulkRequest {
   /** Field by which to sort the results. */
@@ -15337,10 +15283,10 @@ export const GetCategoriesContactBulkResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetCategoriesContactBulkResponse>;
 
 export type GetCategoriesForPropertyRequestSort = "name";
-export const GetCategoriesForPropertyRequestSort = /*@__PURE__*/ S.String;
+export const GetCategoriesForPropertyRequestSort = S.String;
 
 export type GetCategoriesForPropertyRequestSortOrder = "asc" | "desc";
-export const GetCategoriesForPropertyRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetCategoriesForPropertyRequestSortOrder = S.String;
 
 export interface GetCategoriesForPropertyRequest {
   /** ID of the property */
@@ -15393,10 +15339,10 @@ export const GetCategoriesForPropertyResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetCategoriesForPropertyResponse>;
 
 export type GetCategoriesPropertyBulkRequestSort = "modified";
-export const GetCategoriesPropertyBulkRequestSort = /*@__PURE__*/ S.String;
+export const GetCategoriesPropertyBulkRequestSort = S.String;
 
 export type GetCategoriesPropertyBulkRequestSortOrder = "asc" | "desc";
-export const GetCategoriesPropertyBulkRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetCategoriesPropertyBulkRequestSortOrder = S.String;
 
 export interface GetCategoriesPropertyBulkRequest {
   /** Field by which to sort the results. */
@@ -15465,10 +15411,10 @@ export const GetCategoriesPropertyBulkResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetCategoriesPropertyBulkResponse>;
 
 export type GetCategoriesSupplierRequestSort = "name";
-export const GetCategoriesSupplierRequestSort = /*@__PURE__*/ S.String;
+export const GetCategoriesSupplierRequestSort = S.String;
 
 export type GetCategoriesSupplierRequestSortOrder = "asc" | "desc";
-export const GetCategoriesSupplierRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetCategoriesSupplierRequestSortOrder = S.String;
 
 export interface GetCategoriesSupplierRequest {
   /** ID of the supplier */
@@ -15534,8 +15480,7 @@ export type GetClearingSalesPropertiesRequestStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetClearingSalesPropertiesRequestStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetClearingSalesPropertiesRequestStatusItem = S.String;
 
 export type GetClearingSalesPropertiesRequestStatusList = Array<
   GetClearingSalesPropertiesRequestStatusItem | (string & {})
@@ -15552,8 +15497,7 @@ export type GetClearingSalesPropertiesRequestPortalStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetClearingSalesPropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetClearingSalesPropertiesRequestPortalStatusItem = S.String;
 
 export type GetClearingSalesPropertiesRequestPortalStatusList = Array<
   GetClearingSalesPropertiesRequestPortalStatusItem | (string & {})
@@ -15609,11 +15553,10 @@ export type GetClearingSalesPropertiesRequestSort =
   | "modified"
   | "suburb"
   | "searchPrice";
-export const GetClearingSalesPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetClearingSalesPropertiesRequestSort = S.String;
 
 export type GetClearingSalesPropertiesRequestSortOrder = "asc" | "desc";
-export const GetClearingSalesPropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetClearingSalesPropertiesRequestSortOrder = S.String;
 
 export interface GetClearingSalesPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -15724,7 +15667,7 @@ export type ClearingSalesPropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const ClearingSalesPropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const ClearingSalesPropertyAddressVisibility = S.String;
 
 export type ClearingSalesPropertyPhotosList = Array<PropertyPhoto>;
 export const ClearingSalesPropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -15735,8 +15678,7 @@ export type ClearingSalesPropertyCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const ClearingSalesPropertyCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const ClearingSalesPropertyCommercialListingType = S.String;
 
 export type ClearingSalesPropertyAccount = AccessAccount;
 export const ClearingSalesPropertyAccount = AccessAccount;
@@ -15751,7 +15693,7 @@ export type ClearingSalesPropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const ClearingSalesPropertyStatus = /*@__PURE__*/ S.String;
+export const ClearingSalesPropertyStatus = S.String;
 
 export type ClearingSalesPropertyPortalStatus =
   | "prospect"
@@ -15763,7 +15705,7 @@ export type ClearingSalesPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const ClearingSalesPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const ClearingSalesPropertyPortalStatus = S.String;
 
 export type ClearingSalesPropertyContactStaffList = Array<User>;
 export const ClearingSalesPropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -15950,8 +15892,7 @@ export type GetClearingSalesPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetClearingSalesPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const GetClearingSalesPropertyResponseAddressVisibility = S.String;
 
 export type GetClearingSalesPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const GetClearingSalesPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -15962,8 +15903,7 @@ export type GetClearingSalesPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const GetClearingSalesPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const GetClearingSalesPropertyResponseCommercialListingType = S.String;
 
 export type GetClearingSalesPropertyResponseAccount = AccessAccount;
 export const GetClearingSalesPropertyResponseAccount = AccessAccount;
@@ -15978,7 +15918,7 @@ export type GetClearingSalesPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetClearingSalesPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const GetClearingSalesPropertyResponseStatus = S.String;
 
 export type GetClearingSalesPropertyResponsePortalStatus =
   | "prospect"
@@ -15990,8 +15930,7 @@ export type GetClearingSalesPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetClearingSalesPropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetClearingSalesPropertyResponsePortalStatus = S.String;
 
 export type GetClearingSalesPropertyResponseContactStaffList = Array<User>;
 export const GetClearingSalesPropertyResponseContactStaffList =
@@ -16214,7 +16153,7 @@ export type GetClearingSalesPropertyAndLifeResponseAddressVisibility =
   | "suburb"
   | "fullAddress";
 export const GetClearingSalesPropertyAndLifeResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type GetClearingSalesPropertyAndLifeResponsePhotosList =
   Array<PropertyPhoto>;
@@ -16228,7 +16167,7 @@ export type GetClearingSalesPropertyAndLifeResponseCommercialListingType =
   | "lease"
   | "both";
 export const GetClearingSalesPropertyAndLifeResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type GetClearingSalesPropertyAndLifeResponseAccount = AccessAccount;
 export const GetClearingSalesPropertyAndLifeResponseAccount = AccessAccount;
@@ -16243,8 +16182,7 @@ export type GetClearingSalesPropertyAndLifeResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetClearingSalesPropertyAndLifeResponseStatus =
-  /*@__PURE__*/ S.String;
+export const GetClearingSalesPropertyAndLifeResponseStatus = S.String;
 
 export type GetClearingSalesPropertyAndLifeResponsePortalStatus =
   | "prospect"
@@ -16256,8 +16194,7 @@ export type GetClearingSalesPropertyAndLifeResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetClearingSalesPropertyAndLifeResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetClearingSalesPropertyAndLifeResponsePortalStatus = S.String;
 
 export type GetClearingSalesPropertyAndLifeResponseContactStaffList =
   Array<User>;
@@ -16506,8 +16443,7 @@ export type GetClearingSalesSoldPropertiesRequestStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetClearingSalesSoldPropertiesRequestStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetClearingSalesSoldPropertiesRequestStatusItem = S.String;
 
 export type GetClearingSalesSoldPropertiesRequestStatusList = Array<
   GetClearingSalesSoldPropertiesRequestStatusItem | (string & {})
@@ -16521,8 +16457,7 @@ export type GetClearingSalesSoldPropertiesRequestPortalStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetClearingSalesSoldPropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetClearingSalesSoldPropertiesRequestPortalStatusItem = S.String;
 
 export type GetClearingSalesSoldPropertiesRequestPortalStatusList = Array<
   GetClearingSalesSoldPropertiesRequestPortalStatusItem | (string & {})
@@ -16558,11 +16493,10 @@ export type GetClearingSalesSoldPropertiesRequestSort =
   | "unconditional"
   | "settlement"
   | "suburb";
-export const GetClearingSalesSoldPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetClearingSalesSoldPropertiesRequestSort = S.String;
 
 export type GetClearingSalesSoldPropertiesRequestSortOrder = "asc" | "desc";
-export const GetClearingSalesSoldPropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetClearingSalesSoldPropertiesRequestSortOrder = S.String;
 
 export interface GetClearingSalesSoldPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -16694,8 +16628,7 @@ export type ClearingSalesSoldPropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const ClearingSalesSoldPropertyAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const ClearingSalesSoldPropertyAddressVisibility = S.String;
 
 export type ClearingSalesSoldPropertyPhotosList = Array<PropertyPhoto>;
 export const ClearingSalesSoldPropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -16706,8 +16639,7 @@ export type ClearingSalesSoldPropertyCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const ClearingSalesSoldPropertyCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const ClearingSalesSoldPropertyCommercialListingType = S.String;
 
 export type ClearingSalesSoldPropertyAccount = AccessAccount;
 export const ClearingSalesSoldPropertyAccount = AccessAccount;
@@ -16722,7 +16654,7 @@ export type ClearingSalesSoldPropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const ClearingSalesSoldPropertyStatus = /*@__PURE__*/ S.String;
+export const ClearingSalesSoldPropertyStatus = S.String;
 
 export type ClearingSalesSoldPropertyPortalStatus =
   | "prospect"
@@ -16734,7 +16666,7 @@ export type ClearingSalesSoldPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const ClearingSalesSoldPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const ClearingSalesSoldPropertyPortalStatus = S.String;
 
 export type ClearingSalesSoldPropertyContactStaffList = Array<User>;
 export const ClearingSalesSoldPropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -16938,7 +16870,7 @@ export type GetCommercialDealLeaseResponseStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const GetCommercialDealLeaseResponseStatus = /*@__PURE__*/ S.String;
+export const GetCommercialDealLeaseResponseStatus = S.String;
 
 export interface GetCommercialDealLeaseResponse {
   id?: number;
@@ -17033,7 +16965,7 @@ export type GetCommercialDealSaleResponseStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const GetCommercialDealSaleResponseStatus = /*@__PURE__*/ S.String;
+export const GetCommercialDealSaleResponseStatus = S.String;
 
 export type GetCommercialDealSaleResponsePurchasersList = Array<ContactMinimal>;
 export const GetCommercialDealSaleResponsePurchasersList =
@@ -17087,7 +17019,7 @@ export type GetCommercialLeaseDealsRequestStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const GetCommercialLeaseDealsRequestStatus = /*@__PURE__*/ S.String;
+export const GetCommercialLeaseDealsRequestStatus = S.String;
 
 export interface GetCommercialLeaseDealsRequest {
   /** Filter commercial deals occurring on or after this date */
@@ -17134,7 +17066,7 @@ export type CommercialDealLeaseStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const CommercialDealLeaseStatus = /*@__PURE__*/ S.String;
+export const CommercialDealLeaseStatus = S.String;
 
 export interface CommercialDealLease {
   id?: number;
@@ -17223,8 +17155,7 @@ export type GetCommercialLeasedPropertiesRequestStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetCommercialLeasedPropertiesRequestStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetCommercialLeasedPropertiesRequestStatusItem = S.String;
 
 export type GetCommercialLeasedPropertiesRequestStatusList = Array<
   GetCommercialLeasedPropertiesRequestStatusItem | (string & {})
@@ -17238,8 +17169,7 @@ export type GetCommercialLeasedPropertiesRequestPortalStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetCommercialLeasedPropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetCommercialLeasedPropertiesRequestPortalStatusItem = S.String;
 
 export type GetCommercialLeasedPropertiesRequestPortalStatusList = Array<
   GetCommercialLeasedPropertiesRequestPortalStatusItem | (string & {})
@@ -17301,11 +17231,10 @@ export type GetCommercialLeasedPropertiesRequestSort =
   | "suburb"
   | "landArea"
   | "floorArea";
-export const GetCommercialLeasedPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetCommercialLeasedPropertiesRequestSort = S.String;
 
 export type GetCommercialLeasedPropertiesRequestSortOrder = "asc" | "desc";
-export const GetCommercialLeasedPropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetCommercialLeasedPropertiesRequestSortOrder = S.String;
 
 export interface GetCommercialLeasedPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -17437,7 +17366,7 @@ export type CommercialSoldPropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const CommercialSoldPropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const CommercialSoldPropertyAddressVisibility = S.String;
 
 export type CommercialSoldPropertyPhotosList = Array<PropertyPhoto>;
 export const CommercialSoldPropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -17448,8 +17377,7 @@ export type CommercialSoldPropertyCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const CommercialSoldPropertyCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const CommercialSoldPropertyCommercialListingType = S.String;
 
 export type CommercialSoldPropertyAccount = AccessAccount;
 export const CommercialSoldPropertyAccount = AccessAccount;
@@ -17464,7 +17392,7 @@ export type CommercialSoldPropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const CommercialSoldPropertyStatus = /*@__PURE__*/ S.String;
+export const CommercialSoldPropertyStatus = S.String;
 
 export type CommercialSoldPropertyPortalStatus =
   | "prospect"
@@ -17476,7 +17404,7 @@ export type CommercialSoldPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const CommercialSoldPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const CommercialSoldPropertyPortalStatus = S.String;
 
 export type CommercialSoldPropertyContactStaffList = Array<ID>;
 export const CommercialSoldPropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -17744,8 +17672,7 @@ export type GetCommercialLeasePropertiesRequestStatusItem =
   | "listingOrConditional"
   | "unconditional"
   | "management";
-export const GetCommercialLeasePropertiesRequestStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetCommercialLeasePropertiesRequestStatusItem = S.String;
 
 export type GetCommercialLeasePropertiesRequestStatusList = Array<
   GetCommercialLeasePropertiesRequestStatusItem | (string & {})
@@ -17763,8 +17690,7 @@ export type GetCommercialLeasePropertiesRequestPortalStatusItem =
   | "listingOrConditional"
   | "unconditional"
   | "management";
-export const GetCommercialLeasePropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetCommercialLeasePropertiesRequestPortalStatusItem = S.String;
 
 export type GetCommercialLeasePropertiesRequestPortalStatusList = Array<
   GetCommercialLeasePropertiesRequestPortalStatusItem | (string & {})
@@ -17824,11 +17750,10 @@ export type GetCommercialLeasePropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetCommercialLeasePropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetCommercialLeasePropertiesRequestSort = S.String;
 
 export type GetCommercialLeasePropertiesRequestSortOrder = "asc" | "desc";
-export const GetCommercialLeasePropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetCommercialLeasePropertiesRequestSortOrder = S.String;
 
 export interface GetCommercialLeasePropertiesRequest {
   /** Filter results modified since this datetime */
@@ -17985,8 +17910,7 @@ export type GetCommercialLeasePropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetCommercialLeasePropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const GetCommercialLeasePropertyResponseAddressVisibility = S.String;
 
 export type GetCommercialLeasePropertyResponsePhotosList = Array<PropertyPhoto>;
 export const GetCommercialLeasePropertyResponsePhotosList =
@@ -17998,8 +17922,7 @@ export type GetCommercialLeasePropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const GetCommercialLeasePropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const GetCommercialLeasePropertyResponseCommercialListingType = S.String;
 
 export type GetCommercialLeasePropertyResponseAccount = AccessAccount;
 export const GetCommercialLeasePropertyResponseAccount = AccessAccount;
@@ -18014,7 +17937,7 @@ export type GetCommercialLeasePropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetCommercialLeasePropertyResponseStatus = /*@__PURE__*/ S.String;
+export const GetCommercialLeasePropertyResponseStatus = S.String;
 
 export type GetCommercialLeasePropertyResponsePortalStatus =
   | "prospect"
@@ -18026,8 +17949,7 @@ export type GetCommercialLeasePropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetCommercialLeasePropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetCommercialLeasePropertyResponsePortalStatus = S.String;
 
 export type GetCommercialLeasePropertyResponseContactStaffList = Array<ID>;
 export const GetCommercialLeasePropertyResponseContactStaffList =
@@ -18226,7 +18148,7 @@ export type GetCommercialSaleDealsRequestStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const GetCommercialSaleDealsRequestStatus = /*@__PURE__*/ S.String;
+export const GetCommercialSaleDealsRequestStatus = S.String;
 
 export interface GetCommercialSaleDealsRequest {
   /** Filter commercial deals occurring on or after this date */
@@ -18273,7 +18195,7 @@ export type CommercialDealSaleStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const CommercialDealSaleStatus = /*@__PURE__*/ S.String;
+export const CommercialDealSaleStatus = S.String;
 
 export type CommercialDealSalePurchasersList = Array<ContactMinimal>;
 export const CommercialDealSalePurchasersList = /*@__PURE__*/ S.Array(
@@ -18353,8 +18275,7 @@ export type GetCommercialSalePropertiesRequestStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetCommercialSalePropertiesRequestStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetCommercialSalePropertiesRequestStatusItem = S.String;
 
 export type GetCommercialSalePropertiesRequestStatusList = Array<
   GetCommercialSalePropertiesRequestStatusItem | (string & {})
@@ -18371,8 +18292,7 @@ export type GetCommercialSalePropertiesRequestPortalStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetCommercialSalePropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetCommercialSalePropertiesRequestPortalStatusItem = S.String;
 
 export type GetCommercialSalePropertiesRequestPortalStatusList = Array<
   GetCommercialSalePropertiesRequestPortalStatusItem | (string & {})
@@ -18431,11 +18351,10 @@ export type GetCommercialSalePropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetCommercialSalePropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetCommercialSalePropertiesRequestSort = S.String;
 
 export type GetCommercialSalePropertiesRequestSortOrder = "asc" | "desc";
-export const GetCommercialSalePropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetCommercialSalePropertiesRequestSortOrder = S.String;
 
 export interface GetCommercialSalePropertiesRequest {
   /** Filter results modified since this datetime */
@@ -18588,8 +18507,7 @@ export type GetCommercialSalePropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetCommercialSalePropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const GetCommercialSalePropertyResponseAddressVisibility = S.String;
 
 export type GetCommercialSalePropertyResponsePhotosList = Array<PropertyPhoto>;
 export const GetCommercialSalePropertyResponsePhotosList =
@@ -18601,8 +18519,7 @@ export type GetCommercialSalePropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const GetCommercialSalePropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const GetCommercialSalePropertyResponseCommercialListingType = S.String;
 
 export type GetCommercialSalePropertyResponseAccount = AccessAccount;
 export const GetCommercialSalePropertyResponseAccount = AccessAccount;
@@ -18617,7 +18534,7 @@ export type GetCommercialSalePropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetCommercialSalePropertyResponseStatus = /*@__PURE__*/ S.String;
+export const GetCommercialSalePropertyResponseStatus = S.String;
 
 export type GetCommercialSalePropertyResponsePortalStatus =
   | "prospect"
@@ -18629,8 +18546,7 @@ export type GetCommercialSalePropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetCommercialSalePropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetCommercialSalePropertyResponsePortalStatus = S.String;
 
 export type GetCommercialSalePropertyResponseContactStaffList = Array<ID>;
 export const GetCommercialSalePropertyResponseContactStaffList =
@@ -18861,8 +18777,7 @@ export type GetCommercialSoldPropertiesRequestStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetCommercialSoldPropertiesRequestStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetCommercialSoldPropertiesRequestStatusItem = S.String;
 
 export type GetCommercialSoldPropertiesRequestStatusList = Array<
   GetCommercialSoldPropertiesRequestStatusItem | (string & {})
@@ -18876,8 +18791,7 @@ export type GetCommercialSoldPropertiesRequestPortalStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetCommercialSoldPropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetCommercialSoldPropertiesRequestPortalStatusItem = S.String;
 
 export type GetCommercialSoldPropertiesRequestPortalStatusList = Array<
   GetCommercialSoldPropertiesRequestPortalStatusItem | (string & {})
@@ -18914,11 +18828,10 @@ export type GetCommercialSoldPropertiesRequestSort =
   | "suburb"
   | "landArea"
   | "floorArea";
-export const GetCommercialSoldPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetCommercialSoldPropertiesRequestSort = S.String;
 
 export type GetCommercialSoldPropertiesRequestSortOrder = "asc" | "desc";
-export const GetCommercialSoldPropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetCommercialSoldPropertiesRequestSortOrder = S.String;
 
 export interface GetCommercialSoldPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -19096,8 +19009,7 @@ export type GetCommericalPropertyAndLifeResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetCommericalPropertyAndLifeResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const GetCommericalPropertyAndLifeResponseAddressVisibility = S.String;
 
 export type GetCommericalPropertyAndLifeResponsePhotosList =
   Array<PropertyPhoto>;
@@ -19111,7 +19023,7 @@ export type GetCommericalPropertyAndLifeResponseCommercialListingType =
   | "lease"
   | "both";
 export const GetCommericalPropertyAndLifeResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type GetCommericalPropertyAndLifeResponseAccount = AccessAccount;
 export const GetCommericalPropertyAndLifeResponseAccount = AccessAccount;
@@ -19126,8 +19038,7 @@ export type GetCommericalPropertyAndLifeResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetCommericalPropertyAndLifeResponseStatus =
-  /*@__PURE__*/ S.String;
+export const GetCommericalPropertyAndLifeResponseStatus = S.String;
 
 export type GetCommericalPropertyAndLifeResponsePortalStatus =
   | "prospect"
@@ -19139,8 +19050,7 @@ export type GetCommericalPropertyAndLifeResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetCommericalPropertyAndLifeResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetCommericalPropertyAndLifeResponsePortalStatus = S.String;
 
 export type GetCommericalPropertyAndLifeResponseContactStaffList = Array<ID>;
 export const GetCommericalPropertyAndLifeResponseContactStaffList =
@@ -19586,10 +19496,10 @@ export const GetContactActivityLogResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactActivityLogResponse>;
 
 export type GetContactCategoriesRequestSort = "name";
-export const GetContactCategoriesRequestSort = /*@__PURE__*/ S.String;
+export const GetContactCategoriesRequestSort = S.String;
 
 export type GetContactCategoriesRequestSortOrder = "asc" | "desc";
-export const GetContactCategoriesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetContactCategoriesRequestSortOrder = S.String;
 
 export interface GetContactCategoriesRequest {
   /** Page number of results */
@@ -19753,10 +19663,10 @@ export const GetContactCategoryGroupCategoryRequest = /*@__PURE__*/ S.suspend(
 }) as any as S.Schema<GetContactCategoryGroupCategoryRequest>;
 
 export type GetContactCategoryGroupsRequestSort = "name";
-export const GetContactCategoryGroupsRequestSort = /*@__PURE__*/ S.String;
+export const GetContactCategoryGroupsRequestSort = S.String;
 
 export type GetContactCategoryGroupsRequestSortOrder = "asc" | "desc";
-export const GetContactCategoryGroupsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetContactCategoryGroupsRequestSortOrder = S.String;
 
 export interface GetContactCategoryGroupsRequest {
   /** Page number of results */
@@ -19833,7 +19743,7 @@ export type LinkedPropertyRelationship =
   | "landlord"
   | "tenant"
   | "purchaser";
-export const LinkedPropertyRelationship = /*@__PURE__*/ S.String;
+export const LinkedPropertyRelationship = S.String;
 
 export type LinkedPropertyStatus =
   | "prospect"
@@ -19845,7 +19755,7 @@ export type LinkedPropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const LinkedPropertyStatus = /*@__PURE__*/ S.String;
+export const LinkedPropertyStatus = S.String;
 
 export type LinkedPropertyPortalStatus =
   | "prospect"
@@ -19857,7 +19767,7 @@ export type LinkedPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const LinkedPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const LinkedPropertyPortalStatus = S.String;
 
 export interface LinkedProperty {
   id?: number;
@@ -19943,7 +19853,7 @@ export type CustomFieldDataType =
   | "boolean"
   | "date"
   | "dayAndMonth";
-export const CustomFieldDataType = /*@__PURE__*/ S.String;
+export const CustomFieldDataType = S.String;
 
 export interface CustomField {
   dataType?: CustomFieldDataType;
@@ -20022,7 +19932,7 @@ export const GetContactDatesRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactDatesRequest>;
 
 export type ContactDateTypeFormat = "MM-DD" | "YYYY-MM-DD";
-export const ContactDateTypeFormat = /*@__PURE__*/ S.String;
+export const ContactDateTypeFormat = S.String;
 
 export interface ContactDateType {
   id?: number;
@@ -20096,10 +20006,10 @@ export const GetContactDatesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactDatesResponse>;
 
 export type GetContactDatesBulkRequestSort = "modified";
-export const GetContactDatesBulkRequestSort = /*@__PURE__*/ S.String;
+export const GetContactDatesBulkRequestSort = S.String;
 
 export type GetContactDatesBulkRequestSortOrder = "asc" | "desc";
-export const GetContactDatesBulkRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetContactDatesBulkRequestSortOrder = S.String;
 
 export interface GetContactDatesBulkRequest {
   /** Field by which to sort the results. */
@@ -20171,10 +20081,10 @@ export const GetContactDatesBulkResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactDatesBulkResponse>;
 
 export type GetContactDateTypesRequestSort = "name";
-export const GetContactDateTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetContactDateTypesRequestSort = S.String;
 
 export type GetContactDateTypesRequestSortOrder = "asc" | "desc";
-export const GetContactDateTypesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetContactDateTypesRequestSortOrder = S.String;
 
 export interface GetContactDateTypesRequest {
   /** Page number of results */
@@ -20256,11 +20166,10 @@ export type GetContactDistributionListsRequestSort =
   | "name"
   | "inserted"
   | "modified";
-export const GetContactDistributionListsRequestSort = /*@__PURE__*/ S.String;
+export const GetContactDistributionListsRequestSort = S.String;
 
 export type GetContactDistributionListsRequestSortOrder = "asc" | "desc";
-export const GetContactDistributionListsRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetContactDistributionListsRequestSortOrder = S.String;
 
 export type GetContactDistributionListsRequestUseridList = Array<number>;
 export const GetContactDistributionListsRequestUseridList =
@@ -20323,10 +20232,10 @@ export const GetContactDistributionListsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactDistributionListsResponse>;
 
 export type GetContactEntityTypesRequestSort = "name";
-export const GetContactEntityTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetContactEntityTypesRequestSort = S.String;
 
 export type GetContactEntityTypesRequestSortOrder = "asc" | "desc";
-export const GetContactEntityTypesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetContactEntityTypesRequestSortOrder = S.String;
 
 export interface GetContactEntityTypesRequest {
   /** Page number of results */
@@ -20374,10 +20283,10 @@ export const GetContactEntityTypesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactEntityTypesResponse>;
 
 export type GetContactEventsRequestSort = "start";
-export const GetContactEventsRequestSort = /*@__PURE__*/ S.String;
+export const GetContactEventsRequestSort = S.String;
 
 export type GetContactEventsRequestSortOrder = "asc" | "desc";
-export const GetContactEventsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetContactEventsRequestSortOrder = S.String;
 
 export interface GetContactEventsRequest {
   /** ID of the contact */
@@ -20447,10 +20356,10 @@ export const GetContactFileRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactFileRequest>;
 
 export type GetContactFilesRequestSort = "inserted";
-export const GetContactFilesRequestSort = /*@__PURE__*/ S.String;
+export const GetContactFilesRequestSort = S.String;
 
 export type GetContactFilesRequestSortOrder = "asc" | "desc";
-export const GetContactFilesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetContactFilesRequestSortOrder = S.String;
 
 export interface GetContactFilesRequest {
   /** ID of the contact */
@@ -20499,10 +20408,10 @@ export const GetContactFilesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactFilesResponse>;
 
 export type GetContactGdprOptinsRequestSort = "inserted" | "modified";
-export const GetContactGdprOptinsRequestSort = /*@__PURE__*/ S.String;
+export const GetContactGdprOptinsRequestSort = S.String;
 
 export type GetContactGdprOptinsRequestSortOrder = "asc" | "desc";
-export const GetContactGdprOptinsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetContactGdprOptinsRequestSortOrder = S.String;
 
 export interface GetContactGdprOptinsRequest {
   /** ID of the contact */
@@ -20596,10 +20505,10 @@ export const GetContactGdprOptinsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactGdprOptinsResponse>;
 
 export type GetContactInterestTypesRequestSort = "name";
-export const GetContactInterestTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetContactInterestTypesRequestSort = S.String;
 
 export type GetContactInterestTypesRequestSortOrder = "asc" | "desc";
-export const GetContactInterestTypesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetContactInterestTypesRequestSortOrder = S.String;
 
 export interface GetContactInterestTypesRequest {
   /** Page number of results */
@@ -20650,11 +20559,10 @@ export const GetContactInterestTypesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactInterestTypesResponse>;
 
 export type GetContactMarketingUsersBulkRequestSort = "modified";
-export const GetContactMarketingUsersBulkRequestSort = /*@__PURE__*/ S.String;
+export const GetContactMarketingUsersBulkRequestSort = S.String;
 
 export type GetContactMarketingUsersBulkRequestSortOrder = "asc" | "desc";
-export const GetContactMarketingUsersBulkRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetContactMarketingUsersBulkRequestSortOrder = S.String;
 
 export interface GetContactMarketingUsersBulkRequest {
   /** Field by which to sort the results. */
@@ -20831,10 +20739,10 @@ export const GetContactNotesRequestTypesList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<GetContactNotesRequestTypesList>;
 
 export type GetContactNotesRequestSort = "inserted";
-export const GetContactNotesRequestSort = /*@__PURE__*/ S.String;
+export const GetContactNotesRequestSort = S.String;
 
 export type GetContactNotesRequestSortOrder = "asc" | "desc";
-export const GetContactNotesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetContactNotesRequestSortOrder = S.String;
 
 export interface GetContactNotesRequest {
   /** ID of the contact */
@@ -20900,10 +20808,10 @@ export const GetContactNoteTypeRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactNoteTypeRequest>;
 
 export type GetContactNoteTypesRequestSort = "name";
-export const GetContactNoteTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetContactNoteTypesRequestSort = S.String;
 
 export type GetContactNoteTypesRequestSortOrder = "asc" | "desc";
-export const GetContactNoteTypesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetContactNoteTypesRequestSortOrder = S.String;
 
 export interface GetContactNoteTypesRequest {
   /** Page number of results */
@@ -20970,10 +20878,10 @@ export const GetContactRequirementRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactRequirementRequest>;
 
 export type GetContactRequirementsRequestSort = "inserted" | "modified";
-export const GetContactRequirementsRequestSort = /*@__PURE__*/ S.String;
+export const GetContactRequirementsRequestSort = S.String;
 
 export type GetContactRequirementsRequestSortOrder = "asc" | "desc";
-export const GetContactRequirementsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetContactRequirementsRequestSortOrder = S.String;
 
 export interface GetContactRequirementsRequest {
   /** ID of the contact */
@@ -21029,11 +20937,10 @@ export const GetContactRequirementsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactRequirementsResponse>;
 
 export type GetContactRequirementsBulkRequestSort = "inserted" | "modified";
-export const GetContactRequirementsBulkRequestSort = /*@__PURE__*/ S.String;
+export const GetContactRequirementsBulkRequestSort = S.String;
 
 export type GetContactRequirementsBulkRequestSortOrder = "asc" | "desc";
-export const GetContactRequirementsBulkRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetContactRequirementsBulkRequestSortOrder = S.String;
 
 export interface GetContactRequirementsBulkRequest {
   /** Page number of results */
@@ -21120,10 +21027,10 @@ export type GetContactsRequestSort =
   | "inserted"
   | "modified"
   | "touched";
-export const GetContactsRequestSort = /*@__PURE__*/ S.String;
+export const GetContactsRequestSort = S.String;
 
 export type GetContactsRequestSortOrder = "asc" | "desc";
-export const GetContactsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetContactsRequestSortOrder = S.String;
 
 export type GetContactsRequestMarketingUserList = Array<number>;
 export const GetContactsRequestMarketingUserList = /*@__PURE__*/ S.Array(
@@ -21208,11 +21115,10 @@ export const GetContactsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactsResponse>;
 
 export type GetContactSourceOfEnquiryBulkRequestSort = "modified";
-export const GetContactSourceOfEnquiryBulkRequestSort = /*@__PURE__*/ S.String;
+export const GetContactSourceOfEnquiryBulkRequestSort = S.String;
 
 export type GetContactSourceOfEnquiryBulkRequestSortOrder = "asc" | "desc";
-export const GetContactSourceOfEnquiryBulkRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetContactSourceOfEnquiryBulkRequestSortOrder = S.String;
 
 export interface GetContactSourceOfEnquiryBulkRequest {
   /** Field by which to sort the results. */
@@ -21653,10 +21559,10 @@ export const GetCurrentTenantsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetCurrentTenantsResponse>;
 
 export type GetCustomRegionsRequestSort = "name";
-export const GetCustomRegionsRequestSort = /*@__PURE__*/ S.String;
+export const GetCustomRegionsRequestSort = S.String;
 
 export type GetCustomRegionsRequestSortOrder = "asc" | "desc";
-export const GetCustomRegionsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetCustomRegionsRequestSortOrder = S.String;
 
 export interface GetCustomRegionsRequest {
   /** Page number of results */
@@ -21705,10 +21611,10 @@ export const GetCustomRegionsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetCustomRegionsResponse>;
 
 export type GetCustomUnsubscribeTypesRequestSort = "name";
-export const GetCustomUnsubscribeTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetCustomUnsubscribeTypesRequestSort = S.String;
 
 export type GetCustomUnsubscribeTypesRequestSortOrder = "asc" | "desc";
-export const GetCustomUnsubscribeTypesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetCustomUnsubscribeTypesRequestSortOrder = S.String;
 
 export interface GetCustomUnsubscribeTypesRequest {
   /** Page number of results */
@@ -21842,10 +21748,10 @@ export const GetEmailTemplatesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetEmailTemplatesResponse>;
 
 export type GetEnquiriesRequestSort = "enquiryDate";
-export const GetEnquiriesRequestSort = /*@__PURE__*/ S.String;
+export const GetEnquiriesRequestSort = S.String;
 
 export type GetEnquiriesRequestSortOrder = "asc" | "desc";
-export const GetEnquiriesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetEnquiriesRequestSortOrder = S.String;
 
 export interface GetEnquiriesRequest {
   /** Filter enquiries occuring on or after this datetime */
@@ -21987,10 +21893,10 @@ export const GetEventStreamResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetEventStreamResponse>;
 
 export type GetExternalLinkTypesRequestSort = "name";
-export const GetExternalLinkTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetExternalLinkTypesRequestSort = S.String;
 
 export type GetExternalLinkTypesRequestSortOrder = "asc" | "desc";
-export const GetExternalLinkTypesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetExternalLinkTypesRequestSortOrder = S.String;
 
 export interface GetExternalLinkTypesRequest {
   /** Page number of results */
@@ -22072,7 +21978,7 @@ export type PropertyLifeAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const PropertyLifeAddressVisibility = /*@__PURE__*/ S.String;
+export const PropertyLifeAddressVisibility = S.String;
 
 export type PropertyLifePhotosList = Array<PropertyPhoto>;
 export const PropertyLifePhotosList = /*@__PURE__*/ S.Array(
@@ -22080,7 +21986,7 @@ export const PropertyLifePhotosList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<PropertyLifePhotosList>;
 
 export type PropertyLifeCommercialListingType = "sale" | "lease" | "both";
-export const PropertyLifeCommercialListingType = /*@__PURE__*/ S.String;
+export const PropertyLifeCommercialListingType = S.String;
 
 export type PropertyLifeAccount = AccessAccount;
 export const PropertyLifeAccount = AccessAccount;
@@ -22095,7 +22001,7 @@ export type PropertyLifeStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const PropertyLifeStatus = /*@__PURE__*/ S.String;
+export const PropertyLifeStatus = S.String;
 
 export type PropertyLifePortalStatus =
   | "prospect"
@@ -22107,7 +22013,7 @@ export type PropertyLifePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const PropertyLifePortalStatus = /*@__PURE__*/ S.String;
+export const PropertyLifePortalStatus = S.String;
 
 export type PropertyLifeContactStaffList = Array<User>;
 export const PropertyLifeContactStaffList = /*@__PURE__*/ S.Array(
@@ -22316,10 +22222,10 @@ export const GetFMSLeadsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetFMSLeadsResponse>;
 
 export type GetHoldingAreaTypesRequestSort = "source";
-export const GetHoldingAreaTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetHoldingAreaTypesRequestSort = S.String;
 
 export type GetHoldingAreaTypesRequestSortOrder = "asc" | "desc";
-export const GetHoldingAreaTypesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetHoldingAreaTypesRequestSortOrder = S.String;
 
 export interface GetHoldingAreaTypesRequest {
   /** Page number of results */
@@ -22390,8 +22296,7 @@ export type GetHolidayRentalPropertiesRequestStatusItem =
   | "prospect"
   | "appraisal"
   | "management";
-export const GetHolidayRentalPropertiesRequestStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetHolidayRentalPropertiesRequestStatusItem = S.String;
 
 export type GetHolidayRentalPropertiesRequestStatusList = Array<
   GetHolidayRentalPropertiesRequestStatusItem | (string & {})
@@ -22405,8 +22310,7 @@ export type GetHolidayRentalPropertiesRequestPortalStatusItem =
   | "prospect"
   | "appraisal"
   | "management";
-export const GetHolidayRentalPropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetHolidayRentalPropertiesRequestPortalStatusItem = S.String;
 
 export type GetHolidayRentalPropertiesRequestPortalStatusList = Array<
   GetHolidayRentalPropertiesRequestPortalStatusItem | (string & {})
@@ -22464,11 +22368,10 @@ export type GetHolidayRentalPropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetHolidayRentalPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetHolidayRentalPropertiesRequestSort = S.String;
 
 export type GetHolidayRentalPropertiesRequestSortOrder = "asc" | "desc";
-export const GetHolidayRentalPropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetHolidayRentalPropertiesRequestSortOrder = S.String;
 
 export interface GetHolidayRentalPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -22628,8 +22531,7 @@ export type GetHolidayRentalPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetHolidayRentalPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const GetHolidayRentalPropertyResponseAddressVisibility = S.String;
 
 export type GetHolidayRentalPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const GetHolidayRentalPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -22640,8 +22542,7 @@ export type GetHolidayRentalPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const GetHolidayRentalPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const GetHolidayRentalPropertyResponseCommercialListingType = S.String;
 
 export type GetHolidayRentalPropertyResponseAccount = AccessAccount;
 export const GetHolidayRentalPropertyResponseAccount = AccessAccount;
@@ -22656,7 +22557,7 @@ export type GetHolidayRentalPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetHolidayRentalPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const GetHolidayRentalPropertyResponseStatus = S.String;
 
 export type GetHolidayRentalPropertyResponsePortalStatus =
   | "prospect"
@@ -22668,8 +22569,7 @@ export type GetHolidayRentalPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetHolidayRentalPropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetHolidayRentalPropertyResponsePortalStatus = S.String;
 
 export type GetHolidayRentalPropertyResponseContactStaffList = Array<User>;
 export const GetHolidayRentalPropertyResponseContactStaffList =
@@ -22915,7 +22815,7 @@ export type GetHolidayRentalPropertyAndLifeResponseAddressVisibility =
   | "suburb"
   | "fullAddress";
 export const GetHolidayRentalPropertyAndLifeResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type GetHolidayRentalPropertyAndLifeResponsePhotosList =
   Array<PropertyPhoto>;
@@ -22929,7 +22829,7 @@ export type GetHolidayRentalPropertyAndLifeResponseCommercialListingType =
   | "lease"
   | "both";
 export const GetHolidayRentalPropertyAndLifeResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type GetHolidayRentalPropertyAndLifeResponseAccount = AccessAccount;
 export const GetHolidayRentalPropertyAndLifeResponseAccount = AccessAccount;
@@ -22944,8 +22844,7 @@ export type GetHolidayRentalPropertyAndLifeResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetHolidayRentalPropertyAndLifeResponseStatus =
-  /*@__PURE__*/ S.String;
+export const GetHolidayRentalPropertyAndLifeResponseStatus = S.String;
 
 export type GetHolidayRentalPropertyAndLifeResponsePortalStatus =
   | "prospect"
@@ -22957,8 +22856,7 @@ export type GetHolidayRentalPropertyAndLifeResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetHolidayRentalPropertyAndLifeResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetHolidayRentalPropertyAndLifeResponsePortalStatus = S.String;
 
 export type GetHolidayRentalPropertyAndLifeResponseContactStaffList =
   Array<User>;
@@ -23222,10 +23120,10 @@ export const GetInspectionRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetInspectionRequest>;
 
 export type GetInspectionsRequestSort = "inserted";
-export const GetInspectionsRequestSort = /*@__PURE__*/ S.String;
+export const GetInspectionsRequestSort = S.String;
 
 export type GetInspectionsRequestSortOrder = "asc" | "desc";
-export const GetInspectionsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetInspectionsRequestSortOrder = S.String;
 
 export interface GetInspectionsRequest {
   /** ID of the property */
@@ -23303,10 +23201,10 @@ export const GetIntegratorAccountRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetIntegratorAccountRequest>;
 
 export type GetIntegratorAccountsRequestSort = "name";
-export const GetIntegratorAccountsRequestSort = /*@__PURE__*/ S.String;
+export const GetIntegratorAccountsRequestSort = S.String;
 
 export type GetIntegratorAccountsRequestSortOrder = "asc" | "desc";
-export const GetIntegratorAccountsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetIntegratorAccountsRequestSortOrder = S.String;
 
 export interface GetIntegratorAccountsRequest {
   /** Page number of results */
@@ -23375,10 +23273,10 @@ export const GetIntegratorAccountUserRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetIntegratorAccountUserRequest>;
 
 export type GetIntegratorAccountUsersRequestSort = "firstName" | "lastName";
-export const GetIntegratorAccountUsersRequestSort = /*@__PURE__*/ S.String;
+export const GetIntegratorAccountUsersRequestSort = S.String;
 
 export type GetIntegratorAccountUsersRequestSortOrder = "asc" | "desc";
-export const GetIntegratorAccountUsersRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetIntegratorAccountUsersRequestSortOrder = S.String;
 
 export interface GetIntegratorAccountUsersRequest {
   /** ID of the account */
@@ -23441,8 +23339,7 @@ export type GetIntegratorMergeFieldsRequestDeliveryMethod =
   | "email"
   | "sms"
   | "cloud_letter";
-export const GetIntegratorMergeFieldsRequestDeliveryMethod =
-  /*@__PURE__*/ S.String;
+export const GetIntegratorMergeFieldsRequestDeliveryMethod = S.String;
 
 export interface GetIntegratorMergeFieldsRequest {
   /** ID of the account to fetch merge fields for. Must be enabled for this integrator. */
@@ -23478,7 +23375,7 @@ export const GetIntegratorMergeFieldsRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetIntegratorMergeFieldsRequest>;
 
 export type MergeFieldsTieredResponseMetaResponseType = "tiered";
-export const MergeFieldsTieredResponseMetaResponseType = /*@__PURE__*/ S.String;
+export const MergeFieldsTieredResponseMetaResponseType = S.String;
 
 export interface MergeFieldsTieredResponseMeta {
   /** The template type used to filter the fields */
@@ -23504,7 +23401,7 @@ export const MergeFieldsTieredResponseMeta = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<MergeFieldsTieredResponseMeta>;
 
 export type MergeFieldEnginesItem = "email" | "sms" | "cloud_letter";
-export const MergeFieldEnginesItem = /*@__PURE__*/ S.String;
+export const MergeFieldEnginesItem = S.String;
 
 /** Delivery engines that support this field */
 export type MergeFieldEnginesList = Array<MergeFieldEnginesItem>;
@@ -23611,7 +23508,7 @@ export const MergeFieldsTieredResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<MergeFieldsTieredResponse>;
 
 export type MergeFieldsFlatResponseMetaResponseType = "flat";
-export const MergeFieldsFlatResponseMetaResponseType = /*@__PURE__*/ S.String;
+export const MergeFieldsFlatResponseMetaResponseType = S.String;
 
 export interface MergeFieldsFlatResponseMeta {
   /** The context used to filter the fields */
@@ -23764,7 +23661,7 @@ export type GetLandPropertiesRequestStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetLandPropertiesRequestStatusItem = /*@__PURE__*/ S.String;
+export const GetLandPropertiesRequestStatusItem = S.String;
 
 export type GetLandPropertiesRequestStatusList = Array<
   GetLandPropertiesRequestStatusItem | (string & {})
@@ -23780,7 +23677,7 @@ export type GetLandPropertiesRequestPortalStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetLandPropertiesRequestPortalStatusItem = /*@__PURE__*/ S.String;
+export const GetLandPropertiesRequestPortalStatusItem = S.String;
 
 export type GetLandPropertiesRequestPortalStatusList = Array<
   GetLandPropertiesRequestPortalStatusItem | (string & {})
@@ -23830,10 +23727,10 @@ export type GetLandPropertiesRequestSort =
   | "suburb"
   | "searchPrice"
   | "landArea";
-export const GetLandPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetLandPropertiesRequestSort = S.String;
 
 export type GetLandPropertiesRequestSortOrder = "asc" | "desc";
-export const GetLandPropertiesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetLandPropertiesRequestSortOrder = S.String;
 
 export interface GetLandPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -23972,7 +23869,7 @@ export type GetLandPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetLandPropertyResponseAddressVisibility = /*@__PURE__*/ S.String;
+export const GetLandPropertyResponseAddressVisibility = S.String;
 
 export type GetLandPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const GetLandPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -23983,8 +23880,7 @@ export type GetLandPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const GetLandPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const GetLandPropertyResponseCommercialListingType = S.String;
 
 export type GetLandPropertyResponseAccount = AccessAccount;
 export const GetLandPropertyResponseAccount = AccessAccount;
@@ -23999,7 +23895,7 @@ export type GetLandPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetLandPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const GetLandPropertyResponseStatus = S.String;
 
 export type GetLandPropertyResponsePortalStatus =
   | "prospect"
@@ -24011,7 +23907,7 @@ export type GetLandPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetLandPropertyResponsePortalStatus = /*@__PURE__*/ S.String;
+export const GetLandPropertyResponsePortalStatus = S.String;
 
 export type GetLandPropertyResponseContactStaffList = Array<ID>;
 export const GetLandPropertyResponseContactStaffList = /*@__PURE__*/ S.Array(
@@ -24197,8 +24093,7 @@ export type GetLandPropertyAndLifeResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetLandPropertyAndLifeResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const GetLandPropertyAndLifeResponseAddressVisibility = S.String;
 
 export type GetLandPropertyAndLifeResponsePhotosList = Array<PropertyPhoto>;
 export const GetLandPropertyAndLifeResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -24209,8 +24104,7 @@ export type GetLandPropertyAndLifeResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const GetLandPropertyAndLifeResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const GetLandPropertyAndLifeResponseCommercialListingType = S.String;
 
 export type GetLandPropertyAndLifeResponseAccount = AccessAccount;
 export const GetLandPropertyAndLifeResponseAccount = AccessAccount;
@@ -24225,7 +24119,7 @@ export type GetLandPropertyAndLifeResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetLandPropertyAndLifeResponseStatus = /*@__PURE__*/ S.String;
+export const GetLandPropertyAndLifeResponseStatus = S.String;
 
 export type GetLandPropertyAndLifeResponsePortalStatus =
   | "prospect"
@@ -24237,8 +24131,7 @@ export type GetLandPropertyAndLifeResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetLandPropertyAndLifeResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetLandPropertyAndLifeResponsePortalStatus = S.String;
 
 export type GetLandPropertyAndLifeResponseContactStaffList = Array<ID>;
 export const GetLandPropertyAndLifeResponseContactStaffList =
@@ -24438,7 +24331,7 @@ export type GetLandSoldPropertiesRequestStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetLandSoldPropertiesRequestStatusItem = /*@__PURE__*/ S.String;
+export const GetLandSoldPropertiesRequestStatusItem = S.String;
 
 export type GetLandSoldPropertiesRequestStatusList = Array<
   GetLandSoldPropertiesRequestStatusItem | (string & {})
@@ -24451,8 +24344,7 @@ export type GetLandSoldPropertiesRequestPortalStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetLandSoldPropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetLandSoldPropertiesRequestPortalStatusItem = S.String;
 
 export type GetLandSoldPropertiesRequestPortalStatusList = Array<
   GetLandSoldPropertiesRequestPortalStatusItem | (string & {})
@@ -24486,10 +24378,10 @@ export type GetLandSoldPropertiesRequestSort =
   | "settlement"
   | "suburb"
   | "landArea";
-export const GetLandSoldPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetLandSoldPropertiesRequestSort = S.String;
 
 export type GetLandSoldPropertiesRequestSortOrder = "asc" | "desc";
-export const GetLandSoldPropertiesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetLandSoldPropertiesRequestSortOrder = S.String;
 
 export interface GetLandSoldPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -24608,7 +24500,7 @@ export type LandSoldPropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const LandSoldPropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const LandSoldPropertyAddressVisibility = S.String;
 
 export type LandSoldPropertyPhotosList = Array<PropertyPhoto>;
 export const LandSoldPropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -24616,7 +24508,7 @@ export const LandSoldPropertyPhotosList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<LandSoldPropertyPhotosList>;
 
 export type LandSoldPropertyCommercialListingType = "sale" | "lease" | "both";
-export const LandSoldPropertyCommercialListingType = /*@__PURE__*/ S.String;
+export const LandSoldPropertyCommercialListingType = S.String;
 
 export type LandSoldPropertyAccount = AccessAccount;
 export const LandSoldPropertyAccount = AccessAccount;
@@ -24631,7 +24523,7 @@ export type LandSoldPropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const LandSoldPropertyStatus = /*@__PURE__*/ S.String;
+export const LandSoldPropertyStatus = S.String;
 
 export type LandSoldPropertyPortalStatus =
   | "prospect"
@@ -24643,7 +24535,7 @@ export type LandSoldPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const LandSoldPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const LandSoldPropertyPortalStatus = S.String;
 
 export type LandSoldPropertyContactStaffList = Array<ID>;
 export const LandSoldPropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -24797,7 +24689,7 @@ export type GetLivestockPropertiesRequestStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetLivestockPropertiesRequestStatusItem = /*@__PURE__*/ S.String;
+export const GetLivestockPropertiesRequestStatusItem = S.String;
 
 export type GetLivestockPropertiesRequestStatusList = Array<
   GetLivestockPropertiesRequestStatusItem | (string & {})
@@ -24813,8 +24705,7 @@ export type GetLivestockPropertiesRequestPortalStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetLivestockPropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetLivestockPropertiesRequestPortalStatusItem = S.String;
 
 export type GetLivestockPropertiesRequestPortalStatusList = Array<
   GetLivestockPropertiesRequestPortalStatusItem | (string & {})
@@ -24866,10 +24757,10 @@ export type GetLivestockPropertiesRequestSort =
   | "modified"
   | "suburb"
   | "searchPrice";
-export const GetLivestockPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetLivestockPropertiesRequestSort = S.String;
 
 export type GetLivestockPropertiesRequestSortOrder = "asc" | "desc";
-export const GetLivestockPropertiesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetLivestockPropertiesRequestSortOrder = S.String;
 
 export interface GetLivestockPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -24976,7 +24867,7 @@ export type LivestockPropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const LivestockPropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const LivestockPropertyAddressVisibility = S.String;
 
 export type LivestockPropertyPhotosList = Array<PropertyPhoto>;
 export const LivestockPropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -24984,7 +24875,7 @@ export const LivestockPropertyPhotosList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<LivestockPropertyPhotosList>;
 
 export type LivestockPropertyCommercialListingType = "sale" | "lease" | "both";
-export const LivestockPropertyCommercialListingType = /*@__PURE__*/ S.String;
+export const LivestockPropertyCommercialListingType = S.String;
 
 export type LivestockPropertyAccount = AccessAccount;
 export const LivestockPropertyAccount = AccessAccount;
@@ -24999,7 +24890,7 @@ export type LivestockPropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const LivestockPropertyStatus = /*@__PURE__*/ S.String;
+export const LivestockPropertyStatus = S.String;
 
 export type LivestockPropertyPortalStatus =
   | "prospect"
@@ -25011,7 +24902,7 @@ export type LivestockPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const LivestockPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const LivestockPropertyPortalStatus = S.String;
 
 export type LivestockPropertyContactStaffList = Array<User>;
 export const LivestockPropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -25194,8 +25085,7 @@ export type GetLivestockPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetLivestockPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const GetLivestockPropertyResponseAddressVisibility = S.String;
 
 export type GetLivestockPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const GetLivestockPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -25206,8 +25096,7 @@ export type GetLivestockPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const GetLivestockPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const GetLivestockPropertyResponseCommercialListingType = S.String;
 
 export type GetLivestockPropertyResponseAccount = AccessAccount;
 export const GetLivestockPropertyResponseAccount = AccessAccount;
@@ -25222,7 +25111,7 @@ export type GetLivestockPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetLivestockPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const GetLivestockPropertyResponseStatus = S.String;
 
 export type GetLivestockPropertyResponsePortalStatus =
   | "prospect"
@@ -25234,7 +25123,7 @@ export type GetLivestockPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetLivestockPropertyResponsePortalStatus = /*@__PURE__*/ S.String;
+export const GetLivestockPropertyResponsePortalStatus = S.String;
 
 export type GetLivestockPropertyResponseContactStaffList = Array<User>;
 export const GetLivestockPropertyResponseContactStaffList =
@@ -25447,8 +25336,7 @@ export type GetLivestockPropertyAndLifeResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetLivestockPropertyAndLifeResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const GetLivestockPropertyAndLifeResponseAddressVisibility = S.String;
 
 export type GetLivestockPropertyAndLifeResponsePhotosList =
   Array<PropertyPhoto>;
@@ -25462,7 +25350,7 @@ export type GetLivestockPropertyAndLifeResponseCommercialListingType =
   | "lease"
   | "both";
 export const GetLivestockPropertyAndLifeResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type GetLivestockPropertyAndLifeResponseAccount = AccessAccount;
 export const GetLivestockPropertyAndLifeResponseAccount = AccessAccount;
@@ -25477,7 +25365,7 @@ export type GetLivestockPropertyAndLifeResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetLivestockPropertyAndLifeResponseStatus = /*@__PURE__*/ S.String;
+export const GetLivestockPropertyAndLifeResponseStatus = S.String;
 
 export type GetLivestockPropertyAndLifeResponsePortalStatus =
   | "prospect"
@@ -25489,8 +25377,7 @@ export type GetLivestockPropertyAndLifeResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetLivestockPropertyAndLifeResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetLivestockPropertyAndLifeResponsePortalStatus = S.String;
 
 export type GetLivestockPropertyAndLifeResponseContactStaffList = Array<User>;
 export const GetLivestockPropertyAndLifeResponseContactStaffList =
@@ -25725,8 +25612,7 @@ export type GetLivestockSoldPropertiesRequestStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetLivestockSoldPropertiesRequestStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetLivestockSoldPropertiesRequestStatusItem = S.String;
 
 export type GetLivestockSoldPropertiesRequestStatusList = Array<
   GetLivestockSoldPropertiesRequestStatusItem | (string & {})
@@ -25740,8 +25626,7 @@ export type GetLivestockSoldPropertiesRequestPortalStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetLivestockSoldPropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetLivestockSoldPropertiesRequestPortalStatusItem = S.String;
 
 export type GetLivestockSoldPropertiesRequestPortalStatusList = Array<
   GetLivestockSoldPropertiesRequestPortalStatusItem | (string & {})
@@ -25775,11 +25660,10 @@ export type GetLivestockSoldPropertiesRequestSort =
   | "unconditional"
   | "settlement"
   | "suburb";
-export const GetLivestockSoldPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetLivestockSoldPropertiesRequestSort = S.String;
 
 export type GetLivestockSoldPropertiesRequestSortOrder = "asc" | "desc";
-export const GetLivestockSoldPropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetLivestockSoldPropertiesRequestSortOrder = S.String;
 
 export interface GetLivestockSoldPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -25906,7 +25790,7 @@ export type LivestockSoldPropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const LivestockSoldPropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const LivestockSoldPropertyAddressVisibility = S.String;
 
 export type LivestockSoldPropertyPhotosList = Array<PropertyPhoto>;
 export const LivestockSoldPropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -25917,8 +25801,7 @@ export type LivestockSoldPropertyCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const LivestockSoldPropertyCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const LivestockSoldPropertyCommercialListingType = S.String;
 
 export type LivestockSoldPropertyAccount = AccessAccount;
 export const LivestockSoldPropertyAccount = AccessAccount;
@@ -25933,7 +25816,7 @@ export type LivestockSoldPropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const LivestockSoldPropertyStatus = /*@__PURE__*/ S.String;
+export const LivestockSoldPropertyStatus = S.String;
 
 export type LivestockSoldPropertyPortalStatus =
   | "prospect"
@@ -25945,7 +25828,7 @@ export type LivestockSoldPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const LivestockSoldPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const LivestockSoldPropertyPortalStatus = S.String;
 
 export type LivestockSoldPropertyContactStaffList = Array<User>;
 export const LivestockSoldPropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -26113,10 +25996,10 @@ export const GetLivestockSoldPropertiesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetLivestockSoldPropertiesResponse>;
 
 export type GetMaintenanceRequestSort = "inserted" | "modified";
-export const GetMaintenanceRequestSort = /*@__PURE__*/ S.String;
+export const GetMaintenanceRequestSort = S.String;
 
 export type GetMaintenanceRequestSortOrder = "asc" | "desc";
-export const GetMaintenanceRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetMaintenanceRequestSortOrder = S.String;
 
 export interface GetMaintenanceRequest {
   /** ID of the property */
@@ -26231,10 +26114,10 @@ export const GetMaintenanceJobPhotoRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetMaintenanceJobPhotoRequest>;
 
 export type GetMaintenanceNotesRequestSort = "inserted";
-export const GetMaintenanceNotesRequestSort = /*@__PURE__*/ S.String;
+export const GetMaintenanceNotesRequestSort = S.String;
 
 export type GetMaintenanceNotesRequestSortOrder = "asc" | "desc";
-export const GetMaintenanceNotesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetMaintenanceNotesRequestSortOrder = S.String;
 
 export interface GetMaintenanceNotesRequest {
   /** ID of the property */
@@ -26312,10 +26195,10 @@ export const GetMaintenanceNotesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetMaintenanceNotesResponse>;
 
 export type GetMaintenanceRequestsRequestSort = "inserted";
-export const GetMaintenanceRequestsRequestSort = /*@__PURE__*/ S.String;
+export const GetMaintenanceRequestsRequestSort = S.String;
 
 export type GetMaintenanceRequestsRequestSortOrder = "asc" | "desc";
-export const GetMaintenanceRequestsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetMaintenanceRequestsRequestSortOrder = S.String;
 
 export interface GetMaintenanceRequestsRequest {
   /** ID of the property */
@@ -26384,7 +26267,7 @@ export type GetMatchingContactsCountRequestType =
   | "sale"
   | "lease"
   | "saleAndLease";
-export const GetMatchingContactsCountRequestType = /*@__PURE__*/ S.String;
+export const GetMatchingContactsCountRequestType = S.String;
 
 export type GetMatchingContactsCountRequestPropertyClass =
   | "residential"
@@ -26393,8 +26276,7 @@ export type GetMatchingContactsCountRequestPropertyClass =
   | "rural"
   | "holidayRental"
   | "land";
-export const GetMatchingContactsCountRequestPropertyClass =
-  /*@__PURE__*/ S.String;
+export const GetMatchingContactsCountRequestPropertyClass = S.String;
 
 export type GetMatchingContactsCountRequestSuburbsList = Array<Suburb>;
 export const GetMatchingContactsCountRequestSuburbsList = /*@__PURE__*/ S.Array(
@@ -26447,7 +26329,7 @@ export type GetMergeFieldsRequestDeliveryMethod =
   | "email"
   | "sms"
   | "cloud_letter";
-export const GetMergeFieldsRequestDeliveryMethod = /*@__PURE__*/ S.String;
+export const GetMergeFieldsRequestDeliveryMethod = S.String;
 
 export interface GetMergeFieldsRequest {
   /** Template type ID (e.g. market_report, buyer_match, property_alert). */
@@ -26535,10 +26417,10 @@ export const GetMessagesThreadsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetMessagesThreadsResponse>;
 
 export type GetMethodOfSaleTypesRequestSort = "name";
-export const GetMethodOfSaleTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetMethodOfSaleTypesRequestSort = S.String;
 
 export type GetMethodOfSaleTypesRequestSortOrder = "asc" | "desc";
-export const GetMethodOfSaleTypesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetMethodOfSaleTypesRequestSortOrder = S.String;
 
 export interface GetMethodOfSaleTypesRequest {
   /** Page number of results */
@@ -26685,10 +26567,10 @@ export const GetOwnerSummaryTemplatesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetOwnerSummaryTemplatesResponse>;
 
 export type GetPortalStatsRequestSort = "modified" | "statDate";
-export const GetPortalStatsRequestSort = /*@__PURE__*/ S.String;
+export const GetPortalStatsRequestSort = S.String;
 
 export type GetPortalStatsRequestSortOrder = "asc" | "desc";
-export const GetPortalStatsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPortalStatsRequestSortOrder = S.String;
 
 export interface GetPortalStatsRequest {
   /** Filter metrics occuring on or after this date */
@@ -26795,10 +26677,10 @@ export const GetPrecinctRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPrecinctRequest>;
 
 export type GetPriceQualifierTypesRequestSort = "name";
-export const GetPriceQualifierTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetPriceQualifierTypesRequestSort = S.String;
 
 export type GetPriceQualifierTypesRequestSortOrder = "asc" | "desc";
-export const GetPriceQualifierTypesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPriceQualifierTypesRequestSortOrder = S.String;
 
 export interface GetPriceQualifierTypesRequest {
   /** Page number of results */
@@ -26866,10 +26748,10 @@ export const GetPropertiesRequestCustomRegionsList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<GetPropertiesRequestCustomRegionsList>;
 
 export type GetPropertiesRequestSort = "inserted" | "modified" | "suburb";
-export const GetPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertiesRequestSort = S.String;
 
 export type GetPropertiesRequestSortOrder = "asc" | "desc";
-export const GetPropertiesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertiesRequestSortOrder = S.String;
 
 export interface GetPropertiesRequest {
   /** Filter properties in these suburb IDs */
@@ -26916,7 +26798,7 @@ export type PropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const PropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const PropertyAddressVisibility = S.String;
 
 export type PropertyPhotosList = Array<PropertyPhoto>;
 export const PropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -26924,7 +26806,7 @@ export const PropertyPhotosList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<PropertyPhotosList>;
 
 export type PropertyCommercialListingType = "sale" | "lease" | "both";
-export const PropertyCommercialListingType = /*@__PURE__*/ S.String;
+export const PropertyCommercialListingType = S.String;
 
 export type PropertyAccount = AccessAccount;
 export const PropertyAccount = AccessAccount;
@@ -27089,10 +26971,10 @@ export type GetPropertiesLifeLeaseRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetPropertiesLifeLeaseRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertiesLifeLeaseRequestSort = S.String;
 
 export type GetPropertiesLifeLeaseRequestSortOrder = "asc" | "desc";
-export const GetPropertiesLifeLeaseRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertiesLifeLeaseRequestSortOrder = S.String;
 
 export type GetPropertiesLifeLeaseRequestSuburbsList = Array<number>;
 export const GetPropertiesLifeLeaseRequestSuburbsList = /*@__PURE__*/ S.Array(
@@ -27139,7 +27021,7 @@ export type GetPropertiesLifeLeaseRequestStatusItem =
   | "listingOrConditional"
   | "unconditional"
   | "management";
-export const GetPropertiesLifeLeaseRequestStatusItem = /*@__PURE__*/ S.String;
+export const GetPropertiesLifeLeaseRequestStatusItem = S.String;
 
 export type GetPropertiesLifeLeaseRequestStatusList = Array<
   GetPropertiesLifeLeaseRequestStatusItem | (string & {})
@@ -27156,8 +27038,7 @@ export type GetPropertiesLifeLeaseRequestPortalStatusItem =
   | "listingOrConditional"
   | "unconditional"
   | "management";
-export const GetPropertiesLifeLeaseRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetPropertiesLifeLeaseRequestPortalStatusItem = S.String;
 
 export type GetPropertiesLifeLeaseRequestPortalStatusList = Array<
   GetPropertiesLifeLeaseRequestPortalStatusItem | (string & {})
@@ -27174,8 +27055,7 @@ export type GetPropertiesLifeLeaseRequestPropertyClassItem =
   | "rural"
   | "holidayRental"
   | "land";
-export const GetPropertiesLifeLeaseRequestPropertyClassItem =
-  /*@__PURE__*/ S.String;
+export const GetPropertiesLifeLeaseRequestPropertyClassItem = S.String;
 
 export type GetPropertiesLifeLeaseRequestPropertyClassList = Array<
   GetPropertiesLifeLeaseRequestPropertyClassItem | (string & {})
@@ -27186,7 +27066,7 @@ export const GetPropertiesLifeLeaseRequestPropertyClassList =
   ) as any as S.Schema<GetPropertiesLifeLeaseRequestPropertyClassList>;
 
 export type GetPropertiesLifeLeaseRequestAreaType = "sqm" | "acre" | "hectare";
-export const GetPropertiesLifeLeaseRequestAreaType = /*@__PURE__*/ S.String;
+export const GetPropertiesLifeLeaseRequestAreaType = S.String;
 
 export interface GetPropertiesLifeLeaseRequest {
   /** Filter results modified since this datetime */
@@ -27358,10 +27238,10 @@ export type GetPropertiesLifeSaleRequestSort =
   | "landArea"
   | "floorArea"
   | "publishedToWeb";
-export const GetPropertiesLifeSaleRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertiesLifeSaleRequestSort = S.String;
 
 export type GetPropertiesLifeSaleRequestSortOrder = "asc" | "desc";
-export const GetPropertiesLifeSaleRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertiesLifeSaleRequestSortOrder = S.String;
 
 export type GetPropertiesLifeSaleRequestAccessByList = Array<number>;
 export const GetPropertiesLifeSaleRequestAccessByList = /*@__PURE__*/ S.Array(
@@ -27408,7 +27288,7 @@ export type GetPropertiesLifeSaleRequestStatusItem =
   | "listingOrConditional"
   | "unconditional"
   | "management";
-export const GetPropertiesLifeSaleRequestStatusItem = /*@__PURE__*/ S.String;
+export const GetPropertiesLifeSaleRequestStatusItem = S.String;
 
 export type GetPropertiesLifeSaleRequestStatusList = Array<
   GetPropertiesLifeSaleRequestStatusItem | (string & {})
@@ -27425,8 +27305,7 @@ export type GetPropertiesLifeSaleRequestPortalStatusItem =
   | "listingOrConditional"
   | "unconditional"
   | "management";
-export const GetPropertiesLifeSaleRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetPropertiesLifeSaleRequestPortalStatusItem = S.String;
 
 export type GetPropertiesLifeSaleRequestPortalStatusList = Array<
   GetPropertiesLifeSaleRequestPortalStatusItem | (string & {})
@@ -27443,8 +27322,7 @@ export type GetPropertiesLifeSaleRequestPropertyClassItem =
   | "rural"
   | "holidayRental"
   | "land";
-export const GetPropertiesLifeSaleRequestPropertyClassItem =
-  /*@__PURE__*/ S.String;
+export const GetPropertiesLifeSaleRequestPropertyClassItem = S.String;
 
 export type GetPropertiesLifeSaleRequestPropertyClassList = Array<
   GetPropertiesLifeSaleRequestPropertyClassItem | (string & {})
@@ -27455,7 +27333,7 @@ export const GetPropertiesLifeSaleRequestPropertyClassList =
   ) as any as S.Schema<GetPropertiesLifeSaleRequestPropertyClassList>;
 
 export type GetPropertiesLifeSaleRequestAreaType = "sqm" | "acre" | "hectare";
-export const GetPropertiesLifeSaleRequestAreaType = /*@__PURE__*/ S.String;
+export const GetPropertiesLifeSaleRequestAreaType = S.String;
 
 export interface GetPropertiesLifeSaleRequest {
   /** Filter results modified since this datetime */
@@ -27629,7 +27507,7 @@ export type GetPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetPropertyResponseAddressVisibility = /*@__PURE__*/ S.String;
+export const GetPropertyResponseAddressVisibility = S.String;
 
 export type GetPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const GetPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -27640,7 +27518,7 @@ export type GetPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const GetPropertyResponseCommercialListingType = /*@__PURE__*/ S.String;
+export const GetPropertyResponseCommercialListingType = S.String;
 
 export type GetPropertyResponseAccount = AccessAccount;
 export const GetPropertyResponseAccount = AccessAccount;
@@ -27872,10 +27750,10 @@ export const GetPropertyAlarmDetailsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyAlarmDetailsResponse>;
 
 export type GetPropertyCategoriesRequestSort = "name";
-export const GetPropertyCategoriesRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyCategoriesRequestSort = S.String;
 
 export type GetPropertyCategoriesRequestSortOrder = "asc" | "desc";
-export const GetPropertyCategoriesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyCategoriesRequestSortOrder = S.String;
 
 export interface GetPropertyCategoriesRequest {
   /** Page number of results */
@@ -27955,10 +27833,10 @@ export const GetPropertyCategoryGroupRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyCategoryGroupRequest>;
 
 export type GetPropertyCategoryGroupsRequestSort = "name";
-export const GetPropertyCategoryGroupsRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyCategoryGroupsRequestSort = S.String;
 
 export type GetPropertyCategoryGroupsRequestSortOrder = "asc" | "desc";
-export const GetPropertyCategoryGroupsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyCategoryGroupsRequestSortOrder = S.String;
 
 export interface GetPropertyCategoryGroupsRequest {
   /** Page number of results */
@@ -28009,10 +27887,10 @@ export const GetPropertyCategoryGroupsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyCategoryGroupsResponse>;
 
 export type GetPropertyClassesRequestSort = "name";
-export const GetPropertyClassesRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyClassesRequestSort = S.String;
 
 export type GetPropertyClassesRequestSortOrder = "asc" | "desc";
-export const GetPropertyClassesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyClassesRequestSortOrder = S.String;
 
 export interface GetPropertyClassesRequest {
   /** Page number of results */
@@ -28058,7 +27936,7 @@ export const GetPropertyClassesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyClassesResponse>;
 
 export type GetPropertyCustomFieldsRequestSalelease = "sale" | "lease";
-export const GetPropertyCustomFieldsRequestSalelease = /*@__PURE__*/ S.String;
+export const GetPropertyCustomFieldsRequestSalelease = S.String;
 
 export interface GetPropertyCustomFieldsRequest {
   /** Class of property */
@@ -28136,7 +28014,7 @@ export type PropertyFeatureDataType =
   | "boolean"
   | "date"
   | "dayAndMonth";
-export const PropertyFeatureDataType = /*@__PURE__*/ S.String;
+export const PropertyFeatureDataType = S.String;
 
 export interface PropertyFeature {
   name?: string;
@@ -28193,13 +28071,13 @@ export const GetPropertyFeaturesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyFeaturesResponse>;
 
 export type GetPropertyFeedbackLifeRequestSalelease = "sale" | "lease";
-export const GetPropertyFeedbackLifeRequestSalelease = /*@__PURE__*/ S.String;
+export const GetPropertyFeedbackLifeRequestSalelease = S.String;
 
 export type GetPropertyFeedbackLifeRequestSort = "inserted" | "feedbackDate";
-export const GetPropertyFeedbackLifeRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyFeedbackLifeRequestSort = S.String;
 
 export type GetPropertyFeedbackLifeRequestSortOrder = "asc" | "desc";
-export const GetPropertyFeedbackLifeRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyFeedbackLifeRequestSortOrder = S.String;
 
 export type GetPropertyFeedbackLifeRequestContactsList = Array<number>;
 export const GetPropertyFeedbackLifeRequestContactsList = /*@__PURE__*/ S.Array(
@@ -28269,15 +28147,13 @@ export const GetPropertyFeedbackLifeResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyFeedbackLifeResponse>;
 
 export type GetPropertyFeedbackLifeSummaryRequestSalelease = "sale" | "lease";
-export const GetPropertyFeedbackLifeSummaryRequestSalelease =
-  /*@__PURE__*/ S.String;
+export const GetPropertyFeedbackLifeSummaryRequestSalelease = S.String;
 
 export type GetPropertyFeedbackLifeSummaryRequestSort = "count";
-export const GetPropertyFeedbackLifeSummaryRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyFeedbackLifeSummaryRequestSort = S.String;
 
 export type GetPropertyFeedbackLifeSummaryRequestSortOrder = "asc" | "desc";
-export const GetPropertyFeedbackLifeSummaryRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetPropertyFeedbackLifeSummaryRequestSortOrder = S.String;
 
 export interface GetPropertyFeedbackLifeSummaryRequest {
   /** ID of the property */
@@ -28340,7 +28216,7 @@ export const GetPropertyFeedbackLifeSummaryResponse = /*@__PURE__*/ S.suspend(
 }) as any as S.Schema<GetPropertyFeedbackLifeSummaryResponse>;
 
 export type GetPropertyFileLifeRequestSalelease = "sale" | "lease";
-export const GetPropertyFileLifeRequestSalelease = /*@__PURE__*/ S.String;
+export const GetPropertyFileLifeRequestSalelease = S.String;
 
 export interface GetPropertyFileLifeRequest {
   /** ID of the property */
@@ -28406,10 +28282,10 @@ export const GetPropertyFileLifeResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyFileLifeResponse>;
 
 export type GetPropertyFilesRequestSort = "inserted" | "modified";
-export const GetPropertyFilesRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyFilesRequestSort = S.String;
 
 export type GetPropertyFilesRequestSortOrder = "asc" | "desc";
-export const GetPropertyFilesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyFilesRequestSortOrder = S.String;
 
 export interface GetPropertyFilesRequest {
   /** ID of the property */
@@ -28458,13 +28334,13 @@ export const GetPropertyFilesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyFilesResponse>;
 
 export type GetPropertyFilesLifeRequestSalelease = "sale" | "lease";
-export const GetPropertyFilesLifeRequestSalelease = /*@__PURE__*/ S.String;
+export const GetPropertyFilesLifeRequestSalelease = S.String;
 
 export type GetPropertyFilesLifeRequestSort = "inserted" | "modified";
-export const GetPropertyFilesLifeRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyFilesLifeRequestSort = S.String;
 
 export type GetPropertyFilesLifeRequestSortOrder = "asc" | "desc";
-export const GetPropertyFilesLifeRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyFilesLifeRequestSortOrder = S.String;
 
 export interface GetPropertyFilesLifeRequest {
   /** ID of the property */
@@ -28549,10 +28425,10 @@ export const GetPropertyKeyRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyKeyRequest>;
 
 export type GetPropertyKeysRequestSort = "keyname" | "iskeyout" | "propertyid";
-export const GetPropertyKeysRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyKeysRequestSort = S.String;
 
 export type GetPropertyKeysRequestSortOrder = "asc" | "desc";
-export const GetPropertyKeysRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyKeysRequestSortOrder = S.String;
 
 export interface GetPropertyKeysRequest {
   /** ID of the property */
@@ -28607,7 +28483,7 @@ export type GetPropertyLeaseDealsRequestStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const GetPropertyLeaseDealsRequestStatus = /*@__PURE__*/ S.String;
+export const GetPropertyLeaseDealsRequestStatus = S.String;
 
 export interface GetPropertyLeaseDealsRequest {
   /** ID of the property */
@@ -28827,8 +28703,7 @@ export const GetPropertyLifeAlarmDetailsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyLifeAlarmDetailsResponse>;
 
 export type GetPropertyLifeEnquirySourcesRequestSalelease = "sale" | "lease";
-export const GetPropertyLifeEnquirySourcesRequestSalelease =
-  /*@__PURE__*/ S.String;
+export const GetPropertyLifeEnquirySourcesRequestSalelease = S.String;
 
 export interface GetPropertyLifeEnquirySourcesRequest {
   /** ID of the property */
@@ -28871,8 +28746,7 @@ export const GetPropertyLifeEnquirySourcesResponse = /*@__PURE__*/ S.suspend(
 export type GetPropertyLifeEnquirySourcesItemRequestSalelease =
   | "sale"
   | "lease";
-export const GetPropertyLifeEnquirySourcesItemRequestSalelease =
-  /*@__PURE__*/ S.String;
+export const GetPropertyLifeEnquirySourcesItemRequestSalelease = S.String;
 
 export interface GetPropertyLifeEnquirySourcesItemRequest {
   /** ID of the property */
@@ -29045,7 +28919,7 @@ export const GetPropertyLifeHazardsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyLifeHazardsResponse>;
 
 export type GetPropertyLifeInterestRequestSalelease = "sale" | "lease";
-export const GetPropertyLifeInterestRequestSalelease = /*@__PURE__*/ S.String;
+export const GetPropertyLifeInterestRequestSalelease = S.String;
 
 export interface GetPropertyLifeInterestRequest {
   /** ID of the property */
@@ -29085,8 +28959,7 @@ export const GetPropertyLifeInterestResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyLifeInterestResponse>;
 
 export type GetPropertyLifeInterestItemRequestSalelease = "sale" | "lease";
-export const GetPropertyLifeInterestItemRequestSalelease =
-  /*@__PURE__*/ S.String;
+export const GetPropertyLifeInterestItemRequestSalelease = S.String;
 
 export interface GetPropertyLifeInterestItemRequest {
   /** ID of the property */
@@ -29210,11 +29083,10 @@ export const PropertyOfferCondition = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<PropertyOfferCondition>;
 
 export type GetPropertyLifeOfferConditionsRequestSort = "due";
-export const GetPropertyLifeOfferConditionsRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyLifeOfferConditionsRequestSort = S.String;
 
 export type GetPropertyLifeOfferConditionsRequestSortOrder = "asc" | "desc";
-export const GetPropertyLifeOfferConditionsRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetPropertyLifeOfferConditionsRequestSortOrder = S.String;
 
 export interface GetPropertyLifeOfferConditionsRequest {
   /** ID of the property */
@@ -29317,7 +29189,7 @@ export const GetPropertyLifeOwnersResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyLifeOwnersResponse>;
 
 export type GetPropertyLifePortalIdsRequestSalelease = "sale" | "lease";
-export const GetPropertyLifePortalIdsRequestSalelease = /*@__PURE__*/ S.String;
+export const GetPropertyLifePortalIdsRequestSalelease = S.String;
 
 export interface GetPropertyLifePortalIdsRequest {
   /** ID of the property */
@@ -29385,7 +29257,7 @@ export const GetPropertyLifePortalIdsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyLifePortalIdsResponse>;
 
 export type GetPropertyLifePortalsRequestSalelease = "sale" | "lease";
-export const GetPropertyLifePortalsRequestSalelease = /*@__PURE__*/ S.String;
+export const GetPropertyLifePortalsRequestSalelease = S.String;
 
 export interface GetPropertyLifePortalsRequest {
   /** ID of the property */
@@ -29509,7 +29381,7 @@ export const GetPropertyLifeQrCodeResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyLifeQrCodeResponse>;
 
 export type GetPropertyLifeRoomsRequestSalelease = "sale" | "lease";
-export const GetPropertyLifeRoomsRequestSalelease = /*@__PURE__*/ S.String;
+export const GetPropertyLifeRoomsRequestSalelease = S.String;
 
 export interface GetPropertyLifeRoomsRequest {
   /** ID of the property */
@@ -29542,7 +29414,7 @@ export const GetPropertyLifeRoomsRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyLifeRoomsRequest>;
 
 export type PropertyRoomUnits = "feet" | "metres";
-export const PropertyRoomUnits = /*@__PURE__*/ S.String;
+export const PropertyRoomUnits = S.String;
 
 export interface PropertyRoom {
   id?: number;
@@ -29588,18 +29460,15 @@ export const GetPropertyLifeRoomsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyLifeRoomsResponse>;
 
 export type GetPropertyLifeScheduledViewingsRequestSalelease = "sale" | "lease";
-export const GetPropertyLifeScheduledViewingsRequestSalelease =
-  /*@__PURE__*/ S.String;
+export const GetPropertyLifeScheduledViewingsRequestSalelease = S.String;
 
 export type GetPropertyLifeScheduledViewingsRequestSort =
   | "inserted"
   | "feedbackDate";
-export const GetPropertyLifeScheduledViewingsRequestSort =
-  /*@__PURE__*/ S.String;
+export const GetPropertyLifeScheduledViewingsRequestSort = S.String;
 
 export type GetPropertyLifeScheduledViewingsRequestSortOrder = "asc" | "desc";
-export const GetPropertyLifeScheduledViewingsRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetPropertyLifeScheduledViewingsRequestSortOrder = S.String;
 
 export interface GetPropertyLifeScheduledViewingsRequest {
   propertyid: string;
@@ -29888,8 +29757,7 @@ export const GetPropertyListingConfigurationsResponse = /*@__PURE__*/ S.suspend(
 }) as any as S.Schema<GetPropertyListingConfigurationsResponse>;
 
 export type GetPropertyMatchingContactsRequestSalelease = "sale" | "lease";
-export const GetPropertyMatchingContactsRequestSalelease =
-  /*@__PURE__*/ S.String;
+export const GetPropertyMatchingContactsRequestSalelease = S.String;
 
 export type GetPropertyMatchingContactsRequestSort =
   | "inserted"
@@ -29897,11 +29765,10 @@ export type GetPropertyMatchingContactsRequestSort =
   | "firstName"
   | "lastName"
   | "touched";
-export const GetPropertyMatchingContactsRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyMatchingContactsRequestSort = S.String;
 
 export type GetPropertyMatchingContactsRequestSortOrder = "asc" | "desc";
-export const GetPropertyMatchingContactsRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetPropertyMatchingContactsRequestSortOrder = S.String;
 
 export interface GetPropertyMatchingContactsRequest {
   /** ID of the property */
@@ -29975,10 +29842,10 @@ export const GetPropertyNotesRequestTypesList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<GetPropertyNotesRequestTypesList>;
 
 export type GetPropertyNotesRequestSort = "inserted";
-export const GetPropertyNotesRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyNotesRequestSort = S.String;
 
 export type GetPropertyNotesRequestSortOrder = "asc" | "desc";
-export const GetPropertyNotesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyNotesRequestSortOrder = S.String;
 
 export interface GetPropertyNotesRequest {
   /** ID of the property */
@@ -30044,10 +29911,10 @@ export const GetPropertyNoteTypeRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyNoteTypeRequest>;
 
 export type GetPropertyNoteTypesRequestSort = "name";
-export const GetPropertyNoteTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyNoteTypesRequestSort = S.String;
 
 export type GetPropertyNoteTypesRequestSortOrder = "asc" | "desc";
-export const GetPropertyNoteTypesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyNoteTypesRequestSortOrder = S.String;
 
 export interface GetPropertyNoteTypesRequest {
   /** Page number of results */
@@ -30105,13 +29972,13 @@ export const GetPropertyOfferRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyOfferRequest>;
 
 export type GetPropertyOffersRequestType = "sale";
-export const GetPropertyOffersRequestType = /*@__PURE__*/ S.String;
+export const GetPropertyOffersRequestType = S.String;
 
 export type GetPropertyOffersRequestSort = "offerDate";
-export const GetPropertyOffersRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyOffersRequestSort = S.String;
 
 export type GetPropertyOffersRequestSortOrder = "asc" | "desc";
-export const GetPropertyOffersRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyOffersRequestSortOrder = S.String;
 
 export interface GetPropertyOffersRequest {
   /** Filter by offer type. Currently only "sale" is supported */
@@ -30169,7 +30036,7 @@ export const GetPropertyOffersResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyOffersResponse>;
 
 export type GetPropertyOpenHomeRequestSalelease = "sale" | "lease";
-export const GetPropertyOpenHomeRequestSalelease = /*@__PURE__*/ S.String;
+export const GetPropertyOpenHomeRequestSalelease = S.String;
 
 export interface GetPropertyOpenHomeRequest {
   /** ID of the property */
@@ -30199,13 +30066,13 @@ export const GetPropertyOpenHomeRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyOpenHomeRequest>;
 
 export type GetPropertyOpenHomesRequestSalelease = "sale" | "lease";
-export const GetPropertyOpenHomesRequestSalelease = /*@__PURE__*/ S.String;
+export const GetPropertyOpenHomesRequestSalelease = S.String;
 
 export type GetPropertyOpenHomesRequestSort = "start";
-export const GetPropertyOpenHomesRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyOpenHomesRequestSort = S.String;
 
 export type GetPropertyOpenHomesRequestSortOrder = "asc" | "desc";
-export const GetPropertyOpenHomesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyOpenHomesRequestSortOrder = S.String;
 
 export interface GetPropertyOpenHomesRequest {
   /** ID of the property */
@@ -30336,10 +30203,10 @@ export const GetPropertyPhotosResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyPhotosResponse>;
 
 export type GetPropertyPhotoTagsRequestSort = "name" | "confidence";
-export const GetPropertyPhotoTagsRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyPhotoTagsRequestSort = S.String;
 
 export type GetPropertyPhotoTagsRequestSortOrder = "asc" | "desc";
-export const GetPropertyPhotoTagsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyPhotoTagsRequestSortOrder = S.String;
 
 export interface GetPropertyPhotoTagsRequest {
   /** ID of the property */
@@ -30461,7 +30328,7 @@ export type GetPropertySaleDealsRequestStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const GetPropertySaleDealsRequestStatus = /*@__PURE__*/ S.String;
+export const GetPropertySaleDealsRequestStatus = S.String;
 
 export interface GetPropertySaleDealsRequest {
   /** ID of the property */
@@ -30631,10 +30498,10 @@ export const GetPropertyStrataPropertiesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyStrataPropertiesResponse>;
 
 export type GetPropertyTagsRequestSort = "name" | "confidence";
-export const GetPropertyTagsRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyTagsRequestSort = S.String;
 
 export type GetPropertyTagsRequestSortOrder = "asc" | "desc";
-export const GetPropertyTagsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyTagsRequestSortOrder = S.String;
 
 export interface GetPropertyTagsRequest {
   /** ID of the property */
@@ -30689,10 +30556,10 @@ export const GetPropertyTagsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyTagsResponse>;
 
 export type GetPropertyTypesRequestSort = "name";
-export const GetPropertyTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetPropertyTypesRequestSort = S.String;
 
 export type GetPropertyTypesRequestSortOrder = "asc" | "desc";
-export const GetPropertyTypesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetPropertyTypesRequestSortOrder = S.String;
 
 export interface GetPropertyTypesRequest {
   /** Page number of results */
@@ -30862,8 +30729,7 @@ export type GetResidentialLeasePropertiesRequestStatusItem =
   | "prospect"
   | "appraisal"
   | "management";
-export const GetResidentialLeasePropertiesRequestStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetResidentialLeasePropertiesRequestStatusItem = S.String;
 
 export type GetResidentialLeasePropertiesRequestStatusList = Array<
   GetResidentialLeasePropertiesRequestStatusItem | (string & {})
@@ -30877,8 +30743,7 @@ export type GetResidentialLeasePropertiesRequestPortalStatusItem =
   | "prospect"
   | "appraisal"
   | "management";
-export const GetResidentialLeasePropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetResidentialLeasePropertiesRequestPortalStatusItem = S.String;
 
 export type GetResidentialLeasePropertiesRequestPortalStatusList = Array<
   GetResidentialLeasePropertiesRequestPortalStatusItem | (string & {})
@@ -30938,11 +30803,10 @@ export type GetResidentialLeasePropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetResidentialLeasePropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetResidentialLeasePropertiesRequestSort = S.String;
 
 export type GetResidentialLeasePropertiesRequestSortOrder = "asc" | "desc";
-export const GetResidentialLeasePropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetResidentialLeasePropertiesRequestSortOrder = S.String;
 
 export interface GetResidentialLeasePropertiesRequest {
   /** Filter results modified since this datetime */
@@ -31120,8 +30984,7 @@ export type GetResidentialLeasePropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetResidentialLeasePropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const GetResidentialLeasePropertyResponseAddressVisibility = S.String;
 
 export type GetResidentialLeasePropertyResponsePhotosList =
   Array<PropertyPhoto>;
@@ -31135,7 +30998,7 @@ export type GetResidentialLeasePropertyResponseCommercialListingType =
   | "lease"
   | "both";
 export const GetResidentialLeasePropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type GetResidentialLeasePropertyResponseAccount = AccessAccount;
 export const GetResidentialLeasePropertyResponseAccount = AccessAccount;
@@ -31150,7 +31013,7 @@ export type GetResidentialLeasePropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetResidentialLeasePropertyResponseStatus = /*@__PURE__*/ S.String;
+export const GetResidentialLeasePropertyResponseStatus = S.String;
 
 export type GetResidentialLeasePropertyResponsePortalStatus =
   | "prospect"
@@ -31162,8 +31025,7 @@ export type GetResidentialLeasePropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetResidentialLeasePropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetResidentialLeasePropertyResponsePortalStatus = S.String;
 
 export type GetResidentialLeasePropertyResponseContactStaffList = Array<User>;
 export const GetResidentialLeasePropertyResponseContactStaffList =
@@ -31421,7 +31283,7 @@ export type GetResidentialLeasePropertyAndLifeResponseAddressVisibility =
   | "suburb"
   | "fullAddress";
 export const GetResidentialLeasePropertyAndLifeResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type GetResidentialLeasePropertyAndLifeResponsePhotosList =
   Array<PropertyPhoto>;
@@ -31435,7 +31297,7 @@ export type GetResidentialLeasePropertyAndLifeResponseCommercialListingType =
   | "lease"
   | "both";
 export const GetResidentialLeasePropertyAndLifeResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type GetResidentialLeasePropertyAndLifeResponseAccount = AccessAccount;
 export const GetResidentialLeasePropertyAndLifeResponseAccount = AccessAccount;
@@ -31450,8 +31312,7 @@ export type GetResidentialLeasePropertyAndLifeResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetResidentialLeasePropertyAndLifeResponseStatus =
-  /*@__PURE__*/ S.String;
+export const GetResidentialLeasePropertyAndLifeResponseStatus = S.String;
 
 export type GetResidentialLeasePropertyAndLifeResponsePortalStatus =
   | "prospect"
@@ -31463,8 +31324,7 @@ export type GetResidentialLeasePropertyAndLifeResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetResidentialLeasePropertyAndLifeResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetResidentialLeasePropertyAndLifeResponsePortalStatus = S.String;
 
 export type GetResidentialLeasePropertyAndLifeResponseContactStaffList =
   Array<User>;
@@ -31836,8 +31696,7 @@ export type GetResidentialSalePropertiesRequestStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetResidentialSalePropertiesRequestStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetResidentialSalePropertiesRequestStatusItem = S.String;
 
 export type GetResidentialSalePropertiesRequestStatusList = Array<
   GetResidentialSalePropertiesRequestStatusItem | (string & {})
@@ -31854,8 +31713,7 @@ export type GetResidentialSalePropertiesRequestPortalStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetResidentialSalePropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetResidentialSalePropertiesRequestPortalStatusItem = S.String;
 
 export type GetResidentialSalePropertiesRequestPortalStatusList = Array<
   GetResidentialSalePropertiesRequestPortalStatusItem | (string & {})
@@ -31915,11 +31773,10 @@ export type GetResidentialSalePropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetResidentialSalePropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetResidentialSalePropertiesRequestSort = S.String;
 
 export type GetResidentialSalePropertiesRequestSortOrder = "asc" | "desc";
-export const GetResidentialSalePropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetResidentialSalePropertiesRequestSortOrder = S.String;
 
 export interface GetResidentialSalePropertiesRequest {
   /** Filter results modified since this datetime */
@@ -32073,8 +31930,7 @@ export type GetResidentialSalePropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetResidentialSalePropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const GetResidentialSalePropertyResponseAddressVisibility = S.String;
 
 export type GetResidentialSalePropertyResponsePhotosList = Array<PropertyPhoto>;
 export const GetResidentialSalePropertyResponsePhotosList =
@@ -32086,8 +31942,7 @@ export type GetResidentialSalePropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const GetResidentialSalePropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const GetResidentialSalePropertyResponseCommercialListingType = S.String;
 
 export type GetResidentialSalePropertyResponseAccount = AccessAccount;
 export const GetResidentialSalePropertyResponseAccount = AccessAccount;
@@ -32102,7 +31957,7 @@ export type GetResidentialSalePropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetResidentialSalePropertyResponseStatus = /*@__PURE__*/ S.String;
+export const GetResidentialSalePropertyResponseStatus = S.String;
 
 export type GetResidentialSalePropertyResponsePortalStatus =
   | "prospect"
@@ -32114,8 +31969,7 @@ export type GetResidentialSalePropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetResidentialSalePropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetResidentialSalePropertyResponsePortalStatus = S.String;
 
 export type GetResidentialSalePropertyResponseContactStaffList = Array<User>;
 export const GetResidentialSalePropertyResponseContactStaffList =
@@ -32423,7 +32277,7 @@ export type GetResidentialSalePropertyAndLifeResponseAddressVisibility =
   | "suburb"
   | "fullAddress";
 export const GetResidentialSalePropertyAndLifeResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type GetResidentialSalePropertyAndLifeResponsePhotosList =
   Array<PropertyPhoto>;
@@ -32437,7 +32291,7 @@ export type GetResidentialSalePropertyAndLifeResponseCommercialListingType =
   | "lease"
   | "both";
 export const GetResidentialSalePropertyAndLifeResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type GetResidentialSalePropertyAndLifeResponseAccount = AccessAccount;
 export const GetResidentialSalePropertyAndLifeResponseAccount = AccessAccount;
@@ -32452,8 +32306,7 @@ export type GetResidentialSalePropertyAndLifeResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetResidentialSalePropertyAndLifeResponseStatus =
-  /*@__PURE__*/ S.String;
+export const GetResidentialSalePropertyAndLifeResponseStatus = S.String;
 
 export type GetResidentialSalePropertyAndLifeResponsePortalStatus =
   | "prospect"
@@ -32465,8 +32318,7 @@ export type GetResidentialSalePropertyAndLifeResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetResidentialSalePropertyAndLifeResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetResidentialSalePropertyAndLifeResponsePortalStatus = S.String;
 
 export type GetResidentialSalePropertyAndLifeResponseContactStaffList =
   Array<User>;
@@ -32801,8 +32653,7 @@ export type GetResidentialSoldPropertiesRequestStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetResidentialSoldPropertiesRequestStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetResidentialSoldPropertiesRequestStatusItem = S.String;
 
 export type GetResidentialSoldPropertiesRequestStatusList = Array<
   GetResidentialSoldPropertiesRequestStatusItem | (string & {})
@@ -32816,8 +32667,7 @@ export type GetResidentialSoldPropertiesRequestPortalStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetResidentialSoldPropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetResidentialSoldPropertiesRequestPortalStatusItem = S.String;
 
 export type GetResidentialSoldPropertiesRequestPortalStatusList = Array<
   GetResidentialSoldPropertiesRequestPortalStatusItem | (string & {})
@@ -32862,11 +32712,10 @@ export type GetResidentialSoldPropertiesRequestSort =
   | "salePrice"
   | "landArea"
   | "floorArea";
-export const GetResidentialSoldPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetResidentialSoldPropertiesRequestSort = S.String;
 
 export type GetResidentialSoldPropertiesRequestSortOrder = "asc" | "desc";
-export const GetResidentialSoldPropertiesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetResidentialSoldPropertiesRequestSortOrder = S.String;
 
 export interface GetResidentialSoldPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -33013,7 +32862,7 @@ export type ResidentialSoldPropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const ResidentialSoldPropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const ResidentialSoldPropertyAddressVisibility = S.String;
 
 export type ResidentialSoldPropertyPhotosList = Array<PropertyPhoto>;
 export const ResidentialSoldPropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -33024,8 +32873,7 @@ export type ResidentialSoldPropertyCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const ResidentialSoldPropertyCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const ResidentialSoldPropertyCommercialListingType = S.String;
 
 export type ResidentialSoldPropertyAccount = AccessAccount;
 export const ResidentialSoldPropertyAccount = AccessAccount;
@@ -33040,7 +32888,7 @@ export type ResidentialSoldPropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const ResidentialSoldPropertyStatus = /*@__PURE__*/ S.String;
+export const ResidentialSoldPropertyStatus = S.String;
 
 export type ResidentialSoldPropertyPortalStatus =
   | "prospect"
@@ -33052,7 +32900,7 @@ export type ResidentialSoldPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const ResidentialSoldPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const ResidentialSoldPropertyPortalStatus = S.String;
 
 export type ResidentialSoldPropertyContactStaffList = Array<User>;
 export const ResidentialSoldPropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -33344,7 +33192,7 @@ export type GetRuralPropertiesRequestStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetRuralPropertiesRequestStatusItem = /*@__PURE__*/ S.String;
+export const GetRuralPropertiesRequestStatusItem = S.String;
 
 export type GetRuralPropertiesRequestStatusList = Array<
   GetRuralPropertiesRequestStatusItem | (string & {})
@@ -33360,7 +33208,7 @@ export type GetRuralPropertiesRequestPortalStatusItem =
   | "conditional"
   | "listingOrConditional"
   | "unconditional";
-export const GetRuralPropertiesRequestPortalStatusItem = /*@__PURE__*/ S.String;
+export const GetRuralPropertiesRequestPortalStatusItem = S.String;
 
 export type GetRuralPropertiesRequestPortalStatusList = Array<
   GetRuralPropertiesRequestPortalStatusItem | (string & {})
@@ -33411,10 +33259,10 @@ export type GetRuralPropertiesRequestSort =
   | "searchPrice"
   | "landArea"
   | "floorArea";
-export const GetRuralPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetRuralPropertiesRequestSort = S.String;
 
 export type GetRuralPropertiesRequestSortOrder = "asc" | "desc";
-export const GetRuralPropertiesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetRuralPropertiesRequestSortOrder = S.String;
 
 export interface GetRuralPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -33547,7 +33395,7 @@ export type GetRuralPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetRuralPropertyResponseAddressVisibility = /*@__PURE__*/ S.String;
+export const GetRuralPropertyResponseAddressVisibility = S.String;
 
 export type GetRuralPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const GetRuralPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -33558,8 +33406,7 @@ export type GetRuralPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const GetRuralPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const GetRuralPropertyResponseCommercialListingType = S.String;
 
 export type GetRuralPropertyResponseAccount = AccessAccount;
 export const GetRuralPropertyResponseAccount = AccessAccount;
@@ -33574,7 +33421,7 @@ export type GetRuralPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetRuralPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const GetRuralPropertyResponseStatus = S.String;
 
 export type GetRuralPropertyResponsePortalStatus =
   | "prospect"
@@ -33586,7 +33433,7 @@ export type GetRuralPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetRuralPropertyResponsePortalStatus = /*@__PURE__*/ S.String;
+export const GetRuralPropertyResponsePortalStatus = S.String;
 
 export type GetRuralPropertyResponseContactStaffList = Array<User>;
 export const GetRuralPropertyResponseContactStaffList = /*@__PURE__*/ S.Array(
@@ -33794,8 +33641,7 @@ export type GetRuralPropertyAndLifeResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const GetRuralPropertyAndLifeResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const GetRuralPropertyAndLifeResponseAddressVisibility = S.String;
 
 export type GetRuralPropertyAndLifeResponsePhotosList = Array<PropertyPhoto>;
 export const GetRuralPropertyAndLifeResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -33806,8 +33652,7 @@ export type GetRuralPropertyAndLifeResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const GetRuralPropertyAndLifeResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const GetRuralPropertyAndLifeResponseCommercialListingType = S.String;
 
 export type GetRuralPropertyAndLifeResponseAccount = AccessAccount;
 export const GetRuralPropertyAndLifeResponseAccount = AccessAccount;
@@ -33822,7 +33667,7 @@ export type GetRuralPropertyAndLifeResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetRuralPropertyAndLifeResponseStatus = /*@__PURE__*/ S.String;
+export const GetRuralPropertyAndLifeResponseStatus = S.String;
 
 export type GetRuralPropertyAndLifeResponsePortalStatus =
   | "prospect"
@@ -33834,8 +33679,7 @@ export type GetRuralPropertyAndLifeResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const GetRuralPropertyAndLifeResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const GetRuralPropertyAndLifeResponsePortalStatus = S.String;
 
 export type GetRuralPropertyAndLifeResponseContactStaffList = Array<User>;
 export const GetRuralPropertyAndLifeResponseContactStaffList =
@@ -34058,7 +33902,7 @@ export type GetRuralSoldPropertiesRequestStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetRuralSoldPropertiesRequestStatusItem = /*@__PURE__*/ S.String;
+export const GetRuralSoldPropertiesRequestStatusItem = S.String;
 
 export type GetRuralSoldPropertiesRequestStatusList = Array<
   GetRuralSoldPropertiesRequestStatusItem | (string & {})
@@ -34071,8 +33915,7 @@ export type GetRuralSoldPropertiesRequestPortalStatusItem =
   | "conditional"
   | "unconditional"
   | "settled";
-export const GetRuralSoldPropertiesRequestPortalStatusItem =
-  /*@__PURE__*/ S.String;
+export const GetRuralSoldPropertiesRequestPortalStatusItem = S.String;
 
 export type GetRuralSoldPropertiesRequestPortalStatusList = Array<
   GetRuralSoldPropertiesRequestPortalStatusItem | (string & {})
@@ -34107,10 +33950,10 @@ export type GetRuralSoldPropertiesRequestSort =
   | "suburb"
   | "landArea"
   | "floorArea";
-export const GetRuralSoldPropertiesRequestSort = /*@__PURE__*/ S.String;
+export const GetRuralSoldPropertiesRequestSort = S.String;
 
 export type GetRuralSoldPropertiesRequestSortOrder = "asc" | "desc";
-export const GetRuralSoldPropertiesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetRuralSoldPropertiesRequestSortOrder = S.String;
 
 export interface GetRuralSoldPropertiesRequest {
   /** Filter results modified since this datetime */
@@ -34244,7 +34087,7 @@ export type RuralSoldPropertyAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const RuralSoldPropertyAddressVisibility = /*@__PURE__*/ S.String;
+export const RuralSoldPropertyAddressVisibility = S.String;
 
 export type RuralSoldPropertyPhotosList = Array<PropertyPhoto>;
 export const RuralSoldPropertyPhotosList = /*@__PURE__*/ S.Array(
@@ -34252,7 +34095,7 @@ export const RuralSoldPropertyPhotosList = /*@__PURE__*/ S.Array(
 ) as any as S.Schema<RuralSoldPropertyPhotosList>;
 
 export type RuralSoldPropertyCommercialListingType = "sale" | "lease" | "both";
-export const RuralSoldPropertyCommercialListingType = /*@__PURE__*/ S.String;
+export const RuralSoldPropertyCommercialListingType = S.String;
 
 export type RuralSoldPropertyAccount = AccessAccount;
 export const RuralSoldPropertyAccount = AccessAccount;
@@ -34267,7 +34110,7 @@ export type RuralSoldPropertyStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const RuralSoldPropertyStatus = /*@__PURE__*/ S.String;
+export const RuralSoldPropertyStatus = S.String;
 
 export type RuralSoldPropertyPortalStatus =
   | "prospect"
@@ -34279,7 +34122,7 @@ export type RuralSoldPropertyPortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const RuralSoldPropertyPortalStatus = /*@__PURE__*/ S.String;
+export const RuralSoldPropertyPortalStatus = S.String;
 
 export type RuralSoldPropertyContactStaffList = Array<User>;
 export const RuralSoldPropertyContactStaffList = /*@__PURE__*/ S.Array(
@@ -34515,11 +34358,10 @@ export const GetSearchThreadsRecipientsRequestRecipientsList =
   ) as any as S.Schema<GetSearchThreadsRecipientsRequestRecipientsList>;
 
 export type GetSearchThreadsRecipientsRequestSort = "modified" | "created";
-export const GetSearchThreadsRecipientsRequestSort = /*@__PURE__*/ S.String;
+export const GetSearchThreadsRecipientsRequestSort = S.String;
 
 export type GetSearchThreadsRecipientsRequestSortOrder = "asc" | "desc";
-export const GetSearchThreadsRecipientsRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetSearchThreadsRecipientsRequestSortOrder = S.String;
 
 export interface GetSearchThreadsRecipientsRequest {
   /** Recipient ID */
@@ -34565,11 +34407,10 @@ export const GetSearchThreadsStaffTypesRequestStaffTypesList =
   ) as any as S.Schema<GetSearchThreadsStaffTypesRequestStaffTypesList>;
 
 export type GetSearchThreadsStaffTypesRequestSort = "modified" | "created";
-export const GetSearchThreadsStaffTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetSearchThreadsStaffTypesRequestSort = S.String;
 
 export type GetSearchThreadsStaffTypesRequestSortOrder = "asc" | "desc";
-export const GetSearchThreadsStaffTypesRequestSortOrder =
-  /*@__PURE__*/ S.String;
+export const GetSearchThreadsStaffTypesRequestSortOrder = S.String;
 
 export interface GetSearchThreadsStaffTypesRequest {
   /** Staff Type ID */
@@ -34609,10 +34450,10 @@ export const GetSearchThreadsStaffTypesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetSearchThreadsStaffTypesResponse>;
 
 export type GetSearchThreadsTermRequestSort = "modified" | "created";
-export const GetSearchThreadsTermRequestSort = /*@__PURE__*/ S.String;
+export const GetSearchThreadsTermRequestSort = S.String;
 
 export type GetSearchThreadsTermRequestSortOrder = "asc" | "desc";
-export const GetSearchThreadsTermRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetSearchThreadsTermRequestSortOrder = S.String;
 
 export interface GetSearchThreadsTermRequest {
   /** The term to search for. */
@@ -34646,8 +34487,7 @@ export const GetSearchThreadsTermResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetSearchThreadsTermResponse>;
 
 export type GetSinglePropertyFeedbackLifeRequestSalelease = "sale" | "lease";
-export const GetSinglePropertyFeedbackLifeRequestSalelease =
-  /*@__PURE__*/ S.String;
+export const GetSinglePropertyFeedbackLifeRequestSalelease = S.String;
 
 export interface GetSinglePropertyFeedbackLifeRequest {
   /** ID of the property */
@@ -34904,10 +34744,10 @@ export const Insurance = /*@__PURE__*/ S.suspend(() =>
 ).annotate({ identifier: "Insurance" }) as any as S.Schema<Insurance>;
 
 export type GetSuppliersRequestSort = "inserted" | "modified";
-export const GetSuppliersRequestSort = /*@__PURE__*/ S.String;
+export const GetSuppliersRequestSort = S.String;
 
 export type GetSuppliersRequestSortOrder = "asc" | "desc";
-export const GetSuppliersRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetSuppliersRequestSortOrder = S.String;
 
 export interface GetSuppliersRequest {
   /** Page number of results */
@@ -35063,10 +34903,10 @@ export const GetTaskRequest = /*@__PURE__*/ S.suspend(() =>
 ).annotate({ identifier: "GetTaskRequest" }) as any as S.Schema<GetTaskRequest>;
 
 export type GetTasksRequestSort = "start";
-export const GetTasksRequestSort = /*@__PURE__*/ S.String;
+export const GetTasksRequestSort = S.String;
 
 export type GetTasksRequestSortOrder = "asc" | "desc";
-export const GetTasksRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetTasksRequestSortOrder = S.String;
 
 export interface GetTasksRequest {
   /** Filter tasks starting on or after this datetime */
@@ -35130,10 +34970,10 @@ export const GetTasksResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetTasksResponse>;
 
 export type GetTenureOrTitleTypesRequestSort = "name";
-export const GetTenureOrTitleTypesRequestSort = /*@__PURE__*/ S.String;
+export const GetTenureOrTitleTypesRequestSort = S.String;
 
 export type GetTenureOrTitleTypesRequestSortOrder = "asc" | "desc";
-export const GetTenureOrTitleTypesRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetTenureOrTitleTypesRequestSortOrder = S.String;
 
 export interface GetTenureOrTitleTypesRequest {
   /** Page number of results */
@@ -35239,7 +35079,7 @@ export type TrustAccountType =
   | "sales"
   | "propertyManagement"
   | "combinedSalesAndPropertyManagement";
-export const TrustAccountType = /*@__PURE__*/ S.String;
+export const TrustAccountType = S.String;
 
 export interface TrustAccount {
   id?: number;
@@ -35284,10 +35124,10 @@ export type GetUpcomingOpenHomesRequestClass =
   | "residential"
   | "rural"
   | "holidayRental";
-export const GetUpcomingOpenHomesRequestClass = /*@__PURE__*/ S.String;
+export const GetUpcomingOpenHomesRequestClass = S.String;
 
 export type GetUpcomingOpenHomesRequestSalelease = "sale" | "lease";
-export const GetUpcomingOpenHomesRequestSalelease = /*@__PURE__*/ S.String;
+export const GetUpcomingOpenHomesRequestSalelease = S.String;
 
 export interface GetUpcomingOpenHomesRequest {
   /** Class of property */
@@ -35372,7 +35212,7 @@ export type GetUserResponseRole =
   | "commercialSalesAndLeasing"
   | "residentialSales"
   | "propertyManagement";
-export const GetUserResponseRole = /*@__PURE__*/ S.String;
+export const GetUserResponseRole = S.String;
 
 export type GetUserResponsePhoneNumbersList = Array<PhoneNumber>;
 export const GetUserResponsePhoneNumbersList = /*@__PURE__*/ S.Array(
@@ -35536,10 +35376,10 @@ export const GetUserSummaryGrossCommissionResponse = /*@__PURE__*/ S.suspend(
 }) as any as S.Schema<GetUserSummaryGrossCommissionResponse>;
 
 export type GetUserTeamsRequestSort = "name";
-export const GetUserTeamsRequestSort = /*@__PURE__*/ S.String;
+export const GetUserTeamsRequestSort = S.String;
 
 export type GetUserTeamsRequestSortOrder = "asc" | "desc";
-export const GetUserTeamsRequestSortOrder = /*@__PURE__*/ S.String;
+export const GetUserTeamsRequestSortOrder = S.String;
 
 export interface GetUserTeamsRequest {
   /** Field by which to sort the results. */
@@ -35611,13 +35451,13 @@ export type InspectionWithPropertyStatus =
   | "proposed"
   | "scheduled"
   | "confirmed";
-export const InspectionWithPropertyStatus = /*@__PURE__*/ S.String;
+export const InspectionWithPropertyStatus = S.String;
 
 export type InspectionWithPropertyType = "routine" | "ingoing" | "outgoing";
-export const InspectionWithPropertyType = /*@__PURE__*/ S.String;
+export const InspectionWithPropertyType = S.String;
 
 export type InspectionWithPropertyTimeOfDay = "morning" | "afternoon";
-export const InspectionWithPropertyTimeOfDay = /*@__PURE__*/ S.String;
+export const InspectionWithPropertyTimeOfDay = S.String;
 
 export interface InspectionWithPropertyPropertyLeaseLife {
   id?: number;
@@ -35894,7 +35734,7 @@ export type LookupPropertyByPortalReferenceResponseAddressVisibility =
   | "suburb"
   | "fullAddress";
 export const LookupPropertyByPortalReferenceResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type LookupPropertyByPortalReferenceResponsePhotosList =
   Array<PropertyPhoto>;
@@ -35908,7 +35748,7 @@ export type LookupPropertyByPortalReferenceResponseCommercialListingType =
   | "lease"
   | "both";
 export const LookupPropertyByPortalReferenceResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type LookupPropertyByPortalReferenceResponseAccount = AccessAccount;
 export const LookupPropertyByPortalReferenceResponseAccount = AccessAccount;
@@ -36293,8 +36133,7 @@ export type RetrieveBulkContactNotesExportsRequestStatus =
   | "pending"
   | "processing"
   | "ready";
-export const RetrieveBulkContactNotesExportsRequestStatus =
-  /*@__PURE__*/ S.String;
+export const RetrieveBulkContactNotesExportsRequestStatus = S.String;
 
 export interface RetrieveBulkContactNotesExportsRequest {
   /** Filter results inserted since this datetime */
@@ -36472,8 +36311,7 @@ export type SearchContactsRequestPropertyRelationshipItem =
   | "purchaser"
   | "landlord"
   | "tenant";
-export const SearchContactsRequestPropertyRelationshipItem =
-  /*@__PURE__*/ S.String;
+export const SearchContactsRequestPropertyRelationshipItem = S.String;
 
 export type SearchContactsRequestPropertyRelationshipList = Array<
   SearchContactsRequestPropertyRelationshipItem | (string & {})
@@ -36737,7 +36575,7 @@ export type PropertySearchResultCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const PropertySearchResultCommercialListingType = /*@__PURE__*/ S.String;
+export const PropertySearchResultCommercialListingType = S.String;
 
 export interface PropertySearchResultSaleLife {
   id?: number;
@@ -36971,10 +36809,10 @@ export const SuggestAddressCoreLogicResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<SuggestAddressCoreLogicResponse>;
 
 export type SuggestDistrictRequestSort = "name";
-export const SuggestDistrictRequestSort = /*@__PURE__*/ S.String;
+export const SuggestDistrictRequestSort = S.String;
 
 export type SuggestDistrictRequestSortOrder = "asc" | "desc";
-export const SuggestDistrictRequestSortOrder = /*@__PURE__*/ S.String;
+export const SuggestDistrictRequestSortOrder = S.String;
 
 export interface SuggestDistrictRequest {
   /** The suburb name (partial match) or district name to search by */
@@ -37064,10 +36902,10 @@ export const SuggestDistrictResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<SuggestDistrictResponse>;
 
 export type SuggestSuburbRequestSort = "name";
-export const SuggestSuburbRequestSort = /*@__PURE__*/ S.String;
+export const SuggestSuburbRequestSort = S.String;
 
 export type SuggestSuburbRequestSortOrder = "asc" | "desc";
-export const SuggestSuburbRequestSortOrder = /*@__PURE__*/ S.String;
+export const SuggestSuburbRequestSortOrder = S.String;
 
 export interface SuggestSuburbRequest {
   /** The suburb name (partial match) or postcode (exact match) to search by */
@@ -37244,7 +37082,7 @@ export const UpdateBusinessPropertyRequestRates =
   AddBusinessPropertyRequestRates;
 
 export type UpdateBusinessPropertyRequestStatus = "prospect" | "appraisal";
-export const UpdateBusinessPropertyRequestStatus = /*@__PURE__*/ S.String;
+export const UpdateBusinessPropertyRequestStatus = S.String;
 
 export interface UpdateBusinessPropertyRequest {
   /** ID of the property */
@@ -37362,8 +37200,7 @@ export type UpdateBusinessPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const UpdateBusinessPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const UpdateBusinessPropertyResponseAddressVisibility = S.String;
 
 export type UpdateBusinessPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const UpdateBusinessPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -37374,8 +37211,7 @@ export type UpdateBusinessPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const UpdateBusinessPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const UpdateBusinessPropertyResponseCommercialListingType = S.String;
 
 export type UpdateBusinessPropertyResponseAccount = AccessAccount;
 export const UpdateBusinessPropertyResponseAccount = AccessAccount;
@@ -37389,7 +37225,7 @@ export type UpdateBusinessPropertyResponseStatus =
   | "settled"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateBusinessPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const UpdateBusinessPropertyResponseStatus = S.String;
 
 export type UpdateBusinessPropertyResponsePortalStatus =
   | "prospect"
@@ -37401,8 +37237,7 @@ export type UpdateBusinessPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateBusinessPropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateBusinessPropertyResponsePortalStatus = S.String;
 
 export type UpdateBusinessPropertyResponseContactStaffList = Array<ID>;
 export const UpdateBusinessPropertyResponseContactStaffList =
@@ -37653,7 +37488,7 @@ export const UpdateClearingSalesPropertyRequestExternalLinksList =
   ) as any as S.Schema<UpdateClearingSalesPropertyRequestExternalLinksList>;
 
 export type UpdateClearingSalesPropertyRequestStatus = "prospect" | "appraisal";
-export const UpdateClearingSalesPropertyRequestStatus = /*@__PURE__*/ S.String;
+export const UpdateClearingSalesPropertyRequestStatus = S.String;
 
 export type UpdateClearingSalesPropertyRequestRates =
   AddBusinessPropertyRequestRates;
@@ -37800,8 +37635,7 @@ export type UpdateClearingSalesPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const UpdateClearingSalesPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const UpdateClearingSalesPropertyResponseAddressVisibility = S.String;
 
 export type UpdateClearingSalesPropertyResponsePhotosList =
   Array<PropertyPhoto>;
@@ -37815,7 +37649,7 @@ export type UpdateClearingSalesPropertyResponseCommercialListingType =
   | "lease"
   | "both";
 export const UpdateClearingSalesPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type UpdateClearingSalesPropertyResponseAccount = AccessAccount;
 export const UpdateClearingSalesPropertyResponseAccount = AccessAccount;
@@ -37830,7 +37664,7 @@ export type UpdateClearingSalesPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateClearingSalesPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const UpdateClearingSalesPropertyResponseStatus = S.String;
 
 export type UpdateClearingSalesPropertyResponsePortalStatus =
   | "prospect"
@@ -37842,8 +37676,7 @@ export type UpdateClearingSalesPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateClearingSalesPropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateClearingSalesPropertyResponsePortalStatus = S.String;
 
 export type UpdateClearingSalesPropertyResponseContactStaffList = Array<User>;
 export const UpdateClearingSalesPropertyResponseContactStaffList =
@@ -38059,7 +37892,7 @@ export type UpdateCommercialDealLeaseRequestStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const UpdateCommercialDealLeaseRequestStatus = /*@__PURE__*/ S.String;
+export const UpdateCommercialDealLeaseRequestStatus = S.String;
 
 export interface UpdateCommercialDealLeaseRequest {
   /** ID of the property */
@@ -38148,7 +37981,7 @@ export type UpdateCommercialDealLeaseResponseStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const UpdateCommercialDealLeaseResponseStatus = /*@__PURE__*/ S.String;
+export const UpdateCommercialDealLeaseResponseStatus = S.String;
 
 export interface UpdateCommercialDealLeaseResponse {
   id?: number;
@@ -38222,7 +38055,7 @@ export type UpdateCommercialDealSaleRequestStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const UpdateCommercialDealSaleRequestStatus = /*@__PURE__*/ S.String;
+export const UpdateCommercialDealSaleRequestStatus = S.String;
 
 export type UpdateCommercialDealSaleRequestPurchasersList =
   Array<ContactMinimal>;
@@ -38300,7 +38133,7 @@ export type UpdateCommercialDealSaleResponseStatus =
   | "Pending"
   | "Rejected"
   | "Approved";
-export const UpdateCommercialDealSaleResponseStatus = /*@__PURE__*/ S.String;
+export const UpdateCommercialDealSaleResponseStatus = S.String;
 
 export type UpdateCommercialDealSaleResponsePurchasersList =
   Array<ContactMinimal>;
@@ -38378,8 +38211,7 @@ export const UpdateCommercialLeasePropertyRequestExternalLinksList =
 export type UpdateCommercialLeasePropertyRequestStatus =
   | "prospect"
   | "appraisal";
-export const UpdateCommercialLeasePropertyRequestStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateCommercialLeasePropertyRequestStatus = S.String;
 
 export type UpdateCommercialLeasePropertyRequestRates =
   AddCommercialLeasePropertyRequestRates;
@@ -38501,8 +38333,7 @@ export type UpdateCommercialLeasePropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const UpdateCommercialLeasePropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const UpdateCommercialLeasePropertyResponseAddressVisibility = S.String;
 
 export type UpdateCommercialLeasePropertyResponsePhotosList =
   Array<PropertyPhoto>;
@@ -38516,7 +38347,7 @@ export type UpdateCommercialLeasePropertyResponseCommercialListingType =
   | "lease"
   | "both";
 export const UpdateCommercialLeasePropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type UpdateCommercialLeasePropertyResponseAccount = AccessAccount;
 export const UpdateCommercialLeasePropertyResponseAccount = AccessAccount;
@@ -38531,8 +38362,7 @@ export type UpdateCommercialLeasePropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateCommercialLeasePropertyResponseStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateCommercialLeasePropertyResponseStatus = S.String;
 
 export type UpdateCommercialLeasePropertyResponsePortalStatus =
   | "prospect"
@@ -38544,8 +38374,7 @@ export type UpdateCommercialLeasePropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateCommercialLeasePropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateCommercialLeasePropertyResponsePortalStatus = S.String;
 
 export type UpdateCommercialLeasePropertyResponseContactStaffList = Array<ID>;
 export const UpdateCommercialLeasePropertyResponseContactStaffList =
@@ -38776,7 +38605,7 @@ export const UpdateCommercialSalePropertyRequestExternalLinksList =
 export type UpdateCommercialSalePropertyRequestStatus =
   | "prospect"
   | "appraisal";
-export const UpdateCommercialSalePropertyRequestStatus = /*@__PURE__*/ S.String;
+export const UpdateCommercialSalePropertyRequestStatus = S.String;
 
 export type UpdateCommercialSalePropertyRequestRates =
   AddBusinessPropertyRequestRates;
@@ -38919,8 +38748,7 @@ export type UpdateCommercialSalePropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const UpdateCommercialSalePropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const UpdateCommercialSalePropertyResponseAddressVisibility = S.String;
 
 export type UpdateCommercialSalePropertyResponsePhotosList =
   Array<PropertyPhoto>;
@@ -38934,7 +38762,7 @@ export type UpdateCommercialSalePropertyResponseCommercialListingType =
   | "lease"
   | "both";
 export const UpdateCommercialSalePropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type UpdateCommercialSalePropertyResponseAccount = AccessAccount;
 export const UpdateCommercialSalePropertyResponseAccount = AccessAccount;
@@ -38949,8 +38777,7 @@ export type UpdateCommercialSalePropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateCommercialSalePropertyResponseStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateCommercialSalePropertyResponseStatus = S.String;
 
 export type UpdateCommercialSalePropertyResponsePortalStatus =
   | "prospect"
@@ -38962,8 +38789,7 @@ export type UpdateCommercialSalePropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateCommercialSalePropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateCommercialSalePropertyResponsePortalStatus = S.String;
 
 export type UpdateCommercialSalePropertyResponseContactStaffList = Array<ID>;
 export const UpdateCommercialSalePropertyResponseContactStaffList =
@@ -39529,7 +39355,7 @@ export type UpdateContactRequirementRequestType =
   | "sale"
   | "lease"
   | "saleOrLease";
-export const UpdateContactRequirementRequestType = /*@__PURE__*/ S.String;
+export const UpdateContactRequirementRequestType = S.String;
 
 export interface UpdateContactRequirementRequest {
   /** ID of the contact */
@@ -39748,7 +39574,7 @@ export const UpdateExternalPropertyStatsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<UpdateExternalPropertyStatsResponse>;
 
 export type UpdateFeedbackRequestSalelease = "sale" | "lease";
-export const UpdateFeedbackRequestSalelease = /*@__PURE__*/ S.String;
+export const UpdateFeedbackRequestSalelease = S.String;
 
 export type UpdateContactNoteWithFeedbackAccessByList = Array<ID>;
 export const UpdateContactNoteWithFeedbackAccessByList = /*@__PURE__*/ S.Array(
@@ -39831,7 +39657,7 @@ export const UpdateHolidayRentalPropertyRequestExternalLinksList =
   ) as any as S.Schema<UpdateHolidayRentalPropertyRequestExternalLinksList>;
 
 export type UpdateHolidayRentalPropertyRequestStatus = "prospect" | "appraisal";
-export const UpdateHolidayRentalPropertyRequestStatus = /*@__PURE__*/ S.String;
+export const UpdateHolidayRentalPropertyRequestStatus = S.String;
 
 export type UpdateHolidayRentalPropertyRequestRates =
   AddCommercialLeasePropertyRequestRates;
@@ -39954,8 +39780,7 @@ export type UpdateHolidayRentalPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const UpdateHolidayRentalPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const UpdateHolidayRentalPropertyResponseAddressVisibility = S.String;
 
 export type UpdateHolidayRentalPropertyResponsePhotosList =
   Array<PropertyPhoto>;
@@ -39969,7 +39794,7 @@ export type UpdateHolidayRentalPropertyResponseCommercialListingType =
   | "lease"
   | "both";
 export const UpdateHolidayRentalPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type UpdateHolidayRentalPropertyResponseAccount = AccessAccount;
 export const UpdateHolidayRentalPropertyResponseAccount = AccessAccount;
@@ -39984,7 +39809,7 @@ export type UpdateHolidayRentalPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateHolidayRentalPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const UpdateHolidayRentalPropertyResponseStatus = S.String;
 
 export type UpdateHolidayRentalPropertyResponsePortalStatus =
   | "prospect"
@@ -39996,8 +39821,7 @@ export type UpdateHolidayRentalPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateHolidayRentalPropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateHolidayRentalPropertyResponsePortalStatus = S.String;
 
 export type UpdateHolidayRentalPropertyResponseContactStaffList = Array<User>;
 export const UpdateHolidayRentalPropertyResponseContactStaffList =
@@ -40226,10 +40050,10 @@ export type UpdateInspectionRequestStatus =
   | "proposed"
   | "scheduled"
   | "confirmed";
-export const UpdateInspectionRequestStatus = /*@__PURE__*/ S.String;
+export const UpdateInspectionRequestStatus = S.String;
 
 export type UpdateInspectionRequestType = "routine" | "ingoing" | "outgoing";
-export const UpdateInspectionRequestType = /*@__PURE__*/ S.String;
+export const UpdateInspectionRequestType = S.String;
 
 export interface UpdateInspectionRequest {
   /** ID of the property */
@@ -40319,7 +40143,7 @@ export type UpdateLandPropertyRequestRates = AddBusinessPropertyRequestRates;
 export const UpdateLandPropertyRequestRates = AddBusinessPropertyRequestRates;
 
 export type UpdateLandPropertyRequestStatus = "prospect" | "appraisal";
-export const UpdateLandPropertyRequestStatus = /*@__PURE__*/ S.String;
+export const UpdateLandPropertyRequestStatus = S.String;
 
 export interface UpdateLandPropertyRequest {
   /** ID of the property */
@@ -40435,8 +40259,7 @@ export type UpdateLandPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const UpdateLandPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const UpdateLandPropertyResponseAddressVisibility = S.String;
 
 export type UpdateLandPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const UpdateLandPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -40447,8 +40270,7 @@ export type UpdateLandPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const UpdateLandPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const UpdateLandPropertyResponseCommercialListingType = S.String;
 
 export type UpdateLandPropertyResponseAccount = AccessAccount;
 export const UpdateLandPropertyResponseAccount = AccessAccount;
@@ -40463,7 +40285,7 @@ export type UpdateLandPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateLandPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const UpdateLandPropertyResponseStatus = S.String;
 
 export type UpdateLandPropertyResponsePortalStatus =
   | "prospect"
@@ -40475,7 +40297,7 @@ export type UpdateLandPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateLandPropertyResponsePortalStatus = /*@__PURE__*/ S.String;
+export const UpdateLandPropertyResponsePortalStatus = S.String;
 
 export type UpdateLandPropertyResponseContactStaffList = Array<ID>;
 export const UpdateLandPropertyResponseContactStaffList = /*@__PURE__*/ S.Array(
@@ -40662,7 +40484,7 @@ export const UpdateLivestockPropertyRequestExternalLinksList =
   ) as any as S.Schema<UpdateLivestockPropertyRequestExternalLinksList>;
 
 export type UpdateLivestockPropertyRequestStatus = "prospect" | "appraisal";
-export const UpdateLivestockPropertyRequestStatus = /*@__PURE__*/ S.String;
+export const UpdateLivestockPropertyRequestStatus = S.String;
 
 export type UpdateLivestockPropertyRequestRates =
   AddBusinessPropertyRequestRates;
@@ -40805,8 +40627,7 @@ export type UpdateLivestockPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const UpdateLivestockPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const UpdateLivestockPropertyResponseAddressVisibility = S.String;
 
 export type UpdateLivestockPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const UpdateLivestockPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -40817,8 +40638,7 @@ export type UpdateLivestockPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const UpdateLivestockPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const UpdateLivestockPropertyResponseCommercialListingType = S.String;
 
 export type UpdateLivestockPropertyResponseAccount = AccessAccount;
 export const UpdateLivestockPropertyResponseAccount = AccessAccount;
@@ -40833,7 +40653,7 @@ export type UpdateLivestockPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateLivestockPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const UpdateLivestockPropertyResponseStatus = S.String;
 
 export type UpdateLivestockPropertyResponsePortalStatus =
   | "prospect"
@@ -40845,8 +40665,7 @@ export type UpdateLivestockPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateLivestockPropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateLivestockPropertyResponsePortalStatus = S.String;
 
 export type UpdateLivestockPropertyResponseContactStaffList = Array<User>;
 export const UpdateLivestockPropertyResponseContactStaffList =
@@ -41126,7 +40945,7 @@ export type UpdateMeUserResponseRole =
   | "commercialSalesAndLeasing"
   | "residentialSales"
   | "propertyManagement";
-export const UpdateMeUserResponseRole = /*@__PURE__*/ S.String;
+export const UpdateMeUserResponseRole = S.String;
 
 export type UpdateMeUserResponsePhoneNumbersList = Array<PhoneNumber>;
 export const UpdateMeUserResponsePhoneNumbersList = /*@__PURE__*/ S.Array(
@@ -41196,7 +41015,7 @@ export const UpdateMeUserResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<UpdateMeUserResponse>;
 
 export type UpdateOpenHomeRequestSalelease = "sale" | "lease";
-export const UpdateOpenHomeRequestSalelease = /*@__PURE__*/ S.String;
+export const UpdateOpenHomeRequestSalelease = S.String;
 
 export type UpdateOpenHomeRequestExtraAgentsList = Array<ID>;
 export const UpdateOpenHomeRequestExtraAgentsList = /*@__PURE__*/ S.Array(
@@ -41285,7 +41104,7 @@ export type MetricStatType =
   | "emailAgent"
   | "callAgent"
   | "brochureView";
-export const MetricStatType = /*@__PURE__*/ S.String;
+export const MetricStatType = S.String;
 
 export interface Metric {
   statType?: MetricStatType | (string & {});
@@ -41358,8 +41177,7 @@ export const UpdatePortalStatsTotalRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<UpdatePortalStatsTotalRequest>;
 
 export type UpdatePropertyCustomFieldsRequestSalelease = "sale" | "lease";
-export const UpdatePropertyCustomFieldsRequestSalelease =
-  /*@__PURE__*/ S.String;
+export const UpdatePropertyCustomFieldsRequestSalelease = S.String;
 
 export type UpdatePropertyCustomFieldsRequestItemsList =
   Array<AddUpdateCustomField>;
@@ -41481,8 +41299,7 @@ export const UpdatePropertyKeyRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<UpdatePropertyKeyRequest>;
 
 export type UpdatePropertyLifeEnquirySourceRequestSalelease = "sale" | "lease";
-export const UpdatePropertyLifeEnquirySourceRequestSalelease =
-  /*@__PURE__*/ S.String;
+export const UpdatePropertyLifeEnquirySourceRequestSalelease = S.String;
 
 export interface UpdatePropertyLifeEnquirySourceRequest {
   /** ID of the property */
@@ -41565,8 +41382,7 @@ export const UpdatePropertyLifeExternalFeedbackRequest =
   }) as any as S.Schema<UpdatePropertyLifeExternalFeedbackRequest>;
 
 export type UpdatePropertyLifeInterestRequestSalelease = "sale" | "lease";
-export const UpdatePropertyLifeInterestRequestSalelease =
-  /*@__PURE__*/ S.String;
+export const UpdatePropertyLifeInterestRequestSalelease = S.String;
 
 export interface UpdatePropertyLifeInterestRequest {
   /** ID of the property */
@@ -41697,7 +41513,7 @@ export const UpdatePropertyOfferConditionRequest = /*@__PURE__*/ S.suspend(() =>
 
 /** Photo type */
 export type UpdatePropertyPhotoRequestType = "Photograph" | "Floorplan";
-export const UpdatePropertyPhotoRequestType = /*@__PURE__*/ S.String;
+export const UpdatePropertyPhotoRequestType = S.String;
 
 export interface UpdatePropertyPhotoRequest {
   /** ID of the property */
@@ -41834,8 +41650,7 @@ export const UpdateResidentialLeasePropertyRequestExternalLinksList =
 export type UpdateResidentialLeasePropertyRequestStatus =
   | "prospect"
   | "appraisal";
-export const UpdateResidentialLeasePropertyRequestStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateResidentialLeasePropertyRequestStatus = S.String;
 
 export type UpdateResidentialLeasePropertyRequestRates =
   AddCommercialLeasePropertyRequestRates;
@@ -41963,8 +41778,7 @@ export type UpdateResidentialLeasePropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const UpdateResidentialLeasePropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const UpdateResidentialLeasePropertyResponseAddressVisibility = S.String;
 
 export type UpdateResidentialLeasePropertyResponsePhotosList =
   Array<PropertyPhoto>;
@@ -41978,7 +41792,7 @@ export type UpdateResidentialLeasePropertyResponseCommercialListingType =
   | "lease"
   | "both";
 export const UpdateResidentialLeasePropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type UpdateResidentialLeasePropertyResponseAccount = AccessAccount;
 export const UpdateResidentialLeasePropertyResponseAccount = AccessAccount;
@@ -41993,8 +41807,7 @@ export type UpdateResidentialLeasePropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateResidentialLeasePropertyResponseStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateResidentialLeasePropertyResponseStatus = S.String;
 
 export type UpdateResidentialLeasePropertyResponsePortalStatus =
   | "prospect"
@@ -42006,8 +41819,7 @@ export type UpdateResidentialLeasePropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateResidentialLeasePropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateResidentialLeasePropertyResponsePortalStatus = S.String;
 
 export type UpdateResidentialLeasePropertyResponseContactStaffList =
   Array<User>;
@@ -42276,8 +42088,7 @@ export const UpdateResidentialSalePropertyRequestExternalLinksList =
 export type UpdateResidentialSalePropertyRequestStatus =
   | "prospect"
   | "appraisal";
-export const UpdateResidentialSalePropertyRequestStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateResidentialSalePropertyRequestStatus = S.String;
 
 export type UpdateResidentialSalePropertyRequestRates =
   AddBusinessPropertyRequestRates;
@@ -42427,8 +42238,7 @@ export type UpdateResidentialSalePropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const UpdateResidentialSalePropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const UpdateResidentialSalePropertyResponseAddressVisibility = S.String;
 
 export type UpdateResidentialSalePropertyResponsePhotosList =
   Array<PropertyPhoto>;
@@ -42442,7 +42252,7 @@ export type UpdateResidentialSalePropertyResponseCommercialListingType =
   | "lease"
   | "both";
 export const UpdateResidentialSalePropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+  S.String;
 
 export type UpdateResidentialSalePropertyResponseAccount = AccessAccount;
 export const UpdateResidentialSalePropertyResponseAccount = AccessAccount;
@@ -42457,8 +42267,7 @@ export type UpdateResidentialSalePropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateResidentialSalePropertyResponseStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateResidentialSalePropertyResponseStatus = S.String;
 
 export type UpdateResidentialSalePropertyResponsePortalStatus =
   | "prospect"
@@ -42470,8 +42279,7 @@ export type UpdateResidentialSalePropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateResidentialSalePropertyResponsePortalStatus =
-  /*@__PURE__*/ S.String;
+export const UpdateResidentialSalePropertyResponsePortalStatus = S.String;
 
 export type UpdateResidentialSalePropertyResponseContactStaffList = Array<User>;
 export const UpdateResidentialSalePropertyResponseContactStaffList =
@@ -42786,7 +42594,7 @@ export const UpdateRuralPropertyRequestExternalLinksList =
   ) as any as S.Schema<UpdateRuralPropertyRequestExternalLinksList>;
 
 export type UpdateRuralPropertyRequestStatus = "prospect" | "appraisal";
-export const UpdateRuralPropertyRequestStatus = /*@__PURE__*/ S.String;
+export const UpdateRuralPropertyRequestStatus = S.String;
 
 export type UpdateRuralPropertyRequestRates = AddBusinessPropertyRequestRates;
 export const UpdateRuralPropertyRequestRates = AddBusinessPropertyRequestRates;
@@ -42923,8 +42731,7 @@ export type UpdateRuralPropertyResponseAddressVisibility =
   | "streetAndSuburb"
   | "suburb"
   | "fullAddress";
-export const UpdateRuralPropertyResponseAddressVisibility =
-  /*@__PURE__*/ S.String;
+export const UpdateRuralPropertyResponseAddressVisibility = S.String;
 
 export type UpdateRuralPropertyResponsePhotosList = Array<PropertyPhoto>;
 export const UpdateRuralPropertyResponsePhotosList = /*@__PURE__*/ S.Array(
@@ -42935,8 +42742,7 @@ export type UpdateRuralPropertyResponseCommercialListingType =
   | "sale"
   | "lease"
   | "both";
-export const UpdateRuralPropertyResponseCommercialListingType =
-  /*@__PURE__*/ S.String;
+export const UpdateRuralPropertyResponseCommercialListingType = S.String;
 
 export type UpdateRuralPropertyResponseAccount = AccessAccount;
 export const UpdateRuralPropertyResponseAccount = AccessAccount;
@@ -42951,7 +42757,7 @@ export type UpdateRuralPropertyResponseStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateRuralPropertyResponseStatus = /*@__PURE__*/ S.String;
+export const UpdateRuralPropertyResponseStatus = S.String;
 
 export type UpdateRuralPropertyResponsePortalStatus =
   | "prospect"
@@ -42963,7 +42769,7 @@ export type UpdateRuralPropertyResponsePortalStatus =
   | "management"
   | "withdrawn"
   | "withdrawnAppraisal";
-export const UpdateRuralPropertyResponsePortalStatus = /*@__PURE__*/ S.String;
+export const UpdateRuralPropertyResponsePortalStatus = S.String;
 
 export type UpdateRuralPropertyResponseContactStaffList = Array<User>;
 export const UpdateRuralPropertyResponseContactStaffList =

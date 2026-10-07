@@ -23,10 +23,12 @@ export class BadRequest
     [{ status: 400 }],
   ) {}
 
-export type CreateAppraisalRequestAppraisalContactIdsList = Array<number>;
+export type CreateAppraisalRequestAppraisalContactIdsList = Array<
+  number | null
+>;
 export const CreateAppraisalRequestAppraisalContactIdsList =
   /*@__PURE__*/ S.Array(
-    S.Number,
+    S.NullOr(S.Number),
   ) as any as S.Schema<CreateAppraisalRequestAppraisalContactIdsList>;
 
 export interface CreateAppraisalRequestAppraisal {
@@ -71,14 +73,14 @@ export const CreateAppraisalRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "CreateAppraisalRequest",
 }) as any as S.Schema<CreateAppraisalRequest>;
 
-export type AppraisalAppraisalConsultantIdsList = Array<number>;
+export type AppraisalAppraisalConsultantIdsList = Array<number | null>;
 export const AppraisalAppraisalConsultantIdsList = /*@__PURE__*/ S.Array(
-  S.Number,
+  S.NullOr(S.Number),
 ) as any as S.Schema<AppraisalAppraisalConsultantIdsList>;
 
-export type AppraisalContactIdsList = Array<number>;
+export type AppraisalContactIdsList = Array<number | null>;
 export const AppraisalContactIdsList = /*@__PURE__*/ S.Array(
-  S.Number,
+  S.NullOr(S.Number),
 ) as any as S.Schema<AppraisalContactIdsList>;
 
 export interface Appraisal {
@@ -349,24 +351,28 @@ export const CreateContactNoteRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "CreateContactNoteRequest",
 }) as any as S.Schema<CreateContactNoteRequest>;
 
-export type CreateSearchCriteriaRequestCriteriaSuburbIdsList = Array<number>;
+export type CreateSearchCriteriaRequestCriteriaSuburbIdsList = Array<
+  number | null
+>;
 export const CreateSearchCriteriaRequestCriteriaSuburbIdsList =
   /*@__PURE__*/ S.Array(
-    S.Number,
+    S.NullOr(S.Number),
   ) as any as S.Schema<CreateSearchCriteriaRequestCriteriaSuburbIdsList>;
 
-export type CreateSearchCriteriaRequestCriteriaPropertyTypeIdsList =
-  Array<number>;
+export type CreateSearchCriteriaRequestCriteriaPropertyTypeIdsList = Array<
+  number | null
+>;
 export const CreateSearchCriteriaRequestCriteriaPropertyTypeIdsList =
   /*@__PURE__*/ S.Array(
-    S.Number,
+    S.NullOr(S.Number),
   ) as any as S.Schema<CreateSearchCriteriaRequestCriteriaPropertyTypeIdsList>;
 
-export type CreateSearchCriteriaRequestCriteriaPropertyCategoryIdsList =
-  Array<number>;
+export type CreateSearchCriteriaRequestCriteriaPropertyCategoryIdsList = Array<
+  number | null
+>;
 export const CreateSearchCriteriaRequestCriteriaPropertyCategoryIdsList =
   /*@__PURE__*/ S.Array(
-    S.Number,
+    S.NullOr(S.Number),
   ) as any as S.Schema<CreateSearchCriteriaRequestCriteriaPropertyCategoryIdsList>;
 
 export interface CreateSearchCriteriaRequestCriteria {
@@ -452,9 +458,9 @@ export const CreateSearchCriteriaRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "CreateSearchCriteriaRequest",
 }) as any as S.Schema<CreateSearchCriteriaRequest>;
 
-export type CreateTasksRequestTasksItemContactIdsList = Array<number>;
+export type CreateTasksRequestTasksItemContactIdsList = Array<number | null>;
 export const CreateTasksRequestTasksItemContactIdsList = /*@__PURE__*/ S.Array(
-  S.Number,
+  S.NullOr(S.Number),
 ) as any as S.Schema<CreateTasksRequestTasksItemContactIdsList>;
 
 export interface CreateTasksRequestTasksItem {
@@ -689,14 +695,14 @@ export const CriteriaSuburbsList = /*@__PURE__*/ S.Array(
   CriteriaSuburb,
 ) as any as S.Schema<CriteriaSuburbsList>;
 
-export type CriteriaPropertyTypeIdsList = Array<number>;
+export type CriteriaPropertyTypeIdsList = Array<number | null>;
 export const CriteriaPropertyTypeIdsList = /*@__PURE__*/ S.Array(
-  S.Number,
+  S.NullOr(S.Number),
 ) as any as S.Schema<CriteriaPropertyTypeIdsList>;
 
-export type CriteriaPropertyCategoryIdsList = Array<number>;
+export type CriteriaPropertyCategoryIdsList = Array<number | null>;
 export const CriteriaPropertyCategoryIdsList = /*@__PURE__*/ S.Array(
-  S.Number,
+  S.NullOr(S.Number),
 ) as any as S.Schema<CriteriaPropertyCategoryIdsList>;
 
 /** Buying criteria. The blueprint documents this shape twice — once embedded in Contact, once under Search Criteria — and the two lists differ. This is their union; every member is optional, so neither reading is excluded. */
@@ -829,9 +835,9 @@ export const ListAppointmentsRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "ListAppointmentsRequest",
 }) as any as S.Schema<ListAppointmentsRequest>;
 
-export type AppointmentConsultantIdsList = Array<number>;
+export type AppointmentConsultantIdsList = Array<number | null>;
 export const AppointmentConsultantIdsList = /*@__PURE__*/ S.Array(
-  S.Number,
+  S.NullOr(S.Number),
 ) as any as S.Schema<AppointmentConsultantIdsList>;
 
 export interface Appointment {
@@ -1403,9 +1409,9 @@ export const ListContactCompletedTasksRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "ListContactCompletedTasksRequest",
 }) as any as S.Schema<ListContactCompletedTasksRequest>;
 
-export type TaskContactIdsList = Array<number>;
+export type TaskContactIdsList = Array<number | null>;
 export const TaskContactIdsList = /*@__PURE__*/ S.Array(
-  S.Number,
+  S.NullOr(S.Number),
 ) as any as S.Schema<TaskContactIdsList>;
 
 /** A task. The completed-tasks endpoint returns the same shape plus `complete_date`; the union is modelled here. */
@@ -2028,9 +2034,9 @@ export const ListRentalListingsRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "ListRentalListingsRequest",
 }) as any as S.Schema<ListRentalListingsRequest>;
 
-export type RentalListingConsultantIdsList = Array<number>;
+export type RentalListingConsultantIdsList = Array<number | null>;
 export const RentalListingConsultantIdsList = /*@__PURE__*/ S.Array(
-  S.Number,
+  S.NullOr(S.Number),
 ) as any as S.Schema<RentalListingConsultantIdsList>;
 
 export interface AdvertisingCopy {
@@ -2138,9 +2144,9 @@ export const ListSalesListingsRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "ListSalesListingsRequest",
 }) as any as S.Schema<ListSalesListingsRequest>;
 
-export type SalesListingConsultantIdsList = Array<number>;
+export type SalesListingConsultantIdsList = Array<number | null>;
 export const SalesListingConsultantIdsList = /*@__PURE__*/ S.Array(
-  S.Number,
+  S.NullOr(S.Number),
 ) as any as S.Schema<SalesListingConsultantIdsList>;
 
 export type SalesListingInspectionsList = Array<Inspection>;
@@ -2487,14 +2493,14 @@ export const SalesListingBuyersList = /*@__PURE__*/ S.Array(
   ListingBuyer,
 ) as any as S.Schema<SalesListingBuyersList>;
 
-export type SalesListingVendorIdsList = Array<number>;
+export type SalesListingVendorIdsList = Array<number | null>;
 export const SalesListingVendorIdsList = /*@__PURE__*/ S.Array(
-  S.Number,
+  S.NullOr(S.Number),
 ) as any as S.Schema<SalesListingVendorIdsList>;
 
-export type SalesListingPurchaserIdsList = Array<number>;
+export type SalesListingPurchaserIdsList = Array<number | null>;
 export const SalesListingPurchaserIdsList = /*@__PURE__*/ S.Array(
-  S.Number,
+  S.NullOr(S.Number),
 ) as any as S.Schema<SalesListingPurchaserIdsList>;
 
 /** Public-flagged files only. `url` carries a single-use-looking token query parameter; treat it as short-lived rather than storing it. */
@@ -2701,10 +2707,12 @@ export const SearchContactsResponse = /*@__PURE__*/ S.suspend(() =>
   identifier: "SearchContactsResponse",
 }) as any as S.Schema<SearchContactsResponse>;
 
-export type UpdateAppraisalRequestAppraisalContactIdsList = Array<number>;
+export type UpdateAppraisalRequestAppraisalContactIdsList = Array<
+  number | null
+>;
 export const UpdateAppraisalRequestAppraisalContactIdsList =
   /*@__PURE__*/ S.Array(
-    S.Number,
+    S.NullOr(S.Number),
   ) as any as S.Schema<UpdateAppraisalRequestAppraisalContactIdsList>;
 
 export interface UpdateAppraisalRequestAppraisal {
@@ -2806,10 +2814,12 @@ export const UpdateContactResponse = /*@__PURE__*/ S.suspend(() =>
   identifier: "UpdateContactResponse",
 }) as any as S.Schema<UpdateContactResponse>;
 
-export type UpdateSalesListingRequestSalesListingVendorIdsList = Array<number>;
+export type UpdateSalesListingRequestSalesListingVendorIdsList = Array<
+  number | null
+>;
 export const UpdateSalesListingRequestSalesListingVendorIdsList =
   /*@__PURE__*/ S.Array(
-    S.Number,
+    S.NullOr(S.Number),
   ) as any as S.Schema<UpdateSalesListingRequestSalesListingVendorIdsList>;
 
 export interface UpdateSalesListingRequestSalesListing {
@@ -2842,24 +2852,28 @@ export const UpdateSalesListingRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "UpdateSalesListingRequest",
 }) as any as S.Schema<UpdateSalesListingRequest>;
 
-export type UpdateSearchCriteriaRequestCriteriaSuburbIdsList = Array<number>;
+export type UpdateSearchCriteriaRequestCriteriaSuburbIdsList = Array<
+  number | null
+>;
 export const UpdateSearchCriteriaRequestCriteriaSuburbIdsList =
   /*@__PURE__*/ S.Array(
-    S.Number,
+    S.NullOr(S.Number),
   ) as any as S.Schema<UpdateSearchCriteriaRequestCriteriaSuburbIdsList>;
 
-export type UpdateSearchCriteriaRequestCriteriaPropertyTypeIdsList =
-  Array<number>;
+export type UpdateSearchCriteriaRequestCriteriaPropertyTypeIdsList = Array<
+  number | null
+>;
 export const UpdateSearchCriteriaRequestCriteriaPropertyTypeIdsList =
   /*@__PURE__*/ S.Array(
-    S.Number,
+    S.NullOr(S.Number),
   ) as any as S.Schema<UpdateSearchCriteriaRequestCriteriaPropertyTypeIdsList>;
 
-export type UpdateSearchCriteriaRequestCriteriaPropertyCategoryIdsList =
-  Array<number>;
+export type UpdateSearchCriteriaRequestCriteriaPropertyCategoryIdsList = Array<
+  number | null
+>;
 export const UpdateSearchCriteriaRequestCriteriaPropertyCategoryIdsList =
   /*@__PURE__*/ S.Array(
-    S.Number,
+    S.NullOr(S.Number),
   ) as any as S.Schema<UpdateSearchCriteriaRequestCriteriaPropertyCategoryIdsList>;
 
 export interface UpdateSearchCriteriaRequestCriteria {
