@@ -17,7 +17,7 @@ npm install @smartretraining/rex-effect effect
 
 ```typescript
 import { Effect, Layer } from "effect";
-import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
+import * as FetchHttpClient from "effect/http/FetchHttpClient";
 import { CredentialsFromEnv } from "@smartretraining/rex-effect";
 import { listingsSearch } from "@smartretraining/rex-effect";
 

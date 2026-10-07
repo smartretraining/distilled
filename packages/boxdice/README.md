@@ -7,7 +7,7 @@ Effect-native SDK for the **Box+Dice AI API** — the CRM MRI Software sells as
 import * as Effect from "effect/Effect";
 import * as Stream from "effect/Stream";
 import * as BoxDice from "@smartretraining/boxdice-effect";
-import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
+import * as FetchHttpClient from "effect/http/FetchHttpClient";
 
 const listings = Stream.runCollect(
   BoxDice.listSalesListings.pages({}).pipe(

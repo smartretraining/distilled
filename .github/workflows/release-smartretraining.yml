@@ -73,11 +73,13 @@ jobs:
           # previous tag.
           fetch-depth: 0
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      # Upstream replaced bun.lock with pnpm-lock.yaml; installing with bun
+      # here would resolve without a lockfile.
+      - uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
         with:
-          bun-version: latest
+          install: false
 
-      # npm (not bun) does the publishing: trusted publishing is an npm CLI
+      # npm (not pnpm) does the publishing: trusted publishing is an npm CLI
       # feature. Node 22 ships npm 10.x, which predates it, so the CLI is
       # upgraded explicitly.
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -90,7 +92,7 @@ jobs:
           npm install -g npm@^11.5.1
           npm --version
 
-      - run: bun install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
 
       - name: Resolve and agree the version
         id: version
@@ -131,7 +133,7 @@ jobs:
       # built) until `tsc -b` has emitted the referenced projects.
       - name: Build
         run: |
-          for dir in $PACKAGES; do bunx tsc -b "$dir" --force; done
+          for dir in $PACKAGES; do pnpm exec tsc -b "$dir" --force; done
 
       # `noCheck: true` in tsconfig.base.json means day-to-day builds only
       # emit. Nothing ships without being properly checked first.
@@ -139,7 +141,7 @@ jobs:
         run: |
           for dir in $PACKAGES; do
             echo "== $dir"
-            bunx tsc -p "$dir/tsconfig.json" --noEmit --noCheck false
+            pnpm exec tsc -p "$dir/tsconfig.json" --noEmit --noCheck false
           done
 
       - name: Verify build output exists

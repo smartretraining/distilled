@@ -29,6 +29,9 @@ await runOpenApiConvert({
   ],
   patchesDir: "patches",
   options: {
+    // core rc.13 defaults to verbNoun (contactsSearch -> searchContact), which
+    // renames every published operation.
+    operationNaming: "as-is",
     namespace: "com.rexsoftware.api",
     serviceName: "Rex",
     // Rex's introspection surface has no deprecation markers; keep every

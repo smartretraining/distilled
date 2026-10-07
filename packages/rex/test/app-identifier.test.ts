@@ -9,7 +9,7 @@
  * later tests writing into the first test's capture array.
  */
 import { Effect, Layer } from "effect";
-import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
+import * as FetchHttpClient from "effect/http/FetchHttpClient";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CredentialsFromToken, login } from "../src/credentials.ts";
 import { listingsSearch } from "../src/services/rex.ts";

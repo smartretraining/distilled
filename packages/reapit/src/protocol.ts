@@ -37,9 +37,9 @@
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Redacted from "effect/Redacted";
-import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
+import * as HttpClientRequest from "effect/http/HttpClientRequest";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
 import * as API from "@distilled.cloud/core/api";
 import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
 import type { API_ERRORS, ConfigError } from "@distilled.cloud/core/errors";
@@ -48,6 +48,7 @@ import {
   ReapitApiError,
   ReapitVersionError,
   UnknownReapitError,
+  ReapitParseError,
 } from "./errors.ts";
 
 /**
@@ -61,6 +62,7 @@ export type ReapitOpError =
   | ReapitApiError
   | ReapitVersionError
   | UnknownReapitError
+  | ReapitParseError
   | ConfigError
   | HttpClientError.HttpClientError;
 
@@ -144,6 +146,7 @@ const baseProtocol = makeRestProtocol<Config>({
     };
   },
   transformResponse,
+  parseError: ({ body, cause }) => new ReapitParseError({ body, cause }),
   unknownError: ({ code, message, body }) => {
     const errors = extractErrors(body);
     const first = errors[0];

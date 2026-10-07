@@ -37,6 +37,9 @@ await runOpenApiConvert({
   parse: (text) => YAML.parse(text),
   patchesDir: "patches",
   options: {
+    // core rc.13 defaults to verbNoun (contactsSearch -> searchContact), which
+    // renames every published operation.
+    operationNaming: "as-is",
     namespace: "com.vaultre.api",
     serviceName: "VaultRE",
     // The four statuses VaultRE declares per operation. 400 is its catch-all
