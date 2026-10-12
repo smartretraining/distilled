@@ -1,3 +1,4 @@
+import { ConfigError } from "@distilled.cloud/core/errors";
 /**
  * Box+Dice credentials — hand-written.
  *
@@ -28,7 +29,6 @@ import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Redacted from "effect/Redacted";
-import { ConfigError } from "@distilled.cloud/core/errors";
 
 /** The API this SDK was generated from. */
 export const DEFAULT_API_PATH = "ai_api";
@@ -45,13 +45,11 @@ export interface Config {
   readonly apiPath: string;
 }
 
-export class Credentials extends Context.Service<
-  Credentials,
-  Effect.Effect<Config>
->()("BoxDiceCredentials") {}
+export class Credentials extends Context.Service<Credentials, Effect.Effect<Config>>()(
+  "BoxDiceCredentials",
+) {}
 
-const originFromTenant = (tenant: string): string =>
-  `https://${tenant}.boxdice.com.au`;
+const originFromTenant = (tenant: string): string => `https://${tenant}.boxdice.com.au`;
 
 const trimSlash = (url: string): string => url.replace(/\/+$/, "");
 
@@ -70,9 +68,7 @@ export const fromToken = (config: {
   Layer.succeed(
     Credentials,
     Effect.gen(function* () {
-      const origin =
-        config.origin ??
-        (config.tenant ? originFromTenant(config.tenant) : undefined);
+      const origin = config.origin ?? (config.tenant ? originFromTenant(config.tenant) : undefined);
 
       if (!origin) {
         return yield* new ConfigError({
@@ -108,8 +104,7 @@ export const CredentialsFromEnv: Layer.Layer<Credentials> = Layer.succeed(
 
     if (!token) {
       return yield* new ConfigError({
-        message:
-          "Box+Dice credentials require the BOXDICE_API_TOKEN environment variable",
+        message: "Box+Dice credentials require the BOXDICE_API_TOKEN environment variable",
       });
     }
     if (!tenant && !origin) {

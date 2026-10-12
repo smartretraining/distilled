@@ -29,8 +29,7 @@ const page = (ids: readonly number[], next?: string) => ({
   ...(next ? { paging: { next } } : {}),
 });
 
-const url = (after: string) =>
-  `https://acme.boxdice.com.au/ai_api/contacts?after=${after}`;
+const url = (after: string) => `https://acme.boxdice.com.au/ai_api/contacts?after=${after}`;
 
 describe("nextCursor", () => {
   it("extracts the cursor from an absolute next URL", () => {
@@ -42,11 +41,9 @@ describe("nextCursor", () => {
   // in one case a path naming a different collection than the endpoint that
   // produced it. Taking only the cursor is what makes those harmless.
   it("ignores the path the vendor echoes back, taking only the cursor", () => {
-    expect(
-      nextCursor(
-        "https://acme.boxdice.com.au/rebot_api/rental_listings?after=99_1",
-      ),
-    ).toBe("99_1");
+    expect(nextCursor("https://acme.boxdice.com.au/rebot_api/rental_listings?after=99_1")).toBe(
+      "99_1",
+    );
   });
 
   // The email and SMS history endpoints page by number rather than cursor.
@@ -65,9 +62,7 @@ describe("nextCursor", () => {
   });
 
   it("falls back to a query scan for a relative next", () => {
-    expect(nextCursor("/ai_api/contacts?after=1520848432_37")).toBe(
-      "1520848432_37",
-    );
+    expect(nextCursor("/ai_api/contacts?after=1520848432_37")).toBe("1520848432_37");
   });
 });
 
@@ -85,10 +80,7 @@ describe("paginateAfter", () => {
 
   // The end of a feed, as the protocol hands it over.
   it("stops on the empty page a 204 becomes", async () => {
-    const { pages, requested } = await traverse([
-      page([1], url("a")),
-      { data: [] },
-    ]);
+    const { pages, requested } = await traverse([page([1], url("a")), { data: [] }]);
 
     expect(pages).toHaveLength(2);
     expect(requested).toEqual([undefined, "a"]);

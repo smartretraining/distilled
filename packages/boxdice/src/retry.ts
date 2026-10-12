@@ -1,3 +1,4 @@
+import { type Policy, throttlingFactory, transientFactory } from "@distilled.cloud/core/retry";
 /**
  * Box+Dice retry configuration.
  *
@@ -20,11 +21,6 @@
 import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
-import {
-  type Policy,
-  throttlingFactory,
-  transientFactory,
-} from "@distilled.cloud/core/retry";
 
 export {
   type Options,
@@ -47,9 +43,7 @@ export const policy = (optionsOrFactory: Policy) =>
   Effect.provide(Layer.succeed(Retry, optionsOrFactory));
 
 /** Disables all automatic retries. */
-export const none = Effect.provide(
-  Layer.succeed(Retry, { while: () => false }),
-);
+export const none = Effect.provide(Layer.succeed(Retry, { while: () => false }));
 
 /** Apply the throttling retry policy (retries throttling errors indefinitely). */
 export const throttling = policy(throttlingFactory);

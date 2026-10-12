@@ -33,8 +33,8 @@ export {
 } from "@distilled.cloud/core/errors";
 export type { DefaultErrors } from "@distilled.cloud/core/errors";
 
-import * as Schema from "effect/Schema";
 import * as Category from "@distilled.cloud/core/category";
+import * as Schema from "effect/Schema";
 
 /**
  * A structured failure from a Box+Dice `{ error }` or `{ errors }` body.
@@ -46,17 +46,14 @@ import * as Category from "@distilled.cloud/core/category";
  * itself out in backoff before surfacing. Genuinely transient conditions
  * arrive as 5xx and keep their own categories.
  */
-export class BoxDiceApiError extends Schema.TaggedError<BoxDiceApiError>()(
-  "BoxDiceApiError",
-  {
-    /** The flat `error` sentence, or the first message from `errors`. */
-    message: Schema.optional(Schema.String),
-    /** The `errors` map verbatim: field name → messages. */
-    errors: Schema.Unknown,
-    /** The full response body. */
-    body: Schema.Unknown,
-  },
-).pipe(Category.withBadRequestError) {}
+export class BoxDiceApiError extends Schema.TaggedError<BoxDiceApiError>()("BoxDiceApiError", {
+  /** The flat `error` sentence, or the first message from `errors`. */
+  message: Schema.optional(Schema.String),
+  /** The `errors` map verbatim: field name → messages. */
+  errors: Schema.Unknown,
+  /** The full response body. */
+  body: Schema.Unknown,
+}).pipe(Category.withBadRequestError) {}
 
 /** Unknown Box+Dice error — returned when nothing else matches the failure. */
 export class UnknownBoxDiceError extends Schema.TaggedError<UnknownBoxDiceError>()(

@@ -1,3 +1,4 @@
+import { ConfigError } from "@distilled.cloud/core/errors";
 /**
  * Reapit (Agentbox) credentials — hand-written.
  *
@@ -22,7 +23,6 @@ import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Redacted from "effect/Redacted";
-import { ConfigError } from "@distilled.cloud/core/errors";
 
 export const DEFAULT_API_BASE_URL = "https://api.agentboxcrm.com.au";
 
@@ -46,10 +46,9 @@ export interface Config {
   readonly version: ApiVersion;
 }
 
-export class Credentials extends Context.Service<
-  Credentials,
-  Effect.Effect<Config>
->()("ReapitCredentials") {}
+export class Credentials extends Context.Service<Credentials, Effect.Effect<Config>>()(
+  "ReapitCredentials",
+) {}
 
 /** Layer from a plain client ID + API key. */
 export const fromApiKey = (config: {

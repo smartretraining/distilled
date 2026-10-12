@@ -40,7 +40,7 @@
 import * as fs from "fs";
 import * as path from "path";
 
-const rootDir = path.join(import.meta.dir, "..");
+const rootDir = path.join(import.meta.dirname, "..");
 const specsDir = path.join(rootDir, "specs", "rex");
 const outFile = path.join(rootDir, "specs", "openapi.generated.json");
 
@@ -74,9 +74,7 @@ interface RexOpenApiBlock {
   };
   response?: {
     // Object keyed by example name, or `[]` when no example is available.
-    examples?:
-      | Record<string, { code?: string; summary?: string; example?: unknown }>
-      | unknown[];
+    examples?: Record<string, { code?: string; summary?: string; example?: unknown }> | unknown[];
   };
 }
 
@@ -157,9 +155,7 @@ function mapType(rexType: string | undefined): string | undefined {
  * It is the only machine-readable signal that a field carries a valuelist id.
  */
 function isValuelistRef(description: string | undefined): boolean {
-  return (
-    description !== undefined && /\(valuelist:\s*[\w-]+\)/.test(description)
-  );
+  return description !== undefined && /\(valuelist:\s*[\w-]+\)/.test(description);
 }
 
 /** Convert a Rex parameter/field definition into a JSON Schema node. */
@@ -344,9 +340,7 @@ function transform(): void {
     .sort();
 
   if (describeFiles.length === 0) {
-    throw new Error(
-      `No *.describe.json files in ${specsDir}. Run \`bun run specs:scrape\` first.`,
-    );
+    throw new Error(`No *.describe.json files in ${specsDir}. Run \`bun run specs:scrape\` first.`);
   }
 
   const doc: OpenApiDoc = {
@@ -365,9 +359,7 @@ function transform(): void {
   let withExample = 0;
 
   for (const file of describeFiles) {
-    const parsed = JSON.parse(
-      fs.readFileSync(path.join(specsDir, file), "utf8"),
-    ) as RexDescribe;
+    const parsed = JSON.parse(fs.readFileSync(path.join(specsDir, file), "utf8")) as RexDescribe;
     const service = parsed.result.name;
     const methods = parsed.result.methods;
 
@@ -380,10 +372,8 @@ function transform(): void {
       const operationId = `${service}_${methodName}`;
       const apiPath = `/v1/rex/${service}::${methodName}`;
 
-      const { schema: requestSchema, anyRequired } =
-        buildRequestSchema(openapi);
-      const { schema: responseSchema, fromExample } =
-        inferResponseSchema(openapi);
+      const { schema: requestSchema, anyRequired } = buildRequestSchema(openapi);
+      const { schema: responseSchema, fromExample } = inferResponseSchema(openapi);
       if (fromExample) withExample++;
 
       doc.paths[apiPath] = {

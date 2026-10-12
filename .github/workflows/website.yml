@@ -86,7 +86,7 @@ jobs:
         github.event.action != 'unlabeled' &&
         (github.event.action != 'labeled' ||
          github.event.label.name == 'deploy-website')))
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
@@ -106,7 +106,7 @@ jobs:
           app-id: ${{ secrets.ALCHEMY_VERSION_BOT_ID }}
           private-key: ${{ secrets.ALCHEMY_VERSION_BOT_PRIVATE_KEY }}
 
-      - name: Setup pnpm & Bun
+      - name: Setup pnpm
         uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2.0.2
         with:
           cache: true
@@ -169,7 +169,7 @@ jobs:
 
   cleanup:
     name: Cleanup
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository &&
       ((github.event.action == 'closed' &&
@@ -190,7 +190,7 @@ jobs:
           app-id: ${{ secrets.ALCHEMY_VERSION_BOT_ID }}
           private-key: ${{ secrets.ALCHEMY_VERSION_BOT_PRIVATE_KEY }}
 
-      - name: Setup pnpm & Bun
+      - name: Setup pnpm
         uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2.0.2
         with:
           cache: true

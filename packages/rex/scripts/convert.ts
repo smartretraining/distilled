@@ -20,7 +20,7 @@ import * as path from "node:path";
 import { runOpenApiConvert } from "@distilled.cloud/core/codegen/openapi-cli";
 
 await runOpenApiConvert({
-  root: path.resolve(import.meta.dir, ".."),
+  root: path.resolve(import.meta.dirname, ".."),
   specs: [
     {
       name: "rex",

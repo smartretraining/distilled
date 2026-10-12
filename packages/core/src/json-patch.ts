@@ -1,11 +1,10 @@
 /**
  * JSON Patch (RFC 6902) Implementation
  *
- * Provides a unified spec patching system for all SDKs. Patches apply in
- * `convert` so `.generated-specs` is the patched Smithy model. generate does
- * not patch. Prefer `operationNaming: "verbNoun"` for operationId renames —
- * JSON pointers at `/paths/~1foo/operationId` go stale when upstream prefixes
- * paths.
+ * The patch engine for every SDK. Patches are Smithy ops applied in
+ * `convert` (`finalizeConvert`), so `.generated-specs` is the patched Smithy
+ * model; generate does not patch. Operation names are convert policy
+ * (`operationNames`), never a patch.
  *
  * Pure functions only — callers load patch files themselves (the generators
  * use Effect's FileSystem) and hand the parsed operations to `applyPatch`.
@@ -20,6 +19,14 @@ export interface JsonPatchOperation {
   path: string;
   value?: unknown;
   from?: string;
+  /**
+   * Extension for `add` and `move`: when the op creates a new object key,
+   * insert it just before this sibling key instead of at the end, so the
+   * patched model keeps the order the converter would have written. A `move`
+   * whose `from` equals `path` reorders a key. Ignored when the key already
+   * exists, the parent is an array, or the sibling is absent.
+   */
+  before?: string;
 }
 
 export type JsonPatch = JsonPatchOperation[];
@@ -59,11 +66,7 @@ export function getValueAtPath(obj: unknown, pointer: string): unknown {
   let current: unknown = obj;
 
   for (const segment of segments) {
-    if (
-      current === null ||
-      current === undefined ||
-      typeof current !== "object"
-    ) {
+    if (current === null || current === undefined || typeof current !== "object") {
       throw new StaleTargetError(
         `JSON pointer ${pointer} missing (at '${segment}'): not an object`,
       );
@@ -71,17 +74,13 @@ export function getValueAtPath(obj: unknown, pointer: string): unknown {
     if (Array.isArray(current)) {
       const index = segment === "-" ? current.length : parseInt(segment, 10);
       if (index < 0 || index >= current.length) {
-        throw new StaleTargetError(
-          `JSON pointer ${pointer} missing index '${segment}'`,
-        );
+        throw new StaleTargetError(`JSON pointer ${pointer} missing index '${segment}'`);
       }
       current = current[index];
     } else {
       const record = current as Record<string, unknown>;
       if (!Object.prototype.hasOwnProperty.call(record, segment)) {
-        throw new StaleTargetError(
-          `JSON pointer ${pointer} missing key '${segment}'`,
-        );
+        throw new StaleTargetError(`JSON pointer ${pointer} missing key '${segment}'`);
       }
       current = record[segment];
     }
@@ -95,6 +94,8 @@ export function setValueAtPath(
   obj: unknown,
   pointer: string,
   value: unknown,
+  mode: "add" | "replace" = "add",
+  before?: string,
 ): void {
   const segments = parseJsonPointer(pointer);
   if (segments.length === 0) {
@@ -106,9 +107,7 @@ export function setValueAtPath(
   for (let i = 0; i < segments.length - 1; i++) {
     const segment = segments[i]!;
     if (current === null || typeof current !== "object") {
-      throw new StaleTargetError(
-        `Cannot traverse path ${pointer}: not an object`,
-      );
+      throw new StaleTargetError(`Cannot traverse path ${pointer}: not an object`);
     }
     if (Array.isArray(current)) {
       current = current[parseInt(segment, 10)];
@@ -119,19 +118,38 @@ export function setValueAtPath(
 
   const lastSegment = segments[segments.length - 1]!;
   if (current === null || typeof current !== "object") {
-    throw new StaleTargetError(
-      `Cannot set value at path ${pointer}: parent is not an object`,
-    );
+    throw new StaleTargetError(`Cannot set value at path ${pointer}: parent is not an object`);
   }
 
   if (Array.isArray(current)) {
     if (lastSegment === "-") {
       current.push(value);
-    } else {
+    } else if (mode === "replace") {
       current[parseInt(lastSegment, 10)] = value;
+    } else {
+      // RFC 6902 §4.1: `add` at an array index inserts before it.
+      const index = parseInt(lastSegment, 10);
+      if (Number.isNaN(index) || index < 0 || index > current.length) {
+        throw new StaleTargetError(
+          `JSON pointer ${pointer} index '${lastSegment}' is out of bounds`,
+        );
+      }
+      current.splice(index, 0, value);
     }
   } else {
-    (current as Record<string, unknown>)[lastSegment] = value;
+    const record = current as Record<string, unknown>;
+    if (before === undefined || lastSegment in record || !(before in record)) {
+      record[lastSegment] = value;
+      return;
+    }
+    // Rebuild the keys in place: the parent object stays the same object,
+    // since callers and later ops may hold a reference to it.
+    const entries = Object.entries(record);
+    for (const [key] of entries) delete record[key];
+    for (const [key, v] of entries) {
+      if (key === before) record[lastSegment] = value;
+      record[key] = v;
+    }
   }
 }
 
@@ -147,9 +165,7 @@ export function removeValueAtPath(obj: unknown, pointer: string): void {
   for (let i = 0; i < segments.length - 1; i++) {
     const segment = segments[i]!;
     if (current === null || typeof current !== "object") {
-      throw new StaleTargetError(
-        `Cannot traverse path ${pointer}: not an object`,
-      );
+      throw new StaleTargetError(`Cannot traverse path ${pointer}: not an object`);
     }
     if (Array.isArray(current)) {
       current = current[parseInt(segment, 10)];
@@ -160,26 +176,20 @@ export function removeValueAtPath(obj: unknown, pointer: string): void {
 
   const lastSegment = segments[segments.length - 1]!;
   if (current === null || typeof current !== "object") {
-    throw new StaleTargetError(
-      `Cannot remove at path ${pointer}: parent is not an object`,
-    );
+    throw new StaleTargetError(`Cannot remove at path ${pointer}: parent is not an object`);
   }
 
   // RFC 6902 §4.2: the target location MUST exist.
   if (Array.isArray(current)) {
     const index = parseInt(lastSegment, 10);
     if (Number.isNaN(index) || index < 0 || index >= current.length) {
-      throw new StaleTargetError(
-        `JSON pointer ${pointer} missing index '${lastSegment}'`,
-      );
+      throw new StaleTargetError(`JSON pointer ${pointer} missing index '${lastSegment}'`);
     }
     current.splice(index, 1);
   } else {
     const record = current as Record<string, unknown>;
     if (!Object.prototype.hasOwnProperty.call(record, lastSegment)) {
-      throw new StaleTargetError(
-        `JSON pointer ${pointer} missing key '${lastSegment}'`,
-      );
+      throw new StaleTargetError(`JSON pointer ${pointer} missing key '${lastSegment}'`);
     }
     delete record[lastSegment];
   }
@@ -190,13 +200,10 @@ export function removeValueAtPath(obj: unknown, pointer: string): void {
 // ============================================================================
 
 /** Apply a single JSON Patch operation (mutates `obj` in place). */
-export function applyOperation(
-  obj: unknown,
-  operation: JsonPatchOperation,
-): void {
+export function applyOperation(obj: unknown, operation: JsonPatchOperation): void {
   switch (operation.op) {
     case "add":
-      setValueAtPath(obj, operation.path, operation.value);
+      setValueAtPath(obj, operation.path, operation.value, "add", operation.before);
       break;
     case "remove":
       removeValueAtPath(obj, operation.path);
@@ -204,33 +211,25 @@ export function applyOperation(
     case "replace": {
       const existing = getValueAtPath(obj, operation.path);
       if (existing === undefined) {
-        throw new StaleTargetError(
-          `JSON pointer ${operation.path} does not exist`,
-        );
+        throw new StaleTargetError(`JSON pointer ${operation.path} does not exist`);
       }
-      setValueAtPath(obj, operation.path, operation.value);
+      setValueAtPath(obj, operation.path, operation.value, "replace");
       break;
     }
     case "move": {
       if (!operation.from) throw new Error("move operation requires 'from'");
       const moveValue = getValueAtPath(obj, operation.from);
       if (moveValue === undefined) {
-        throw new StaleTargetError(
-          `Cannot move from path ${operation.from}: not an object`,
-        );
+        throw new StaleTargetError(`Cannot move from path ${operation.from}: not an object`);
       }
       removeValueAtPath(obj, operation.from);
-      setValueAtPath(obj, operation.path, moveValue);
+      setValueAtPath(obj, operation.path, moveValue, "add", operation.before);
       break;
     }
     case "copy": {
       if (!operation.from) throw new Error("copy operation requires 'from'");
       const copyValue = getValueAtPath(obj, operation.from);
-      setValueAtPath(
-        obj,
-        operation.path,
-        JSON.parse(JSON.stringify(copyValue)),
-      );
+      setValueAtPath(obj, operation.path, JSON.parse(JSON.stringify(copyValue)));
       break;
     }
     case "test": {
@@ -263,12 +262,7 @@ export function applyPatch(obj: unknown, patch: JsonPatch): void {
  */
 export function isStaleTargetError(error: unknown): boolean {
   if (error instanceof StaleTargetError) return true;
-  const message =
-    typeof error === "string"
-      ? error
-      : error instanceof Error
-        ? error.message
-        : "";
+  const message = typeof error === "string" ? error : error instanceof Error ? error.message : "";
   return (
     message.includes("not an object") ||
     message.includes("parent is not an object") ||

@@ -1,14 +1,10 @@
 import * as Effect from "effect/Effect";
-import * as Layer from "effect/Layer";
 import * as FetchHttpClient from "effect/http/FetchHttpClient";
 import type * as HttpClient from "effect/http/HttpClient";
+import * as Layer from "effect/Layer";
 import { describe, expect, it } from "vitest";
 import { type Credentials, CredentialsFromEnv } from "../src/credentials.ts";
-import {
-  getAccountUsers,
-  getPropertiesLifeSale,
-  getUsage,
-} from "../src/services/vaultre.ts";
+import { getAccountUsers, getPropertiesLifeSale, getUsage } from "../src/services/vaultre.ts";
 
 /**
  * The checks to run the day a VaultRE key exists — and, until then, the list
@@ -23,8 +19,7 @@ import {
  * and run `bun run test`.
  */
 const credentialled =
-  Boolean(process.env.VAULTRE_API_KEY) &&
-  Boolean(process.env.VAULTRE_ACCESS_TOKEN);
+  Boolean(process.env.VAULTRE_API_KEY) && Boolean(process.env.VAULTRE_ACCESS_TOKEN);
 
 const MainLayer = Layer.merge(CredentialsFromEnv, FetchHttpClient.layer);
 
@@ -72,15 +67,11 @@ describe.skipIf(!credentialled)("VaultRE (live)", () => {
     // document's lists with a patch, and it can only be gathered from a
     // tenant.
     const page = await runEffect(getPropertiesLifeSale({ pagesize: 100 }));
-    const seen = new Set(
-      page.items.map((item) => item.status).filter(Boolean) as string[],
-    );
+    const seen = new Set(page.items.map((item) => item.status).filter(Boolean) as string[]);
     const undocumented = [...seen].filter((s) => !DOCUMENTED_STATUSES.has(s));
 
     if (undocumented.length) {
-      console.warn(
-        `undocumented property statuses: ${undocumented.join(", ")}`,
-      );
+      console.warn(`undocumented property statuses: ${undocumented.join(", ")}`);
     }
     expect(seen.size).toBeGreaterThan(0);
   });

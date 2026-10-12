@@ -1,3 +1,6 @@
+import * as API from "@distilled.cloud/core/api";
+import type { API_ERRORS, ConfigError } from "@distilled.cloud/core/errors";
+import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
 /**
  * RexProtocol — hand-written.
  *
@@ -38,14 +41,11 @@
  * ─────────────────────────────────────────────────────────────────────────
  */
 import * as Effect from "effect/Effect";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
 import * as Layer from "effect/Layer";
 import * as Redacted from "effect/Redacted";
 import * as Schema from "effect/Schema";
-import type * as HttpClient from "effect/http/HttpClient";
-import type * as HttpClientError from "effect/http/HttpClientError";
-import * as API from "@distilled.cloud/core/api";
-import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
-import type { API_ERRORS, ConfigError } from "@distilled.cloud/core/errors";
 import { Credentials, type Config } from "./credentials.ts";
 import { RexApiError, UnknownRexError, RexParseError } from "./errors.ts";
 
@@ -128,8 +128,7 @@ const baseProtocol = makeRestProtocol<Config>({
   }),
   errorEnvelope: (body) => {
     const env = decodeEnvelope(body);
-    const inner =
-      env._tag === "Some" && env.value.error ? env.value.error : undefined;
+    const inner = env._tag === "Some" && env.value.error ? env.value.error : undefined;
     return inner ? { code: inner.code, message: inner.message } : undefined;
   },
   transformResponse,
@@ -145,8 +144,7 @@ const baseProtocol = makeRestProtocol<Config>({
   parseError: ({ body, cause }) => new RexParseError({ body, cause }),
   unknownError: ({ code, message, body }) => {
     const env = decodeEnvelope(body);
-    const inner =
-      env._tag === "Some" && env.value.error ? env.value.error : undefined;
+    const inner = env._tag === "Some" && env.value.error ? env.value.error : undefined;
 
     if (inner) {
       return new RexApiError({
@@ -158,12 +156,7 @@ const baseProtocol = makeRestProtocol<Config>({
     }
 
     return new UnknownRexError({
-      code:
-        typeof code === "string"
-          ? code
-          : code !== undefined
-            ? String(code)
-            : undefined,
+      code: typeof code === "string" ? code : code !== undefined ? String(code) : undefined,
       message,
       body,
     });

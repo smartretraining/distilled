@@ -1,3 +1,6 @@
+import type * as API from "@distilled.cloud/core/api";
+import type { API_ERRORS, ConfigError } from "@distilled.cloud/core/errors";
+import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
 /**
  * VaultreProtocol — hand-written.
  *
@@ -28,19 +31,12 @@
  * attached, which is the safe direction — see `test/protocol.test.ts`.
  */
 import * as Effect from "effect/Effect";
-import * as Redacted from "effect/Redacted";
-import type * as Layer from "effect/Layer";
 import type * as HttpClient from "effect/http/HttpClient";
 import type * as HttpClientError from "effect/http/HttpClientError";
-import type * as API from "@distilled.cloud/core/api";
-import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
-import type { API_ERRORS, ConfigError } from "@distilled.cloud/core/errors";
+import type * as Layer from "effect/Layer";
+import * as Redacted from "effect/Redacted";
 import { Credentials, type Config } from "./credentials.ts";
-import {
-  UnknownVaultreError,
-  VaultreApiError,
-  VaultreParseError,
-} from "./errors.ts";
+import { UnknownVaultreError, VaultreApiError, VaultreParseError } from "./errors.ts";
 
 /**
  * Error channel shared by every generated VaultRE operation. Generated
@@ -59,15 +55,10 @@ export type VaultreOpError =
 /** Context (requirements) shared by every generated VaultRE operation. */
 export type VaultreOpContext = Credentials | HttpClient.HttpClient;
 
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null;
+const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null;
 
 const asString = (v: unknown): string | undefined =>
-  typeof v === "string" && v !== ""
-    ? v
-    : typeof v === "number"
-      ? String(v)
-      : undefined;
+  typeof v === "string" && v !== "" ? v : typeof v === "number" ? String(v) : undefined;
 
 /**
  * The human-readable half of a `SuccessOrError` body.
@@ -83,52 +74,48 @@ const errorMessage = (body: unknown): string | undefined =>
 const errorCode = (body: unknown): string | undefined =>
   isRecord(body) ? asString(body.code) : undefined;
 
-export const VaultreProtocol: Layer.Layer<API.Protocol> =
-  makeRestProtocol<Config>({
-    // The Credentials service holds an effect — resolving it here (per
-    // request, on the calling fiber) picks up context-provided credentials,
-    // which is what lets one process sync many agencies off one integrator
-    // key.
-    credentials: Effect.gen(function* () {
-      const resolve = yield* Credentials;
-      return yield* resolve;
-    }),
-    baseUrl: (creds) => creds.apiBaseUrl,
-    headers: (creds) => ({
-      "X-Api-Key": Redacted.value(creds.apiKey),
-      Authorization: `Bearer ${Redacted.value(creds.accessToken)}`,
-    }),
-    errorEnvelope: (body) => {
-      const message = errorMessage(body);
-      if (message === undefined) return undefined;
-      const code = errorCode(body);
-      // The typed error classes the generator emits declare `code: number`,
-      // and core hands them `best.code ?? 0` after discarding any non-numeric
-      // code (`matchTypedError`, core/protocol-http). VaultRE's codes are
-      // strings — `INVALID_PHOTO_IDS: [99999]` — so the message is the only
-      // channel that reaches the caller intact.
-      return {
-        code,
-        message:
-          code !== undefined && !message.includes(code)
-            ? `${code}: ${message}`
-            : message,
-      };
-    },
-    parseError: ({ body, cause }) => new VaultreParseError({ body, cause }),
-    unknownError: ({ code, message, body }) => {
-      const detail = errorMessage(body);
-      if (detail !== undefined) {
-        return new VaultreApiError({
-          code: errorCode(body) ?? asString(code),
-          message: detail,
-          body,
-        });
-      }
-      return new UnknownVaultreError({
-        code: asString(code),
-        message,
+export const VaultreProtocol: Layer.Layer<API.Protocol> = makeRestProtocol<Config>({
+  // The Credentials service holds an effect — resolving it here (per
+  // request, on the calling fiber) picks up context-provided credentials,
+  // which is what lets one process sync many agencies off one integrator
+  // key.
+  credentials: Effect.gen(function* () {
+    const resolve = yield* Credentials;
+    return yield* resolve;
+  }),
+  baseUrl: (creds) => creds.apiBaseUrl,
+  headers: (creds) => ({
+    "X-Api-Key": Redacted.value(creds.apiKey),
+    Authorization: `Bearer ${Redacted.value(creds.accessToken)}`,
+  }),
+  errorEnvelope: (body) => {
+    const message = errorMessage(body);
+    if (message === undefined) return undefined;
+    const code = errorCode(body);
+    // The typed error classes the generator emits declare `code: number`,
+    // and core hands them `best.code ?? 0` after discarding any non-numeric
+    // code (`matchTypedError`, core/protocol-http). VaultRE's codes are
+    // strings — `INVALID_PHOTO_IDS: [99999]` — so the message is the only
+    // channel that reaches the caller intact.
+    return {
+      code,
+      message: code !== undefined && !message.includes(code) ? `${code}: ${message}` : message,
+    };
+  },
+  parseError: ({ body, cause }) => new VaultreParseError({ body, cause }),
+  unknownError: ({ code, message, body }) => {
+    const detail = errorMessage(body);
+    if (detail !== undefined) {
+      return new VaultreApiError({
+        code: errorCode(body) ?? asString(code),
+        message: detail,
         body,
       });
-    },
-  });
+    }
+    return new UnknownVaultreError({
+      code: asString(code),
+      message,
+      body,
+    });
+  },
+});

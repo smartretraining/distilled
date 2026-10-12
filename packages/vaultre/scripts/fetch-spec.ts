@@ -20,13 +20,11 @@ import { readFile, writeFile } from "node:fs/promises";
 import * as path from "node:path";
 
 const SPEC_URL = "https://docs.api.vaultre.com.au/swagger/vaultre.yaml";
-const target = path.resolve(import.meta.dir, "../specs/vaultre.yaml");
+const target = path.resolve(import.meta.dirname, "../specs/vaultre.yaml");
 
 const response = await fetch(SPEC_URL);
 if (!response.ok) {
-  throw new Error(
-    `${SPEC_URL} → HTTP ${response.status} ${response.statusText}`,
-  );
+  throw new Error(`${SPEC_URL} → HTTP ${response.status} ${response.statusText}`);
 }
 const next = await response.text();
 

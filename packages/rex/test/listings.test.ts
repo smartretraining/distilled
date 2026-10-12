@@ -1,11 +1,7 @@
 import { Cause, Effect, Exit } from "effect";
 import { describe, expect, it } from "vitest";
 import { RexApiError } from "../src/errors.ts";
-import {
-  listingsDescribeModel,
-  listingsRead,
-  listingsSearch,
-} from "../src/services/rex.ts";
+import { listingsDescribeModel, listingsRead, listingsSearch } from "../src/services/rex.ts";
 import { runEffect } from "./setup.ts";
 describe("Listings (live)", () => {
   it("describeModel returns the query surface", async () => {
@@ -36,9 +32,7 @@ describe("Listings (live)", () => {
     // with a non-null `error` in the envelope. The client recovers that into
     // the typed error channel, so the Exit is a typed failure (not a defect)
     // carrying RexApiError — `Effect.catchTag("RexApiError", ...)` would work.
-    const exit = await runEffect(
-      listingsRead({ id: 999_999_999 }).pipe(Effect.exit),
-    );
+    const exit = await runEffect(listingsRead({ id: 999_999_999 }).pipe(Effect.exit));
 
     expect(Exit.isFailure(exit)).toBe(true);
     if (Exit.isFailure(exit)) {

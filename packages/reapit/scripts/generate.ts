@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { runGeneratorCli } from "@distilled.cloud/core/codegen/cli";
 /**
  * generate — turn the Smithy JSON model in .generated-specs into the Reapit
  * Effect SDK.
@@ -17,7 +18,6 @@
  * paginated operations directly on the model instead.
  */
 import type { SdkSpec } from "@distilled.cloud/core/codegen/generator";
-import { runGeneratorCli } from "@distilled.cloud/core/codegen/cli";
 
 const NULLABLE_TRAIT = "com.distilled.openapi#nullable";
 const ERROR_MATCHERS_TRAIT = "com.distilled.openapi#errorMatchers";
@@ -55,9 +55,7 @@ const stampPagination = (model: any): string => {
     const [collection] = collections[0]!;
 
     const inputId = shape.input?.target;
-    const inputMembers: Record<string, any> = inputId
-      ? (shapes[inputId]?.members ?? {})
-      : {};
+    const inputMembers: Record<string, any> = inputId ? (shapes[inputId]?.members ?? {}) : {};
     if (!inputMembers.page) continue;
 
     shape.traits ??= {};
@@ -132,11 +130,7 @@ const reapitSpec: SdkSpec = {
   operationDecl: {
     contextType: "ReapitOpContext",
     commonErrorType: "ReapitOpError",
-    commonErrorClasses: [
-      "ReapitApiError",
-      "ReapitVersionError",
-      "UnknownReapitError",
-    ],
+    commonErrorClasses: ["ReapitApiError", "ReapitVersionError", "UnknownReapitError"],
     protocol: "ReapitProtocol",
     retry: "Retry.Retry",
   },
@@ -146,7 +140,7 @@ const reapitSpec: SdkSpec = {
 
 runGeneratorCli({
   description: "Generate the Reapit Effect SDK from the Smithy model",
-  root: `${import.meta.dir}/..`,
+  root: `${import.meta.dirname}/..`,
   // patches/ holds OpenAPI-document patches consumed by scripts/convert.ts;
   // there is no smithy-model patch chain.
   patchesDir: false,

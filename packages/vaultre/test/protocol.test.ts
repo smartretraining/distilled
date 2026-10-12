@@ -22,8 +22,7 @@ import { json, stubClient } from "./setup.ts";
 describe("VaultRE protocol", () => {
   /** The typed failure, insisting it is one — a defect would mean the error envelope went unrecognised. */
   const failure = (exit: Exit.Exit<unknown, unknown>): any => {
-    if (Exit.isSuccess(exit))
-      throw new Error("expected a failure, got a success");
+    if (Exit.isSuccess(exit)) throw new Error("expected a failure, got a success");
     expect(Cause.hasDies(exit.cause)).toBe(false);
     const error = Cause.findErrorOption(exit.cause);
     expect(error._tag).toBe("Some");
@@ -33,9 +32,7 @@ describe("VaultRE protocol", () => {
   it("sends both secrets, on the versioned base URL", async () => {
     const stub = stubClient(() => json({ id: 7, name: "Domain" }));
 
-    await Effect.runPromise(
-      getAdvertisingSupplier({ id: 7 }).pipe(Effect.provide(stub.layer)),
-    );
+    await Effect.runPromise(getAdvertisingSupplier({ id: 7 }).pipe(Effect.provide(stub.layer)));
 
     const [call] = stub.calls;
     expect(call!.url).toBe(
@@ -49,10 +46,7 @@ describe("VaultRE protocol", () => {
 
   it("turns a SuccessOrError 400 into the operation's typed BadRequest", async () => {
     const stub = stubClient(() =>
-      json(
-        { success: false, msg: "Supplier not found", code: "NOT_FOUND" },
-        400,
-      ),
+      json({ success: false, msg: "Supplier not found", code: "NOT_FOUND" }, 400),
     );
 
     const error = failure(
@@ -69,16 +63,11 @@ describe("VaultRE protocol", () => {
   });
 
   it("falls through to UnknownVaultreError, body intact, on an unfamiliar shape", async () => {
-    const stub = stubClient(() =>
-      json({ errors: [{ detail: "something else entirely" }] }, 418),
-    );
+    const stub = stubClient(() => json({ errors: [{ detail: "something else entirely" }] }, 418));
 
     const error = failure(
       await Effect.runPromiseExit(
-        getAdvertisingSupplier({ id: 7 }).pipe(
-          Retry.none,
-          Effect.provide(stub.layer),
-        ),
+        getAdvertisingSupplier({ id: 7 }).pipe(Retry.none, Effect.provide(stub.layer)),
       ),
     );
 
@@ -89,16 +78,11 @@ describe("VaultRE protocol", () => {
   });
 
   it("stops after one 429 when retries are off", async () => {
-    const stub = stubClient(() =>
-      json({ success: false, msg: "Rate limit exceeded" }, 429),
-    );
+    const stub = stubClient(() => json({ success: false, msg: "Rate limit exceeded" }, 429));
 
     const error = failure(
       await Effect.runPromiseExit(
-        getPropertiesLifeSale({ pagesize: 1 }).pipe(
-          Retry.none,
-          Effect.provide(stub.layer),
-        ),
+        getPropertiesLifeSale({ pagesize: 1 }).pipe(Retry.none, Effect.provide(stub.layer)),
       ),
     );
 

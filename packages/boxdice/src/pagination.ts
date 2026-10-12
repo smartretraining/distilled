@@ -1,3 +1,10 @@
+import {
+  getItems,
+  getPath,
+  isTerminalToken,
+  type PaginatedTrait,
+  type PaginationStrategy,
+} from "@distilled.cloud/core/pagination";
 /**
  * Box+Dice pagination — hand-written.
  *
@@ -36,19 +43,8 @@
  */
 import * as Effect from "effect/Effect";
 import * as Stream from "effect/Stream";
-import {
-  getItems,
-  getPath,
-  isTerminalToken,
-  type PaginatedTrait,
-  type PaginationStrategy,
-} from "@distilled.cloud/core/pagination";
 
-export {
-  getItems,
-  paginateSingle,
-  isTerminalToken,
-} from "@distilled.cloud/core/pagination";
+export { getItems, paginateSingle, isTerminalToken } from "@distilled.cloud/core/pagination";
 
 /**
  * Extract the `after` cursor from a `paging.next` URL.
@@ -100,9 +96,7 @@ export const paginateAfter: PaginationStrategy = <
   };
 
   const startCursor =
-    typeof input[inputToken] === "string"
-      ? (input[inputToken] as string)
-      : undefined;
+    typeof input[inputToken] === "string" ? (input[inputToken] as string) : undefined;
 
   return Stream.unfold(
     { cursor: startCursor, done: false, seen: new Set<string>() } as State,
@@ -122,14 +116,9 @@ export const paginateAfter: PaginationStrategy = <
         // only sends the member when it has records — but both are checked
         // because only the first is documented.
         const raw = getPath(page, itemsPath);
-        const empty =
-          raw === undefined ||
-          raw === null ||
-          getItems(page, itemsPath).length === 0;
+        const empty = raw === undefined || raw === null || getItems(page, itemsPath).length === 0;
 
-        const cursor = empty
-          ? undefined
-          : nextCursor(getPath(page, outputToken));
+        const cursor = empty ? undefined : nextCursor(getPath(page, outputToken));
 
         // A repeated cursor cannot happen per the documented contract, but
         // it would spin forever against a misbehaving tenant.
@@ -138,8 +127,7 @@ export const paginateAfter: PaginationStrategy = <
         const nextState: State = {
           cursor,
           done: isTerminalToken(cursor) || stuck,
-          seen:
-            cursor === undefined ? state.seen : new Set(state.seen).add(cursor),
+          seen: cursor === undefined ? state.seen : new Set(state.seen).add(cursor),
         };
 
         return [page, nextState] as const;

@@ -88,9 +88,7 @@ describe("Reapit (live)", () => {
       // The 422 for a bare call says "specify one of postcode, suburbName,
       // state or region" — but only the prefixed forms are accepted, so
       // `filterState` is right and a bare `state` is not.
-      const page = await runEffect(
-        getSuburbs({ filterState: "NSW", limit: 5 }),
-      );
+      const page = await runEffect(getSuburbs({ filterState: "NSW", limit: 5 }));
       expect(page.suburbs!.length).toBeGreaterThan(0);
       expect(page.suburbs![0]!.state).toBe("NSW");
     });

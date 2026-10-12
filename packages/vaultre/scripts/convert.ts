@@ -23,11 +23,11 @@
  * list is a `patches/` entry once an account says which one is real.
  */
 import * as path from "node:path";
-import YAML from "yaml";
 import { runOpenApiConvert } from "@distilled.cloud/core/codegen/openapi-cli";
+import YAML from "yaml";
 
 await runOpenApiConvert({
-  root: path.resolve(import.meta.dir, ".."),
+  root: path.resolve(import.meta.dirname, ".."),
   specs: [
     {
       name: "vaultre",

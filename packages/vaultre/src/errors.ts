@@ -26,8 +26,8 @@ export {
 } from "@distilled.cloud/core/errors";
 export type { DefaultErrors } from "@distilled.cloud/core/errors";
 
-import * as Schema from "effect/Schema";
 import * as Category from "@distilled.cloud/core/category";
+import * as Schema from "effect/Schema";
 
 /**
  * A structured failure from VaultRE's `SuccessOrError` body —
@@ -40,17 +40,14 @@ import * as Category from "@distilled.cloud/core/category";
  * backoff before surfacing. Genuinely transient conditions arrive as 5xx and
  * map to the core classes, which keep their own categories.
  */
-export class VaultreApiError extends Schema.TaggedError<VaultreApiError>()(
-  "VaultreApiError",
-  {
-    /** VaultRE's own error code, e.g. `INVALID_PHOTO_IDS: [99999]`. */
-    code: Schema.optional(Schema.String),
-    /** The `msg` field — a human-readable explanation. */
-    message: Schema.optional(Schema.String),
-    /** The full response body. */
-    body: Schema.Unknown,
-  },
-) {}
+export class VaultreApiError extends Schema.TaggedError<VaultreApiError>()("VaultreApiError", {
+  /** VaultRE's own error code, e.g. `INVALID_PHOTO_IDS: [99999]`. */
+  code: Schema.optional(Schema.String),
+  /** The `msg` field — a human-readable explanation. */
+  message: Schema.optional(Schema.String),
+  /** The full response body. */
+  body: Schema.Unknown,
+}) {}
 
 /** Unknown VaultRE error — returned when nothing else matches the failure. */
 export class UnknownVaultreError extends Schema.TaggedError<UnknownVaultreError>()(

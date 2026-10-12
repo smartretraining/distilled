@@ -31,8 +31,8 @@ export {
 } from "@distilled.cloud/core/errors";
 export type { DefaultErrors } from "@distilled.cloud/core/errors";
 
-import * as Schema from "effect/Schema";
 import * as Category from "@distilled.cloud/core/category";
+import * as Schema from "effect/Schema";
 
 /**
  * A structured error from a Reapit `{ response: { errors: [...] } }` body.
@@ -51,21 +51,18 @@ import * as Category from "@distilled.cloud/core/category";
  * to `InternalServerError` / `ServiceUnavailable` / `BadGateway`, which keep
  * their own categories.
  */
-export class ReapitApiError extends Schema.TaggedError<ReapitApiError>()(
-  "ReapitApiError",
-  {
-    /** Reapit error code — usually the HTTP status as a string, e.g. "422". */
-    code: Schema.optional(Schema.String),
-    /** Short error class, e.g. "Unprocessable Entity Http Exception". */
-    title: Schema.optional(Schema.String),
-    /** Human-readable explanation, e.g. "Please specify one of postcode...". */
-    message: Schema.optional(Schema.String),
-    /** Every error the response carried, not just the first. */
-    errors: Schema.Unknown,
-    /** The full response body. */
-    body: Schema.Unknown,
-  },
-) {}
+export class ReapitApiError extends Schema.TaggedError<ReapitApiError>()("ReapitApiError", {
+  /** Reapit error code — usually the HTTP status as a string, e.g. "422". */
+  code: Schema.optional(Schema.String),
+  /** Short error class, e.g. "Unprocessable Entity Http Exception". */
+  title: Schema.optional(Schema.String),
+  /** Human-readable explanation, e.g. "Please specify one of postcode...". */
+  message: Schema.optional(Schema.String),
+  /** Every error the response carried, not just the first. */
+  errors: Schema.Unknown,
+  /** The full response body. */
+  body: Schema.Unknown,
+}) {}
 
 /**
  * Raised when the API rejects the `version` query parameter (code 300).
@@ -93,10 +90,7 @@ export class UnknownReapitError extends Schema.TaggedError<UnknownReapitError>()
 ).pipe(Category.withServerError) {}
 
 /** Schema parse error wrapper — raised when a response fails schema decoding. */
-export class ReapitParseError extends Schema.TaggedError<ReapitParseError>()(
-  "ReapitParseError",
-  {
-    body: Schema.Unknown,
-    cause: Schema.Unknown,
-  },
-).pipe(Category.withParseError) {}
+export class ReapitParseError extends Schema.TaggedError<ReapitParseError>()("ReapitParseError", {
+  body: Schema.Unknown,
+  cause: Schema.Unknown,
+}).pipe(Category.withParseError) {}

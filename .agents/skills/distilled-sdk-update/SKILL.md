@@ -1,6 +1,6 @@
 ---
 name: distilled-sdk-update
-description: Move an existing distilled SDK to its mirror's latest spec, regenerate it, audit packages/<pkg>/patches/ with `pnpm patches:audit` and delete or slim the patches the new spec has absorbed, then open the PR. Use for "update <pkg> to the latest spec", "regenerate <pkg>", "audit / remove unused patches", "does the spec still need this patch", or when a provider says they fixed their spec. Building a new SDK is the distilled-sdk skill.
+description: Move an existing distilled SDK to its mirror's latest spec, regenerate it, audit packages/<pkg>/patches/ with `pnpm patches:audit` and delete or slim the patches the new spec has absorbed, then open the PR. Use for "update <pkg> to the latest spec", "regenerate <pkg>", "audit / remove unused patches", "which patches does the new spec no longer need", or when a provider says they fixed their spec. Adding, changing, merging or rebasing a single patch, including "do we still need this patch PR?", is distilled-sdk-patch, which reads the generated diff and runs no audit. When also asked to "look at / go through the open PRs" for that provider, it reconciles them against the new spec (Step 6). Building a new SDK is the distilled-sdk skill.
 ---
 
 # Updating a distilled SDK to its latest spec
@@ -51,17 +51,32 @@ telling you something moved: either upstream now has what the op added
 pnpm patches:audit <pkg>          # one verdict per file
 pnpm patches:audit <pkg> --ops    # also one per op inside every needed file
 pnpm patches:audit <pkg> --only <substring>
+pnpm patches:audit <pkg> --jobs <n>   # parallel converts; default from cores and free memory
 ```
 
-The audit converts once with every patch, then once per patch with that
-patch left out (`DISTILLED_SKIP_PATCHES`, a dev-time seam in
-`@distilled.cloud/core/codegen/patches`), and diffs `.generated-specs`:
+Run the audit only after the mirror has moved (step 1): it answers which
+patches the new spec has absorbed, and nothing else. Always name the
+package. To check what one patch you just wrote or edited does, read the
+generated diff instead (`distilled-sdk-patch`, step 5).
+
+The audit (`@distilled.cloud/core/codegen/patch-audit`) builds the model
+once with every patch, then once per patch with that patch left out, and
+diffs the result. It runs `convert` on scratch copies of the package
+(`packages/.audit-<pkg>-<n>`, removed on exit; the package itself is never
+written), so the spec mirror must be fetched (step 1); without it the
+package is reported as skipped. Patches are Smithy ops applied in
+`finalizeConvert`, so each file is judged in memory: one convert, then only
+the finalize steps re-run per file. All of `cloudflare` (about 2,850 files)
+takes under two minutes, `posthog` and `azure` well under a minute, most
+packages seconds. Railway's GraphQL patches apply outside
+`finalizeConvert` and cost one convert each (`DISTILLED_SKIP_PATCHES`),
+spread over `--jobs` copies.
 
 | Verdict | Meaning | Do |
 | --- | --- | --- |
 | `🗑 no effect` | the model is byte-identical without it | delete the file |
 | `✔ needed` | the model differs; the pointers are listed | keep, and read the diff — it is the patch's description, mechanically |
-| `🔗 convert fails without it` | a later patch targets what this one adds | keep both, or delete both |
+| `🔗 the build fails without it` | a later patch targets what this one adds | keep both, or delete both |
 | `op N: no effect` (`--ops`) | one op in a needed file is dead | remove that op |
 
 Verdicts are one-at-a-time. Two patches that add the same thing each look
@@ -131,3 +146,81 @@ the branch, is also the message to send the provider. Group it by kind —
 missing `x-nullable`, shared models with too many `required` fields,
 undocumented error statuses, a wrong response schema, secrets with no
 sensitive mark — because that is how they will fix it.
+
+## Step 6 — reconcile open PRs for the provider (when asked)
+
+Open PRs that patch `packages/<pkg>` were written against the old spec, so
+they are reviewed after the update has merged, never before. The new spec
+decides each one. The authors' commits should land with their names on
+them: update their branches and merge, and close only what the spec or
+another PR already covers.
+
+**Find them.**
+
+```sh
+gh pr list --state open --limit 300 --json number,title,author,files \
+  --jq '.[] | select(any(.files[]; .path | startswith("packages/<pkg>/")))
+        | "#\(.number) \(.author.login): \(.title)"'
+```
+
+Filter on changed files: titles miss PRs scoped to `core` or to a sibling
+package that also patch this one.
+
+Read each body and its `patches/` diff. If the user excludes a PR or an API,
+leave it untouched: no push, no comment, no close.
+
+**Judge each against the regenerated model** (`.generated-specs/`, not the
+TypeScript):
+
+| Finding | Do |
+| --- | --- |
+| The spec now has it: same operations, members or shapes | close with a comment naming the spec commit and the generated symbols |
+| Another open PR does the same, or it already merged | merge the most complete one; close the rest with a link to it |
+| Part is in the spec now | trim the PR to what the spec still lacks |
+| None of it is in the spec | update and merge as is |
+| The spec has it, but the converter generates it wrong | fix the converter in its own PR, merge it, then close |
+
+Usually reading the regenerated model answers it: search
+`.generated-specs/` for the operations, members or shapes the PR adds. When
+it does not, merge `main` into the PR's branch and run `pnpm generate
+<pkg>`: a stale target means the spec moved underneath the patch, and the
+generated diff against `main` shows what the patch still adds. Reach for
+`pnpm patches:audit <pkg> --only <file> --ops` only when that diff cannot
+tell you which ops are dead.
+
+**Update a branch in place.** Maintainers can push to forks when
+`maintainerCanModify` is true; for a fork, fetch `refs/pull/<n>/head`,
+since `origin/<branch>` does not exist:
+
+```sh
+git fetch origin main "refs/pull/<n>/head:refs/remotes/pr/<n>"
+git checkout -B pr-<n> pr/<n>
+git merge --no-edit origin/main            # merge, never rebase: keep their commits
+pnpm generate <pkg>                        # resolve generated-file conflicts by regenerating
+pnpm exec tsc -b packages/<pkg> --noCheck false
+pnpm vitest run packages/<pkg>/src/<their>.test.ts
+git push https://github.com/<owner>/<repo>.git pr-<n>:<headRefName>
+```
+
+- Conflicts in `.generated-specs/` or `src/services/` are not edits to
+  resolve by hand: take either side and regenerate. Conflicts in `patches/`
+  are real; read both sides. Two PRs adding the same shape merge into
+  duplicate ops or duplicate JSON keys without a textual conflict, so check
+  the patch parses with no repeated keys.
+- Delete a test the PR added that only checks the patch's generated shape;
+  patches carry no per-package tests (`distilled-sdk-patch`, step 4).
+  Other tests that predate repo changes (`bun:test` → `vitest`, `Redacted`
+  credentials) get fixed in a separate commit on their branch.
+- When a PR was trimmed, say so in a comment on it: what was dropped and why.
+
+**Merge in dependency order.** PRs that regenerate the same service conflict
+with each other once one lands. Merge the independent ones first, then
+re-merge `main` into each remaining branch and regenerate before queueing
+it. `main` uses a merge queue; enqueue with the GraphQL
+`enqueuePullRequest` mutation (with `expectedHeadOid`) after the checks
+pass.
+
+**Ask before** closing anyone's PR, or before a change beyond patches,
+such as a converter or runtime fix. Every close carries a comment that
+thanks the author and names what superseded it, by PR number or spec
+commit.

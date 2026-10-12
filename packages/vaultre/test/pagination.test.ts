@@ -2,10 +2,7 @@ import * as Effect from "effect/Effect";
 import * as Stream from "effect/Stream";
 import { describe, expect, it } from "vitest";
 import { paginatePages } from "../src/pagination.ts";
-import {
-  getPropertiesLifeSale,
-  getUserTeams,
-} from "../src/services/vaultre.ts";
+import { getPropertiesLifeSale, getUserTeams } from "../src/services/vaultre.ts";
 import { json, stubClient } from "./setup.ts";
 
 const trait = {
@@ -27,9 +24,9 @@ const pagesOf = <O>(
       return respond(page);
     });
 
-  return Effect.runPromise(
-    Stream.runCollect(paginatePages(operation, input, trait)),
-  ).then((pages) => ({ pages: [...pages] as O[], requested }));
+  return Effect.runPromise(Stream.runCollect(paginatePages(operation, input, trait))).then(
+    (pages) => ({ pages: [...pages] as O[], requested }),
+  );
 };
 
 describe("VaultRE pagination", () => {
@@ -44,10 +41,9 @@ describe("VaultRE pagination", () => {
   });
 
   it("starts where the caller asked", async () => {
-    const { requested } = await pagesOf(
-      (page) => ({ items: [{ id: page }], totalPages: 4 }),
-      { page: 3 },
-    );
+    const { requested } = await pagesOf((page) => ({ items: [{ id: page }], totalPages: 4 }), {
+      page: 3,
+    });
 
     expect(requested).toEqual([3, 4]);
   });
@@ -86,9 +82,7 @@ describe("VaultRE pagination", () => {
     );
 
     expect([...items].map((i) => i.id)).toEqual([1, 2]);
-    expect(
-      stub.calls.map((c) => new URL(c.url).searchParams.get("page")),
-    ).toEqual(["1", "2"]);
+    expect(stub.calls.map((c) => new URL(c.url).searchParams.get("page"))).toEqual(["1", "2"]);
   });
 
   it("leaves the envelope-without-a-page operations unpaginated", async () => {

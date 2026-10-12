@@ -61,12 +61,19 @@ pnpm format                 # oxfmt, not prettier
 pnpm lint                   # oxlint
 pnpm generate [<pkg>…]      # convert + generate + format; all packages if no args
 pnpm patches:audit <pkg>    # which of packages/<pkg>/patches/ the spec no longer needs
+pnpm patches:names <pkg>    # final ← upstream shape ids (patches use upstream ids)
 ```
 
-Package manager is pnpm 11 (`packageManager` pins it), Node 24
-(`.node-version`). Bun runs the scripts under `scripts/` and
-`packages/*/scripts/`, so you need both on PATH. A `pre-commit` hook runs
-`bun format`.
+Package manager is pnpm 12 (`packageManager` pins it), Node 24
+(`.node-version`). Node runs the scripts under `scripts/` and
+`packages/*/scripts/` directly (native TypeScript type stripping). A script
+that imports a workspace package (`@distilled.cloud/*`) runs with
+`node --conditions=bun`, which resolves it to `src/*.ts` through the `bun`
+export condition; without the flag Node picks the tsc-built `lib/`. Keep the
+flag off scripts that don't need it and out of workspace-wide `NODE_OPTIONS`:
+third-party packages (srvx, h3, alchemy, …) ship Bun-only builds under the
+same condition. Tests use vitest: `pnpm vitest run
+<paths>`. A `pre-commit` hook runs `pnpm format`.
 
 ## Things that will surprise you
 
@@ -77,9 +84,16 @@ Package manager is pnpm 11 (`packageManager` pins it), Node 24
 - **Never diff a regeneration before formatting.** Generated output is
   committed formatted; `pnpm generate` formats at the end for this reason. Diff
   before that and every file looks changed.
-- **Patch the spec, not the generated TypeScript.** Edits under
+- **Every successful generate stamps `distilled.generatedAt` and
+  `distilled.specUpdatedAt`** (UTC `YYYY-MM-DD`) in the package's
+  `package.json`: when the SDK was generated, and when its spec last changed
+  in the mirror. Commit them with the regenerated code. The spec date needs
+  the mirror checked out; the generator deepens the shallow submodule (no
+  file content) to find it.
+- **Patch the model, not the generated TypeScript.** Edits under
   `packages/*/src/services/` are erased by the next `pnpm generate`. Patches
-  live in `packages/<pkg>/patches/` as RFC-6902 `*.patch.json`.
+  live in `packages/<pkg>/patches/` as RFC-6902 ops on the converted Smithy
+  model, under the names the spec gives (`pnpm patches:names <pkg>`).
 - **`stacks/*` are workspace members but are not in the root tsconfig's
   project references,** so `tsc -b` never sees them. They have their own
   `typecheck` scripts and their own CI job.
