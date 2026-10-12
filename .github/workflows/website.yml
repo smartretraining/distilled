@@ -86,7 +86,7 @@ jobs:
         github.event.action != 'unlabeled' &&
         (github.event.action != 'labeled' ||
          github.event.label.name == 'deploy-website')))
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
@@ -169,7 +169,7 @@ jobs:
 
   cleanup:
     name: Cleanup
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository &&
       ((github.event.action == 'closed' &&
