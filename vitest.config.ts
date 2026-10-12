@@ -14,6 +14,12 @@ export default defineConfig({
       "scripts/**/*.test.ts",
       "stacks/*/*.test.ts",
     ],
-    exclude: ["**/node_modules/**", "**/specs/**", "**/lib/**"],
+    exclude: [
+      "**/node_modules/**",
+      "**/specs/**",
+      "**/lib/**",
+      // Live, credentialed suites with their own vitest configs.
+      "packages/{rex,reapit,boxdice,vaultre}/**",
+    ],
   },
 });

@@ -47,8 +47,13 @@ export const publishablePackages = Effect.fn(function* (root: string, directory:
       } satisfies WorkspacePackage;
     }),
   );
+  // The fork's @smartretraining packages ship on their own version line from
+  // release-smartretraining.yml; upstream's lockstep release must not touch them.
   return packages.filter(
-    (pkg): pkg is WorkspacePackage => pkg !== undefined && pkg.manifest.private !== true,
+    (pkg): pkg is WorkspacePackage =>
+      pkg !== undefined &&
+      pkg.manifest.private !== true &&
+      !pkg.manifest.name.startsWith("@smartretraining/"),
   );
 });
 
