@@ -27,7 +27,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import * as path from "node:path";
 
-const root = path.resolve(import.meta.dir, "..");
+const root = path.resolve(import.meta.dirname, "..");
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Json = any;

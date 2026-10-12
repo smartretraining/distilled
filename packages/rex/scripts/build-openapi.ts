@@ -40,7 +40,7 @@
 import * as fs from "fs";
 import * as path from "path";
 
-const rootDir = path.join(import.meta.dir, "..");
+const rootDir = path.join(import.meta.dirname, "..");
 const specsDir = path.join(rootDir, "specs", "rex");
 const outFile = path.join(rootDir, "specs", "openapi.generated.json");
 

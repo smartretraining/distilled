@@ -63,7 +63,7 @@ const SERVICES = [
   "AdminValueLists",
 ] as const;
 
-const rootDir = path.join(import.meta.dir, "..");
+const rootDir = path.join(import.meta.dirname, "..");
 const outDir = path.join(rootDir, "specs", "rex");
 
 interface RexEnvelope<T> {

@@ -63,7 +63,7 @@ const rexSpec: SdkSpec = {
 
 runGeneratorCli({
   description: "Generate the Rex Effect SDK from the Smithy model",
-  root: `${import.meta.dir}/..`,
+  root: `${import.meta.dirname}/..`,
   // patches/ holds OpenAPI-document patches consumed by scripts/convert.ts;
   // there is no smithy-model patch chain.
   patchesDir: false,

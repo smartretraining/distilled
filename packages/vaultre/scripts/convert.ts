@@ -27,7 +27,7 @@ import { runOpenApiConvert } from "@distilled.cloud/core/codegen/openapi-cli";
 import YAML from "yaml";
 
 await runOpenApiConvert({
-  root: path.resolve(import.meta.dir, ".."),
+  root: path.resolve(import.meta.dirname, ".."),
   specs: [
     {
       name: "vaultre",

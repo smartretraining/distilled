@@ -28,7 +28,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import * as path from "node:path";
 
-const root = path.resolve(import.meta.dir, "..");
+const root = path.resolve(import.meta.dirname, "..");
 const sampleDir = path.join(root, ".samples");
 
 const clientId = process.env.REAPIT_CLIENT_ID;
