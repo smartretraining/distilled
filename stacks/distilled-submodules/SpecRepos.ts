@@ -36,14 +36,13 @@ export interface SpecRepo {
 }
 
 /** Stable identity for repository and scaffold logical IDs. */
-export const mirrorId = (specRepo: SpecRepo) =>
-  specRepo.mirror ?? specRepo.package;
+export const mirrorId = (specRepo: SpecRepo) => specRepo.mirror ?? specRepo.package;
 
 /** Repository name for a mirror. */
-export const repositoryName = (specRepo: SpecRepo) =>
-  `spec-mirror-${mirrorId(specRepo)}`;
+export const repositoryName = (specRepo: SpecRepo) => `spec-mirror-${mirrorId(specRepo)}`;
 
 export const SPEC_REPOS: readonly SpecRepo[] = [
+  { package: "acme" },
   { package: "adyen" },
   { package: "apache-superset" },
   { package: "archil" },
@@ -55,14 +54,11 @@ export const SPEC_REPOS: readonly SpecRepo[] = [
   { package: "boat-dev" },
   {
     package: "boxdice",
-    blocked:
-      "@smartretraining fork package; specs are committed in packages/boxdice/specs",
+    blocked: "@smartretraining fork package; specs are committed in packages/boxdice/specs",
   },
-  {
-    package: "celld",
-    blocked:
-      "Celld v0.6.0 has no published API description; source-derived Smithy contracts are committed in packages/celld/specs",
-  },
+  // celld publishes no API description: its models are hand-written in
+  // spec-repos/celld/models/ and shipped by the mirror.
+  { package: "celld" },
   { package: "chronosphere" },
   { package: "clerk" },
   { package: "cloudflare" },
@@ -88,6 +84,7 @@ export const SPEC_REPOS: readonly SpecRepo[] = [
   { package: "hetzner" },
   { package: "hostinger" },
   { package: "huggingface" },
+  { package: "iceberg" },
   { package: "infisical" },
   { package: "inngest" },
   { package: "intercom" },
@@ -100,6 +97,7 @@ export const SPEC_REPOS: readonly SpecRepo[] = [
   { package: "modal" },
   { package: "modrinth" },
   { package: "neon" },
+  { package: "notion" },
   { package: "okta" },
   { package: "onepassword" },
   { package: "opencode" },
@@ -114,8 +112,7 @@ export const SPEC_REPOS: readonly SpecRepo[] = [
   { package: "railway" },
   {
     package: "reapit",
-    blocked:
-      "@smartretraining fork package; specs are committed in packages/reapit/specs",
+    blocked: "@smartretraining fork package; specs are committed in packages/reapit/specs",
   },
   { package: "redis-cloud" },
   { package: "remote" },
@@ -123,18 +120,13 @@ export const SPEC_REPOS: readonly SpecRepo[] = [
   { package: "resend" },
   {
     package: "rex",
-    blocked:
-      "@smartretraining fork package; specs are committed in packages/rex/specs",
+    blocked: "@smartretraining fork package; specs are committed in packages/rex/specs",
   },
   { package: "s2" },
   { package: "sentry" },
-  {
-    package: "slack",
-    // Slack publishes no machine-readable description; the SDK is built
-    // from the JSON twins of docs.slack.dev method pages, committed under
-    // packages/slack/specs by scripts/download-docs.ts.
-    blocked: "docs.slack.dev method JSON twins are committed in-repo",
-  },
+  // Slack publishes no OpenAPI document; the mirror snapshots the JSON twins
+  // of the docs.slack.dev reference pages.
+  { package: "slack" },
   { package: "spacetimedb" },
   { package: "stackit" },
   { package: "squarespace" },
@@ -150,14 +142,14 @@ export const SPEC_REPOS: readonly SpecRepo[] = [
   { package: "vanta" },
   {
     package: "vaultre",
-    blocked:
-      "@smartretraining fork package; specs are committed in packages/vaultre/specs",
+    blocked: "@smartretraining fork package; specs are committed in packages/vaultre/specs",
   },
   { package: "vercel" },
   { package: "whop" },
   { package: "workos" },
   { package: "xata" },
   { package: "zendesk" },
+  { package: "zerossl" },
 ];
 
 /** A scaffold file: where it is read from, and where it lands in the mirror. */
@@ -186,11 +178,20 @@ export const PER_REPO: readonly ScaffoldEntry[] = [
 ];
 
 /**
+ * Hand-written models a mirror ships verbatim, for an API with no published
+ * description: every file in `spec-repos/<package>/models/` lands in the
+ * mirror's `.meta/models/`, and the mirror's fetch script copies them into
+ * `specs/`. Editing a model is then an ordinary PR here, and the package
+ * still reads it through its submodule like every other spec.
+ */
+export const MODELS: ScaffoldEntry = ["models", ".meta/models"];
+
+/**
  * Read the file set for every mirror off disk, keyed by repository name.
  *
  * Reading at deploy time rather than importing keeps the fetch scripts as
- * ordinary files: they target Bun and each other's dependencies, so they are
- * deliberately outside this stack's TypeScript program.
+ * ordinary files: they target Node and each mirror's own dependencies, so
+ * they are deliberately outside this stack's TypeScript program.
  */
 export const loadScaffolds = Effect.gen(function* () {
   const fs = yield* FileSystem.FileSystem;
@@ -210,6 +211,17 @@ export const loadScaffolds = Effect.gen(function* () {
     const files: Record<string, string> = { ...shared };
     for (const [source, target] of PER_REPO) {
       files[target] = yield* read("spec-repos", specRepo.package, source);
+    }
+    const models = path.join(import.meta.dirname, "spec-repos", specRepo.package, MODELS[0]);
+    if (yield* fs.exists(models)) {
+      for (const name of (yield* fs.readDirectory(models)).sort()) {
+        files[`${MODELS[1]}/${name}`] = yield* read(
+          "spec-repos",
+          specRepo.package,
+          MODELS[0],
+          name,
+        );
+      }
     }
     scaffolds[repositoryName(specRepo)] = files;
   }

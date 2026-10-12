@@ -2,7 +2,7 @@
 
 `@distilled.cloud/zerossl` provides ZeroSSL's External Account Binding (EAB)
 credential endpoint. Install it alongside `effect`, set `ZEROSSL_ACCESS_KEY`,
-save this as `example.ts`, and run `bun example.ts`:
+save this as `example.ts`, and run `node example.ts`:
 
 ```ts
 import * as ZeroSsl from "@distilled.cloud/zerossl";
@@ -42,13 +42,14 @@ errors. Typed rate-limit errors retain `Retry-After` as an optional Effect
 
 ## Source and limitations
 
-[`manual-specs/zerossl.json`](./manual-specs/zerossl.json) is a hand-authored
-Smithy model based on the [ZeroSSL REST docs](https://zerossl.com/documentation/api/)
-and [EAB endpoint docs](https://zerossl.com/documentation/acme/generate-eab-credentials/).
-There is no downloaded spec or artificial mirror. Edit the model and handwritten
-protocol, not generated service files. From this package directory, regenerate
-with `bun scripts/generate.ts`; format changed paths with
-`pnpm exec oxfmt <paths>` from the workspace root.
+`scripts/convert.ts` builds the Smithy model from the ZeroSSL API reference,
+which ZeroSSL publishes as Markdown in
+[zerossl/documentation](https://github.com/zerossl/documentation) and the spec
+mirror `specs/spec-mirror-zerossl` snapshots daily: one page per endpoint
+(method, URL, parameter table, example response) plus the error-code tables.
+What the reference does not state lives in `patches/`. Edit the converter,
+patches and handwritten protocol, not generated service files; regenerate with
+`pnpm generate zerossl` from the workspace root.
 
 Only EAB credential generation is modeled, not ZeroSSL's certificate-management
 REST API. Certificate issuance uses `@distilled.cloud/acme` with the ZeroSSL

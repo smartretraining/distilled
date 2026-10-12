@@ -31,3 +31,9 @@ vendor/
 .claude
 .worktrees
 .npmrc
+
+# Scratch copies `pnpm patches:audit` converts in; removed when it exits.
+packages/.audit-*/
+
+# pkg pack output (CI artifact hand-off)
+.pkg

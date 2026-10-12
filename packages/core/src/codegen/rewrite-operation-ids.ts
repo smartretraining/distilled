@@ -542,9 +542,7 @@ const pascalToken = (raw: string): string => {
 export const singularize = (raw: string): string => {
   const lower = raw.toLowerCase();
   const keepCase = (s: string): string =>
-    raw[0] === raw[0]?.toUpperCase()
-      ? s.charAt(0).toUpperCase() + s.slice(1)
-      : s;
+    raw[0] === raw[0]?.toUpperCase() ? s.charAt(0).toUpperCase() + s.slice(1) : s;
   const alias = TOKEN_ALIAS[lower];
   if (alias !== undefined) {
     return alias.endsWith("s") ? alias.slice(0, -1) : alias;
@@ -590,15 +588,11 @@ const splitIdent = (s: string): string[] => {
   return parts;
 };
 
-const isStrongVerb = (raw: string): boolean =>
-  STRONG_VERBS.has(raw.toLowerCase());
-const isTrailingVerb = (raw: string): boolean =>
-  TRAILING_VERBS.has(raw.toLowerCase());
-const isWeakLeadingVerb = (raw: string): boolean =>
-  WEAK_LEADING_VERBS.has(raw.toLowerCase());
+const isStrongVerb = (raw: string): boolean => STRONG_VERBS.has(raw.toLowerCase());
+const isTrailingVerb = (raw: string): boolean => TRAILING_VERBS.has(raw.toLowerCase());
+const isWeakLeadingVerb = (raw: string): boolean => WEAK_LEADING_VERBS.has(raw.toLowerCase());
 
-const alias = (raw: string): string =>
-  VERB_ALIAS[raw.toLowerCase()] ?? raw.toLowerCase();
+const alias = (raw: string): string => VERB_ALIAS[raw.toLowerCase()] ?? raw.toLowerCase();
 
 /** `version`-like tokens (`V1`, `v1beta1`, `V2`) are never nouns to singularise. */
 const isVersionToken = (raw: string): boolean => /^[vV]\d/.test(raw);
@@ -611,11 +605,7 @@ const MODIFIERS = new Set(["partial", "bulk", "batch", "all", "many"]);
  * is singularised, and only for non-list verbs (`getApp`, `listApps`,
  * `listMachineEvents`). Parent tokens keep their spelling.
  */
-const assemble = (
-  verb: string,
-  nouns: readonly string[],
-  tail: readonly string[] = [],
-): string => {
+const assemble = (verb: string, nouns: readonly string[], tail: readonly string[] = []): string => {
   // `App_Certificates_acme_create`: the qualifier trails the resource in
   // the id but reads better in front of it (`createAppAcmeCertificate`).
   let ordered = [...nouns];
@@ -673,13 +663,8 @@ export const toVerbNoun = (operationId: string): string => {
     if (verbSeg > 0) {
       const head = segments.slice(0, verbSeg).flatMap(splitIdent);
       const [verb, ...objectHere] = splitIdent(segments[verbSeg]!);
-      const object = [
-        ...objectHere,
-        ...segments.slice(verbSeg + 1).flatMap(splitIdent),
-      ];
-      const compound = object.some(
-        (t) => isStrongVerb(t) || /^(or|and)$/i.test(t),
-      );
+      const object = [...objectHere, ...segments.slice(verbSeg + 1).flatMap(splitIdent)];
+      const compound = object.some((t) => isStrongVerb(t) || /^(or|and)$/i.test(t));
       if (!compound) return assemble(alias(verb!), head, object);
     }
     return lowerFirst(trimmed);
@@ -700,8 +685,7 @@ export const toVerbNoun = (operationId: string): string => {
   // `IndexCreate`, `IndexDocument` all name the index entity.
   const strong = (raw: string) => !isIndexVerb(raw) && isStrongVerb(raw);
   const trailing = (raw: string) => !isIndexVerb(raw) && isTrailingVerb(raw);
-  const weakLeading = (raw: string) =>
-    !isIndexVerb(raw) && isWeakLeadingVerb(raw);
+  const weakLeading = (raw: string) => !isIndexVerb(raw) && isWeakLeadingVerb(raw);
 
   if (strong(first)) {
     return alias(first) + parts.slice(1).map(pascalToken).join("");
@@ -733,29 +717,15 @@ export const toVerbNoun = (operationId: string): string => {
   const nouns = parts.slice(0, -1);
   if (nouns.slice(1).some(strong)) return lowerFirst(trimmed);
   const modifier = nouns.at(-1);
-  if (
-    nouns.length > 1 &&
-    modifier !== undefined &&
-    MODIFIERS.has(modifier.toLowerCase())
-  ) {
+  if (nouns.length > 1 && modifier !== undefined && MODIFIERS.has(modifier.toLowerCase())) {
     return assemble(alias(last), nouns.slice(0, -1), [modifier]);
   }
   return assemble(alias(last), nouns);
 };
 
-const COMPANION_SUFFIXES = [
-  "Request",
-  "Response",
-  "Input",
-  "Output",
-  "Error",
-  "Result",
-] as const;
+const COMPANION_SUFFIXES = ["Request", "Response", "Input", "Output", "Error", "Result"] as const;
 
-const remapTargets = (
-  node: unknown,
-  mapping: ReadonlyMap<string, string>,
-): unknown => {
+const remapTargets = (node: unknown, mapping: ReadonlyMap<string, string>): unknown => {
   if (Array.isArray(node)) {
     return node.map((item) => remapTargets(item, mapping));
   }
@@ -771,6 +741,53 @@ const remapTargets = (
   return out;
 };
 
+/**
+ * `metadata` key of a model whose final names are deferred (the OpenAPI
+ * converter's `deferNaming`): upstream shape id → final shape id.
+ * `finalizeConvert` applies it after the Smithy patches and removes it.
+ */
+export const RENAME_METADATA_KEY = "distilled.rename";
+
+/**
+ * Apply and remove a model's deferred rename ({@link RENAME_METADATA_KEY}).
+ * Returns how many shapes it renamed.
+ */
+export const applyDeferredRename = (model: {
+  metadata?: Record<string, any>;
+  shapes?: Record<string, any>;
+}): number => {
+  const rename = model.metadata?.[RENAME_METADATA_KEY] as Record<string, string> | undefined;
+  if (rename === undefined) return 0;
+  delete model.metadata![RENAME_METADATA_KEY];
+  const shapes = model.shapes ?? {};
+  // A patch may have moved or removed a shape; only rename what is there.
+  const mapping = new Map(Object.entries(rename).filter(([from]) => from in shapes));
+  if (mapping.size > 0) renameShapes(model, mapping);
+  return mapping.size;
+};
+
+/**
+ * Rename shapes by id and rewrite every `target` that points at a renamed
+ * one, keeping the model's shape order. All renames happen at once, so a
+ * mapping may swap names. Throws when a new id is already taken by a shape
+ * that keeps its name, or two shapes would land on one id.
+ */
+export const renameShapes = (
+  model: { shapes?: Record<string, any> },
+  mapping: ReadonlyMap<string, string>,
+): void => {
+  const shapes = model.shapes ?? {};
+  const nextShapes: Record<string, any> = {};
+  for (const [id, def] of Object.entries(shapes)) {
+    const newId = mapping.get(id) ?? id;
+    if (Object.prototype.hasOwnProperty.call(nextShapes, newId)) {
+      throw new Error(`renaming ${id} → ${newId}: that shape id is already taken`);
+    }
+    nextShapes[newId] = remapTargets(def, mapping);
+  }
+  model.shapes = nextShapes;
+};
+
 /** Version prefixes and API roots that carry no meaning in a name. */
 const NOISE_SEGMENTS = new Set(["api", "rest", "v", "public"]);
 const isNoiseSegment = (seg: string): boolean => {
@@ -778,8 +795,7 @@ const isNoiseSegment = (seg: string): boolean => {
   return NOISE_SEGMENTS.has(lower) || /^v\d+(\.\d+)*$/.test(lower);
 };
 
-const HTTP_METHOD_ID =
-  /^(get|post|put|patch|delete|head|options)(?=$|[-_./]|[A-Z0-9])/i;
+const HTTP_METHOD_ID = /^(get|post|put|patch|delete|head|options)(?=$|[-_./]|[A-Z0-9])/i;
 
 /**
  * Whether an OpenAPI `operationId` carries no information beyond the
@@ -832,22 +848,16 @@ export const isVerbatimRouteId = (
   // `ByAppIdPromote`: a whole parameter, then route literals.
   return byClauses.every((c) => {
     const lengths = [
-      ...params
-        .filter((p) => p.every((t, i) => t === c[i]))
-        .map((p) => p.length),
+      ...params.filter((p) => p.every((t, i) => t === c[i])).map((p) => p.length),
       ...(c[0] === "id" ? [1] : []),
     ];
-    return lengths.some(
-      (n) => n <= c.length && c.slice(n).every((t) => literal.has(t)),
-    );
+    return lengths.some((n) => n <= c.length && c.slice(n).every((t) => literal.has(t)));
   });
 };
 
 /** `activity/get-feeds` → `get-feeds`: a tag prefix is not part of the name. */
 const stripTag = (operationId: string): string =>
-  operationId.includes("/")
-    ? operationId.slice(operationId.lastIndexOf("/") + 1)
-    : operationId;
+  operationId.includes("/") ? operationId.slice(operationId.lastIndexOf("/") + 1) : operationId;
 
 export const isMechanicalOperationId = (
   operationId: string | undefined,
@@ -928,10 +938,7 @@ export interface PathNamingHints {
   readonly verbatim?: boolean;
 }
 
-export const pathToVerbNoun = (
-  ctx: OperationIdContext,
-  hints: PathNamingHints = {},
-): string => {
+export const pathToVerbNoun = (ctx: OperationIdContext, hints: PathNamingHints = {}): string => {
   const method = ctx.method.toLowerCase();
   const segments = ctx.path.split(/[?#]/)[0]!.split("/").filter(Boolean);
   const literal: string[] = [];
@@ -980,10 +987,7 @@ export const pathToVerbNoun = (
     const matchParam = (at: number): number => {
       let best = 0;
       for (const prm of params) {
-        if (
-          prm.length > best &&
-          prm.every((t, k) => raw[at + k]?.toLowerCase() === t)
-        ) {
+        if (prm.length > best && prm.every((t, k) => raw[at + k]?.toLowerCase() === t)) {
           best = prm.length;
         }
       }
@@ -1015,18 +1019,14 @@ export const pathToVerbNoun = (
         // on `/custom-domains/{domain}`) it is the literal.
         n = matchParam(i);
         skip = n;
-        const echoes = raw
-          .slice(i, i + n)
-          .some((x) => literal.has(x.toLowerCase()));
+        const echoes = raw.slice(i, i + n).some((x) => literal.has(x.toLowerCase()));
         const prev = tokens.at(-1)?.toLowerCase();
         const prevIsResource =
           prev !== undefined &&
           raw
             .slice(i, i + n)
             .some(
-              (x) =>
-                singularize(prev) === singularize(x.toLowerCase()) ||
-                prev === x.toLowerCase(),
+              (x) => singularize(prev) === singularize(x.toLowerCase()) || prev === x.toLowerCase(),
             );
         if (echoes && !prevIsResource) n = 0;
       }
@@ -1079,15 +1079,9 @@ export const pathToVerbNoun = (
     const [verb, ...rest] = lastTokens;
     const parents = tokens.slice(0, -1);
     const nouns = parents.map((t, i) =>
-      i === parents.length - 1
-        ? t.map((x, j) => (j === t.length - 1 ? singularize(x) : x))
-        : t,
+      i === parents.length - 1 ? t.map((x, j) => (j === t.length - 1 ? singularize(x) : x)) : t,
     );
-    return (
-      alias(verb!) +
-      nouns.flat().map(pascalToken).join("") +
-      rest.map(pascalToken).join("")
-    );
+    return alias(verb!) + nouns.flat().map(pascalToken).join("") + rest.map(pascalToken).join("");
   }
 
   // GET is `list` only when the body is known to be a collection; an
@@ -1137,22 +1131,48 @@ export const verbNounSmithyModel = (model: {
 }): { renamed: number; collisions: string[] } => {
   const shapes = model.shapes ?? {};
   const mapping = new Map<string, string>();
+  const mappedTo = new Set<string>();
   const collisions: string[] = [];
-  const taken = new Set(Object.keys(shapes));
+  const ids = Object.keys(shapes);
+  const taken = new Set(ids);
+  const order = new Map(ids.map((id, i) => [id, i]));
 
-  const ops = Object.entries(shapes).filter(
-    ([, def]) => def?.type === "operation",
-  );
-  const opLocals = new Set<string>();
-  for (const [id] of ops) {
+  const split = (id: string): [ns: string, local: string] => {
     const hash = id.indexOf("#");
-    opLocals.add(hash >= 0 ? id.slice(hash + 1) : id);
+    return hash >= 0 ? [id.slice(0, hash), id.slice(hash + 1)] : ["", id];
+  };
+  // Local names per namespace in code-unit order, so the shapes whose name
+  // starts with an operation's are one contiguous run (found by binary
+  // search) instead of a scan of every shape per operation.
+  const localsByNs = new Map<string, string[]>();
+  for (const id of ids) {
+    const [ns, local] = split(id);
+    const list = localsByNs.get(ns);
+    if (list) list.push(local);
+    else localsByNs.set(ns, [local]);
   }
+  for (const list of localsByNs.values()) list.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  const withPrefix = (ns: string, prefix: string): string[] => {
+    const list = localsByNs.get(ns) ?? [];
+    let lo = 0;
+    let hi = list.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >>> 1;
+      if (list[mid]! < prefix) lo = mid + 1;
+      else hi = mid;
+    }
+    const out: string[] = [];
+    for (let i = lo; i < list.length && list[i]!.startsWith(prefix); i++) {
+      out.push(ns ? `${ns}#${list[i]}` : list[i]!);
+    }
+    // Model order, as a scan of every shape would visit them.
+    return out.sort((a, b) => order.get(a)! - order.get(b)!);
+  };
+
+  const ops = Object.entries(shapes).filter(([, def]) => def?.type === "operation");
 
   for (const [id] of ops) {
-    const hash = id.indexOf("#");
-    const ns = hash >= 0 ? id.slice(0, hash) : "";
-    const local = hash >= 0 ? id.slice(hash + 1) : id;
+    const [ns, local] = split(id);
     const camel = toVerbNoun(local);
     const nextLocal = camel.charAt(0).toUpperCase() + camel.slice(1);
     if (nextLocal === local) continue;
@@ -1161,24 +1181,21 @@ export const verbNounSmithyModel = (model: {
       collisions.push(`${local} → ${nextLocal}`);
       continue;
     }
-    if ([...mapping.values()].includes(nextId)) {
+    if (mappedTo.has(nextId)) {
       collisions.push(`${local} → ${nextLocal}`);
       continue;
     }
     mapping.set(id, nextId);
+    mappedTo.add(nextId);
     taken.add(nextId);
 
     // Companions: `<Op>Request`, `<Op>Response…`, and anything derived
     // from them by the converters' `${opName}Request${Member}` naming.
     // Skip prefixes that are themselves another operation's name
     // (`Get` vs `GetObject`) — only exact suffix matches count there.
-    for (const candidate of Object.keys(shapes)) {
+    for (const candidate of withPrefix(ns, local)) {
       if (candidate === id || mapping.has(candidate)) continue;
-      const cHash = candidate.indexOf("#");
-      const cNs = cHash >= 0 ? candidate.slice(0, cHash) : "";
-      const cLocal = cHash >= 0 ? candidate.slice(cHash + 1) : candidate;
-      if (cNs !== ns || !cLocal.startsWith(local)) continue;
-      const tail = cLocal.slice(local.length);
+      const tail = split(candidate)[1].slice(local.length);
       if (tail === "") continue;
       const suffixed = COMPANION_SUFFIXES.some((s) => tail.startsWith(s));
       if (!suffixed) continue;
@@ -1187,18 +1204,14 @@ export const verbNounSmithyModel = (model: {
       const to = ns ? `${ns}#${nextLocal}${tail}` : `${nextLocal}${tail}`;
       if (taken.has(to)) continue;
       mapping.set(candidate, to);
+      mappedTo.add(to);
       taken.add(to);
     }
   }
 
   if (mapping.size === 0) return { renamed: 0, collisions };
 
-  const nextShapes: Record<string, any> = {};
-  for (const [id, def] of Object.entries(shapes)) {
-    const newId = mapping.get(id) ?? id;
-    nextShapes[newId] = remapTargets(def, mapping);
-  }
-  model.shapes = nextShapes;
+  renameShapes(model, mapping);
   return {
     renamed: ops.filter(([opId]) => mapping.has(opId)).length,
     collisions,
