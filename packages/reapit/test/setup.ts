@@ -1,7 +1,7 @@
+import { resolve } from "path";
 import { config } from "dotenv";
 import { Effect, Layer } from "effect";
 import * as FetchHttpClient from "effect/http/FetchHttpClient";
-import { resolve } from "path";
 import { CredentialsFromEnv } from "../src/credentials.ts";
 
 config({ path: resolve(import.meta.dirname, "../../../.env") });

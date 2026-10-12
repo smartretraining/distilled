@@ -1,6 +1,6 @@
-import * as Layer from "effect/Layer";
 import * as FetchHttpClient from "effect/http/FetchHttpClient";
 import type * as HttpClient from "effect/http/HttpClient";
+import * as Layer from "effect/Layer";
 import { Credentials, fromApiKey } from "../src/credentials.ts";
 
 export interface Call {
@@ -25,10 +25,7 @@ export const stubClient = (
   readonly layer: Layer.Layer<HttpClient.HttpClient | Credentials>;
 } => {
   const calls: Call[] = [];
-  const fetch = (async (
-    input: RequestInfo | URL,
-    init?: RequestInit,
-  ): Promise<Response> => {
+  const fetch = (async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
     const call: Call = {
       url: String(input),
       method: init?.method ?? "GET",

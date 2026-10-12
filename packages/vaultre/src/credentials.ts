@@ -1,3 +1,4 @@
+import { ConfigError } from "@distilled.cloud/core/errors";
 /**
  * VaultRE credentials — hand-written.
  *
@@ -23,15 +24,13 @@ import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Redacted from "effect/Redacted";
-import { ConfigError } from "@distilled.cloud/core/errors";
 
 /**
  * The only origin VaultRE documents. The API is versioned in the path, and
  * the vendor spec this SDK is generated from declares exactly this server, so
  * pointing the SDK at `v1.2` would silently mismatch the schemas.
  */
-export const DEFAULT_API_BASE_URL =
-  "https://ap-southeast-2.api.vaultre.com.au/api/v1.3";
+export const DEFAULT_API_BASE_URL = "https://ap-southeast-2.api.vaultre.com.au/api/v1.3";
 
 export interface Config {
   /** Integrator key — the `X-Api-Key` header. */
@@ -42,10 +41,9 @@ export interface Config {
   readonly apiBaseUrl: string;
 }
 
-export class Credentials extends Context.Service<
-  Credentials,
-  Effect.Effect<Config>
->()("VaultreCredentials") {}
+export class Credentials extends Context.Service<Credentials, Effect.Effect<Config>>()(
+  "VaultreCredentials",
+) {}
 
 const trimSlash = (url: string): string => url.replace(/\/+$/, "");
 
@@ -84,9 +82,7 @@ export const CredentialsFromEnv: Layer.Layer<Credentials> = Layer.succeed(
     return {
       apiKey: Redacted.make(apiKey),
       accessToken: Redacted.make(accessToken),
-      apiBaseUrl: trimSlash(
-        process.env.VAULTRE_API_BASE_URL ?? DEFAULT_API_BASE_URL,
-      ),
+      apiBaseUrl: trimSlash(process.env.VAULTRE_API_BASE_URL ?? DEFAULT_API_BASE_URL),
     };
   }).pipe(Effect.orDie),
 );

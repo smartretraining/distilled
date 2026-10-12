@@ -52,9 +52,7 @@ const contextOnlyDelivery = {
 
 describe("decodeWebhookDelivery", () => {
   it("decodes a v1_full_change_detail delivery and narrows on format", async () => {
-    const delivery = await Effect.runPromise(
-      decodeWebhookDelivery(fullChangeDelivery),
-    );
+    const delivery = await Effect.runPromise(decodeWebhookDelivery(fullChangeDelivery));
     const event = delivery.data[0]!;
     expect(event.type).toBe("notes.updated");
 
@@ -67,9 +65,7 @@ describe("decodeWebhookDelivery", () => {
   });
 
   it("decodes a v1_context_only delivery", async () => {
-    const delivery = await Effect.runPromise(
-      decodeWebhookDelivery(contextOnlyDelivery),
-    );
+    const delivery = await Effect.runPromise(decodeWebhookDelivery(contextOnlyDelivery));
     const event = delivery.data[0]!;
 
     if (event.payload.format !== "v1_context_only") {
@@ -77,9 +73,7 @@ describe("decodeWebhookDelivery", () => {
     }
     expect(event.payload.context.service).toBe("Notes");
     expect(event.payload.context.record_id).toBe(7838281);
-    expect(event.payload.context.triggered_by_user?.email_address).toBe(
-      "user@example.com",
-    );
+    expect(event.payload.context.triggered_by_user?.email_address).toBe("user@example.com");
   });
 
   it("accepts pre: null for create events", async () => {

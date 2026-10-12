@@ -2,25 +2,22 @@
   "name": "@smartretraining/rex-effect",
   "version": "0.11.0",
   "description": "Effect-native SDK for the Rex Software real-estate API, generated from Rex's describe/describeModel introspection.",
+  "homepage": "https://github.com/smartretraining/distilled/tree/main/packages/rex",
+  "bugs": {
+    "url": "https://github.com/smartretraining/distilled/issues"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/smartretraining/distilled.git",
     "directory": "packages/rex"
   },
-  "homepage": "https://github.com/smartretraining/distilled/tree/main/packages/rex",
-  "bugs": {
-    "url": "https://github.com/smartretraining/distilled/issues"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "type": "module",
-  "sideEffects": false,
   "files": [
     "lib",
     "src"
   ],
+  "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./lib/index.d.ts",
@@ -70,6 +67,9 @@
       "worker": "./src/services/*.ts",
       "default": "./lib/services/*.js"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsc -b",

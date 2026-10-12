@@ -1,3 +1,6 @@
+import * as API from "@distilled.cloud/core/api";
+import type { API_ERRORS, ConfigError } from "@distilled.cloud/core/errors";
+import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
 /**
  * ReapitProtocol — hand-written.
  *
@@ -35,14 +38,11 @@
  * not here, so the raw wire shape stays visible at this layer.
  */
 import * as Effect from "effect/Effect";
-import * as Layer from "effect/Layer";
-import * as Redacted from "effect/Redacted";
-import * as HttpClientRequest from "effect/http/HttpClientRequest";
 import type * as HttpClient from "effect/http/HttpClient";
 import type * as HttpClientError from "effect/http/HttpClientError";
-import * as API from "@distilled.cloud/core/api";
-import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
-import type { API_ERRORS, ConfigError } from "@distilled.cloud/core/errors";
+import * as HttpClientRequest from "effect/http/HttpClientRequest";
+import * as Layer from "effect/Layer";
+import * as Redacted from "effect/Redacted";
 import { Credentials, type Config } from "./credentials.ts";
 import {
   ReapitApiError,
@@ -77,8 +77,7 @@ interface ReapitErrorEntry {
   readonly validVersions?: readonly number[];
 }
 
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null;
+const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null;
 
 /**
  * Pull the `errors` array out of whichever envelope the body used. Reapit

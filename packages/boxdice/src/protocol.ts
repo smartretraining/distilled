@@ -1,3 +1,6 @@
+import type * as API from "@distilled.cloud/core/api";
+import type { API_ERRORS, ConfigError } from "@distilled.cloud/core/errors";
+import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
 /**
  * BoxDiceProtocol — hand-written.
  *
@@ -43,19 +46,12 @@
  * single call look slow.
  */
 import * as Effect from "effect/Effect";
-import * as Redacted from "effect/Redacted";
-import type * as Layer from "effect/Layer";
 import type * as HttpClient from "effect/http/HttpClient";
 import type * as HttpClientError from "effect/http/HttpClientError";
-import type * as API from "@distilled.cloud/core/api";
-import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
-import type { API_ERRORS, ConfigError } from "@distilled.cloud/core/errors";
+import type * as Layer from "effect/Layer";
+import * as Redacted from "effect/Redacted";
 import { Credentials, type Config } from "./credentials.ts";
-import {
-  BoxDiceApiError,
-  UnknownBoxDiceError,
-  BoxDiceParseError,
-} from "./errors.ts";
+import { BoxDiceApiError, UnknownBoxDiceError, BoxDiceParseError } from "./errors.ts";
 
 /**
  * Error channel shared by every generated Box+Dice operation. Generated
@@ -74,8 +70,7 @@ export type BoxDiceOpError =
 /** Context (requirements) shared by every generated Box+Dice operation. */
 export type BoxDiceOpContext = Credentials | HttpClient.HttpClient;
 
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null;
+const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null;
 
 /**
  * First human-readable message from either error shape.
@@ -126,38 +121,37 @@ export const normaliseEmptyBody = (body: unknown): unknown =>
 const errorDetail = (body: unknown): unknown =>
   isRecord(body) ? (body.errors ?? body.error) : undefined;
 
-export const BoxDiceProtocol: Layer.Layer<API.Protocol> =
-  makeRestProtocol<Config>({
-    // The Credentials service holds an effect — resolving it here (per
-    // request, on the calling fiber) picks up context-provided credentials,
-    // which is what lets one process sync many agencies.
-    credentials: Effect.gen(function* () {
-      const resolve = yield* Credentials;
-      return yield* resolve;
-    }),
-    baseUrl: (creds) => `${creds.origin}/${creds.apiPath}`,
-    headers: (creds) => ({
-      Authorization: `Api-Key token=${Redacted.value(creds.token)}`,
-    }),
-    transformResponse: normaliseEmptyBody,
-    errorEnvelope: (body) => {
-      const message = firstMessage(body);
-      return message === undefined ? undefined : { message };
-    },
-    parseError: ({ body, cause }) => new BoxDiceParseError({ body, cause }),
-    unknownError: ({ code, message, body }) => {
-      const detail = errorDetail(body);
-      if (detail !== undefined) {
-        return new BoxDiceApiError({
-          message: firstMessage(body) ?? message,
-          errors: detail,
-          body,
-        });
-      }
-      return new UnknownBoxDiceError({
-        code: code === undefined ? undefined : String(code),
-        message,
+export const BoxDiceProtocol: Layer.Layer<API.Protocol> = makeRestProtocol<Config>({
+  // The Credentials service holds an effect — resolving it here (per
+  // request, on the calling fiber) picks up context-provided credentials,
+  // which is what lets one process sync many agencies.
+  credentials: Effect.gen(function* () {
+    const resolve = yield* Credentials;
+    return yield* resolve;
+  }),
+  baseUrl: (creds) => `${creds.origin}/${creds.apiPath}`,
+  headers: (creds) => ({
+    Authorization: `Api-Key token=${Redacted.value(creds.token)}`,
+  }),
+  transformResponse: normaliseEmptyBody,
+  errorEnvelope: (body) => {
+    const message = firstMessage(body);
+    return message === undefined ? undefined : { message };
+  },
+  parseError: ({ body, cause }) => new BoxDiceParseError({ body, cause }),
+  unknownError: ({ code, message, body }) => {
+    const detail = errorDetail(body);
+    if (detail !== undefined) {
+      return new BoxDiceApiError({
+        message: firstMessage(body) ?? message,
+        errors: detail,
         body,
       });
-    },
-  });
+    }
+    return new UnknownBoxDiceError({
+      code: code === undefined ? undefined : String(code),
+      message,
+      body,
+    });
+  },
+});

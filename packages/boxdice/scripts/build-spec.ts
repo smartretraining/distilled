@@ -120,10 +120,7 @@ const unresolved = (conflict: string): Json => ({
 });
 
 /** An object schema. Every member optional — see {@link str}. */
-const object = (
-  properties: Record<string, Json>,
-  description?: string,
-): Json => ({
+const object = (properties: Record<string, Json>, description?: string): Json => ({
   type: "object",
   properties,
   ...(description ? { description } : {}),
@@ -282,8 +279,7 @@ const SCHEMAS: Record<string, Json> = {
       notes: arrayOf(ref("ContactNote")),
       criteria: arrayOf(ref("Criteria")),
     },
-    "A contact. Also used for the per-consultant contact list, which returns " +
-      "the same shape.",
+    "A contact. Also used for the per-consultant contact list, which returns " + "the same shape.",
   ),
 
   Consultant: object({
@@ -477,9 +473,7 @@ const SCHEMAS: Record<string, Json> = {
   Voucher: object(
     {
       sale_date: date(),
-      sale_price: unresolved(
-        'Documented `(Number)`, sent as the string `"431000.0"`.',
-      ),
+      sale_price: unresolved('Documented `(Number)`, sent as the string `"431000.0"`.'),
       settlement_date: date(),
       commission_type: str("Observed value: `tiered`."),
       commission_structures: arrayOf(ref("CommissionStructure")),
@@ -644,9 +638,7 @@ const SCHEMAS: Record<string, Json> = {
       street_name: str(),
       street_type: str(),
       suburb: str(),
-      postcode: int(
-        "Documented `(Number)`, unlike the read side's `(String)`.",
-      ),
+      postcode: int("Documented `(Number)`, unlike the read side's `(String)`."),
       state: str(),
       country: str(),
     },
@@ -708,10 +700,7 @@ const jsonResponse = (description: string, schema: Json): Json => ({
  * nothing.
  */
 const collection = (schemaName: string, description: string): Json =>
-  jsonResponse(
-    description,
-    object({ data: arrayOf(ref(schemaName)), paging: ref("Paging") }),
-  );
+  jsonResponse(description, object({ data: arrayOf(ref(schemaName)), paging: ref("Paging") }));
 
 /** A non-paginated `{ data: [...] }` response. */
 const bareCollection = (schemaName: string, description: string): Json =>
@@ -998,9 +987,7 @@ const PATHS: Record<string, Json> = {
         object({
           contact_category: object({
             type_id: int("Required unless `name` is given."),
-            name: str(
-              "Required unless `type_id` is given. Max 100 characters.",
-            ),
+            name: str("Required unless `type_id` is given. Max 100 characters."),
             consultant_id: int(),
           }),
         }),
@@ -1062,9 +1049,7 @@ const PATHS: Record<string, Json> = {
       summary: "Add a note to a contact.",
       tags: ["Contacts"],
       parameters: [contactId],
-      requestBody: jsonBody(
-        object({ note: object({ text: str(), consultant_id: int() }) }),
-      ),
+      requestBody: jsonBody(object({ note: object({ text: str(), consultant_id: int() }) })),
       responses: {
         "201": jsonResponse("Note created.", ref("CreatedId")),
         "400": badRequest,
@@ -1143,9 +1128,7 @@ const PATHS: Record<string, Json> = {
             return_pa_from: num(),
             return_pa_to: num(),
             notes: str(),
-            ealert_enabled: bool(
-              "Write-only: accepted here, never returned on the read side.",
-            ),
+            ealert_enabled: bool("Write-only: accepted here, never returned on the read side."),
           }),
         }),
       ),
@@ -1228,24 +1211,19 @@ const PATHS: Record<string, Json> = {
               contact_ids: arrayOf(int()),
               action_date: date(),
               consultant_id: int(),
-              kind: str(
-                "`Phone`, `Email`, `SMS`, `Letter`, `Task`, `Web enquiry` or `Others`.",
-              ),
+              kind: str("`Phone`, `Email`, `SMS`, `Letter`, `Task`, `Web enquiry` or `Others`."),
             }),
           ),
         }),
       ),
       responses: {
-        "200": jsonResponse(
-          "Per-task results, positionally matching the request.",
-          {
-            type: "array",
-            items: object({
-              id: int(),
-              errors: { type: "object", nullable: true },
-            }),
-          },
-        ),
+        "200": jsonResponse("Per-task results, positionally matching the request.", {
+          type: "array",
+          items: object({
+            id: int(),
+            errors: { type: "object", nullable: true },
+          }),
+        }),
       },
     },
   },
@@ -1385,9 +1363,7 @@ const PATHS: Record<string, Json> = {
       requestBody: jsonBody(
         object({
           appraisal: object({
-            appraisal_status: str(
-              "`current` (default), `cancelled` or `listed`.",
-            ),
+            appraisal_status: str("`current` (default), `cancelled` or `listed`."),
             appraisal_source: str(),
             contact_ids: arrayOf(int("Required.")),
             office_id: int("Required."),
@@ -1472,10 +1448,7 @@ const spec = {
   components: { schemas: SCHEMAS },
 };
 
-const operationCount = Object.values(PATHS).reduce(
-  (n, item) => n + Object.keys(item).length,
-  0,
-);
+const operationCount = Object.values(PATHS).reduce((n, item) => n + Object.keys(item).length, 0);
 const unresolvedCount = JSON.stringify(spec).split("UNRESOLVED:").length - 1;
 
 const out = path.join(root, "specs/openapi.json");

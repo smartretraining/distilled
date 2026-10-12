@@ -22,9 +22,7 @@ describe("PublishedListings (live)", () => {
       expect(typeof row.id).toBe("string");
       expect(typeof row.property_id).toBe("string");
       expect(typeof row.system_listing_state).toBe("string");
-      expect(row.address === null || typeof row.address === "object").toBe(
-        true,
-      );
+      expect(row.address === null || typeof row.address === "object").toBe(true);
     }
   });
 });

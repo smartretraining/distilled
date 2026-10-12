@@ -63,8 +63,7 @@ const OPERATION_IDS: Readonly<Record<string, string>> = {
   "post /search-requirements": "createSearchRequirement",
   "get /search-requirements/{searchRequirementId}": "getSearchRequirement",
   "put /search-requirements/{searchRequirementId}": "updateSearchRequirement",
-  "delete /search-requirements/{searchRequirementId}":
-    "deleteSearchRequirement",
+  "delete /search-requirements/{searchRequirementId}": "deleteSearchRequirement",
   "get /staff": "getStaff",
   "get /staff/{memberId}": "getStaffMember",
   "put /subscribe": "updateContactSubscriptions",
@@ -73,12 +72,7 @@ const OPERATION_IDS: Readonly<Record<string, string>> = {
 };
 
 /** Headers/params the protocol layer supplies; never an operation input. */
-const PROTOCOL_PARAMS = new Set([
-  "X-Client-ID",
-  "X-API-Key",
-  "Authorization",
-  "version",
-]);
+const PROTOCOL_PARAMS = new Set(["X-Client-ID", "X-API-Key", "Authorization", "version"]);
 
 // ============================================================================
 // observed.json → JSON Schema
@@ -117,9 +111,7 @@ const toSchema = (o: Observed): Json => {
         properties[k] = toSchema(v);
       }
       const optional = new Set(o.optional);
-      const required = Object.keys(o.properties).filter(
-        (k) => !optional.has(k),
-      );
+      const required = Object.keys(o.properties).filter((k) => !optional.has(k));
       const schema: Json = { type: "object", properties };
       if (required.length) schema.required = required;
       return schema;
@@ -213,9 +205,7 @@ for (const [urlPath, pathItem] of Object.entries<Json>(vendor.paths)) {
     }
 
     // ---- request side: keep the vendor's params, minus protocol-supplied ----
-    const parameters = (op.parameters ?? []).filter(
-      (p: Json) => !PROTOCOL_PARAMS.has(p.name),
-    );
+    const parameters = (op.parameters ?? []).filter((p: Json) => !PROTOCOL_PARAMS.has(p.name));
 
     // ---- response side: observed if we have it, repaired vendor if not ----
     const obs = observed[operationId];
@@ -260,10 +250,7 @@ for (const [urlPath, pathItem] of Object.entries<Json>(vendor.paths)) {
   if (Object.keys(outItem).length) spec.paths[urlPath] = outItem;
 }
 
-await writeFile(
-  path.join(root, "specs/openapi.json"),
-  `${JSON.stringify(spec, null, 2)}\n`,
-);
+await writeFile(path.join(root, "specs/openapi.json"), `${JSON.stringify(spec, null, 2)}\n`);
 
 const total = observedCount + fallbackCount;
 console.log(`📄 wrote specs/openapi.json`);
@@ -271,9 +258,7 @@ console.log(
   `   ${total} operations — ${observedCount} from observed responses, ${fallbackCount} from the repaired vendor schema`,
 );
 if (unnamed.length) {
-  console.error(
-    `\n⚠️  ${unnamed.length} operation(s) have no operationId and were DROPPED:`,
-  );
+  console.error(`\n⚠️  ${unnamed.length} operation(s) have no operationId and were DROPPED:`);
   for (const k of unnamed) console.error(`     ${k}`);
   process.exit(1);
 }

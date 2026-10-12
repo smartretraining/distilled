@@ -33,8 +33,7 @@ const sampleDir = path.join(root, ".samples");
 
 const clientId = process.env.REAPIT_CLIENT_ID;
 const apiKey = process.env.REAPIT_API_KEY;
-const baseUrl =
-  process.env.REAPIT_API_BASE_URL ?? "https://api.agentboxcrm.com.au";
+const baseUrl = process.env.REAPIT_API_BASE_URL ?? "https://api.agentboxcrm.com.au";
 
 if (!clientId || !apiKey) {
   console.error("REAPIT_CLIENT_ID and REAPIT_API_KEY are required");
@@ -184,10 +183,7 @@ const observe = (value: unknown): Observed => {
   if (Array.isArray(value)) {
     const items = value
       .map(observe)
-      .reduce<Observed | undefined>(
-        (acc, cur) => (acc ? merge(acc, cur) : cur),
-        undefined,
-      );
+      .reduce<Observed | undefined>((acc, cur) => (acc ? merge(acc, cur) : cur), undefined);
     return items ? { kind: "array", items } : { kind: "array" };
   }
   switch (typeof value) {
@@ -221,18 +217,14 @@ const merge = (a: Observed, b: Observed): Observed => {
   if (a.kind !== b.kind) return { kind: "unknown" };
 
   if (a.kind === "array" && b.kind === "array") {
-    const items =
-      a.items && b.items ? merge(a.items, b.items) : (a.items ?? b.items);
+    const items = a.items && b.items ? merge(a.items, b.items) : (a.items ?? b.items);
     return items ? { kind: "array", items } : { kind: "array" };
   }
 
   if (a.kind === "object" && b.kind === "object") {
     const properties: Record<string, Observed> = {};
     const optional = new Set([...a.optional, ...b.optional]);
-    for (const key of new Set([
-      ...Object.keys(a.properties),
-      ...Object.keys(b.properties),
-    ])) {
+    for (const key of new Set([...Object.keys(a.properties), ...Object.keys(b.properties)])) {
       const av = a.properties[key];
       const bv = b.properties[key];
       if (av && bv) properties[key] = merge(av, bv);
@@ -258,20 +250,14 @@ for (const endpoint of ENDPOINTS) {
   let endpointPath = endpoint.path;
 
   if (endpoint.from) {
-    const source = payloads[endpoint.from.operationId] as
-      | Record<string, unknown>
-      | undefined;
+    const source = payloads[endpoint.from.operationId] as Record<string, unknown> | undefined;
     const rows = source?.[endpoint.from.collection];
     const first = Array.isArray(rows) ? rows[0] : undefined;
     const id =
-      first && typeof first === "object"
-        ? (first as Record<string, unknown>).id
-        : undefined;
+      first && typeof first === "object" ? (first as Record<string, unknown>).id : undefined;
 
     if (typeof id !== "string" && typeof id !== "number") {
-      failures.push(
-        `${endpoint.operationId} (no id from ${endpoint.from.operationId})`,
-      );
+      failures.push(`${endpoint.operationId} (no id from ${endpoint.from.operationId})`);
       console.error(`   ✗ ${endpoint.operationId}: no id available`);
       continue;
     }
@@ -342,18 +328,11 @@ for (const endpoint of ENDPOINTS) {
   );
 }
 
-await writeFile(
-  path.join(root, "specs/observed.json"),
-  `${JSON.stringify(observed, null, 2)}\n`,
-);
+await writeFile(path.join(root, "specs/observed.json"), `${JSON.stringify(observed, null, 2)}\n`);
 
-console.log(
-  `\n📐 wrote specs/observed.json — ${Object.keys(observed).length} operation(s)`,
-);
+console.log(`\n📐 wrote specs/observed.json — ${Object.keys(observed).length} operation(s)`);
 console.log(`   raw bodies in .samples/ (gitignored)`);
 if (failures.length) {
-  console.error(
-    `\n⚠️  ${failures.length} endpoint(s) failed: ${failures.join(", ")}`,
-  );
+  console.error(`\n⚠️  ${failures.length} endpoint(s) failed: ${failures.join(", ")}`);
   process.exit(1);
 }

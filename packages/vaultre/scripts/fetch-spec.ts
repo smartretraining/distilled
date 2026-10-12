@@ -24,9 +24,7 @@ const target = path.resolve(import.meta.dir, "../specs/vaultre.yaml");
 
 const response = await fetch(SPEC_URL);
 if (!response.ok) {
-  throw new Error(
-    `${SPEC_URL} → HTTP ${response.status} ${response.statusText}`,
-  );
+  throw new Error(`${SPEC_URL} → HTTP ${response.status} ${response.statusText}`);
 }
 const next = await response.text();
 

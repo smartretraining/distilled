@@ -46,9 +46,7 @@ describe("X-App-Identifier", () => {
     );
 
     expect(requests).toHaveLength(1);
-    expect(requests[0]!.headers.get("x-app-identifier")).toBe(
-      "Integration:Acme:website",
-    );
+    expect(requests[0]!.headers.get("x-app-identifier")).toBe("Integration:Acme:website");
     expect(requests[0]!.headers.get("authorization")).toBe("Bearer test-token");
   });
 
@@ -63,8 +61,6 @@ describe("X-App-Identifier", () => {
     expect(token).toBe("session-token");
     expect(requests).toHaveLength(1);
     expect(requests[0]!.url).toContain("Authentication/login");
-    expect(requests[0]!.headers.get("x-app-identifier")).toBe(
-      "Integration:Acme:website",
-    );
+    expect(requests[0]!.headers.get("x-app-identifier")).toBe("Integration:Acme:website");
   });
 });

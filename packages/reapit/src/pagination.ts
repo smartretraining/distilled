@@ -1,3 +1,8 @@
+import {
+  getPath,
+  type PaginatedTrait,
+  type PaginationStrategy,
+} from "@distilled.cloud/core/pagination";
 /**
  * Reapit pagination — hand-written.
  *
@@ -22,11 +27,6 @@
  */
 import * as Effect from "effect/Effect";
 import * as Stream from "effect/Stream";
-import {
-  getPath,
-  type PaginatedTrait,
-  type PaginationStrategy,
-} from "@distilled.cloud/core/pagination";
 
 export { getItems, paginatePageNumber } from "@distilled.cloud/core/pagination";
 
@@ -77,9 +77,7 @@ export const paginatePages: PaginationStrategy = <
       const current = toNumber(getPath(response, currentPath)) ?? state.page;
 
       const items = pagination.items
-        ? (getPath(response, pagination.items) as
-            | readonly unknown[]
-            | undefined)
+        ? (getPath(response, pagination.items) as readonly unknown[] | undefined)
         : undefined;
 
       const done =

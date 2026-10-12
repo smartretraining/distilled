@@ -18,9 +18,7 @@ import { json, stubClient } from "./setup.ts";
 describe("VaultRE spec translation", () => {
   /** One page of `/properties/sale`, decoded through the real protocol. */
   const oneListing = (item: Record<string, unknown>) => {
-    const stub = stubClient(() =>
-      json({ items: [item], totalItems: 1, totalPages: 1 }),
-    );
+    const stub = stubClient(() => json({ items: [item], totalItems: 1, totalPages: 1 }));
     return Effect.runPromise(
       getPropertiesLifeSale({ pagesize: 1 }).pipe(Effect.provide(stub.layer)),
     ).then((page) => page.items[0]!);
@@ -69,9 +67,7 @@ describe("VaultRE spec translation", () => {
     // `/properties/{class}/{salelease}/{id}/custom` puts two vocabulary
     // words in the path. They are path LABELS, not query parameters, and
     // getting that wrong 404s every call to this half of the API.
-    const stub = stubClient(() =>
-      json({ items: [], totalItems: 0, totalPages: 0 }),
-    );
+    const stub = stubClient(() => json({ items: [], totalItems: 0, totalPages: 0 }));
 
     await Effect.runPromise(
       getPropertyCustomFields({
@@ -99,9 +95,7 @@ describe("VaultRE spec translation", () => {
     );
 
     const solicitors = await Effect.runPromise(
-      getPropertySolicitors({ id: 4211, lifeid: 9902 }).pipe(
-        Effect.provide(stub.layer),
-      ),
+      getPropertySolicitors({ id: 4211, lifeid: 9902 }).pipe(Effect.provide(stub.layer)),
     );
 
     expect(solicitors.purchaser?.firstName).toBe("Ada");
@@ -123,9 +117,7 @@ describe("VaultRE spec translation", () => {
             settlement: "2026-08-30T00:00:00Z",
             salePrice: 815000,
             status: "unconditional",
-            commissionSplits: [
-              { id: 5, user: { id: 88, firstName: "Ada" }, grossPercent: 60 },
-            ],
+            commissionSplits: [{ id: 5, user: { id: 88, firstName: "Ada" }, grossPercent: 60 }],
           },
         ],
         totalItems: 1,
@@ -134,9 +126,7 @@ describe("VaultRE spec translation", () => {
     );
 
     const history = await Effect.runPromise(
-      getPropertySaleHistory({ propertyid: 4211 }).pipe(
-        Effect.provide(stub.layer),
-      ),
+      getPropertySaleHistory({ propertyid: 4211 }).pipe(Effect.provide(stub.layer)),
     );
 
     const sale = history.items[0]!;

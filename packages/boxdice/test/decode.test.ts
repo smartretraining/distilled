@@ -1,5 +1,6 @@
 import * as Schema from "effect/Schema";
 import { describe, expect, it } from "vitest";
+import { normaliseEmptyBody } from "../src/protocol.ts";
 import {
   Contact,
   CreateTasksResponse,
@@ -8,7 +9,6 @@ import {
   ListSalesListingsResponse,
   SalesListing,
 } from "../src/services/boxdice.ts";
-import { normaliseEmptyBody } from "../src/protocol.ts";
 
 /**
  * These decode the payloads Box+Dice's own blueprint documents.
@@ -60,9 +60,7 @@ describe("Box+Dice response decoding", () => {
             sale_date: "2015-03-16",
             sale_price: "431000.0",
             commission_type: "tiered",
-            commission_structures: [
-              { percentage: 10.0, amount: 0.0, target: 1.0 },
-            ],
+            commission_structures: [{ percentage: 10.0, amount: 0.0, target: 1.0 }],
             gross_commission: { inc_gst: 0.11, ex_gst: 0.1 },
             multiple_payment_stages: false,
             commission_payment_milestones: [
@@ -185,9 +183,7 @@ describe("Box+Dice response decoding", () => {
             suburb: "OAKDALE",
             latitude: -34.0889811,
           },
-          categories: [
-            { id: 87, type_id: 4, consultant_id: 3, name: "Foo Bar" },
-          ],
+          categories: [{ id: 87, type_id: 4, consultant_id: 3, name: "Foo Bar" }],
           notes: [{ id: 967, consultant_id: 3, text: "Foo bar" }],
           criteria: [
             {
@@ -214,9 +210,7 @@ describe("Box+Dice response decoding", () => {
   // protocol substitutes an empty page first. This asserts the composed path,
   // because that is the one a caught-up sync run actually takes.
   it("decodes the empty body a 204 leaves behind, via the protocol's repair", () => {
-    const page = Schema.decodeUnknownSync(ListContactsResponse)(
-      normaliseEmptyBody({}),
-    );
+    const page = Schema.decodeUnknownSync(ListContactsResponse)(normaliseEmptyBody({}));
     expect(page.data).toEqual([]);
   });
 

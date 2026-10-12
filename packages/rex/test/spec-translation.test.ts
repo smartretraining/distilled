@@ -35,9 +35,7 @@ describe("Rex spec translation", () => {
   // `related.feedback_contacts` is a genuine array (`type: "array"` + `items`)
   // and must not be collateral damage of the fix above.
   it("keeps genuine arrays as arrays", () => {
-    expect(() =>
-      decode({ data: { related: { feedback_contacts: { contact_id: 3 } } } }),
-    ).toThrow();
+    expect(() => decode({ data: { related: { feedback_contacts: { contact_id: 3 } } } })).toThrow();
   });
 
   // Valuelist ids are strings on the wire — slugs for global lists, numeric
@@ -124,8 +122,7 @@ describe("Rex spec translation", () => {
               street_name_number: "1 Example Street",
               street_name_number_w_suburb: "1 Example Street, Brisbane City",
               full_address: "1 Example Street, Brisbane City QLD 4000",
-              full_address_w_building_name:
-                "1 Example Street, Brisbane City QLD 4000",
+              full_address_w_building_name: "1 Example Street, Brisbane City QLD 4000",
               hidden_address: "Brisbane City QLD 4000",
               display_address: "1 Example Street, Brisbane City",
             },

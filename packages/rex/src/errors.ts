@@ -31,8 +31,8 @@ export {
 } from "@distilled.cloud/core/errors";
 export type { DefaultErrors } from "@distilled.cloud/core/errors";
 
-import * as Schema from "effect/Schema";
 import * as Category from "@distilled.cloud/core/category";
+import * as Schema from "effect/Schema";
 
 /**
  * A structured error returned inside the Rex response envelope's `error`
@@ -60,34 +60,25 @@ import * as Category from "@distilled.cloud/core/category";
  * );
  * ```
  */
-export class RexApiError extends Schema.TaggedError<RexApiError>()(
-  "RexApiError",
-  {
-    /** Rex exception class name, e.g. "BadMethodCallException". */
-    type: Schema.optional(Schema.String),
-    /** Rex numeric error code. */
-    code: Schema.optional(Schema.Number),
-    message: Schema.optional(Schema.String),
-    /** The full `error` object from the envelope, including `extra`. */
-    body: Schema.Unknown,
-  },
-) {}
+export class RexApiError extends Schema.TaggedError<RexApiError>()("RexApiError", {
+  /** Rex exception class name, e.g. "BadMethodCallException". */
+  type: Schema.optional(Schema.String),
+  /** Rex numeric error code. */
+  code: Schema.optional(Schema.Number),
+  message: Schema.optional(Schema.String),
+  /** The full `error` object from the envelope, including `extra`. */
+  body: Schema.Unknown,
+}) {}
 
 /** Returned when a Rex error response can't be matched to a known shape. */
-export class UnknownRexError extends Schema.TaggedError<UnknownRexError>()(
-  "UnknownRexError",
-  {
-    code: Schema.optional(Schema.String),
-    message: Schema.optional(Schema.String),
-    body: Schema.Unknown,
-  },
-).pipe(Category.withServerError) {}
+export class UnknownRexError extends Schema.TaggedError<UnknownRexError>()("UnknownRexError", {
+  code: Schema.optional(Schema.String),
+  message: Schema.optional(Schema.String),
+  body: Schema.Unknown,
+}).pipe(Category.withServerError) {}
 
 /** Schema parse error wrapper — raised when a response fails schema decoding. */
-export class RexParseError extends Schema.TaggedError<RexParseError>()(
-  "RexParseError",
-  {
-    body: Schema.Unknown,
-    cause: Schema.Unknown,
-  },
-).pipe(Category.withParseError) {}
+export class RexParseError extends Schema.TaggedError<RexParseError>()("RexParseError", {
+  body: Schema.Unknown,
+  cause: Schema.Unknown,
+}).pipe(Category.withParseError) {}

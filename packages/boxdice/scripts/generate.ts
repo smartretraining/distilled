@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { runGeneratorCli } from "@distilled.cloud/core/codegen/cli";
 /**
  * generate — turn the Smithy JSON model in .generated-specs into the Box+Dice
  * Effect SDK.
@@ -21,7 +22,6 @@
  * directly, and `src/pagination.ts` reads the cursor back out of the URL.
  */
 import type { SdkSpec } from "@distilled.cloud/core/codegen/generator";
-import { runGeneratorCli } from "@distilled.cloud/core/codegen/cli";
 
 const NULLABLE_TRAIT = "com.distilled.openapi#nullable";
 const ERROR_MATCHERS_TRAIT = "com.distilled.openapi#errorMatchers";
@@ -48,9 +48,7 @@ const stampPagination = (model: any): string => {
   for (const [id, shape] of Object.entries<any>(shapes)) {
     if (shape?.type !== "operation") continue;
 
-    const output = shape.output?.target
-      ? shapes[shape.output.target]
-      : undefined;
+    const output = shape.output?.target ? shapes[shape.output.target] : undefined;
     const outputMembers: Record<string, any> = output?.members ?? {};
     if (!outputMembers.data || !outputMembers.paging) continue;
 

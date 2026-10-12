@@ -40,10 +40,7 @@ import * as Schema from "effect/Schema";
 import { RexParseError } from "./errors.ts";
 
 /** The two `send_format_id` values a subscription can use. */
-export const WebhookFormat = Schema.Literals([
-  "v1_full_change_detail",
-  "v1_context_only",
-]);
+export const WebhookFormat = Schema.Literals(["v1_full_change_detail", "v1_context_only"]);
 export type WebhookFormat = typeof WebhookFormat.Type;
 
 /** The user whose action triggered the event, when Rex can attribute one. */
@@ -72,10 +69,7 @@ export type WebhookContext = typeof WebhookContext.Type;
  * depends on the originating service, so it is kept open — narrow it against
  * the relevant generated `*Output` schema once you know `context.service`.
  */
-export const WebhookRecordSnapshot = Schema.Record(
-  Schema.String,
-  Schema.Unknown,
-);
+export const WebhookRecordSnapshot = Schema.Record(Schema.String, Schema.Unknown);
 export type WebhookRecordSnapshot = typeof WebhookRecordSnapshot.Type;
 
 /** `v1_full_change_detail` payload: full `pre` / `post` record states. */
@@ -99,10 +93,7 @@ export const WebhookContextOnlyPayload = Schema.Struct({
 export type WebhookContextOnlyPayload = typeof WebhookContextOnlyPayload.Type;
 
 /** Either delivery format — discriminated by `payload.format`. */
-export const WebhookPayload = Schema.Union([
-  WebhookFullChangePayload,
-  WebhookContextOnlyPayload,
-]);
+export const WebhookPayload = Schema.Union([WebhookFullChangePayload, WebhookContextOnlyPayload]);
 export type WebhookPayload = typeof WebhookPayload.Type;
 
 /** A single event within a delivery. */
@@ -136,6 +127,4 @@ const decode = Schema.decodeUnknownEffect(WebhookDelivery);
 export const decodeWebhookDelivery = (
   body: unknown,
 ): Effect.Effect<WebhookDelivery, RexParseError> =>
-  decode(body).pipe(
-    Effect.mapError((cause) => new RexParseError({ body, cause })),
-  );
+  decode(body).pipe(Effect.mapError((cause) => new RexParseError({ body, cause })));

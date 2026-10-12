@@ -50,10 +50,9 @@ export interface Config {
   readonly appIdentifier: string;
 }
 
-export class Credentials extends Context.Service<
-  Credentials,
-  Effect.Effect<Config>
->()("RexCredentials") {}
+export class Credentials extends Context.Service<Credentials, Effect.Effect<Config>>()(
+  "RexCredentials",
+) {}
 
 /**
  * Exchange email + password for a session token via
@@ -83,9 +82,7 @@ export const login = (
         error?: { message?: string } | null;
       };
       if (!res.ok || json.error || typeof json.result !== "string") {
-        throw new Error(
-          json.error?.message ?? `Rex login failed (HTTP ${res.status})`,
-        );
+        throw new Error(json.error?.message ?? `Rex login failed (HTTP ${res.status})`);
       }
       return json.result;
     },
@@ -116,14 +113,11 @@ const envConfig = EffectConfig.all({
   apiBaseUrl: EffectConfig.String("REX_API_BASE_URL").pipe(
     EffectConfig.withDefault(DEFAULT_API_BASE_URL),
   ),
-  appIdentifier: EffectConfig.String("REX_APP_IDENTIFIER").pipe(
-    EffectConfig.option,
-  ),
+  appIdentifier: EffectConfig.String("REX_APP_IDENTIFIER").pipe(EffectConfig.option),
 });
 
 const missingCredentials = new ConfigError({
-  message:
-    "Rex credentials require either REX_API_TOKEN, or REX_EMAIL + REX_PASSWORD",
+  message: "Rex credentials require either REX_API_TOKEN, or REX_EMAIL + REX_PASSWORD",
 });
 
 const missingAppIdentifier = new ConfigError({
@@ -142,9 +136,7 @@ const missingAppIdentifier = new ConfigError({
 export const CredentialsFromEnv: Layer.Layer<Credentials> = Layer.effect(
   Credentials,
   Effect.gen(function* () {
-    const cfg = yield* envConfig.pipe(
-      Effect.mapError(() => missingCredentials),
-    );
+    const cfg = yield* envConfig.pipe(Effect.mapError(() => missingCredentials));
 
     if (cfg.appIdentifier._tag === "None") {
       return yield* Effect.fail(missingAppIdentifier);
