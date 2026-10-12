@@ -54,6 +54,11 @@ export const SPEC_REPOS: readonly SpecRepo[] = [
   { package: "azure" },
   { package: "boat-dev" },
   {
+    package: "boxdice",
+    blocked:
+      "@smartretraining fork package; specs are committed in packages/boxdice/specs",
+  },
+  {
     package: "celld",
     blocked:
       "Celld v0.6.0 has no published API description; source-derived Smithy contracts are committed in packages/celld/specs",
@@ -107,10 +112,20 @@ export const SPEC_REPOS: readonly SpecRepo[] = [
   { package: "posthog" },
   { package: "prisma", mirror: "prisma-postgres" },
   { package: "railway" },
+  {
+    package: "reapit",
+    blocked:
+      "@smartretraining fork package; specs are committed in packages/reapit/specs",
+  },
   { package: "redis-cloud" },
   { package: "remote" },
   { package: "render" },
   { package: "resend" },
+  {
+    package: "rex",
+    blocked:
+      "@smartretraining fork package; specs are committed in packages/rex/specs",
+  },
   { package: "s2" },
   { package: "sentry" },
   {
@@ -133,6 +148,11 @@ export const SPEC_REPOS: readonly SpecRepo[] = [
   { package: "typesense" },
   { package: "unkey" },
   { package: "vanta" },
+  {
+    package: "vaultre",
+    blocked:
+      "@smartretraining fork package; specs are committed in packages/vaultre/specs",
+  },
   { package: "vercel" },
   { package: "whop" },
   { package: "workos" },
