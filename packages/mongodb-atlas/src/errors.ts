@@ -52,7 +52,7 @@ export class UnknownMongodbAtlasError extends Schema.TaggedError<UnknownMongodbA
   },
 ).pipe(Category.withServerError) {}
 
-/** Schema parse error wrapper (kept for v0 surface parity). */
+/** A 2xx body that does not match the output schema (strict response validation). */
 export class MongodbAtlasParseError extends Schema.TaggedError<MongodbAtlasParseError>()(
   "MongodbAtlasParseError",
   {

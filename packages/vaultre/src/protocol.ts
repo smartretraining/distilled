@@ -30,13 +30,17 @@
 import * as Effect from "effect/Effect";
 import * as Redacted from "effect/Redacted";
 import type * as Layer from "effect/Layer";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
 import type * as API from "@distilled.cloud/core/api";
 import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
 import type { API_ERRORS, ConfigError } from "@distilled.cloud/core/errors";
 import { Credentials, type Config } from "./credentials.ts";
-import { UnknownVaultreError, VaultreApiError } from "./errors.ts";
+import {
+  UnknownVaultreError,
+  VaultreApiError,
+  VaultreParseError,
+} from "./errors.ts";
 
 /**
  * Error channel shared by every generated VaultRE operation. Generated
@@ -48,6 +52,7 @@ export type VaultreOpError =
   | InstanceType<(typeof API_ERRORS)[number]>
   | VaultreApiError
   | UnknownVaultreError
+  | VaultreParseError
   | ConfigError
   | HttpClientError.HttpClientError;
 
@@ -110,6 +115,7 @@ export const VaultreProtocol: Layer.Layer<API.Protocol> =
             : message,
       };
     },
+    parseError: ({ body, cause }) => new VaultreParseError({ body, cause }),
     unknownError: ({ code, message, body }) => {
       const detail = errorMessage(body);
       if (detail !== undefined) {

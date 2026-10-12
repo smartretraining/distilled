@@ -39,6 +39,20 @@ export class Conflict
     [{ status: 409 }],
   ) {}
 
+/** The folder does not exist, or the caller cannot see it. Resource Manager answers both with HTTP 403 'Permission ... denied on resource ... (or it may not exist).' */
+export class FolderNotFound
+  extends /*@__PURE__*/ T.applyErrorMatchers(
+    /*@__PURE__*/ S.TaggedError<FolderNotFound>()("FolderNotFound", {
+      code: S.optional(S.Number),
+      message: S.String,
+      status: S.optional(S.String),
+      reason: S.optional(S.String),
+      domain: S.optional(S.String),
+      details: S.optional(S.Array(S.Unknown)),
+    }).pipe(C.withAuthError),
+    [{ status: 403, message: { includes: "(or it may not exist)" } }],
+  ) {}
+
 export class Forbidden
   extends /*@__PURE__*/ T.applyErrorMatchers(
     /*@__PURE__*/ S.TaggedError<Forbidden>()("Forbidden", {
@@ -65,10 +79,47 @@ export class NotFound
     [{ status: 404 }],
   ) {}
 
-export type StringList = Array<string>;
-export const StringList = /*@__PURE__*/ S.Array(
-  S.String,
-) as any as S.Schema<StringList>;
+/** The project does not exist, or the caller cannot see it. Resource Manager answers both with HTTP 403 'Permission ... denied on resource ... (or it may not exist).' */
+export class ProjectNotFound
+  extends /*@__PURE__*/ T.applyErrorMatchers(
+    /*@__PURE__*/ S.TaggedError<ProjectNotFound>()("ProjectNotFound", {
+      code: S.optional(S.Number),
+      message: S.String,
+      status: S.optional(S.String),
+      reason: S.optional(S.String),
+      domain: S.optional(S.String),
+      details: S.optional(S.Array(S.Unknown)),
+    }).pipe(C.withAuthError),
+    [{ status: 403, message: { includes: "(or it may not exist)" } }],
+  ) {}
+
+/** The TagKey does not exist, or the caller cannot see it. Resource Manager answers both with HTTP 403 'Permission denied on resource ... (or it may not exist).'; a denial of an existing TagKey names the missing permission instead. */
+export class TagKeyNotFound
+  extends /*@__PURE__*/ T.applyErrorMatchers(
+    /*@__PURE__*/ S.TaggedError<TagKeyNotFound>()("TagKeyNotFound", {
+      code: S.optional(S.Number),
+      message: S.String,
+      status: S.optional(S.String),
+      reason: S.optional(S.String),
+      domain: S.optional(S.String),
+      details: S.optional(S.Array(S.Unknown)),
+    }).pipe(C.withAuthError),
+    [{ status: 403, message: { includes: "(or it may not exist)" } }],
+  ) {}
+
+/** The TagValue does not exist, or the caller cannot see it. Resource Manager answers both with HTTP 403 'Permission denied on resource ... (or it may not exist).'; a denial of an existing TagValue names the missing permission instead. */
+export class TagValueNotFound
+  extends /*@__PURE__*/ T.applyErrorMatchers(
+    /*@__PURE__*/ S.TaggedError<TagValueNotFound>()("TagValueNotFound", {
+      code: S.optional(S.Number),
+      message: S.String,
+      status: S.optional(S.String),
+      reason: S.optional(S.String),
+      domain: S.optional(S.String),
+      details: S.optional(S.Array(S.Unknown)),
+    }).pipe(C.withAuthError),
+    [{ status: 403, message: { includes: "(or it may not exist)" } }],
+  ) {}
 
 export type StringMap = { [key: string]: string | undefined };
 export const StringMap = /*@__PURE__*/ S.Record(
@@ -80,46 +131,51 @@ export type FolderStateEnum =
   | "STATE_UNSPECIFIED"
   | "ACTIVE"
   | "DELETE_REQUESTED";
-export const FolderStateEnum = /*@__PURE__*/ S.String;
+export const FolderStateEnum = S.String;
+
+export type StringList = Array<string>;
+export const StringList = /*@__PURE__*/ S.Array(
+  S.String,
+) as any as S.Schema<StringList>;
 
 /** A folder in an organization's resource hierarchy, used to organize that organization's resources. */
 export interface Folder {
   /** Required. The folder's parent's resource name. Updates to the folder's parent must be performed using MoveFolder. */
   parent?: string;
-  /** The folder's display name. A folder's display name must be unique amongst its siblings. For example, no two folders with the same parent can share the same display name. The display name must start and end with a letter or digit, may contain letters, digits, spaces, hyphens and underscores and can be no longer than 30 characters. This is captured by the regular expression: `[\p{L}\p{N}]([\p{L}\p{N}_- ]{0,28}[\p{L}\p{N}])?`. */
-  displayName?: string;
-  /** Output only. Optional capabilities configured for this folder (via UpdateCapability API). Example: `folders/123/capabilities/app-management`. */
-  configuredCapabilities?: StringList;
-  /** Optional. Input only. Immutable. Tag keys/values directly bound to this folder. Each item in the map must be expressed as " : ". For example: "123/environment" : "production", "123/costCenter" : "marketing" Note: Currently this field is in Preview. */
-  tags?: StringMap;
-  /** Output only. Management Project associated with this folder (if app-management capability is enabled). Example: `projects/google-mp-123` OUTPUT ONLY. */
-  managementProject?: string;
   /** Output only. Timestamp when the folder was created. */
   createTime?: string;
   /** Output only. A checksum computed by the server based on the current value of the folder resource. This may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding. */
   etag?: string;
-  /** Output only. The lifecycle state of the folder. Updates to the state must be performed using DeleteFolder and UndeleteFolder. */
-  state?: FolderStateEnum | (string & {});
+  /** Optional. Input only. Immutable. Tag keys/values directly bound to this folder. Each item in the map must be expressed as " : ". For example: "123/environment" : "production", "123/costCenter" : "marketing" Note: Currently this field is in Preview. */
+  tags?: StringMap;
+  /** The folder's display name. A folder's display name must be unique amongst its siblings. For example, no two folders with the same parent can share the same display name. The display name must start and end with a letter or digit, may contain letters, digits, spaces, hyphens and underscores and can be no longer than 30 characters. This is captured by the regular expression: `[\p{L}\p{N}]([\p{L}\p{N}_- ]{0,28}[\p{L}\p{N}])?`. */
+  displayName?: string;
   /** Identifier. The resource name of the folder. Its format is `folders/{folder_id}`, for example: "folders/1234". */
   name?: string;
-  /** Output only. Timestamp when the folder was last modified. */
-  updateTime?: string;
+  /** Output only. The lifecycle state of the folder. Updates to the state must be performed using DeleteFolder and UndeleteFolder. */
+  state?: FolderStateEnum | (string & {});
+  /** Output only. Optional capabilities configured for this folder (via UpdateCapability API). Example: `folders/123/capabilities/app-management`. */
+  configuredCapabilities?: StringList;
+  /** Output only. Management Project associated with this folder (if app-management capability is enabled). Example: `projects/google-mp-123` OUTPUT ONLY. */
+  managementProject?: string;
   /** Output only. Timestamp when the folder was requested to be deleted. */
   deleteTime?: string;
+  /** Output only. Timestamp when the folder was last modified. */
+  updateTime?: string;
 }
 export const Folder = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     parent: S.optional(S.String),
-    displayName: S.optional(S.String),
-    configuredCapabilities: S.optional(StringList),
-    tags: S.optional(StringMap),
-    managementProject: S.optional(S.String),
     createTime: S.optional(S.String),
     etag: S.optional(S.String),
-    state: S.optional(FolderStateEnum),
+    tags: S.optional(StringMap),
+    displayName: S.optional(S.String),
     name: S.optional(S.String),
-    updateTime: S.optional(S.String),
+    state: S.optional(FolderStateEnum),
+    configuredCapabilities: S.optional(StringList),
+    managementProject: S.optional(S.String),
     deleteTime: S.optional(S.String),
+    updateTime: S.optional(S.String),
   }),
 ).annotate({ identifier: "Folder" }) as any as S.Schema<Folder>;
 
@@ -154,67 +210,67 @@ export const DocumentMapList = /*@__PURE__*/ S.Array(
 
 /** The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). */
 export interface Status {
-  /** A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client. */
-  message?: string;
   /** A list of messages that carry the error details. There is a common set of message types for APIs to use. */
   details?: DocumentMapList;
+  /** A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client. */
+  message?: string;
   /** The status code, which should be an enum value of google.rpc.Code. */
   code?: number;
 }
 export const Status = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    message: S.optional(S.String),
     details: S.optional(DocumentMapList),
+    message: S.optional(S.String),
     code: S.optional(S.Number),
   }),
 ).annotate({ identifier: "Status" }) as any as S.Schema<Status>;
 
 /** This resource represents a long-running operation that is the result of a network API call. */
 export interface Operation {
-  /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
-  name?: string;
-  /** The error result of the operation in case of failure or cancellation. */
-  error?: Status;
-  /** The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`. */
-  response?: DocumentMap;
   /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any. */
   metadata?: DocumentMap;
+  /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
+  name?: string;
   /** If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available. */
   done?: boolean;
+  /** The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`. */
+  response?: DocumentMap;
+  /** The error result of the operation in case of failure or cancellation. */
+  error?: Status;
 }
 export const Operation = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    name: S.optional(S.String),
-    error: S.optional(Status),
-    response: S.optional(DocumentMap),
     metadata: S.optional(DocumentMap),
+    name: S.optional(S.String),
     done: S.optional(S.Boolean),
+    response: S.optional(DocumentMap),
+    error: S.optional(Status),
   }),
 ).annotate({ identifier: "Operation" }) as any as S.Schema<Operation>;
 
 /** A Lien represents an encumbrance on the actions that can be performed on a resource. */
 export interface Lien {
-  /** The types of operations which should be blocked as a result of this Lien. Each value should correspond to an IAM permission. The server will validate the permissions against those for which Liens are supported. An empty list is meaningless and will be rejected. Example: ['resourcemanager.projects.delete'] */
-  restrictions?: StringList;
+  /** A stable, user-visible/meaningful string identifying the origin of the Lien, intended to be inspected programmatically. Maximum length of 200 characters. Example: 'compute.googleapis.com' */
+  origin?: string;
   /** A system-generated unique identifier for this Lien. Example: `liens/1234abcd` */
   name?: string;
+  /** Concise user-visible strings indicating why an action cannot be performed on a resource. Maximum length of 200 characters. Example: 'Holds production API key' */
+  reason?: string;
+  /** The types of operations which should be blocked as a result of this Lien. Each value should correspond to an IAM permission. The server will validate the permissions against those for which Liens are supported. An empty list is meaningless and will be rejected. Example: ['resourcemanager.projects.delete'] */
+  restrictions?: StringList;
   /** A reference to the resource this Lien is attached to. The server will validate the parent against those for which Liens are supported. Example: `projects/1234` */
   parent?: string;
   /** The creation time of this Lien. */
   createTime?: string;
-  /** Concise user-visible strings indicating why an action cannot be performed on a resource. Maximum length of 200 characters. Example: 'Holds production API key' */
-  reason?: string;
-  /** A stable, user-visible/meaningful string identifying the origin of the Lien, intended to be inspected programmatically. Maximum length of 200 characters. Example: 'compute.googleapis.com' */
-  origin?: string;
 }
 export const Lien = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    restrictions: S.optional(StringList),
+    origin: S.optional(S.String),
     name: S.optional(S.String),
+    reason: S.optional(S.String),
+    restrictions: S.optional(StringList),
     parent: S.optional(S.String),
     createTime: S.optional(S.String),
-    reason: S.optional(S.String),
-    origin: S.optional(S.String),
   }),
 ).annotate({ identifier: "Lien" }) as any as S.Schema<Lien>;
 
@@ -240,49 +296,52 @@ export type ProjectStateEnum =
   | "STATE_UNSPECIFIED"
   | "ACTIVE"
   | "DELETE_REQUESTED";
-export const ProjectStateEnum = /*@__PURE__*/ S.String;
+export const ProjectStateEnum = S.String;
 
 /** A project is a high-level Google Cloud entity. It is a container for ACLs, APIs, App Engine Apps, VMs, and other Google Cloud Platform resources. */
 export interface Project {
-  /** Immutable. The unique, user-assigned id of the project. It must be 6 to 30 lowercase ASCII letters, digits, or hyphens. It must start with a letter. Trailing hyphens are prohibited. Example: `tokyo-rain-123` */
-  projectId?: string;
+  /** Output only. The unique resource name of the project. It is an int64 generated number prefixed by "projects/". Example: `projects/415104041262` */
+  name?: string;
+  /** Optional. Input only. Immutable. Tag keys/values directly bound to this project. Each item in the map must be expressed as " : ". For example: "123/environment" : "production", "123/costCenter" : "marketing" Note: Currently this field is in Preview. */
+  tags?: StringMap;
+  /** Output only. The time at which this resource was requested for deletion. */
+  deleteTime?: string;
   /** Optional. The labels associated with this project. Label keys must be between 1 and 63 characters long and must conform to the following regular expression: \[a-z\](\[-a-z0-9\]*\[a-z0-9\])?. Label values must be between 0 and 63 characters long and must conform to the regular expression (\[a-z\](\[-a-z0-9\]*\[a-z0-9\])?)?. No more than 64 labels can be associated with a given resource. Clients should store labels in a representation such as JSON that does not depend on specific characters being disallowed. Example: `"myBusinessDimension" : "businessValue"` */
   labels?: StringMap;
   /** Output only. If this project is a Management Project, list of capabilities configured on the parent folder. Note, presence of any capability implies that this is a Management Project. Example: `folders/123/capabilities/app-management`. OUTPUT ONLY. */
   configuredCapabilities?: StringList;
+  /** Output only. Creation time. */
+  createTime?: string;
   /** Optional. A reference to a parent Resource. eg., `organizations/123` or `folders/876`. */
   parent?: string;
   /** Optional. A user-assigned display name of the project. When present it must be between 4 to 30 characters. Allowed characters are: lowercase and uppercase letters, numbers, hyphen, single-quote, double-quote, space, and exclamation point. Example: `My Project` */
   displayName?: string;
-  /** Optional. Input only. Immutable. Tag keys/values directly bound to this project. Each item in the map must be expressed as " : ". For example: "123/environment" : "production", "123/costCenter" : "marketing" Note: Currently this field is in Preview. */
-  tags?: StringMap;
-  /** Output only. Creation time. */
-  createTime?: string;
-  /** Output only. A checksum computed by the server based on the current value of the Project resource. This may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding. */
-  etag?: string;
-  /** Output only. The unique resource name of the project. It is an int64 generated number prefixed by "projects/". Example: `projects/415104041262` */
-  name?: string;
   /** Output only. The project lifecycle state. */
   state?: ProjectStateEnum | (string & {});
+  /** Immutable. The unique, user-assigned id of the project. It must be 6 to 30 lowercase ASCII letters, digits, or hyphens. It must start with a letter. Trailing hyphens are prohibited. Example: `tokyo-rain-123` */
+  projectId?: string;
+  /** Output only. A checksum computed by the server based on the current value of the Project resource. This may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding. */
+  etag?: string;
   /** Output only. The most recent time this resource was modified. */
   updateTime?: string;
-  /** Output only. The time at which this resource was requested for deletion. */
-  deleteTime?: string;
+  /** Output only. If `true`, this project is a Management Project. A Management Project manages dedicated project groups for specific purposes (e.g., agent management or app management). */
+  isManagementProject?: boolean;
 }
 export const Project = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    projectId: S.optional(S.String),
+    name: S.optional(S.String),
+    tags: S.optional(StringMap),
+    deleteTime: S.optional(S.String),
     labels: S.optional(StringMap),
     configuredCapabilities: S.optional(StringList),
+    createTime: S.optional(S.String),
     parent: S.optional(S.String),
     displayName: S.optional(S.String),
-    tags: S.optional(StringMap),
-    createTime: S.optional(S.String),
-    etag: S.optional(S.String),
-    name: S.optional(S.String),
     state: S.optional(ProjectStateEnum),
+    projectId: S.optional(S.String),
+    etag: S.optional(S.String),
     updateTime: S.optional(S.String),
-    deleteTime: S.optional(S.String),
+    isManagementProject: S.optional(S.Boolean),
   }),
 ).annotate({ identifier: "Project" }) as any as S.Schema<Project>;
 
@@ -306,21 +365,21 @@ export const CreateProjectsRequest = /*@__PURE__*/ S.suspend(() =>
 
 /** A TagBinding represents a connection between a TagValue and a cloud resource. When a TagBinding is created, the TagValue is applied to all the descendants of the Google Cloud resource. */
 export interface TagBinding {
-  /** The TagValue of the TagBinding. Must be of the form `tagValues/456`. */
-  tagValue?: string;
-  /** The namespaced name for the TagValue of the TagBinding. Must be in the format `{parent_id}/{tag_key_short_name}/{short_name}`. For methods that support TagValue namespaced name, only one of tag_value_namespaced_name or tag_value may be filled. Requests with both fields will be rejected. */
-  tagValueNamespacedName?: string;
   /** Output only. The name of the TagBinding. This is a String of the form: `tagBindings/{full-resource-name}/{tag-value-name}` (e.g. `tagBindings/%2F%2Fcloudresourcemanager.googleapis.com%2Fprojects%2F123/tagValues/456`) or `tagBindings/{full-resource-name}/{tag-key-name}` (e.g. `tagBindings/%2F%2Fcloudresourcemanager.googleapis.com%2Fprojects%2F123/tagKeys/123`). */
   name?: string;
   /** The full resource name of the resource the TagValue is bound to. E.g. `//cloudresourcemanager.googleapis.com/projects/123` */
   parent?: string;
+  /** The TagValue of the TagBinding. Must be of the form `tagValues/456`. */
+  tagValue?: string;
+  /** The namespaced name for the TagValue of the TagBinding. Must be in the format `{parent_id}/{tag_key_short_name}/{short_name}`. For methods that support TagValue namespaced name, only one of tag_value_namespaced_name or tag_value may be filled. Requests with both fields will be rejected. */
+  tagValueNamespacedName?: string;
 }
 export const TagBinding = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    tagValue: S.optional(S.String),
-    tagValueNamespacedName: S.optional(S.String),
     name: S.optional(S.String),
     parent: S.optional(S.String),
+    tagValue: S.optional(S.String),
+    tagValueNamespacedName: S.optional(S.String),
   }),
 ).annotate({ identifier: "TagBinding" }) as any as S.Schema<TagBinding>;
 
@@ -349,45 +408,45 @@ export type TagKeyPurposeEnum =
   | "PURPOSE_UNSPECIFIED"
   | "GCE_FIREWALL"
   | "DATA_GOVERNANCE";
-export const TagKeyPurposeEnum = /*@__PURE__*/ S.String;
+export const TagKeyPurposeEnum = S.String;
 
 /** A TagKey, used to group a set of TagValues. */
 export interface TagKey {
-  /** Immutable. The resource name of the TagKey's parent. A TagKey can be parented by an Organization or a Project. For a TagKey parented by an Organization, its parent must be in the form `organizations/{org_id}`. For a TagKey parented by a Project, its parent can be in the form `projects/{project_id}` or `projects/{project_number}`. */
-  parent?: string;
-  /** Output only. Immutable. Namespaced name of the TagKey. */
-  namespacedName?: string;
-  /** Required. Immutable. The user friendly name for a TagKey. The short name should be unique for TagKeys within the same tag namespace. The short name must be 1-256 characters, beginning and ending with an alphanumeric character ([a-z0-9A-Z]) with dashes (-), underscores (_), dots (.), and alphanumerics between. */
-  shortName?: string;
-  /** Optional. A purpose denotes that this Tag is intended for use in policies of a specific policy engine, and will involve that policy engine in management operations involving this Tag. A purpose does not grant a policy engine exclusive rights to the Tag, and it may be referenced by other policy engines. A purpose cannot be changed once set. */
-  purpose?: TagKeyPurposeEnum | (string & {});
   /** Optional. Regular expression constraint for freeform tag values. If present, it implicitly allows freeform values (constrained by the regex). */
   allowedValuesRegex?: string;
-  /** Immutable. The resource name for a TagKey. Must be in the format `tagKeys/{tag_key_id}`, where `tag_key_id` is the generated numeric id for the TagKey. */
-  name?: string;
+  /** Output only. Creation time. */
+  createTime?: string;
+  /** Immutable. The resource name of the TagKey's parent. A TagKey can be parented by an Organization or a Project. For a TagKey parented by an Organization, its parent must be in the form `organizations/{org_id}`. For a TagKey parented by a Project, its parent can be in the form `projects/{project_id}` or `projects/{project_number}`. */
+  parent?: string;
+  /** Required. Immutable. The user friendly name for a TagKey. The short name should be unique for TagKeys within the same tag namespace. The short name must be 1-256 characters, beginning and ending with an alphanumeric character ([a-z0-9A-Z]) with dashes (-), underscores (_), dots (.), and alphanumerics between. */
+  shortName?: string;
   /** Optional. User-assigned description of the TagKey. Must not exceed 256 characters. Read-write. */
   description?: string;
   /** Output only. Update time. */
   updateTime?: string;
+  /** Output only. Immutable. Namespaced name of the TagKey. */
+  namespacedName?: string;
+  /** Immutable. The resource name for a TagKey. Must be in the format `tagKeys/{tag_key_id}`, where `tag_key_id` is the generated numeric id for the TagKey. */
+  name?: string;
+  /** Optional. A purpose denotes that this Tag is intended for use in policies of a specific policy engine, and will involve that policy engine in management operations involving this Tag. A purpose does not grant a policy engine exclusive rights to the Tag, and it may be referenced by other policy engines. A purpose cannot be changed once set. */
+  purpose?: TagKeyPurposeEnum | (string & {});
   /** Optional. Purpose data corresponds to the policy system that the tag is intended for. See documentation for `Purpose` for formatting of this field. Purpose data cannot be changed once set. */
   purposeData?: StringMap;
-  /** Output only. Creation time. */
-  createTime?: string;
   /** Optional. Entity tag which users can pass to prevent race conditions. This field is always set in server responses. See UpdateTagKeyRequest for details. */
   etag?: string;
 }
 export const TagKey = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    parent: S.optional(S.String),
-    namespacedName: S.optional(S.String),
-    shortName: S.optional(S.String),
-    purpose: S.optional(TagKeyPurposeEnum),
     allowedValuesRegex: S.optional(S.String),
-    name: S.optional(S.String),
+    createTime: S.optional(S.String),
+    parent: S.optional(S.String),
+    shortName: S.optional(S.String),
     description: S.optional(S.String),
     updateTime: S.optional(S.String),
+    namespacedName: S.optional(S.String),
+    name: S.optional(S.String),
+    purpose: S.optional(TagKeyPurposeEnum),
     purposeData: S.optional(StringMap),
-    createTime: S.optional(S.String),
     etag: S.optional(S.String),
   }),
 ).annotate({ identifier: "TagKey" }) as any as S.Schema<TagKey>;
@@ -415,33 +474,33 @@ export const CreateTagKeysRequest = /*@__PURE__*/ S.suspend(() =>
 
 /** A TagValue is a child of a particular TagKey. This is used to group cloud resources for the purpose of controlling them using policies. */
 export interface TagValue {
-  /** Output only. Creation time. */
-  createTime?: string;
   /** Optional. Entity tag which users can pass to prevent race conditions. This field is always set in server responses. See UpdateTagValueRequest for details. */
   etag?: string;
-  /** Output only. The namespaced name of the TagValue. Can be in the form `{organization_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_number}/{tag_key_short_name}/{tag_value_short_name}`. */
-  namespacedName?: string;
+  /** Output only. Creation time. */
+  createTime?: string;
   /** Output only. Update time. */
   updateTime?: string;
-  /** Required. Immutable. User-assigned short name for TagValue. The short name should be unique for TagValues within the same parent TagKey. The short name must be 256 characters or less, beginning and ending with an alphanumeric character ([a-z0-9A-Z]) with dashes (-), underscores (_), dots (.), and alphanumerics between. */
-  shortName?: string;
-  /** Immutable. The resource name of the new TagValue's parent TagKey. Must be of the form `tagKeys/{tag_key_id}`. */
-  parent?: string;
-  /** Immutable. Resource name for TagValue in the format `tagValues/456`. */
-  name?: string;
   /** Optional. User-assigned description of the TagValue. Must not exceed 256 characters. Read-write. */
   description?: string;
+  /** Output only. The namespaced name of the TagValue. Can be in the form `{organization_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_number}/{tag_key_short_name}/{tag_value_short_name}`. */
+  namespacedName?: string;
+  /** Required. Immutable. User-assigned short name for TagValue. The short name should be unique for TagValues within the same parent TagKey. The short name must be 256 characters or less, beginning and ending with an alphanumeric character ([a-z0-9A-Z]) with dashes (-), underscores (_), dots (.), and alphanumerics between. */
+  shortName?: string;
+  /** Immutable. Resource name for TagValue in the format `tagValues/456`. */
+  name?: string;
+  /** Immutable. The resource name of the new TagValue's parent TagKey. Must be of the form `tagKeys/{tag_key_id}`. */
+  parent?: string;
 }
 export const TagValue = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    createTime: S.optional(S.String),
     etag: S.optional(S.String),
-    namespacedName: S.optional(S.String),
+    createTime: S.optional(S.String),
     updateTime: S.optional(S.String),
-    shortName: S.optional(S.String),
-    parent: S.optional(S.String),
-    name: S.optional(S.String),
     description: S.optional(S.String),
+    namespacedName: S.optional(S.String),
+    shortName: S.optional(S.String),
+    name: S.optional(S.String),
+    parent: S.optional(S.String),
   }),
 ).annotate({ identifier: "TagValue" }) as any as S.Schema<TagValue>;
 
@@ -468,23 +527,23 @@ export const CreateTagValuesRequest = /*@__PURE__*/ S.suspend(() =>
 
 /** A TagHold represents the use of a TagValue that is not captured by TagBindings. If a TagValue has any TagHolds, deletion will be blocked. This resource is intended to be created in the same cloud location as the `holder`. */
 export interface TagHold {
-  /** Required. The name of the resource where the TagValue is being used. Must be less than 200 characters. E.g. `//compute.googleapis.com/compute/projects/myproject/regions/us-east-1/instanceGroupManagers/instance-group` */
-  holder?: string;
-  /** Optional. A URL where an end user can learn more about removing this hold. E.g. `https://cloud.google.com/resource-manager/docs/tags/tags-creating-and-managing` */
-  helpLink?: string;
-  /** Output only. The time this TagHold was created. */
-  createTime?: string;
   /** Optional. An optional string representing the origin of this request. This field should include human-understandable information to distinguish origins from each other. Must be less than 200 characters. E.g. `migs-35678234` */
   origin?: string;
+  /** Required. The name of the resource where the TagValue is being used. Must be less than 200 characters. E.g. `//compute.googleapis.com/compute/projects/myproject/regions/us-east-1/instanceGroupManagers/instance-group` */
+  holder?: string;
+  /** Output only. The time this TagHold was created. */
+  createTime?: string;
+  /** Optional. A URL where an end user can learn more about removing this hold. E.g. `https://cloud.google.com/resource-manager/docs/tags/tags-creating-and-managing` */
+  helpLink?: string;
   /** Output only. The resource name of a TagHold. This is a String of the form: `tagValues/{tag-value-id}/tagHolds/{tag-hold-id}` (e.g. `tagValues/123/tagHolds/456`). This resource name is generated by the server. */
   name?: string;
 }
 export const TagHold = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    holder: S.optional(S.String),
-    helpLink: S.optional(S.String),
-    createTime: S.optional(S.String),
     origin: S.optional(S.String),
+    holder: S.optional(S.String),
+    createTime: S.optional(S.String),
+    helpLink: S.optional(S.String),
     name: S.optional(S.String),
   }),
 ).annotate({ identifier: "TagHold" }) as any as S.Schema<TagHold>;
@@ -592,18 +651,18 @@ export const DeleteTagBindingsRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<DeleteTagBindingsRequest>;
 
 export interface DeleteTagKeysRequest {
-  /** Optional. The etag known to the client for the expected state of the TagKey. This is to be used for optimistic concurrency. */
-  etag?: string;
-  /** Required. The resource name of a TagKey to be deleted in the format `tagKeys/123`. The TagKey cannot be a parent of any existing TagValues or it will not be deleted successfully. */
-  name: string;
   /** Optional. Set as true to perform validations necessary for deletion, but not actually perform the action. */
   validateOnly?: boolean;
+  /** Required. The resource name of a TagKey to be deleted in the format `tagKeys/123`. The TagKey cannot be a parent of any existing TagValues or it will not be deleted successfully. */
+  name: string;
+  /** Optional. The etag known to the client for the expected state of the TagKey. This is to be used for optimistic concurrency. */
+  etag?: string;
 }
 export const DeleteTagKeysRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    etag: S.optional(S.String.pipe(T.Query())),
-    name: S.String.pipe(T.Label()),
     validateOnly: S.optional(S.Boolean.pipe(T.Query())),
+    name: S.String.pipe(T.Label()),
+    etag: S.optional(S.String.pipe(T.Query())),
   }).pipe(
     T.Http({
       method: "DELETE",
@@ -640,15 +699,15 @@ export const DeleteTagValuesRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<DeleteTagValuesRequest>;
 
 export interface DeleteTagValuesTagHoldsRequest {
-  /** Required. The resource name of the TagHold to delete. Must be of the form: `tagValues/{tag-value-id}/tagHolds/{tag-hold-id}`. */
-  name: string;
   /** Optional. Set to true to perform the validations necessary for deleting the resource, but not actually perform the action. */
   validateOnly?: boolean;
+  /** Required. The resource name of the TagHold to delete. Must be of the form: `tagValues/{tag-value-id}/tagHolds/{tag-hold-id}`. */
+  name: string;
 }
 export const DeleteTagValuesTagHoldsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    name: S.String.pipe(T.Label()),
     validateOnly: S.optional(S.Boolean.pipe(T.Query())),
+    name: S.String.pipe(T.Label()),
   }).pipe(
     T.Http({
       method: "DELETE",
@@ -659,6 +718,40 @@ export const DeleteTagValuesTagHoldsRequest = /*@__PURE__*/ S.suspend(() =>
 ).annotate({
   identifier: "DeleteTagValuesTagHoldsRequest",
 }) as any as S.Schema<DeleteTagValuesTagHoldsRequest>;
+
+export interface FetchResourceSemanticsV3Request {
+  /** Required. The full resource name of the GCP resource to retrieve semantics for. Examples: "//compute.googleapis.com/projects/123/zones/us-central1-a/instances/my-instance" "//storage.googleapis.com/projects/_/buckets/my_bucket" */
+  fullResourceName?: string;
+}
+export const FetchResourceSemanticsV3Request = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    fullResourceName: S.optional(S.String.pipe(T.Query())),
+  }).pipe(
+    T.Http({
+      method: "GET",
+      uri: "v3:fetchResourceSemantics",
+      baseUrl: "https://cloudresourcemanager.googleapis.com/",
+    }),
+  ),
+).annotate({
+  identifier: "FetchResourceSemanticsV3Request",
+}) as any as S.Schema<FetchResourceSemanticsV3Request>;
+
+/** Response message for FetchResourceSemantics. */
+export interface FetchResourceSemanticsResponse {
+  /** Map of resource semantics (e.g., `"ENVIRONMENT": "PRODUCTION"`). */
+  semantics?: StringMap;
+  /** The full resource name for which semantics are returned. Examples: "//compute.googleapis.com/projects/123/zones/us-central1-a/instances/my-instance" "//storage.googleapis.com/projects/_/buckets/my_bucket" */
+  fullResourceName?: string;
+}
+export const FetchResourceSemanticsResponse = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    semantics: S.optional(StringMap),
+    fullResourceName: S.optional(S.String),
+  }),
+).annotate({
+  identifier: "FetchResourceSemanticsResponse",
+}) as any as S.Schema<FetchResourceSemanticsResponse>;
 
 export interface GetFoldersRequest {
   /** Required. The resource name of the folder to retrieve. Must be of the form `folders/{folder_id}`. */
@@ -757,24 +850,66 @@ export const GetIamPolicyFoldersRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "GetIamPolicyFoldersRequest",
 }) as any as S.Schema<GetIamPolicyFoldersRequest>;
 
+/** Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: "Summary size limit" description: "Determines if a summary is less than 100 chars" expression: "document.summary.size() < 100" Example (Equality): title: "Requestor is owner" description: "Determines if requestor is the document owner" expression: "document.owner == request.auth.claims.email" Example (Logic): title: "Public documents" description: "Determine whether the document should be publicly visible" expression: "document.type != 'private' && document.type != 'internal'" Example (Data Manipulation): title: "Notification string" description: "Create a notification string with a timestamp." expression: "'New message received at ' + string(document.create_time)" The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information. */
+export interface Expr {
+  /** Textual representation of an expression in Common Expression Language syntax. */
+  expression?: string;
+  /** Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression. */
+  title?: string;
+  /** Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI. */
+  description?: string;
+  /** Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file. */
+  location?: string;
+}
+export const Expr = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    expression: S.optional(S.String),
+    title: S.optional(S.String),
+    description: S.optional(S.String),
+    location: S.optional(S.String),
+  }),
+).annotate({ identifier: "Expr" }) as any as S.Schema<Expr>;
+
+/** Associates `members`, or principals, with a `role`. */
+export interface Binding {
+  /** The condition that is associated with this binding. If the condition evaluates to `true`, then this binding applies to the current request. If the condition evaluates to `false`, then this binding does not apply to the current request. However, a different role binding might grant the same role to one or more of the principals in this binding. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). */
+  condition?: Expr;
+  /** Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`. For an overview of the IAM roles and permissions, see the [IAM documentation](https://cloud.google.com/iam/docs/roles-overview). For a list of the available pre-defined roles, see [here](https://cloud.google.com/iam/docs/understanding-roles). */
+  role?: string;
+  /** Specifies the principals requesting access for a Google Cloud resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. Does not include identities that come from external identity providers (IdPs) through identity federation. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a Google service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `serviceAccount:{projectid}.svc.id.goog[{namespace}/{kubernetes-sa}]`: An identifier for a [Kubernetes service account](https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts). For example, `my-project.svc.id.goog[my-namespace/my-kubernetes-sa]`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`. * `principal://iam.googleapis.com/locations/global/workforcePools/{pool_id}/subject/{subject_attribute_value}`: A single identity in a workforce identity pool. * `principalSet://iam.googleapis.com/locations/global/workforcePools/{pool_id}/group/{group_id}`: All workforce identities in a group. * `principalSet://iam.googleapis.com/locations/global/workforcePools/{pool_id}/attribute.{attribute_name}/{attribute_value}`: All workforce identities with a specific attribute value. * `principalSet://iam.googleapis.com/locations/global/workforcePools/{pool_id}/*`: All identities in a workforce identity pool. * `principal://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/subject/{subject_attribute_value}`: A single identity in a workload identity pool. * `principalSet://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/group/{group_id}`: A workload identity pool group. * `principalSet://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/attribute.{attribute_name}/{attribute_value}`: All identities in a workload identity pool with a certain attribute. * `principalSet://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/*`: All identities in a workload identity pool. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `deleted:principal://iam.googleapis.com/locations/global/workforcePools/{pool_id}/subject/{subject_attribute_value}`: Deleted single identity in a workforce identity pool. For example, `deleted:principal://iam.googleapis.com/locations/global/workforcePools/my-pool-id/subject/my-subject-attribute-value`. */
+  members?: StringList;
+}
+export const Binding = /*@__PURE__*/ S.suspend(() =>
+  S.Struct({
+    condition: S.optional(Expr),
+    role: S.optional(S.String),
+    members: S.optional(StringList),
+  }),
+).annotate({ identifier: "Binding" }) as any as S.Schema<Binding>;
+
+export type BindingList = Array<Binding>;
+export const BindingList = /*@__PURE__*/ S.Array(
+  Binding,
+) as any as S.Schema<BindingList>;
+
 export type AuditLogConfigLogTypeEnum =
   | "LOG_TYPE_UNSPECIFIED"
   | "ADMIN_READ"
   | "DATA_WRITE"
   | "DATA_READ";
-export const AuditLogConfigLogTypeEnum = /*@__PURE__*/ S.String;
+export const AuditLogConfigLogTypeEnum = S.String;
 
 /** Provides the configuration for logging a type of permissions. Example: { "audit_log_configs": [ { "log_type": "DATA_READ", "exempted_members": [ "user:jose@example.com" ] }, { "log_type": "DATA_WRITE" } ] } This enables 'DATA_READ' and 'DATA_WRITE' logging, while exempting jose@example.com from DATA_READ logging. */
 export interface AuditLogConfig {
-  /** The log type that this config enables. */
-  logType?: AuditLogConfigLogTypeEnum | (string & {});
   /** Specifies the identities that do not cause logging for this type of permission. Follows the same format of Binding.members. */
   exemptedMembers?: StringList;
+  /** The log type that this config enables. */
+  logType?: AuditLogConfigLogTypeEnum | (string & {});
 }
 export const AuditLogConfig = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    logType: S.optional(AuditLogConfigLogTypeEnum),
     exemptedMembers: S.optional(StringList),
+    logType: S.optional(AuditLogConfigLogTypeEnum),
   }),
 ).annotate({ identifier: "AuditLogConfig" }) as any as S.Schema<AuditLogConfig>;
 
@@ -802,65 +937,23 @@ export const AuditConfigList = /*@__PURE__*/ S.Array(
   AuditConfig,
 ) as any as S.Schema<AuditConfigList>;
 
-/** Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: "Summary size limit" description: "Determines if a summary is less than 100 chars" expression: "document.summary.size() < 100" Example (Equality): title: "Requestor is owner" description: "Determines if requestor is the document owner" expression: "document.owner == request.auth.claims.email" Example (Logic): title: "Public documents" description: "Determine whether the document should be publicly visible" expression: "document.type != 'private' && document.type != 'internal'" Example (Data Manipulation): title: "Notification string" description: "Create a notification string with a timestamp." expression: "'New message received at ' + string(document.create_time)" The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information. */
-export interface Expr {
-  /** Textual representation of an expression in Common Expression Language syntax. */
-  expression?: string;
-  /** Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI. */
-  description?: string;
-  /** Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression. */
-  title?: string;
-  /** Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file. */
-  location?: string;
-}
-export const Expr = /*@__PURE__*/ S.suspend(() =>
-  S.Struct({
-    expression: S.optional(S.String),
-    description: S.optional(S.String),
-    title: S.optional(S.String),
-    location: S.optional(S.String),
-  }),
-).annotate({ identifier: "Expr" }) as any as S.Schema<Expr>;
-
-/** Associates `members`, or principals, with a `role`. */
-export interface Binding {
-  /** The condition that is associated with this binding. If the condition evaluates to `true`, then this binding applies to the current request. If the condition evaluates to `false`, then this binding does not apply to the current request. However, a different role binding might grant the same role to one or more of the principals in this binding. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). */
-  condition?: Expr;
-  /** Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`. For an overview of the IAM roles and permissions, see the [IAM documentation](https://cloud.google.com/iam/docs/roles-overview). For a list of the available pre-defined roles, see [here](https://cloud.google.com/iam/docs/understanding-roles). */
-  role?: string;
-  /** Specifies the principals requesting access for a Google Cloud resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. Does not include identities that come from external identity providers (IdPs) through identity federation. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a Google service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `serviceAccount:{projectid}.svc.id.goog[{namespace}/{kubernetes-sa}]`: An identifier for a [Kubernetes service account](https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts). For example, `my-project.svc.id.goog[my-namespace/my-kubernetes-sa]`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`. * `principal://iam.googleapis.com/locations/global/workforcePools/{pool_id}/subject/{subject_attribute_value}`: A single identity in a workforce identity pool. * `principalSet://iam.googleapis.com/locations/global/workforcePools/{pool_id}/group/{group_id}`: All workforce identities in a group. * `principalSet://iam.googleapis.com/locations/global/workforcePools/{pool_id}/attribute.{attribute_name}/{attribute_value}`: All workforce identities with a specific attribute value. * `principalSet://iam.googleapis.com/locations/global/workforcePools/{pool_id}/*`: All identities in a workforce identity pool. * `principal://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/subject/{subject_attribute_value}`: A single identity in a workload identity pool. * `principalSet://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/group/{group_id}`: A workload identity pool group. * `principalSet://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/attribute.{attribute_name}/{attribute_value}`: All identities in a workload identity pool with a certain attribute. * `principalSet://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/*`: All identities in a workload identity pool. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `deleted:principal://iam.googleapis.com/locations/global/workforcePools/{pool_id}/subject/{subject_attribute_value}`: Deleted single identity in a workforce identity pool. For example, `deleted:principal://iam.googleapis.com/locations/global/workforcePools/my-pool-id/subject/my-subject-attribute-value`. */
-  members?: StringList;
-}
-export const Binding = /*@__PURE__*/ S.suspend(() =>
-  S.Struct({
-    condition: S.optional(Expr),
-    role: S.optional(S.String),
-    members: S.optional(StringList),
-  }),
-).annotate({ identifier: "Binding" }) as any as S.Schema<Binding>;
-
-export type BindingList = Array<Binding>;
-export const BindingList = /*@__PURE__*/ S.Array(
-  Binding,
-) as any as S.Schema<BindingList>;
-
 /** An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and domains (such as G Suite). A `role` is a named list of permissions; each `role` can be an IAM predefined role or a user-created custom role. For some types of Google Cloud resources, a `binding` can also specify a `condition`, which is a logical expression that allows access to a resource only if the expression evaluates to `true`. A condition can add constraints based on attributes of the request, the resource, or both. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). **JSON example:** ``` { "bindings": [ { "role": "roles/resourcemanager.organizationAdmin", "members": [ "user:mike@example.com", "group:admins@example.com", "domain:google.com", "serviceAccount:my-project-id@appspot.gserviceaccount.com" ] }, { "role": "roles/resourcemanager.organizationViewer", "members": [ "user:eve@example.com" ], "condition": { "title": "expirable access", "description": "Does not grant access after Sep 2020", "expression": "request.time < timestamp('2020-10-01T00:00:00.000Z')", } } ], "etag": "BwWWja0YfJA=", "version": 3 } ``` **YAML example:** ``` bindings: - members: - user:mike@example.com - group:admins@example.com - domain:google.com - serviceAccount:my-project-id@appspot.gserviceaccount.com role: roles/resourcemanager.organizationAdmin - members: - user:eve@example.com role: roles/resourcemanager.organizationViewer condition: title: expirable access description: Does not grant access after Sep 2020 expression: request.time < timestamp('2020-10-01T00:00:00.000Z') etag: BwWWja0YfJA= version: 3 ``` For a description of IAM and its features, see the [IAM documentation](https://cloud.google.com/iam/docs/). */
 export interface Policy {
-  /** Specifies cloud audit logging configuration for this policy. */
-  auditConfigs?: AuditConfigList;
   /** Specifies the format of the policy. Valid values are `0`, `1`, and `3`. Requests that specify an invalid value are rejected. Any operation that affects conditional role bindings must specify version `3`. This requirement applies to the following operations: * Getting a policy that includes a conditional role binding * Adding a conditional role binding to a policy * Changing a conditional role binding in a policy * Removing any role binding, with or without a condition, from a policy that includes conditions **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost. If a policy does not include any conditions, operations on that policy may specify any valid version or leave the field unset. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). */
   version?: number;
-  /** Associates a list of `members`, or principals, with a `role`. Optionally, may specify a `condition` that determines how and when the `bindings` are applied. Each of the `bindings` must contain at least one principal. The `bindings` in a `Policy` can refer to up to 1,500 principals; up to 250 of these principals can be Google groups. Each occurrence of a principal counts towards these limits. For example, if the `bindings` grant 50 different roles to `user:alice@example.com`, and not to any other principal, then you can add another 1,450 principals to the `bindings` in the `Policy`. */
-  bindings?: BindingList;
   /** `etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. It is strongly suggested that systems make use of the `etag` in the read-modify-write cycle to perform policy updates in order to avoid race conditions: An `etag` is returned in the response to `getIamPolicy`, and systems are expected to put that etag in the request to `setIamPolicy` to ensure that their change will be applied to the same version of the policy. **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost. */
   etag?: string;
+  /** Associates a list of `members`, or principals, with a `role`. Optionally, may specify a `condition` that determines how and when the `bindings` are applied. Each of the `bindings` must contain at least one principal. The `bindings` in a `Policy` can refer to up to 1,500 principals; up to 250 of these principals can be Google groups. Each occurrence of a principal counts towards these limits. For example, if the `bindings` grant 50 different roles to `user:alice@example.com`, and not to any other principal, then you can add another 1,450 principals to the `bindings` in the `Policy`. */
+  bindings?: BindingList;
+  /** Specifies cloud audit logging configuration for this policy. */
+  auditConfigs?: AuditConfigList;
 }
 export const Policy = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    auditConfigs: S.optional(AuditConfigList),
     version: S.optional(S.Number),
-    bindings: S.optional(BindingList),
     etag: S.optional(S.String),
+    bindings: S.optional(BindingList),
+    auditConfigs: S.optional(AuditConfigList),
   }),
 ).annotate({ identifier: "Policy" }) as any as S.Schema<Policy>;
 
@@ -987,18 +1080,18 @@ export const GetLocationsEffectiveTagBindingCollectionsRequest =
 
 /** Represents a collection of effective tag bindings for a GCP resource. */
 export interface EffectiveTagBindingCollection {
-  /** The full resource name of the resource the TagBindings are bound to. E.g. `//cloudresourcemanager.googleapis.com/projects/123` */
-  fullResourceName?: string;
-  /** Identifier. The name of the EffectiveTagBindingCollection, following the convention: `locations/{location}/effectiveTagBindingCollections/{encoded-full-resource-name}` where the encoded-full-resource-name is the UTF-8 encoded name of the GCP resource the TagBindings are bound to. E.g. "locations/global/effectiveTagBindingCollections/%2f%2fcloudresourcemanager.googleapis.com%2fprojects%2f123" */
-  name?: string;
   /** Tag keys/values effectively bound to this resource, specified in namespaced format. For example: "123/environment": "production" */
   effectiveTags?: StringMap;
+  /** Identifier. The name of the EffectiveTagBindingCollection, following the convention: `locations/{location}/effectiveTagBindingCollections/{encoded-full-resource-name}` where the encoded-full-resource-name is the UTF-8 encoded name of the GCP resource the TagBindings are bound to. E.g. "locations/global/effectiveTagBindingCollections/%2f%2fcloudresourcemanager.googleapis.com%2fprojects%2f123" */
+  name?: string;
+  /** The full resource name of the resource the TagBindings are bound to. E.g. `//cloudresourcemanager.googleapis.com/projects/123` */
+  fullResourceName?: string;
 }
 export const EffectiveTagBindingCollection = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    fullResourceName: S.optional(S.String),
-    name: S.optional(S.String),
     effectiveTags: S.optional(StringMap),
+    name: S.optional(S.String),
+    fullResourceName: S.optional(S.String),
   }),
 ).annotate({
   identifier: "EffectiveTagBindingCollection",
@@ -1025,21 +1118,21 @@ export const GetLocationsTagBindingCollectionsRequest = /*@__PURE__*/ S.suspend(
 
 /** Represents a collection of tags directly bound to a GCP resource. */
 export interface TagBindingCollection {
-  /** Tag keys/values directly bound to this resource, specified in namespaced format. For example: "123/environment": "production" */
-  tags?: StringMap;
-  /** Optional. A checksum based on the current bindings which can be passed to prevent race conditions. This field is always set in server responses. */
-  etag?: string;
   /** Identifier. The name of the TagBindingCollection, following the convention: `locations/{location}/tagBindingCollections/{encoded-full-resource-name}` where the encoded-full-resource-name is the UTF-8 encoded name of the GCP resource the TagBindings are bound to. "locations/global/tagBindingCollections/%2f%2fcloudresourcemanager.googleapis.com%2fprojects%2f123" */
   name?: string;
+  /** Optional. A checksum based on the current bindings which can be passed to prevent race conditions. This field is always set in server responses. */
+  etag?: string;
   /** The full resource name of the resource the TagBindings are bound to. E.g. `//cloudresourcemanager.googleapis.com/projects/123` */
   fullResourceName?: string;
+  /** Tag keys/values directly bound to this resource, specified in namespaced format. For example: "123/environment": "production" */
+  tags?: StringMap;
 }
 export const TagBindingCollection = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    tags: S.optional(StringMap),
-    etag: S.optional(S.String),
     name: S.optional(S.String),
+    etag: S.optional(S.String),
     fullResourceName: S.optional(S.String),
+    tags: S.optional(StringMap),
   }),
 ).annotate({
   identifier: "TagBindingCollection",
@@ -1121,37 +1214,37 @@ export type OrganizationStateEnum =
   | "STATE_UNSPECIFIED"
   | "ACTIVE"
   | "DELETE_REQUESTED";
-export const OrganizationStateEnum = /*@__PURE__*/ S.String;
+export const OrganizationStateEnum = S.String;
 
 /** The root node in the resource hierarchy to which a particular entity's (a company, for example) resources belong. */
 export interface Organization {
-  /** Output only. The resource name of the organization. This is the organization's relative path in the API. Its format is "organizations/[organization_id]". For example, "organizations/1234". */
-  name?: string;
+  /** Output only. Timestamp when the Organization was created. */
+  createTime?: string;
+  /** Output only. Timestamp when the Organization was requested for deletion. */
+  deleteTime?: string;
   /** Output only. A human-readable string that refers to the organization in the Google Cloud Console. This string is set by the server and cannot be changed. The string will be set to the primary domain (for example, "google.com") of the Google Workspace customer that owns the organization. */
   displayName?: string;
+  /** Immutable. The G Suite / Workspace customer id used in the Directory API. */
+  directoryCustomerId?: string;
+  /** Output only. A checksum computed by the server based on the current value of the Organization resource. This may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding. */
+  etag?: string;
   /** Output only. The organization's current lifecycle state. */
   state?: OrganizationStateEnum;
   /** Output only. Timestamp when the Organization was last modified. */
   updateTime?: string;
-  /** Output only. Timestamp when the Organization was requested for deletion. */
-  deleteTime?: string;
-  /** Immutable. The G Suite / Workspace customer id used in the Directory API. */
-  directoryCustomerId?: string;
-  /** Output only. Timestamp when the Organization was created. */
-  createTime?: string;
-  /** Output only. A checksum computed by the server based on the current value of the Organization resource. This may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding. */
-  etag?: string;
+  /** Output only. The resource name of the organization. This is the organization's relative path in the API. Its format is "organizations/[organization_id]". For example, "organizations/1234". */
+  name?: string;
 }
 export const Organization = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    name: S.optional(S.String),
+    createTime: S.optional(S.String),
+    deleteTime: S.optional(S.String),
     displayName: S.optional(S.String),
+    directoryCustomerId: S.optional(S.String),
+    etag: S.optional(S.String),
     state: S.optional(OrganizationStateEnum),
     updateTime: S.optional(S.String),
-    deleteTime: S.optional(S.String),
-    directoryCustomerId: S.optional(S.String),
-    createTime: S.optional(S.String),
-    etag: S.optional(S.String),
+    name: S.optional(S.String),
   }),
 ).annotate({ identifier: "Organization" }) as any as S.Schema<Organization>;
 
@@ -1210,18 +1303,18 @@ export const GetTagValuesRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetTagValuesRequest>;
 
 export interface ListEffectiveTagsRequest {
+  /** Required. The full resource name of a resource for which you want to list the effective tags. E.g. "//cloudresourcemanager.googleapis.com/projects/123" */
+  parent?: string;
   /** Optional. A pagination token returned from a previous call to `ListEffectiveTags` that indicates from where this listing should continue. */
   pageToken?: string;
   /** Optional. The maximum number of effective tags to return in the response. The server allows a maximum of 300 effective tags to return in a single page. If unspecified, the server will use 100 as the default. */
   pageSize?: number;
-  /** Required. The full resource name of a resource for which you want to list the effective tags. E.g. "//cloudresourcemanager.googleapis.com/projects/123" */
-  parent?: string;
 }
 export const ListEffectiveTagsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
+    parent: S.optional(S.String.pipe(T.Query())),
     pageToken: S.optional(S.String.pipe(T.Query())),
     pageSize: S.optional(S.Number.pipe(T.Query())),
-    parent: S.optional(S.String.pipe(T.Query())),
   }).pipe(
     T.Http({
       method: "GET",
@@ -1235,27 +1328,27 @@ export const ListEffectiveTagsRequest = /*@__PURE__*/ S.suspend(() =>
 
 /** An EffectiveTag represents a tag that applies to a resource during policy evaluation. Tags can be either directly bound to a resource or inherited from its ancestor. EffectiveTag contains the name and namespaced_name of the tag value and tag key, with additional fields of `inherited` to indicate the inheritance status of the effective tag. */
 export interface EffectiveTag {
-  /** The name of the TagKey, in the format `tagKeys/{id}`, such as `tagKeys/123`. */
-  tagKey?: string;
-  /** The namespaced name of the TagKey. Can be in the form `{organization_id}/{tag_key_short_name}` or `{project_id}/{tag_key_short_name}` or `{project_number}/{tag_key_short_name}`. */
-  namespacedTagKey?: string;
-  /** Resource name for TagValue in the format `tagValues/456`. */
-  tagValue?: string;
   /** The parent name of the tag key. Must be in the format `organizations/{organization_id}` or `projects/{project_number}` */
   tagKeyParentName?: string;
+  /** The name of the TagKey, in the format `tagKeys/{id}`, such as `tagKeys/123`. */
+  tagKey?: string;
   /** Indicates the inheritance status of a tag value attached to the given resource. If the tag value is inherited from one of the resource's ancestors, inherited will be true. If false, then the tag value is directly attached to the resource, inherited will be false. */
   inherited?: boolean;
+  /** The namespaced name of the TagKey. Can be in the form `{organization_id}/{tag_key_short_name}` or `{project_id}/{tag_key_short_name}` or `{project_number}/{tag_key_short_name}`. */
+  namespacedTagKey?: string;
   /** The namespaced name of the TagValue. Can be in the form `{organization_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_number}/{tag_key_short_name}/{tag_value_short_name}`. */
   namespacedTagValue?: string;
+  /** Resource name for TagValue in the format `tagValues/456`. */
+  tagValue?: string;
 }
 export const EffectiveTag = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    tagKey: S.optional(S.String),
-    namespacedTagKey: S.optional(S.String),
-    tagValue: S.optional(S.String),
     tagKeyParentName: S.optional(S.String),
+    tagKey: S.optional(S.String),
     inherited: S.optional(S.Boolean),
+    namespacedTagKey: S.optional(S.String),
     namespacedTagValue: S.optional(S.String),
+    tagValue: S.optional(S.String),
   }),
 ).annotate({ identifier: "EffectiveTag" }) as any as S.Schema<EffectiveTag>;
 
@@ -1281,21 +1374,21 @@ export const ListEffectiveTagsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<ListEffectiveTagsResponse>;
 
 export interface ListFoldersRequest {
-  /** Optional. The maximum number of folders to return in the response. The server can return fewer folders than requested. If unspecified, server picks an appropriate default. */
-  pageSize?: number;
-  /** Optional. A pagination token returned from a previous call to `ListFolders` that indicates where this listing should continue from. */
-  pageToken?: string;
-  /** Required. The name of the parent resource whose folders are being listed. Only children of this parent resource are listed; descendants are not listed. If the parent is a folder, use the value `folders/{folder_id}`. If the parent is an organization, use the value `organizations/{org_id}`. Access to this method is controlled by checking the `resourcemanager.folders.list` permission on the `parent`. */
-  parent?: string;
   /** Optional. Controls whether folders in the DELETE_REQUESTED state should be returned. Defaults to false. */
   showDeleted?: boolean;
+  /** Required. The name of the parent resource whose folders are being listed. Only children of this parent resource are listed; descendants are not listed. If the parent is a folder, use the value `folders/{folder_id}`. If the parent is an organization, use the value `organizations/{org_id}`. Access to this method is controlled by checking the `resourcemanager.folders.list` permission on the `parent`. */
+  parent?: string;
+  /** Optional. A pagination token returned from a previous call to `ListFolders` that indicates where this listing should continue from. */
+  pageToken?: string;
+  /** Optional. The maximum number of folders to return in the response. The server can return fewer folders than requested. If unspecified, server picks an appropriate default. */
+  pageSize?: number;
 }
 export const ListFoldersRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    pageSize: S.optional(S.Number.pipe(T.Query())),
-    pageToken: S.optional(S.String.pipe(T.Query())),
-    parent: S.optional(S.String.pipe(T.Query())),
     showDeleted: S.optional(S.Boolean.pipe(T.Query())),
+    parent: S.optional(S.String.pipe(T.Query())),
+    pageToken: S.optional(S.String.pipe(T.Query())),
+    pageSize: S.optional(S.Number.pipe(T.Query())),
   }).pipe(
     T.Http({
       method: "GET",
@@ -1314,32 +1407,32 @@ export const FolderList = /*@__PURE__*/ S.Array(
 
 /** The ListFolders response message. */
 export interface ListFoldersResponse {
-  /** A pagination token returned from a previous call to `ListFolders` that indicates from where listing should continue. */
-  nextPageToken?: string;
   /** A possibly paginated list of folders that are direct descendants of the specified parent resource. */
   folders?: FolderList;
+  /** A pagination token returned from a previous call to `ListFolders` that indicates from where listing should continue. */
+  nextPageToken?: string;
 }
 export const ListFoldersResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    nextPageToken: S.optional(S.String),
     folders: S.optional(FolderList),
+    nextPageToken: S.optional(S.String),
   }),
 ).annotate({
   identifier: "ListFoldersResponse",
 }) as any as S.Schema<ListFoldersResponse>;
 
 export interface ListLiensRequest {
-  /** Required. The name of the resource to list all attached Liens. For example, `projects/1234`. (google.api.field_policy).resource_type annotation is not set since the parent depends on the meta api implementation. This field could be a project or other sub project resources. */
-  parent?: string;
   /** The maximum number of items to return. This is a suggestion for the server. The server can return fewer liens than requested. If unspecified, server picks an appropriate default. */
   pageSize?: number;
+  /** Required. The name of the resource to list all attached Liens. For example, `projects/1234`. (google.api.field_policy).resource_type annotation is not set since the parent depends on the meta api implementation. This field could be a project or other sub project resources. */
+  parent?: string;
   /** The `next_page_token` value returned from a previous List request, if any. */
   pageToken?: string;
 }
 export const ListLiensRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    parent: S.optional(S.String.pipe(T.Query())),
     pageSize: S.optional(S.Number.pipe(T.Query())),
+    parent: S.optional(S.String.pipe(T.Query())),
     pageToken: S.optional(S.String.pipe(T.Query())),
   }).pipe(
     T.Http({
@@ -1374,20 +1467,20 @@ export const ListLiensResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<ListLiensResponse>;
 
 export interface ListProjectsRequest {
-  /** Optional. The maximum number of projects to return in the response. The server can return fewer projects than requested. If unspecified, server picks an appropriate default. */
-  pageSize?: number;
-  /** Optional. A pagination token returned from a previous call to ListProjects that indicates from where listing should continue. */
-  pageToken?: string;
   /** Required. The name of the parent resource whose projects are being listed. Only children of this parent resource are listed; descendants are not listed. If the parent is a folder, use the value `folders/{folder_id}`. If the parent is an organization, use the value `organizations/{org_id}`. */
   parent?: string;
+  /** Optional. A pagination token returned from a previous call to ListProjects that indicates from where listing should continue. */
+  pageToken?: string;
+  /** Optional. The maximum number of projects to return in the response. The server can return fewer projects than requested. If unspecified, server picks an appropriate default. */
+  pageSize?: number;
   /** Optional. Indicate that projects in the `DELETE_REQUESTED` state should also be returned. Normally only `ACTIVE` projects are returned. */
   showDeleted?: boolean;
 }
 export const ListProjectsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    pageSize: S.optional(S.Number.pipe(T.Query())),
-    pageToken: S.optional(S.String.pipe(T.Query())),
     parent: S.optional(S.String.pipe(T.Query())),
+    pageToken: S.optional(S.String.pipe(T.Query())),
+    pageSize: S.optional(S.Number.pipe(T.Query())),
     showDeleted: S.optional(S.Boolean.pipe(T.Query())),
   }).pipe(
     T.Http({
@@ -1424,16 +1517,16 @@ export const ListProjectsResponse = /*@__PURE__*/ S.suspend(() =>
 export interface ListTagBindingsRequest {
   /** Optional. The maximum number of TagBindings to return in the response. The server allows a maximum of 300 TagBindings to return. If unspecified, the server will use 100 as the default. */
   pageSize?: number;
-  /** Optional. A pagination token returned from a previous call to `ListTagBindings` that indicates where this listing should continue from. */
-  pageToken?: string;
   /** Required. The full resource name of a resource for which you want to list existing TagBindings. E.g. "//cloudresourcemanager.googleapis.com/projects/123" */
   parent?: string;
+  /** Optional. A pagination token returned from a previous call to `ListTagBindings` that indicates where this listing should continue from. */
+  pageToken?: string;
 }
 export const ListTagBindingsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     pageSize: S.optional(S.Number.pipe(T.Query())),
-    pageToken: S.optional(S.String.pipe(T.Query())),
     parent: S.optional(S.String.pipe(T.Query())),
+    pageToken: S.optional(S.String.pipe(T.Query())),
   }).pipe(
     T.Http({
       method: "GET",
@@ -1452,33 +1545,33 @@ export const TagBindingList = /*@__PURE__*/ S.Array(
 
 /** The ListTagBindings response. */
 export interface ListTagBindingsResponse {
-  /** A possibly paginated list of TagBindings for the specified resource. */
-  tagBindings?: TagBindingList;
   /** Pagination token. If the result set is too large to fit in a single response, this token is returned. It encodes the position of the current result cursor. Feeding this value into a new list request with the `page_token` parameter gives the next page of the results. When `next_page_token` is not filled in, there is no next page and the list returned is the last page in the result set. Pagination tokens have a limited lifetime. */
   nextPageToken?: string;
+  /** A possibly paginated list of TagBindings for the specified resource. */
+  tagBindings?: TagBindingList;
 }
 export const ListTagBindingsResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    tagBindings: S.optional(TagBindingList),
     nextPageToken: S.optional(S.String),
+    tagBindings: S.optional(TagBindingList),
   }),
 ).annotate({
   identifier: "ListTagBindingsResponse",
 }) as any as S.Schema<ListTagBindingsResponse>;
 
 export interface ListTagKeysRequest {
+  /** Optional. The maximum number of TagKeys to return in the response. The server allows a maximum of 300 TagKeys to return. If unspecified, the server will use 100 as the default. */
+  pageSize?: number;
   /** Required. The resource name of the TagKey's parent. Must be of the form `organizations/{org_id}` or `projects/{project_id}` or `projects/{project_number}` */
   parent?: string;
   /** Optional. A pagination token returned from a previous call to `ListTagKey` that indicates where this listing should continue from. */
   pageToken?: string;
-  /** Optional. The maximum number of TagKeys to return in the response. The server allows a maximum of 300 TagKeys to return. If unspecified, the server will use 100 as the default. */
-  pageSize?: number;
 }
 export const ListTagKeysRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
+    pageSize: S.optional(S.Number.pipe(T.Query())),
     parent: S.optional(S.String.pipe(T.Query())),
     pageToken: S.optional(S.String.pipe(T.Query())),
-    pageSize: S.optional(S.Number.pipe(T.Query())),
   }).pipe(
     T.Http({
       method: "GET",
@@ -1512,18 +1605,18 @@ export const ListTagKeysResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<ListTagKeysResponse>;
 
 export interface ListTagValuesRequest {
-  /** Optional. The maximum number of TagValues to return in the response. The server allows a maximum of 300 TagValues to return. If unspecified, the server will use 100 as the default. */
-  pageSize?: number;
   /** Optional. A pagination token returned from a previous call to `ListTagValues` that indicates where this listing should continue from. */
   pageToken?: string;
   /** Required. Resource name for the parent of the TagValues to be listed, in the format `tagKeys/123` or `tagValues/123`. */
   parent?: string;
+  /** Optional. The maximum number of TagValues to return in the response. The server allows a maximum of 300 TagValues to return. If unspecified, the server will use 100 as the default. */
+  pageSize?: number;
 }
 export const ListTagValuesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    pageSize: S.optional(S.Number.pipe(T.Query())),
     pageToken: S.optional(S.String.pipe(T.Query())),
     parent: S.optional(S.String.pipe(T.Query())),
+    pageSize: S.optional(S.Number.pipe(T.Query())),
   }).pipe(
     T.Http({
       method: "GET",
@@ -1557,21 +1650,21 @@ export const ListTagValuesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<ListTagValuesResponse>;
 
 export interface ListTagValuesTagHoldsRequest {
-  /** Optional. The maximum number of TagHolds to return in the response. The server allows a maximum of 300 TagHolds to return. If unspecified, the server will use 100 as the default. */
-  pageSize?: number;
+  /** Optional. Criteria used to select a subset of TagHolds parented by the TagValue to return. This field follows the syntax defined by aip.dev/160; the `holder` and `origin` fields are supported for filtering. Currently only `AND` syntax is supported. Some example queries are: * `holder = //compute.googleapis.com/compute/projects/myproject/regions/us-east-1/instanceGroupManagers/instance-group` * `origin = 35678234` * `holder = //compute.googleapis.com/compute/projects/myproject/regions/us-east-1/instanceGroupManagers/instance-group AND origin = 35678234` */
+  filter?: string;
   /** Optional. A pagination token returned from a previous call to `ListTagHolds` that indicates where this listing should continue from. */
   pageToken?: string;
   /** Required. The resource name of the parent TagValue. Must be of the form: `tagValues/{tag-value-id}`. */
   parent: string;
-  /** Optional. Criteria used to select a subset of TagHolds parented by the TagValue to return. This field follows the syntax defined by aip.dev/160; the `holder` and `origin` fields are supported for filtering. Currently only `AND` syntax is supported. Some example queries are: * `holder = //compute.googleapis.com/compute/projects/myproject/regions/us-east-1/instanceGroupManagers/instance-group` * `origin = 35678234` * `holder = //compute.googleapis.com/compute/projects/myproject/regions/us-east-1/instanceGroupManagers/instance-group AND origin = 35678234` */
-  filter?: string;
+  /** Optional. The maximum number of TagHolds to return in the response. The server allows a maximum of 300 TagHolds to return. If unspecified, the server will use 100 as the default. */
+  pageSize?: number;
 }
 export const ListTagValuesTagHoldsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    pageSize: S.optional(S.Number.pipe(T.Query())),
+    filter: S.optional(S.String.pipe(T.Query())),
     pageToken: S.optional(S.String.pipe(T.Query())),
     parent: S.String.pipe(T.Label()),
-    filter: S.optional(S.String.pipe(T.Query())),
+    pageSize: S.optional(S.Number.pipe(T.Query())),
   }).pipe(
     T.Http({
       method: "GET",
@@ -1590,15 +1683,15 @@ export const TagHoldList = /*@__PURE__*/ S.Array(
 
 /** The ListTagHolds response. */
 export interface ListTagHoldsResponse {
-  /** A possibly paginated list of TagHolds. */
-  tagHolds?: TagHoldList;
   /** Pagination token. If the result set is too large to fit in a single response, this token is returned. It encodes the position of the current result cursor. Feeding this value into a new list request with the `page_token` parameter gives the next page of the results. When `next_page_token` is not filled in, there is no next page and the list returned is the last page in the result set. Pagination tokens have a limited lifetime. */
   nextPageToken?: string;
+  /** A possibly paginated list of TagHolds. */
+  tagHolds?: TagHoldList;
 }
 export const ListTagHoldsResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    tagHolds: S.optional(TagHoldList),
     nextPageToken: S.optional(S.String),
+    tagHolds: S.optional(TagHoldList),
   }),
 ).annotate({
   identifier: "ListTagHoldsResponse",
@@ -1673,17 +1766,17 @@ export const MoveProjectsRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<MoveProjectsRequest>;
 
 export interface PatchFoldersRequest {
-  /** Required. Fields to be updated. Only the `display_name` can be updated. */
-  updateMask?: string;
   /** Identifier. The resource name of the folder. Its format is `folders/{folder_id}`, for example: "folders/1234". */
   name: string;
+  /** Required. Fields to be updated. Only the `display_name` can be updated. */
+  updateMask?: string;
   /** Request body */
   body?: Folder;
 }
 export const PatchFoldersRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    updateMask: S.optional(S.String.pipe(T.Query())),
     name: S.String.pipe(T.Label()),
+    updateMask: S.optional(S.String.pipe(T.Query())),
     body: S.optional(Folder.pipe(T.HttpBody())),
   }).pipe(
     T.Http({
@@ -1697,17 +1790,17 @@ export const PatchFoldersRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<PatchFoldersRequest>;
 
 export interface PatchFoldersCapabilitiesRequest {
-  /** Immutable. Identifier. The resource name of the capability. Must be in the following form: * `folders/{folder_id}/capabilities/{capability_name}` For example, `folders/123/capabilities/app-management` Following are the allowed {capability_name} values: * `app-management` */
-  name: string;
   /** Optional. The list of fields to update. Only [Capability.value] can be updated. */
   updateMask?: string;
+  /** Immutable. Identifier. The resource name of the capability. Must be in the following form: * `folders/{folder_id}/capabilities/{capability_name}` For example, `folders/123/capabilities/app-management` Following are the allowed {capability_name} values: * `app-management` */
+  name: string;
   /** Request body */
   body?: Capability;
 }
 export const PatchFoldersCapabilitiesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    name: S.String.pipe(T.Label()),
     updateMask: S.optional(S.String.pipe(T.Query())),
+    name: S.String.pipe(T.Label()),
     body: S.optional(Capability.pipe(T.HttpBody())),
   }).pipe(
     T.Http({
@@ -1770,20 +1863,20 @@ export const PatchProjectsRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<PatchProjectsRequest>;
 
 export interface PatchTagKeysRequest {
+  /** Set as true to perform validations necessary for updating the resource, but not actually perform the action. */
+  validateOnly?: boolean;
   /** Fields to be updated. The mask may only contain `description` or `etag`. If omitted entirely, both `description` and `etag` are assumed to be significant. */
   updateMask?: string;
   /** Immutable. The resource name for a TagKey. Must be in the format `tagKeys/{tag_key_id}`, where `tag_key_id` is the generated numeric id for the TagKey. */
   name: string;
-  /** Set as true to perform validations necessary for updating the resource, but not actually perform the action. */
-  validateOnly?: boolean;
   /** Request body */
   body?: TagKey;
 }
 export const PatchTagKeysRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
+    validateOnly: S.optional(S.Boolean.pipe(T.Query())),
     updateMask: S.optional(S.String.pipe(T.Query())),
     name: S.String.pipe(T.Label()),
-    validateOnly: S.optional(S.Boolean.pipe(T.Query())),
     body: S.optional(TagKey.pipe(T.HttpBody())),
   }).pipe(
     T.Http({
@@ -1797,20 +1890,20 @@ export const PatchTagKeysRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<PatchTagKeysRequest>;
 
 export interface PatchTagValuesRequest {
-  /** Immutable. Resource name for TagValue in the format `tagValues/456`. */
-  name: string;
   /** Optional. True to perform validations necessary for updating the resource, but not actually perform the action. */
   validateOnly?: boolean;
   /** Optional. Fields to be updated. */
   updateMask?: string;
+  /** Immutable. Resource name for TagValue in the format `tagValues/456`. */
+  name: string;
   /** Request body */
   body?: TagValue;
 }
 export const PatchTagValuesRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    name: S.String.pipe(T.Label()),
     validateOnly: S.optional(S.Boolean.pipe(T.Query())),
     updateMask: S.optional(S.String.pipe(T.Query())),
+    name: S.String.pipe(T.Label()),
     body: S.optional(TagValue.pipe(T.HttpBody())),
   }).pipe(
     T.Http({
@@ -1826,16 +1919,16 @@ export const PatchTagValuesRequest = /*@__PURE__*/ S.suspend(() =>
 export interface SearchFoldersRequest {
   /** Optional. The maximum number of folders to return in the response. The server can return fewer folders than requested. If unspecified, server picks an appropriate default. */
   pageSize?: number;
-  /** Optional. A pagination token returned from a previous call to `SearchFolders` that indicates from where search should continue. */
-  pageToken?: string;
   /** Optional. Search criteria used to select the folders to return. If no search criteria is specified then all accessible folders will be returned. Query expressions can be used to restrict results based upon displayName, state and parent, where the operators `=` (`:`) `NOT`, `AND` and `OR` can be used along with the suffix wildcard symbol `*`. The `displayName` field in a query expression should use escaped quotes for values that include whitespace to prevent unexpected behavior. ``` | Field | Description | |-------------------------|----------------------------------------| | displayName | Filters by displayName. | | parent | Filters by parent (for example: folders/123). | | state, lifecycleState | Filters by state. | ``` Some example queries are: * Query `displayName=Test*` returns Folder resources whose display name starts with "Test". * Query `state=ACTIVE` returns Folder resources with `state` set to `ACTIVE`. * Query `parent=folders/123` returns Folder resources that have `folders/123` as a parent resource. * Query `parent=folders/123 AND state=ACTIVE` returns active Folder resources that have `folders/123` as a parent resource. * Query `displayName=\\"Test String\\"` returns Folder resources with display names that include both "Test" and "String". */
   query?: string;
+  /** Optional. A pagination token returned from a previous call to `SearchFolders` that indicates from where search should continue. */
+  pageToken?: string;
 }
 export const SearchFoldersRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     pageSize: S.optional(S.Number.pipe(T.Query())),
-    pageToken: S.optional(S.String.pipe(T.Query())),
     query: S.optional(S.String.pipe(T.Query())),
+    pageToken: S.optional(S.String.pipe(T.Query())),
   }).pipe(
     T.Http({
       method: "GET",
@@ -1849,33 +1942,33 @@ export const SearchFoldersRequest = /*@__PURE__*/ S.suspend(() =>
 
 /** The response message for searching folders. */
 export interface SearchFoldersResponse {
-  /** A pagination token returned from a previous call to `SearchFolders` that indicates from where searching should continue. */
-  nextPageToken?: string;
   /** A possibly paginated folder search results. the specified parent resource. */
   folders?: FolderList;
+  /** A pagination token returned from a previous call to `SearchFolders` that indicates from where searching should continue. */
+  nextPageToken?: string;
 }
 export const SearchFoldersResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    nextPageToken: S.optional(S.String),
     folders: S.optional(FolderList),
+    nextPageToken: S.optional(S.String),
   }),
 ).annotate({
   identifier: "SearchFoldersResponse",
 }) as any as S.Schema<SearchFoldersResponse>;
 
 export interface SearchOrganizationsRequest {
+  /** Optional. A pagination token returned from a previous call to `SearchOrganizations` that indicates from where listing should continue. */
+  pageToken?: string;
   /** Optional. An optional query string used to filter the Organizations to return in the response. Query rules are case-insensitive. ``` | Field | Description | |------------------|--------------------------------------------| | directoryCustomerId, owner.directoryCustomerId | Filters by directory customer id. | | domain | Filters by domain. | ``` Organizations may be queried by `directoryCustomerId` or by `domain`, where the domain is a G Suite domain, for example: * Query `directorycustomerid:123456789` returns Organization resources with `owner.directory_customer_id` equal to `123456789`. * Query `domain:google.com` returns Organization resources corresponding to the domain `google.com`. */
   query?: string;
   /** Optional. The maximum number of organizations to return in the response. The server can return fewer organizations than requested. If unspecified, server picks an appropriate default. */
   pageSize?: number;
-  /** Optional. A pagination token returned from a previous call to `SearchOrganizations` that indicates from where listing should continue. */
-  pageToken?: string;
 }
 export const SearchOrganizationsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
+    pageToken: S.optional(S.String.pipe(T.Query())),
     query: S.optional(S.String.pipe(T.Query())),
     pageSize: S.optional(S.Number.pipe(T.Query())),
-    pageToken: S.optional(S.String.pipe(T.Query())),
   }).pipe(
     T.Http({
       method: "GET",
@@ -1911,16 +2004,16 @@ export const SearchOrganizationsResponse = /*@__PURE__*/ S.suspend(() =>
 export interface SearchProjectsRequest {
   /** Optional. A pagination token returned from a previous call to ListProjects that indicates from where listing should continue. */
   pageToken?: string;
-  /** Optional. The maximum number of projects to return in the response. The server can return fewer projects than requested. If unspecified, server picks an appropriate default. */
-  pageSize?: number;
   /** Optional. A query string for searching for projects that the caller has `resourcemanager.projects.get` permission to. If multiple fields are included in the query, then it will return results that match any of the fields. Some eligible fields are: ``` | Field | Description | |-------------------------|----------------------------------------------| | displayName, name | Filters by displayName. | | parent | Project's parent (for example: folders/123, organizations/*). Prefer parent field over parent.type and parent.id.| | parent.type | Parent's type: `folder` or `organization`. | | parent.id | Parent's id number (for example: 123) | | id, projectId | Filters by projectId. | | state, lifecycleState | Filters by state. | | labels | Filters by label name or value. | | labels.\ (where *key* is the name of a label) | Filters by label name.| ``` Search expressions are case insensitive. Some examples queries: ``` | Query | Description | |------------------|-----------------------------------------------------| | name:how* | The project's name starts with "how". | | name:Howl | The project's name is `Howl` or `howl`. | | name:HOWL | Equivalent to above. | | NAME:howl | Equivalent to above. | | labels.color:* | The project has the label `color`. | | labels.color:red | The project's label `color` has the value `red`. | | labels.color:red labels.size:big | The project's label `color` has the value `red` or its label `size` has the value `big`. | ``` If no query is specified, the call will return projects for which the user has the `resourcemanager.projects.get` permission. */
   query?: string;
+  /** Optional. The maximum number of projects to return in the response. The server can return fewer projects than requested. If unspecified, server picks an appropriate default. */
+  pageSize?: number;
 }
 export const SearchProjectsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     pageToken: S.optional(S.String.pipe(T.Query())),
-    pageSize: S.optional(S.Number.pipe(T.Query())),
     query: S.optional(S.String.pipe(T.Query())),
+    pageSize: S.optional(S.Number.pipe(T.Query())),
   }).pipe(
     T.Http({
       method: "GET",
@@ -1934,15 +2027,15 @@ export const SearchProjectsRequest = /*@__PURE__*/ S.suspend(() =>
 
 /** A page of the response received from the SearchProjects method. A paginated response where more pages are available has `next_page_token` set. This token can be used in a subsequent request to retrieve the next request page. */
 export interface SearchProjectsResponse {
-  /** The list of Projects that matched the list filter query. This list can be paginated. */
-  projects?: ProjectList;
   /** Pagination token. If the result set is too large to fit in a single response, this token is returned. It encodes the position of the current result cursor. Feeding this value into a new list request with the `page_token` parameter gives the next page of the results. When `next_page_token` is not filled in, there is no next page and the list returned is the last page in the result set. Pagination tokens have a limited lifetime. */
   nextPageToken?: string;
+  /** The list of Projects that matched the list filter query. This list can be paginated. */
+  projects?: ProjectList;
 }
 export const SearchProjectsResponse = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    projects: S.optional(ProjectList),
     nextPageToken: S.optional(S.String),
+    projects: S.optional(ProjectList),
   }),
 ).annotate({
   identifier: "SearchProjectsResponse",
@@ -1950,15 +2043,15 @@ export const SearchProjectsResponse = /*@__PURE__*/ S.suspend(() =>
 
 /** Request message for `SetIamPolicy` method. */
 export interface SetIamPolicyRequest {
-  /** REQUIRED: The complete policy to be applied to the `resource`. The size of the policy is limited to a few 10s of KB. An empty policy is a valid policy but certain Google Cloud services (such as Projects) might reject them. */
-  policy?: Policy;
   /** OPTIONAL: A FieldMask specifying which fields of the policy to modify. Only the fields in the mask will be modified. If no mask is provided, the following default mask is used: `paths: "bindings, etag"` */
   updateMask?: string;
+  /** REQUIRED: The complete policy to be applied to the `resource`. The size of the policy is limited to a few 10s of KB. An empty policy is a valid policy but certain Google Cloud services (such as Projects) might reject them. */
+  policy?: Policy;
 }
 export const SetIamPolicyRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    policy: S.optional(Policy),
     updateMask: S.optional(S.String),
+    policy: S.optional(Policy),
   }),
 ).annotate({
   identifier: "SetIamPolicyRequest",
@@ -2400,6 +2493,7 @@ export type DeleteFoldersError =
   | Forbidden
   | BadRequest
   | Conflict
+  | FolderNotFound
   | GcpOpError;
 /** Requests deletion of a folder. The folder is moved into the DELETE_REQUESTED state immediately, and is deleted approximately 30 days later. This method may only be called on an empty folder, where a folder is empty if it doesn't contain any folders or projects in the ACTIVE state. If called on a folder in DELETE_REQUESTED state the operation will result in a no-op success. The caller must have `resourcemanager.folders.delete` permission on the identified folder. */
 export const deleteFolders: API.OperationMethod<
@@ -2410,7 +2504,14 @@ export const deleteFolders: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: DeleteFoldersRequest,
   output: Operation,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    FolderNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -2440,6 +2541,7 @@ export type DeleteProjectsError =
   | Forbidden
   | BadRequest
   | Conflict
+  | ProjectNotFound
   | GcpOpError;
 /** Marks the project identified by the specified `name` (for example, `projects/415104041262`) for deletion. This method will only affect the project if it has a lifecycle state of ACTIVE. This method changes the Project's lifecycle state from ACTIVE to DELETE_REQUESTED. The deletion starts at an unspecified time, at which point the Project is no longer accessible. Until the deletion completes, you can check the lifecycle state checked by retrieving the project with GetProject, and the project remains visible to ListProjects. However, you cannot update the project. After the deletion completes, the project is not retrievable by the GetProject, ListProjects, and SearchProjects methods. The caller must have `resourcemanager.projects.delete` permissions for this project. */
 export const deleteProjects: API.OperationMethod<
@@ -2450,7 +2552,14 @@ export const deleteProjects: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: DeleteProjectsRequest,
   output: Operation,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    ProjectNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -2480,6 +2589,7 @@ export type DeleteTagKeysError =
   | Forbidden
   | BadRequest
   | Conflict
+  | TagKeyNotFound
   | GcpOpError;
 /** Deletes a TagKey. The TagKey cannot be deleted if it has any child TagValues. */
 export const deleteTagKeys: API.OperationMethod<
@@ -2490,7 +2600,14 @@ export const deleteTagKeys: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: DeleteTagKeysRequest,
   output: Operation,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    TagKeyNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -2500,6 +2617,7 @@ export type DeleteTagValuesError =
   | Forbidden
   | BadRequest
   | Conflict
+  | TagValueNotFound
   | GcpOpError;
 /** Deletes a TagValue. The TagValue cannot have any bindings when it is deleted. */
 export const deleteTagValues: API.OperationMethod<
@@ -2510,7 +2628,14 @@ export const deleteTagValues: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: DeleteTagValuesRequest,
   output: Operation,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    TagValueNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -2535,7 +2660,26 @@ export const deleteTagValuesTagHolds: API.OperationMethod<
   retry: Retry.Retry,
 }));
 
-export type GetFoldersError = NotFound | Forbidden | GcpOpError;
+export type FetchResourceSemanticsV3Error = NotFound | Forbidden | GcpOpError;
+/** Returns the semantics associated with the specified resource. */
+export const fetchResourceSemanticsV3: API.OperationMethod<
+  FetchResourceSemanticsV3Request,
+  FetchResourceSemanticsResponse,
+  FetchResourceSemanticsV3Error,
+  GcpOpContext
+> = /*@__PURE__*/ API.make(() => ({
+  input: FetchResourceSemanticsV3Request,
+  output: FetchResourceSemanticsResponse,
+  errors: [NotFound, Forbidden, UnknownGCPError],
+  protocol: GcpProtocol,
+  retry: Retry.Retry,
+}));
+
+export type GetFoldersError =
+  | NotFound
+  | Forbidden
+  | FolderNotFound
+  | GcpOpError;
 /** Retrieves a folder identified by the supplied resource name. Valid folder resource names have the format `folders/{folder_id}` (for example, `folders/1234`). The caller must have `resourcemanager.folders.get` permission on the identified folder. */
 export const getFolders: API.OperationMethod<
   GetFoldersRequest,
@@ -2545,7 +2689,7 @@ export const getFolders: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: GetFoldersRequest,
   output: Folder,
-  errors: [NotFound, Forbidden, UnknownGCPError],
+  errors: [NotFound, Forbidden, FolderNotFound, UnknownGCPError],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -2570,6 +2714,7 @@ export type GetIamPolicyFoldersError =
   | Forbidden
   | BadRequest
   | Conflict
+  | FolderNotFound
   | GcpOpError;
 /** Gets the access control policy for a folder. The returned policy may be empty if no such policy or resource exists. The `resource` field should be the folder's resource name, for example: "folders/1234". The caller must have `resourcemanager.folders.getIamPolicy` permission on the identified folder. */
 export const getIamPolicyFolders: API.OperationMethod<
@@ -2580,7 +2725,14 @@ export const getIamPolicyFolders: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: GetIamPolicyFoldersRequest,
   output: Policy,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    FolderNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -2610,6 +2762,7 @@ export type GetIamPolicyProjectsError =
   | Forbidden
   | BadRequest
   | Conflict
+  | ProjectNotFound
   | GcpOpError;
 /** Returns the IAM access control policy for the specified project, in the format `projects/{ProjectIdOrNumber}` e.g. projects/123. Permission is denied if the policy or the resource do not exist. */
 export const getIamPolicyProjects: API.OperationMethod<
@@ -2620,7 +2773,14 @@ export const getIamPolicyProjects: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: GetIamPolicyProjectsRequest,
   output: Policy,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    ProjectNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -2630,6 +2790,7 @@ export type GetIamPolicyTagKeysError =
   | Forbidden
   | BadRequest
   | Conflict
+  | TagKeyNotFound
   | GcpOpError;
 /** Gets the access control policy for a TagKey. The returned policy may be empty if no such policy or resource exists. The `resource` field should be the TagKey's resource name. For example, "tagKeys/1234". The caller must have `cloudresourcemanager.googleapis.com/tagKeys.getIamPolicy` permission on the specified TagKey. */
 export const getIamPolicyTagKeys: API.OperationMethod<
@@ -2640,7 +2801,14 @@ export const getIamPolicyTagKeys: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: GetIamPolicyTagKeysRequest,
   output: Policy,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    TagKeyNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -2716,7 +2884,11 @@ export const getLocationsTagBindingCollections: API.OperationMethod<
   retry: Retry.Retry,
 }));
 
-export type GetNamespacedTagKeysError = NotFound | Forbidden | GcpOpError;
+export type GetNamespacedTagKeysError =
+  | NotFound
+  | Forbidden
+  | TagKeyNotFound
+  | GcpOpError;
 /** Retrieves a TagKey by its namespaced name. This method will return `PERMISSION_DENIED` if the key does not exist or the user does not have permission to view it. */
 export const getNamespacedTagKeys: API.OperationMethod<
   GetNamespacedTagKeysRequest,
@@ -2726,12 +2898,16 @@ export const getNamespacedTagKeys: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: GetNamespacedTagKeysRequest,
   output: TagKey,
-  errors: [NotFound, Forbidden, UnknownGCPError],
+  errors: [NotFound, Forbidden, TagKeyNotFound, UnknownGCPError],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
 
-export type GetNamespacedTagValuesError = NotFound | Forbidden | GcpOpError;
+export type GetNamespacedTagValuesError =
+  | NotFound
+  | Forbidden
+  | TagValueNotFound
+  | GcpOpError;
 /** Retrieves a TagValue by its namespaced name. This method will return `PERMISSION_DENIED` if the value does not exist or the user does not have permission to view it. */
 export const getNamespacedTagValues: API.OperationMethod<
   GetNamespacedTagValuesRequest,
@@ -2741,7 +2917,7 @@ export const getNamespacedTagValues: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: GetNamespacedTagValuesRequest,
   output: TagValue,
-  errors: [NotFound, Forbidden, UnknownGCPError],
+  errors: [NotFound, Forbidden, TagValueNotFound, UnknownGCPError],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -2776,7 +2952,11 @@ export const getOrganizations: API.OperationMethod<
   retry: Retry.Retry,
 }));
 
-export type GetProjectsError = NotFound | Forbidden | GcpOpError;
+export type GetProjectsError =
+  | NotFound
+  | Forbidden
+  | ProjectNotFound
+  | GcpOpError;
 /** Retrieves the project identified by the specified `name` (for example, `projects/415104041262`). The caller must have `resourcemanager.projects.get` permission for this project. */
 export const getProjects: API.OperationMethod<
   GetProjectsRequest,
@@ -2786,12 +2966,16 @@ export const getProjects: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: GetProjectsRequest,
   output: Project,
-  errors: [NotFound, Forbidden, UnknownGCPError],
+  errors: [NotFound, Forbidden, ProjectNotFound, UnknownGCPError],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
 
-export type GetTagKeysError = NotFound | Forbidden | GcpOpError;
+export type GetTagKeysError =
+  | NotFound
+  | Forbidden
+  | TagKeyNotFound
+  | GcpOpError;
 /** Retrieves a TagKey. This method will return `PERMISSION_DENIED` if the key does not exist or the user does not have permission to view it. */
 export const getTagKeys: API.OperationMethod<
   GetTagKeysRequest,
@@ -2801,12 +2985,16 @@ export const getTagKeys: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: GetTagKeysRequest,
   output: TagKey,
-  errors: [NotFound, Forbidden, UnknownGCPError],
+  errors: [NotFound, Forbidden, TagKeyNotFound, UnknownGCPError],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
 
-export type GetTagValuesError = NotFound | Forbidden | GcpOpError;
+export type GetTagValuesError =
+  | NotFound
+  | Forbidden
+  | TagValueNotFound
+  | GcpOpError;
 /** Retrieves a TagValue. This method will return `PERMISSION_DENIED` if the value does not exist or the user does not have permission to view it. */
 export const getTagValues: API.OperationMethod<
   GetTagValuesRequest,
@@ -2816,7 +3004,7 @@ export const getTagValues: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: GetTagValuesRequest,
   output: TagValue,
-  errors: [NotFound, Forbidden, UnknownGCPError],
+  errors: [NotFound, Forbidden, TagValueNotFound, UnknownGCPError],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -2941,7 +3129,11 @@ export const listTagKeys: API.PaginatedOperationMethod<
   } as const,
 })) as any;
 
-export type ListTagValuesError = NotFound | Forbidden | GcpOpError;
+export type ListTagValuesError =
+  | NotFound
+  | Forbidden
+  | TagValueNotFound
+  | GcpOpError;
 /** Lists all TagValues for a specific TagKey. */
 export const listTagValues: API.PaginatedOperationMethod<
   ListTagValuesRequest,
@@ -2952,7 +3144,7 @@ export const listTagValues: API.PaginatedOperationMethod<
 > = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListTagValuesRequest,
   output: ListTagValuesResponse,
-  errors: [NotFound, Forbidden, UnknownGCPError],
+  errors: [NotFound, Forbidden, TagValueNotFound, UnknownGCPError],
   protocol: GcpProtocol,
   retry: Retry.Retry,
   pagination: {
@@ -2986,6 +3178,7 @@ export type MoveFoldersError =
   | Forbidden
   | BadRequest
   | Conflict
+  | FolderNotFound
   | GcpOpError;
 /** Moves a folder under a new resource parent. Returns an `Operation` which can be used to track the progress of the folder move workflow. Upon success, the `Operation.response` field will be populated with the moved folder. Upon failure, a `FolderOperationError` categorizing the failure cause will be returned - if the failure occurs synchronously then the `FolderOperationError` will be returned in the `Status.details` field. If it occurs asynchronously, then the FolderOperation will be returned in the `Operation.error` field. In addition, the `Operation.metadata` field will be populated with a `FolderOperation` message as an aid to stateless clients. Folder moves will be rejected if they violate either the naming, height, or fanout constraints described in the CreateFolder documentation. The caller must have `resourcemanager.folders.move` permission on the folder's current and proposed new parent. */
 export const moveFolders: API.OperationMethod<
@@ -2996,7 +3189,14 @@ export const moveFolders: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: MoveFoldersRequest,
   output: Operation,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    FolderNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -3006,6 +3206,7 @@ export type MoveProjectsError =
   | Forbidden
   | BadRequest
   | Conflict
+  | ProjectNotFound
   | GcpOpError;
 /** Move a project to another place in your resource hierarchy, under a new resource parent. Returns an operation which can be used to track the process of the project move workflow. Upon success, the `Operation.response` field will be populated with the moved project. The caller must have `resourcemanager.projects.move` permission on the project, on the project's current and proposed new parent. If project has no current parent, or it currently does not have an associated organization resource, you will also need the `resourcemanager.projects.setIamPolicy` permission in the project. */
 export const moveProjects: API.OperationMethod<
@@ -3016,7 +3217,14 @@ export const moveProjects: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: MoveProjectsRequest,
   output: Operation,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    ProjectNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -3026,6 +3234,7 @@ export type PatchFoldersError =
   | Forbidden
   | BadRequest
   | Conflict
+  | FolderNotFound
   | GcpOpError;
 /** Updates a folder, changing its `display_name`. Changes to the folder `display_name` will be rejected if they violate either the `display_name` formatting rules or the naming constraints described in the CreateFolder documentation. The folder's `display_name` must start and end with a letter or digit, may contain letters, digits, spaces, hyphens and underscores and can be between 3 and 30 characters. This is captured by the regular expression: `\p{L}\p{N}{1,28}[\p{L}\p{N}]`. The caller must have `resourcemanager.folders.update` permission on the identified folder. If the update fails due to the unique name constraint then a `PreconditionFailure` explaining this violation will be returned in the Status.details field. */
 export const patchFolders: API.OperationMethod<
@@ -3036,7 +3245,14 @@ export const patchFolders: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: PatchFoldersRequest,
   output: Operation,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    FolderNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -3086,6 +3302,7 @@ export type PatchProjectsError =
   | Forbidden
   | BadRequest
   | Conflict
+  | ProjectNotFound
   | GcpOpError;
 /** Updates the `display_name` and labels of the project identified by the specified `name` (for example, `projects/415104041262`). Deleting all labels requires an update mask for labels field. The caller must have `resourcemanager.projects.update` permission for this project. */
 export const patchProjects: API.OperationMethod<
@@ -3096,7 +3313,14 @@ export const patchProjects: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: PatchProjectsRequest,
   output: Operation,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    ProjectNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -3106,6 +3330,7 @@ export type PatchTagKeysError =
   | Forbidden
   | BadRequest
   | Conflict
+  | TagKeyNotFound
   | GcpOpError;
 /** Updates the attributes of the TagKey resource. */
 export const patchTagKeys: API.OperationMethod<
@@ -3116,7 +3341,14 @@ export const patchTagKeys: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: PatchTagKeysRequest,
   output: Operation,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    TagKeyNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -3126,6 +3358,7 @@ export type PatchTagValuesError =
   | Forbidden
   | BadRequest
   | Conflict
+  | TagValueNotFound
   | GcpOpError;
 /** Updates the attributes of the TagValue resource. */
 export const patchTagValues: API.OperationMethod<
@@ -3136,7 +3369,14 @@ export const patchTagValues: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: PatchTagValuesRequest,
   output: Operation,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    TagValueNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -3406,6 +3646,7 @@ export type UndeleteFoldersError =
   | Forbidden
   | BadRequest
   | Conflict
+  | FolderNotFound
   | GcpOpError;
 /** Cancels the deletion request for a folder. This method may be called on a folder in any state. If the folder is in the ACTIVE state the result will be a no-op success. In order to succeed, the folder's parent must be in the ACTIVE state. In addition, reintroducing the folder into the tree must not violate folder naming, height, and fanout constraints described in the CreateFolder documentation. The caller must have `resourcemanager.folders.undelete` permission on the identified folder. */
 export const undeleteFolders: API.OperationMethod<
@@ -3416,7 +3657,14 @@ export const undeleteFolders: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: UndeleteFoldersRequest,
   output: Operation,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    FolderNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -3426,6 +3674,7 @@ export type UndeleteProjectsError =
   | Forbidden
   | BadRequest
   | Conflict
+  | ProjectNotFound
   | GcpOpError;
 /** Restores the project identified by the specified `name` (for example, `projects/415104041262`). You can only use this method for a project that has a lifecycle state of DELETE_REQUESTED. After deletion starts, the project cannot be restored. The caller must have `resourcemanager.projects.undelete` permission for this project. */
 export const undeleteProjects: API.OperationMethod<
@@ -3436,7 +3685,14 @@ export const undeleteProjects: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: UndeleteProjectsRequest,
   output: Operation,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    ProjectNotFound,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));

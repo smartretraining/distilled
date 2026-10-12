@@ -1,3 +1,375 @@
+## v1.0.0-rc.13
+
+### &nbsp;&nbsp;&nbsp;🚨 Breaking Changes
+
+- Boolean-string flags nested in request bodies &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/604 [<samp>(2e625)</samp>](https://github.com/alchemy-run/distilled/commit/2e625a375)
+
+### &nbsp;&nbsp;&nbsp;🚀 Features
+
+- Distilled-sdk-update skill and `pnpm patches:audit` &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/644 [<samp>(24cd1)</samp>](https://github.com/alchemy-run/distilled/commit/24cd176a4)
+- **acme, zerossl**:
+  - ACME (RFC 8555) and ZeroSSL SDKs &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/542 [<samp>(183f9)</samp>](https://github.com/alchemy-run/distilled/commit/183f9df0a)
+- **aws**:
+  - Replace fast-xml-parser with Effect-native XML parser &nbsp;-&nbsp; by **Rahul Mishra** in https://github.com/alchemy-run/distilled/issues/611 [<samp>(02fa0)</samp>](https://github.com/alchemy-run/distilled/commit/02fa027d6)
+  - Complete the credential-provider surface, one provider per file &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/639 [<samp>(85a6e)</samp>](https://github.com/alchemy-run/distilled/commit/85a6e12b8)
+- **boat-dev**:
+  - Add the Boat SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/620 [<samp>(aa301)</samp>](https://github.com/alchemy-run/distilled/commit/aa3015998)
+- **celld**:
+  - Add generated v0.6.0 SDK &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/621 [<samp>(751b3)</samp>](https://github.com/alchemy-run/distilled/commit/751b30b7f)
+- **cloudflare**:
+  - Type MCP server API and sync errors &nbsp;-&nbsp; by **Dillion Verma**, **Claude Fable 5.1** and **Rahul Mishra** in https://github.com/alchemy-run/distilled/issues/605 [<samp>(1fcac)</samp>](https://github.com/alchemy-run/distilled/commit/1fcac9f2c)
+- **core**:
+  - Match typed errors by response body and headers &nbsp;-&nbsp; by **Rahul Mishra** in https://github.com/alchemy-run/distilled/issues/654 [<samp>(28178)</samp>](https://github.com/alchemy-run/distilled/commit/281780d6f)
+  - Opt-in strict response validation across every SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/673 [<samp>(03de3)</samp>](https://github.com/alchemy-run/distilled/commit/03de3f076)
+- **core,railway**:
+  - Replace GraphQL select client with Query.fn &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/638 [<samp>(4760c)</samp>](https://github.com/alchemy-run/distilled/commit/4760c9378)
+  - Typed errors for Query.fn &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/674 [<samp>(89d7a)</samp>](https://github.com/alchemy-run/distilled/commit/89d7ae116)
+  - Query.pages and Query.items stream Relay connections &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/675 [<samp>(b8012)</samp>](https://github.com/alchemy-run/distilled/commit/b8012cd55)
+- **daytona**:
+  - Add the Daytona SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/619 [<samp>(bc57e)</samp>](https://github.com/alchemy-run/distilled/commit/bc57ef7c2)
+- **doppler,infisical**:
+  - Type the login endpoints Alchemy's secret providers need &nbsp;-&nbsp; by **Rahul Mishra** in https://github.com/alchemy-run/distilled/issues/626 [<samp>(156a5)</samp>](https://github.com/alchemy-run/distilled/commit/156a5b03e)
+- **fly-io**:
+  - Regenerate from the 2026-09-23 spec &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/657 [<samp>(d9779)</samp>](https://github.com/alchemy-run/distilled/commit/d97790d09)
+- **gcp**:
+  - Region, Endpoint, and regional endpoint routing &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/667 [<samp>(386a0)</samp>](https://github.com/alchemy-run/distilled/commit/386a009f4)
+  - Credentials carry a default region &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/668 [<samp>(8c61d)</samp>](https://github.com/alchemy-run/distilled/commit/8c61daa36)
+- **neon**:
+  - Support backend triggers and harden deployment contracts &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/617 [<samp>(2d172)</samp>](https://github.com/alchemy-run/distilled/commit/2d172e7dd)
+- **planetscale**:
+  - Regenerate from the 2026-09-22 spec &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/642 [<samp>(bab10)</samp>](https://github.com/alchemy-run/distilled/commit/bab10d09e)
+- **stackit**:
+  - Add the STACKIT Cloud SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/616 [<samp>(34d96)</samp>](https://github.com/alchemy-run/distilled/commit/34d9658f6)
+- **website**:
+  - Add distilled.cloud landing page and deploy stack &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/566 [<samp>(17ae4)</samp>](https://github.com/alchemy-run/distilled/commit/17ae44723)
+
+### &nbsp;&nbsp;&nbsp;🐞 Bug Fixes
+
+- Upgrade Effect to 4.0.0-rc.117 &nbsp;-&nbsp; by **Rahul Mishra** in https://github.com/alchemy-run/distilled/issues/637 [<samp>(5358d)</samp>](https://github.com/alchemy-run/distilled/commit/5358d6602)
+- Flatten tag-split SDKs off the Services namespace &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/635 [<samp>(6a286)</samp>](https://github.com/alchemy-run/distilled/commit/6a2867667)
+- Upgrade Effect to 4.0.0-rc.118 &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/679 [<samp>(1f1e8)</samp>](https://github.com/alchemy-run/distilled/commit/1f1e8a72d)
+- **aws**:
+  - Drop @smithy/shared-ini-file-loader, @smithy/util-base64 and @aws-sdk/types &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/609 [<samp>(8cc1a)</samp>](https://github.com/alchemy-run/distilled/commit/8cc1a3670)
+  - Support S3 version selection and metadata headers &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/627 [<samp>(71455)</samp>](https://github.com/alchemy-run/distilled/commit/71455a8c2)
+  - Classify unstructured REST-XML server errors &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/630 [<samp>(035bb)</samp>](https://github.com/alchemy-run/distilled/commit/035bb2eff)
+  - **ec2**:
+    - Type missing rule errors on modification &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/623 [<samp>(47cc1)</samp>](https://github.com/alchemy-run/distilled/commit/47cc1ac64)
+    - Type Client VPN lifecycle errors &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/624 [<samp>(54100)</samp>](https://github.com/alchemy-run/distilled/commit/541008479)
+- **aws,cloudflare**:
+  - Type Workers preview conflict and Deadline UpdateQueue conflict &nbsp;-&nbsp; by **Rahul Mishra** in https://github.com/alchemy-run/distilled/issues/683 [<samp>(1f4a6)</samp>](https://github.com/alchemy-run/distilled/commit/1f4a62973)
+- **cloudflare**:
+  - Type queue readiness and migration errors &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/625 [<samp>(94049)</samp>](https://github.com/alchemy-run/distilled/commit/9404949f0)
+  - Type missing DNS record errors &nbsp;-&nbsp; by **Rahul Mishra** in https://github.com/alchemy-run/distilled/issues/648 [<samp>(75306)</samp>](https://github.com/alchemy-run/distilled/commit/753064a04)
+  - Correct Workers-for-Platforms upload metadata &nbsp;-&nbsp; by **Rahul Mishra** in https://github.com/alchemy-run/distilled/issues/649 [<samp>(bf909)</samp>](https://github.com/alchemy-run/distilled/commit/bf909babc)
+- **core**:
+  - GraphQL nullability, nullable inputs, and object Query.map &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/676 [<samp>(ceb70)</samp>](https://github.com/alchemy-run/distilled/commit/ceb704860)
+- **fly-io**:
+  - Type attached volume deletion errors &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/618 [<samp>(6acb5)</samp>](https://github.com/alchemy-run/distilled/commit/6acb5f13f)
+  - Correct Machine lease and lifecycle contracts &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/628 [<samp>(6caf1)</samp>](https://github.com/alchemy-run/distilled/commit/6caf1c02c)
+  - Expose IP assignment network and type NetworkNotFound &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/646 [<samp>(0e76a)</samp>](https://github.com/alchemy-run/distilled/commit/0e76a9abd)
+- **gcp**:
+  - Type HTTP 501 on Agent Engine sandboxes and workerPools.list &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/656 [<samp>(14d93)</samp>](https://github.com/alchemy-run/distilled/commit/14d9302b7)
+  - Type disabled Secret Manager version access &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/665 [<samp>(9afd7)</samp>](https://github.com/alchemy-run/distilled/commit/9afd718ea)
+  - No environment variables for the default region &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/669 [<samp>(6b83c)</samp>](https://github.com/alchemy-run/distilled/commit/6b83c9643)
+  - Typed errors from alchemy live binding tests &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/678 [<samp>(6b1ad)</samp>](https://github.com/alchemy-run/distilled/commit/6b1ad0762)
+  - Typed errors from alchemy's full GCP suite run &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/680 [<samp>(dc82d)</samp>](https://github.com/alchemy-run/distilled/commit/dc82d5334)
+  - Type the Kafka schema-registry missing-parent error &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/681 [<samp>(94c64)</samp>](https://github.com/alchemy-run/distilled/commit/94c64d789)
+- **neon**:
+  - Declare createProjectBranch conflict responses &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/631 [<samp>(b00de)</samp>](https://github.com/alchemy-run/distilled/commit/b00de41fe)
+- **website**:
+  - Correct homepage code snippets, morph, and copy &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/645 [<samp>(1856c)</samp>](https://github.com/alchemy-run/distilled/commit/1856cd7a1)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/alchemy-run/distilled/compare/v1.0.0-rc.12...HEAD)
+
+---
+
+## v1.0.0-rc.12
+
+### &nbsp;&nbsp;&nbsp;🐞 Bug Fixes
+
+- **aws,fly-io**: Harden provisioning and token minting &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/615 [<samp>(6287a)</samp>](https://github.com/alchemy-run/distilled/commit/6287ae25c)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/alchemy-run/distilled/compare/v1.0.0-rc.11...HEAD)
+
+---
+
+## v1.0.0-rc.11
+
+### &nbsp;&nbsp;&nbsp;🚨 Breaking Changes
+
+- **prisma**: Rename SDK package to prisma &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/612 [<samp>(47daf)</samp>](https://github.com/alchemy-run/distilled/commit/47daffa3b)
+
+### &nbsp;&nbsp;&nbsp;🐞 Bug Fixes
+
+- **aws**:
+  - **rds**: Type engine-version parameter errors &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/613 [<samp>(f5ecf)</samp>](https://github.com/alchemy-run/distilled/commit/f5ecf4dd8)
+- **prisma**:
+  - Type Prisma lifecycle and Hyperdrive origin errors &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/610 [<samp>(2a62c)</samp>](https://github.com/alchemy-run/distilled/commit/2a62c5175)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/alchemy-run/distilled/compare/v1.0.0-rc.10...HEAD)
+
+---
+
+## v1.0.0-rc.10
+
+### &nbsp;&nbsp;&nbsp;🚨 Breaking Changes
+
+- **cloudflare**: Restore configuration wrapper on Containers create &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/602 [<samp>(97695)</samp>](https://github.com/alchemy-run/distilled/commit/9769566e8)
+- **railway**: Expose only the native GraphQL client &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/588 [<samp>(c5b83)</samp>](https://github.com/alchemy-run/distilled/commit/c5b839daa)
+
+### &nbsp;&nbsp;&nbsp;🚀 Features
+
+- **aws**:
+  - Replace aws4fetch with Effect-native SigV4 signer &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/577 [<samp>(e8f6a)</samp>](https://github.com/alchemy-run/distilled/commit/e8f6a7c4f)
+  - Inline crc32 fallback &nbsp;-&nbsp; by **Rahul Mishra** in https://github.com/alchemy-run/distilled/issues/582 [<samp>(2754d)</samp>](https://github.com/alchemy-run/distilled/commit/2754dd726)
+  - Effect-native credential providers &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/587 [<samp>(ee6b0)</samp>](https://github.com/alchemy-run/distilled/commit/ee6b0d84d)
+- **cloudflare**:
+  - Worker Previews API and custom-domain previews_enabled &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/576 [<samp>(fb98d)</samp>](https://github.com/alchemy-run/distilled/commit/fb98d73bd)
+  - Read specs from spec-mirror-cloudflare &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/595 [<samp>(95590)</samp>](https://github.com/alchemy-run/distilled/commit/955901612)
+  - CreateUserSchema validationEnabled takes a boolean &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/599 [<samp>(36f9f)</samp>](https://github.com/alchemy-run/distilled/commit/36f9fd60e)
+- **codegen**:
+  - Boolean-string request members become booleans everywhere &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/600 [<samp>(95464)</samp>](https://github.com/alchemy-run/distilled/commit/95464cc03)
+- **railway**:
+  - Add selective Effect GraphQL code generation &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/580 [<samp>(de878)</samp>](https://github.com/alchemy-run/distilled/commit/de8784849)
+  - Refresh sandbox schema and type lifecycle errors &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/607 [<samp>(41c91)</samp>](https://github.com/alchemy-run/distilled/commit/41c91dbd4)
+- **s2**:
+  - Add the S2 (s2.dev) SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/591 [<samp>(fb5ef)</samp>](https://github.com/alchemy-run/distilled/commit/fb5efddd3)
+
+### &nbsp;&nbsp;&nbsp;🐞 Bug Fixes
+
+- Remove invalid PURE annotations &nbsp;-&nbsp; by **Rahul Mishra** in https://github.com/alchemy-run/distilled/issues/558 [<samp>(17029)</samp>](https://github.com/alchemy-run/distilled/commit/17029f4fe)
+- **aws**:
+  - **ec2**: Type security group rule mutation errors &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/608 [<samp>(96aa9)</samp>](https://github.com/alchemy-run/distilled/commit/96aa9a695)
+- **cloudflare**:
+  - Reshape Containers create payload to live API &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/594 [<samp>(2713e)</samp>](https://github.com/alchemy-run/distilled/commit/2713e32ae)
+  - Drop bad validationEnabled member from createUserSchema patch &nbsp;-&nbsp; by **Michael K** and **manager** in https://github.com/alchemy-run/distilled/issues/596 [<samp>(ae494)</samp>](https://github.com/alchemy-run/distilled/commit/ae494cac6)
+  - Drop patch adds the docs now cover (pages, r2) &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/597 [<samp>(24ef3)</samp>](https://github.com/alchemy-run/distilled/commit/24ef3f7f8)
+  - Stop the converter splitting type names that end in "or" &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/603 [<samp>(fce95)</samp>](https://github.com/alchemy-run/distilled/commit/fce951d4e)
+  - Type empty-zone snippet rule deletion errors &nbsp;-&nbsp; by **Rahul Mishra** in https://github.com/alchemy-run/distilled/issues/606 [<samp>(a788b)</samp>](https://github.com/alchemy-run/distilled/commit/a788b889e)
+- **core**:
+  - Preserve nullable OpenAPI collection values &nbsp;-&nbsp; by **Rahul Mishra** in https://github.com/alchemy-run/distilled/issues/584 [<samp>(27c58)</samp>](https://github.com/alchemy-run/distilled/commit/27c5845e3)
+- **deps**:
+  - Update to effect 4.0.0-rc.113 &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/575 [<samp>(8ceed)</samp>](https://github.com/alchemy-run/distilled/commit/8ceedc104)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/alchemy-run/distilled/compare/v1.0.0-rc.9...HEAD)
+
+---
+
+## v1.0.0-rc.9
+
+### &nbsp;&nbsp;&nbsp;🚀 Features
+
+- Regenerate every SDK from the spec mirrors &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/480 [<samp>(6a9f0)</samp>](https://github.com/alchemy-run/distilled/commit/6a9f07851)
+- **adyen**:
+  - Add the Adyen SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/485 [<samp>(8b86d)</samp>](https://github.com/alchemy-run/distilled/commit/8b86d3cd7)
+- **apache-superset**:
+  - Add the Apache Superset SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/499 [<samp>(f241e)</samp>](https://github.com/alchemy-run/distilled/commit/f241e9a85)
+- **archil**:
+  - Add the Archil SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/500 [<samp>(88bca)</samp>](https://github.com/alchemy-run/distilled/commit/88bca1e6f)
+- **argocd**:
+  - Add the Argo CD SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/501 [<samp>(38518)</samp>](https://github.com/alchemy-run/distilled/commit/38518402e)
+- **auth0**:
+  - Add the Auth0 SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/492 [<samp>(e16e5)</samp>](https://github.com/alchemy-run/distilled/commit/e16e5e347)
+- **chronosphere**:
+  - Add the Chronosphere SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/502 [<samp>(f6d0c)</samp>](https://github.com/alchemy-run/distilled/commit/f6d0c8a97)
+- **clerk**:
+  - Add the Clerk SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/493 [<samp>(9f009)</samp>](https://github.com/alchemy-run/distilled/commit/9f00959b1)
+- **codegen**:
+  - Convert-time patches for every dialect, verbNoun by default &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/545 [<samp>(edc10)</samp>](https://github.com/alchemy-run/distilled/commit/edc107786)
+  - Name operations from the route when the operationId is mechanical &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/548 [<samp>(7d2d8)</samp>](https://github.com/alchemy-run/distilled/commit/7d2d8f252)
+  - Drop a redundant Swagger tag prefix from operation ids &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/549 [<samp>(fd544)</samp>](https://github.com/alchemy-run/distilled/commit/fd5440280)
+- **coolify**:
+  - Add the Coolify SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/486 [<samp>(285ea)</samp>](https://github.com/alchemy-run/distilled/commit/285ea7ff8)
+- **customerio**:
+  - Add the Customer.io SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/503 [<samp>(7b209)</samp>](https://github.com/alchemy-run/distilled/commit/7b209b176)
+- **datadog**:
+  - Add the Datadog SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/504 [<samp>(078c3)</samp>](https://github.com/alchemy-run/distilled/commit/078c34ea9)
+- **digitalocean**:
+  - Add the DigitalOcean SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/487 [<samp>(d4fd5)</samp>](https://github.com/alchemy-run/distilled/commit/d4fd55b4b)
+- **docker**:
+  - Add the Docker Engine SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/505 [<samp>(9dbec)</samp>](https://github.com/alchemy-run/distilled/commit/9dbecab50)
+- **doppler**:
+  - Add the Doppler SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/506 [<samp>(5cfc1)</samp>](https://github.com/alchemy-run/distilled/commit/5cfc1285e)
+- **elasticsearch**:
+  - Add the Elasticsearch SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/507 [<samp>(ce8cb)</samp>](https://github.com/alchemy-run/distilled/commit/ce8cb84bd)
+- **forgejo**:
+  - Add the Forgejo SDK &nbsp;-&nbsp; by **Michael K** and **Wyatt Johnson** in https://github.com/alchemy-run/distilled/issues/550 [<samp>(59272)</samp>](https://github.com/alchemy-run/distilled/commit/592725d38)
+- **google-workspace**:
+  - Add the Google Workspace SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/508 [<samp>(4a0e8)</samp>](https://github.com/alchemy-run/distilled/commit/4a0e8bba7)
+- **grafana**:
+  - Add the Grafana SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/494 [<samp>(6c27a)</samp>](https://github.com/alchemy-run/distilled/commit/6c27a941d)
+- **growthbook**:
+  - Add the GrowthBook SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/509 [<samp>(161b6)</samp>](https://github.com/alchemy-run/distilled/commit/161b6bcad)
+- **gusto**:
+  - Add the Gusto SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/510 [<samp>(733a0)</samp>](https://github.com/alchemy-run/distilled/commit/733a0d75b)
+- **hetzner**:
+  - PrimaryIpLimitExceeded &nbsp;-&nbsp; by **Sam Goodwin** [<samp>(cb11c)</samp>](https://github.com/alchemy-run/distilled/commit/cb11c5bf1)
+- **hostinger**:
+  - Add the Hostinger SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/511 [<samp>(4674d)</samp>](https://github.com/alchemy-run/distilled/commit/4674db687)
+- **infisical**:
+  - Add the Infisical SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/512 [<samp>(cd89b)</samp>](https://github.com/alchemy-run/distilled/commit/cd89ba837)
+- **inngest**:
+  - Add the Inngest SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/513 [<samp>(0c952)</samp>](https://github.com/alchemy-run/distilled/commit/0c95221e7)
+- **intercom**:
+  - Add the Intercom SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/514 [<samp>(eb920)</samp>](https://github.com/alchemy-run/distilled/commit/eb9203d37)
+- **launchdarkly**:
+  - Add the LaunchDarkly SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/515 [<samp>(9b45c)</samp>](https://github.com/alchemy-run/distilled/commit/9b45ca182)
+- **meilisearch**:
+  - Add the Meilisearch SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/516 [<samp>(5475b)</samp>](https://github.com/alchemy-run/distilled/commit/5475b2cfa)
+- **mercury**:
+  - Add the Mercury SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/517 [<samp>(bf5dd)</samp>](https://github.com/alchemy-run/distilled/commit/bf5dda2e5)
+- **metabase**:
+  - Add the Metabase SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/518 [<samp>(b72f4)</samp>](https://github.com/alchemy-run/distilled/commit/b72f4fed7)
+- **modal**:
+  - Add the Modal SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/483 [<samp>(cc93b)</samp>](https://github.com/alchemy-run/distilled/commit/cc93bf364)
+- **modrinth**:
+  - Add the Modrinth SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/532 [<samp>(a1ae9)</samp>](https://github.com/alchemy-run/distilled/commit/a1ae95611)
+- **okta**:
+  - Add the Okta SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/495 [<samp>(de23f)</samp>](https://github.com/alchemy-run/distilled/commit/de23fd76d)
+- **onepassword**:
+  - Add the 1Password SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/519 [<samp>(2d3a3)</samp>](https://github.com/alchemy-run/distilled/commit/2d3a33637)
+- **opencode**:
+  - Add the OpenCode SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/520 [<samp>(4ada7)</samp>](https://github.com/alchemy-run/distilled/commit/4ada7b1f6)
+- **ovh**:
+  - Add the OVH SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/521 [<samp>(417d0)</samp>](https://github.com/alchemy-run/distilled/commit/417d0ebd7)
+- **paypal**:
+  - Add the PayPal SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/488 [<samp>(96f31)</samp>](https://github.com/alchemy-run/distilled/commit/96f318d37)
+- **plaid**:
+  - Add the Plaid SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/489 [<samp>(772af)</samp>](https://github.com/alchemy-run/distilled/commit/772afcd62)
+- **polar**:
+  - Add the Polar SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/484 [<samp>(582ca)</samp>](https://github.com/alchemy-run/distilled/commit/582cae06d)
+- **porkbun**:
+  - Add the Porkbun SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/496 [<samp>(f3ab6)</samp>](https://github.com/alchemy-run/distilled/commit/f3ab6378f)
+- **redis-cloud**:
+  - Add the Redis Cloud SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/490 [<samp>(05b23)</samp>](https://github.com/alchemy-run/distilled/commit/05b23d8ce)
+- **remote**:
+  - Add the Remote.com SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/522 [<samp>(10709)</samp>](https://github.com/alchemy-run/distilled/commit/107093139)
+- **render**:
+  - Add the Render SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/556 [<samp>(b3dcc)</samp>](https://github.com/alchemy-run/distilled/commit/b3dcc9d1a)
+- **resend**:
+  - Add the Resend SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/497 [<samp>(afd76)</samp>](https://github.com/alchemy-run/distilled/commit/afd76fa50)
+- **sentry**:
+  - Add the Sentry SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/524 [<samp>(4a148)</samp>](https://github.com/alchemy-run/distilled/commit/4a148e712)
+- **slack**:
+  - Add the Slack Web API SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/551 [<samp>(3082a)</samp>](https://github.com/alchemy-run/distilled/commit/3082a3172)
+- **spacetimedb**:
+  - Add the SpacetimeDB SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/533 [<samp>(38ee3)</samp>](https://github.com/alchemy-run/distilled/commit/38ee39103)
+- **squarespace**:
+  - Add the Squarespace SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/525 [<samp>(2d417)</samp>](https://github.com/alchemy-run/distilled/commit/2d4172d89)
+- **stacks**:
+  - Manage the spec mirrors and the monorepo's own credentials &nbsp;-&nbsp; by **Michael K** and **Claude Opus 5 (1M context)** in https://github.com/alchemy-run/distilled/issues/445 [<samp>(8d93a)</samp>](https://github.com/alchemy-run/distilled/commit/8d93acde9)
+- **stripe**:
+  - Type DeleteProduct ProductHasPrices error &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/570 [<samp>(2a703)</samp>](https://github.com/alchemy-run/distilled/commit/2a703954c)
+- **surrealdb**:
+  - Add the SurrealDB SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/498 [<samp>(51edb)</samp>](https://github.com/alchemy-run/distilled/commit/51edbff06)
+- **temporal**:
+  - Add the Temporal SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/526 [<samp>(48537)</samp>](https://github.com/alchemy-run/distilled/commit/485376821)
+- **trigger-dev**:
+  - Add the Trigger.dev SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/527 [<samp>(48e5c)</samp>](https://github.com/alchemy-run/distilled/commit/48e5c3c88)
+- **turbopuffer**:
+  - Add the Turbopuffer SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/528 [<samp>(70f98)</samp>](https://github.com/alchemy-run/distilled/commit/70f980094)
+- **unkey**:
+  - Add the Unkey SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/529 [<samp>(79e62)</samp>](https://github.com/alchemy-run/distilled/commit/79e625385)
+- **vanta**:
+  - Add the Vanta SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/530 [<samp>(0fc7b)</samp>](https://github.com/alchemy-run/distilled/commit/0fc7beeeb)
+- **whop**:
+  - Add the Whop SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/479 [<samp>(9c565)</samp>](https://github.com/alchemy-run/distilled/commit/9c5658976)
+- **xata**:
+  - Add the Xata SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/491 [<samp>(76797)</samp>](https://github.com/alchemy-run/distilled/commit/767975070)
+- **zendesk**:
+  - Add the Zendesk SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/531 [<samp>(3c978)</samp>](https://github.com/alchemy-run/distilled/commit/3c9782409)
+
+### &nbsp;&nbsp;&nbsp;🐞 Bug Fixes
+
+- **aws**:
+  - Key the SSO role-credentials cache on account and role &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/568 [<samp>(2035e)</samp>](https://github.com/alchemy-run/distilled/commit/2035e129d)
+- **codegen**:
+  - `index` is a noun inside a camel id; getIndexInfo, queryIndex, listRules &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/563 [<samp>(9572a)</samp>](https://github.com/alchemy-run/distilled/commit/9572af33b)
+- **fly-io**:
+  - Machines base URL is the host; the routes carry /v1 &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/564 [<samp>(c7b11)</samp>](https://github.com/alchemy-run/distilled/commit/c7b11bc6b)
+- **gcp**:
+  - Type IAM service-account create quota as ServiceAccountQuotaExceeded &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/571 [<samp>(af261)</samp>](https://github.com/alchemy-run/distilled/commit/af2615f88)
+  - Add GcpUserAccessBinding.restrictedClientApplications &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/572 [<samp>(255e9)</samp>](https://github.com/alchemy-run/distilled/commit/255e9f53c)
+- **railway**:
+  - Drop platformFeatureFlags and supportTierOverride &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/562 [<samp>(78a93)</samp>](https://github.com/alchemy-run/distilled/commit/78a93045e)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/alchemy-run/distilled/compare/v1.0.0-rc.8...HEAD)
+
+---
+
+## v1.0.0-rc.8
+
+### &nbsp;&nbsp;&nbsp;🐞 Bug Fixes
+
+- Upgrade to effect rc 112 &nbsp;-&nbsp; by **Sam Goodwin** [<samp>(809f3)</samp>](https://github.com/alchemy-run/distilled/commit/809f3d85e)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/alchemy-run/distilled/compare/v1.0.0-rc.7...HEAD)
+
+---
+
+## v1.0.0-rc.7
+
+### &nbsp;&nbsp;&nbsp;🚀 Features
+
+- **cloudflare**:
+  - **email_routing**: Type WorkerScriptNotFound on rule writes &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/476 [<samp>(57e90)</samp>](https://github.com/alchemy-run/distilled/commit/57e9053f5)
+- **fly-io,hetzner,railway**:
+  - MachineIdentity, tagged createServer errors, slim GraphQL &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/477 [<samp>(e7f12)</samp>](https://github.com/alchemy-run/distilled/commit/e7f12dd80)
+
+### &nbsp;&nbsp;&nbsp;🐞 Bug Fixes
+
+- **cloudflare**: Unwrap single-type envelope wrappers in spec conversion &nbsp;-&nbsp; by **Rahul Mishra** and **Claude Fable 5** in https://github.com/alchemy-run/distilled/issues/473 [<samp>(8a55e)</samp>](https://github.com/alchemy-run/distilled/commit/8a55e2b13)
+- **deps**: Update to effect 4.0.0-rc.111 &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/474 [<samp>(651cd)</samp>](https://github.com/alchemy-run/distilled/commit/651cde92e)
+- **railway**: SDK DX, tcpProxyCreate, and error tags for alchemy &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/472 [<samp>(db3a1)</samp>](https://github.com/alchemy-run/distilled/commit/db3a1b539)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/alchemy-run/distilled/compare/v1.0.0-rc.6...HEAD)
+
+---
+
+## v1.0.0-rc.6
+
+### &nbsp;&nbsp;&nbsp;🚀 Features
+
+- **fly-io**: Machines patches plus Sprites, MPG, and GraphQL add-ons &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/466 [<samp>(e9427)</samp>](https://github.com/alchemy-run/distilled/commit/e9427740c)
+
+### &nbsp;&nbsp;&nbsp;🐞 Bug Fixes
+
+- **fly-io**: Deploy-token response and base64 PetSem payloads &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/471 [<samp>(182d3)</samp>](https://github.com/alchemy-run/distilled/commit/182d343e5)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/alchemy-run/distilled/compare/v1.0.0-rc.5...HEAD)
+
+---
+
+## v1.0.0-rc.5
+
+### &nbsp;&nbsp;&nbsp;🚀 Features
+
+- **aws**: Endpoint.fromEnv — resolve the AWS_ENDPOINT_URL override &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/451 [<samp>(45e3d)</samp>](https://github.com/alchemy-run/distilled/commit/45e3d861f)
+- **hetzner**: Add the Hetzner Cloud SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/464 [<samp>(5fa46)</samp>](https://github.com/alchemy-run/distilled/commit/5fa4677b4)
+- **huggingface**: Add the Hugging Face Hub API SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/449 [<samp>(4916c)</samp>](https://github.com/alchemy-run/distilled/commit/4916c3c61)
+- **vercel**: Add the Vercel REST SDK &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/446 [<samp>(05b44)</samp>](https://github.com/alchemy-run/distilled/commit/05b444fa8)
+
+### &nbsp;&nbsp;&nbsp;🐞 Bug Fixes
+
+- **aws**:
+  - **cloudwatch**: Type UnsupportedOperation on describeInsightRules &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/450 [<samp>(e2f14)</samp>](https://github.com/alchemy-run/distilled/commit/e2f141df6)
+- **cloudflare**:
+  - **r2**:
+    - Type the non-empty bucket rejection on deleteBucket &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/462 [<samp>(34ba2)</samp>](https://github.com/alchemy-run/distilled/commit/34ba21a5a)
+    - Type the object-plane missing-bucket / missing-key rejections &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/463 [<samp>(f1218)</samp>](https://github.com/alchemy-run/distilled/commit/f1218aa53)
+  - **zero_trust**:
+    - Access application typed errors + inline policies on self-hosted apps &nbsp;-&nbsp; by **Michael K**, **Maximilian Schwarzmüller** and **sam** in https://github.com/alchemy-run/distilled/issues/460 [<samp>(9c978)</samp>](https://github.com/alchemy-run/distilled/commit/9c9789ee9)
+- **core,aws**:
+  - Honor per-call context overrides in yield-first ops; parse X-Amz-Errortype &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/467 [<samp>(8fce7)</samp>](https://github.com/alchemy-run/distilled/commit/8fce771ec)
+- **deps**:
+  - Update to effect 4.0.0-rc.110 &nbsp;-&nbsp; by **Michael K** in https://github.com/alchemy-run/distilled/issues/459 [<samp>(2627d)</samp>](https://github.com/alchemy-run/distilled/commit/2627ddaf9)
+- **hetzner**:
+  - Type errors and schema gaps for alchemy &nbsp;-&nbsp; by **sam** in https://github.com/alchemy-run/distilled/issues/465 [<samp>(e70eb)</samp>](https://github.com/alchemy-run/distilled/commit/e70eb61de)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/alchemy-run/distilled/compare/v1.0.0-rc.4...v1.0.0-rc.5)
+
+---
+
 ## v1.0.0-rc.4
 
 ### &nbsp;&nbsp;&nbsp;🚨 Breaking Changes

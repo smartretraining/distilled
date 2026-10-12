@@ -9,6 +9,7 @@
  * - Default timestamp format is epoch-seconds
  */
 
+import { failIfStrict } from "@distilled.cloud/core/response-validation";
 import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
 import * as AST from "effect/SchemaAST";
@@ -375,9 +376,13 @@ export const restJson1Protocol: Protocol = (
             Object.assign(result, parsed);
           }
         } catch {
-          return yield* new ParseError({
-            message: `Failed to parse JSON body: ${bodyText}`,
-          });
+          // Lenient mode returns the body as read.
+          return yield* failIfStrict(
+            new ParseError({
+              message: `Failed to parse JSON body: ${bodyText}`,
+            }),
+            bodyText,
+          );
         }
       }
 
@@ -408,10 +413,13 @@ export const restJson1Protocol: Protocol = (
         }
       }
 
-      // Extract error code: check X-Amzn-Errortype header first, then body fields
+      // Extract error code: X-Amzn-Errortype first (Smithy restJson1), then
+      // the Coral X-Amz-Errortype spelling, then body fields.
       const rawErrorCode =
         response.headers["x-amzn-errortype"] ??
         response.headers["X-Amzn-Errortype"] ??
+        response.headers["x-amz-errortype"] ??
+        response.headers["X-Amz-Errortype"] ??
         extractJsonErrorCode(body);
 
       if (!rawErrorCode) {

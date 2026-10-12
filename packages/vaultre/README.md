@@ -7,7 +7,7 @@ generated from the vendor's own published OpenAPI document.
 import * as Effect from "effect/Effect";
 import * as Stream from "effect/Stream";
 import * as Vaultre from "@smartretraining/vaultre-effect";
-import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
+import * as FetchHttpClient from "effect/http/FetchHttpClient";
 
 const listings = Stream.runCollect(
   Vaultre.getPropertiesLifeSale.items({ status: ["listing"], pagesize: 50 }),

@@ -677,10 +677,10 @@ export const AdminValueListsDescribeResponseMethodsReadParametersFields =
   }) as any as S.Schema<AdminValueListsDescribeResponseMethodsReadParametersFields>;
 
 export type AdminValueListsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
-  Array<string>;
+  Array<string | null>;
 export const AdminValueListsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<AdminValueListsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList>;
 
 export interface AdminValueListsDescribeResponseMethodsReadParametersExtraFields {
@@ -2750,10 +2750,10 @@ export const AdminWebhooksDescribeResponseMethodsReadParametersFields =
   }) as any as S.Schema<AdminWebhooksDescribeResponseMethodsReadParametersFields>;
 
 export type AdminWebhooksDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
-  Array<string>;
+  Array<string | null>;
 export const AdminWebhooksDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<AdminWebhooksDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList>;
 
 export interface AdminWebhooksDescribeResponseMethodsReadParametersExtraFields {
@@ -4070,10 +4070,12 @@ export const AdminWebhooksDescribeDeleteModesRequest = /*@__PURE__*/ S.suspend(
   identifier: "AdminWebhooksDescribeDeleteModesRequest",
 }) as any as S.Schema<AdminWebhooksDescribeDeleteModesRequest>;
 
-export type AdminWebhooksDescribeDeleteModesResponseBodyList = Array<string>;
+export type AdminWebhooksDescribeDeleteModesResponseBodyList = Array<
+  string | null
+>;
 export const AdminWebhooksDescribeDeleteModesResponseBodyList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<AdminWebhooksDescribeDeleteModesResponseBodyList>;
 
 export type AdminWebhooksDescribeDeleteModesResponse =
@@ -4115,23 +4117,25 @@ export const AdminWebhooksDescribeModelResponseSearchResultFormatsItem =
   }) as any as S.Schema<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
 
 export type AdminWebhooksDescribeModelResponseSearchResultFormatsList =
-  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
+  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem | null>;
 export const AdminWebhooksDescribeModelResponseSearchResultFormatsList =
   /*@__PURE__*/ S.Array(
-    AdminWebhooksDescribeModelResponseSearchResultFormatsItem,
+    S.NullOr(AdminWebhooksDescribeModelResponseSearchResultFormatsItem),
   ) as any as S.Schema<AdminWebhooksDescribeModelResponseSearchResultFormatsList>;
 
-export type AdminWebhooksDescribeModelResponseDeleteModesList = Array<string>;
+export type AdminWebhooksDescribeModelResponseDeleteModesList = Array<
+  string | null
+>;
 export const AdminWebhooksDescribeModelResponseDeleteModesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<AdminWebhooksDescribeModelResponseDeleteModesList>;
 
 export type AdminWebhooksDescribeModelResponseDataStructureStructureList =
-  Array<string>;
+  Array<string | null>;
 export const AdminWebhooksDescribeModelResponseDataStructureStructureList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<AdminWebhooksDescribeModelResponseDataStructureStructureList>;
 
 export interface AdminWebhooksDescribeModelResponseDataStructure {
@@ -4310,10 +4314,12 @@ export const AdminWebhooksDescribeModelResponseSearchableFields =
     identifier: "AdminWebhooksDescribeModelResponseSearchableFields",
   }) as any as S.Schema<AdminWebhooksDescribeModelResponseSearchableFields>;
 
-export type AdminWebhooksDescribeModelResponseOrderbyFieldsList = Array<string>;
+export type AdminWebhooksDescribeModelResponseOrderbyFieldsList = Array<
+  string | null
+>;
 export const AdminWebhooksDescribeModelResponseOrderbyFieldsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<AdminWebhooksDescribeModelResponseOrderbyFieldsList>;
 
 export type AdminWebhooksDescribeModelResponseExportOptionsList =
@@ -5435,10 +5441,10 @@ export const ContactsDescribeResponseMethodsReadParametersFields =
   }) as any as S.Schema<ContactsDescribeResponseMethodsReadParametersFields>;
 
 export type ContactsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
-  Array<string>;
+  Array<string | null>;
 export const ContactsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContactsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList>;
 
 export interface ContactsDescribeResponseMethodsReadParametersExtraFields {
@@ -6724,10 +6730,10 @@ export const ContactsDescribeDeleteModesRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "ContactsDescribeDeleteModesRequest",
 }) as any as S.Schema<ContactsDescribeDeleteModesRequest>;
 
-export type ContactsDescribeDeleteModesResponseBodyList = Array<string>;
+export type ContactsDescribeDeleteModesResponseBodyList = Array<string | null>;
 export const ContactsDescribeDeleteModesResponseBodyList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContactsDescribeDeleteModesResponseBodyList>;
 
 export type ContactsDescribeDeleteModesResponse =
@@ -6757,23 +6763,24 @@ export const ContactsDescribeModelResponseSearchResultFormatsItem =
   AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
 
 export type ContactsDescribeModelResponseSearchResultFormatsList =
-  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
+  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem | null>;
 export const ContactsDescribeModelResponseSearchResultFormatsList =
   /*@__PURE__*/ S.Array(
-    AdminWebhooksDescribeModelResponseSearchResultFormatsItem,
+    S.NullOr(AdminWebhooksDescribeModelResponseSearchResultFormatsItem),
   ) as any as S.Schema<ContactsDescribeModelResponseSearchResultFormatsList>;
 
-export type ContactsDescribeModelResponseDeleteModesList = Array<string>;
+export type ContactsDescribeModelResponseDeleteModesList = Array<string | null>;
 export const ContactsDescribeModelResponseDeleteModesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContactsDescribeModelResponseDeleteModesList>;
 
-export type ContactsDescribeModelResponseDataStructureStructureList =
-  Array<string>;
+export type ContactsDescribeModelResponseDataStructureStructureList = Array<
+  string | null
+>;
 export const ContactsDescribeModelResponseDataStructureStructureList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContactsDescribeModelResponseDataStructureStructureList>;
 
 export interface ContactsDescribeModelResponseDataStructure {
@@ -6857,10 +6864,12 @@ export type ContactsDescribeModelResponseSearchableFields =
 export const ContactsDescribeModelResponseSearchableFields =
   AdminWebhooksDescribeModelResponseSearchableFields;
 
-export type ContactsDescribeModelResponseOrderbyFieldsList = Array<string>;
+export type ContactsDescribeModelResponseOrderbyFieldsList = Array<
+  string | null
+>;
 export const ContactsDescribeModelResponseOrderbyFieldsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContactsDescribeModelResponseOrderbyFieldsList>;
 
 export type ContactsDescribeModelResponseExportOptionsList = Array<unknown>;
@@ -7271,10 +7280,10 @@ export const ContactsReadResponseRelatedContactEmailsItem =
   }) as any as S.Schema<ContactsReadResponseRelatedContactEmailsItem>;
 
 export type ContactsReadResponseRelatedContactEmailsList =
-  Array<ContactsReadResponseRelatedContactEmailsItem>;
+  Array<ContactsReadResponseRelatedContactEmailsItem | null>;
 export const ContactsReadResponseRelatedContactEmailsList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactEmailsItem,
+    S.NullOr(ContactsReadResponseRelatedContactEmailsItem),
   ) as any as S.Schema<ContactsReadResponseRelatedContactEmailsList>;
 
 export interface ContactsReadResponseRelatedContactNamesItem {
@@ -7300,10 +7309,10 @@ export const ContactsReadResponseRelatedContactNamesItem =
   }) as any as S.Schema<ContactsReadResponseRelatedContactNamesItem>;
 
 export type ContactsReadResponseRelatedContactNamesList =
-  Array<ContactsReadResponseRelatedContactNamesItem>;
+  Array<ContactsReadResponseRelatedContactNamesItem | null>;
 export const ContactsReadResponseRelatedContactNamesList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactNamesItem,
+    S.NullOr(ContactsReadResponseRelatedContactNamesItem),
   ) as any as S.Schema<ContactsReadResponseRelatedContactNamesList>;
 
 export interface ContactsReadResponseRelatedContactPhonesItem {
@@ -7333,10 +7342,10 @@ export const ContactsReadResponseRelatedContactPhonesItem =
   }) as any as S.Schema<ContactsReadResponseRelatedContactPhonesItem>;
 
 export type ContactsReadResponseRelatedContactPhonesList =
-  Array<ContactsReadResponseRelatedContactPhonesItem>;
+  Array<ContactsReadResponseRelatedContactPhonesItem | null>;
 export const ContactsReadResponseRelatedContactPhonesList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactPhonesItem,
+    S.NullOr(ContactsReadResponseRelatedContactPhonesItem),
   ) as any as S.Schema<ContactsReadResponseRelatedContactPhonesList>;
 
 export interface ContactsReadResponseRelatedContactTagsItem {
@@ -7354,9 +7363,9 @@ export const ContactsReadResponseRelatedContactTagsItem =
   }) as any as S.Schema<ContactsReadResponseRelatedContactTagsItem>;
 
 export type ContactsReadResponseRelatedContactTagsList =
-  Array<ContactsReadResponseRelatedContactTagsItem>;
+  Array<ContactsReadResponseRelatedContactTagsItem | null>;
 export const ContactsReadResponseRelatedContactTagsList = /*@__PURE__*/ S.Array(
-  ContactsReadResponseRelatedContactTagsItem,
+  S.NullOr(ContactsReadResponseRelatedContactTagsItem),
 ) as any as S.Schema<ContactsReadResponseRelatedContactTagsList>;
 
 export type ContactsReadResponseRelatedContactDocumentsList = Array<unknown>;
@@ -7388,10 +7397,10 @@ export const ContactsReadResponseRelatedContactMailingListsItem =
   }) as any as S.Schema<ContactsReadResponseRelatedContactMailingListsItem>;
 
 export type ContactsReadResponseRelatedContactMailingListsList =
-  Array<ContactsReadResponseRelatedContactMailingListsItem>;
+  Array<ContactsReadResponseRelatedContactMailingListsItem | null>;
 export const ContactsReadResponseRelatedContactMailingListsList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactMailingListsItem,
+    S.NullOr(ContactsReadResponseRelatedContactMailingListsItem),
   ) as any as S.Schema<ContactsReadResponseRelatedContactMailingListsList>;
 
 export interface ContactsReadResponseRelatedContactRelationshipsItemRelationshipType {
@@ -7508,10 +7517,10 @@ export const ContactsReadResponseRelatedContactRelationshipsItem =
   }) as any as S.Schema<ContactsReadResponseRelatedContactRelationshipsItem>;
 
 export type ContactsReadResponseRelatedContactRelationshipsList =
-  Array<ContactsReadResponseRelatedContactRelationshipsItem>;
+  Array<ContactsReadResponseRelatedContactRelationshipsItem | null>;
 export const ContactsReadResponseRelatedContactRelationshipsList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactRelationshipsItem,
+    S.NullOr(ContactsReadResponseRelatedContactRelationshipsItem),
   ) as any as S.Schema<ContactsReadResponseRelatedContactRelationshipsList>;
 
 export type ContactsReadResponseRelatedContactRelnPropertyItemRelnType =
@@ -7643,10 +7652,10 @@ export const ContactsReadResponseRelatedContactRelnPropertyItem =
   }) as any as S.Schema<ContactsReadResponseRelatedContactRelnPropertyItem>;
 
 export type ContactsReadResponseRelatedContactRelnPropertyList =
-  Array<ContactsReadResponseRelatedContactRelnPropertyItem>;
+  Array<ContactsReadResponseRelatedContactRelnPropertyItem | null>;
 export const ContactsReadResponseRelatedContactRelnPropertyList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactRelnPropertyItem,
+    S.NullOr(ContactsReadResponseRelatedContactRelnPropertyItem),
   ) as any as S.Schema<ContactsReadResponseRelatedContactRelnPropertyList>;
 
 export type ContactsReadResponseRelatedContactRelnListingItemRelnType =
@@ -7789,10 +7798,10 @@ export const ContactsReadResponseRelatedContactRelnListingItem =
   }) as any as S.Schema<ContactsReadResponseRelatedContactRelnListingItem>;
 
 export type ContactsReadResponseRelatedContactRelnListingList =
-  Array<ContactsReadResponseRelatedContactRelnListingItem>;
+  Array<ContactsReadResponseRelatedContactRelnListingItem | null>;
 export const ContactsReadResponseRelatedContactRelnListingList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactRelnListingItem,
+    S.NullOr(ContactsReadResponseRelatedContactRelnListingItem),
   ) as any as S.Schema<ContactsReadResponseRelatedContactRelnListingList>;
 
 export interface ContactsReadResponseRelated {
@@ -7877,14 +7886,14 @@ export const ContactsReadResponseMatchSummary = /*@__PURE__*/ S.suspend(() =>
   identifier: "ContactsReadResponseMatchSummary",
 }) as any as S.Schema<ContactsReadResponseMatchSummary>;
 
-export type ContactsReadResponseSmartCategoriesList = Array<string>;
+export type ContactsReadResponseSmartCategoriesList = Array<string | null>;
 export const ContactsReadResponseSmartCategoriesList = /*@__PURE__*/ S.Array(
-  S.String,
+  S.NullOr(S.String),
 ) as any as S.Schema<ContactsReadResponseSmartCategoriesList>;
 
-export type ContactsReadResponseSecurityUserRightsList = Array<string>;
+export type ContactsReadResponseSecurityUserRightsList = Array<string | null>;
 export const ContactsReadResponseSecurityUserRightsList = /*@__PURE__*/ S.Array(
-  S.String,
+  S.NullOr(S.String),
 ) as any as S.Schema<ContactsReadResponseSecurityUserRightsList>;
 
 export interface ContactsReadResponse {
@@ -8098,11 +8107,12 @@ export type ContactsSearchResponseRowsItemSystemCreatedUser =
 export const ContactsSearchResponseRowsItemSystemCreatedUser =
   ContactsReadResponseSystemOwnerUser;
 
-export type ContactsSearchResponseRowsItemSecurityUserRightsList =
-  Array<string>;
+export type ContactsSearchResponseRowsItemSecurityUserRightsList = Array<
+  string | null
+>;
 export const ContactsSearchResponseRowsItemSecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContactsSearchResponseRowsItemSecurityUserRightsList>;
 
 export interface ContactsSearchResponseRowsItem {
@@ -8183,9 +8193,9 @@ export const ContactsSearchResponseRowsItem = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<ContactsSearchResponseRowsItem>;
 
 export type ContactsSearchResponseRowsList =
-  Array<ContactsSearchResponseRowsItem>;
+  Array<ContactsSearchResponseRowsItem | null>;
 export const ContactsSearchResponseRowsList = /*@__PURE__*/ S.Array(
-  ContactsSearchResponseRowsItem,
+  S.NullOr(ContactsSearchResponseRowsItem),
 ) as any as S.Schema<ContactsSearchResponseRowsList>;
 
 export interface ContactsSearchResponseCriteriaItem {
@@ -8202,9 +8212,9 @@ export const ContactsSearchResponseCriteriaItem = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<ContactsSearchResponseCriteriaItem>;
 
 export type ContactsSearchResponseCriteriaList =
-  Array<ContactsSearchResponseCriteriaItem>;
+  Array<ContactsSearchResponseCriteriaItem | null>;
 export const ContactsSearchResponseCriteriaList = /*@__PURE__*/ S.Array(
-  ContactsSearchResponseCriteriaItem,
+  S.NullOr(ContactsSearchResponseCriteriaItem),
 ) as any as S.Schema<ContactsSearchResponseCriteriaList>;
 
 export type ContactsSearchResponseOrderByList = Array<unknown>;
@@ -8552,10 +8562,10 @@ export const ContactsUpdateResponseRelatedContactEmailsItem =
   ContactsReadResponseRelatedContactEmailsItem;
 
 export type ContactsUpdateResponseRelatedContactEmailsList =
-  Array<ContactsReadResponseRelatedContactEmailsItem>;
+  Array<ContactsReadResponseRelatedContactEmailsItem | null>;
 export const ContactsUpdateResponseRelatedContactEmailsList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactEmailsItem,
+    S.NullOr(ContactsReadResponseRelatedContactEmailsItem),
   ) as any as S.Schema<ContactsUpdateResponseRelatedContactEmailsList>;
 
 export type ContactsUpdateResponseRelatedContactNamesItem =
@@ -8564,10 +8574,10 @@ export const ContactsUpdateResponseRelatedContactNamesItem =
   ContactsReadResponseRelatedContactNamesItem;
 
 export type ContactsUpdateResponseRelatedContactNamesList =
-  Array<ContactsReadResponseRelatedContactNamesItem>;
+  Array<ContactsReadResponseRelatedContactNamesItem | null>;
 export const ContactsUpdateResponseRelatedContactNamesList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactNamesItem,
+    S.NullOr(ContactsReadResponseRelatedContactNamesItem),
   ) as any as S.Schema<ContactsUpdateResponseRelatedContactNamesList>;
 
 export type ContactsUpdateResponseRelatedContactPhonesItem =
@@ -8576,10 +8586,10 @@ export const ContactsUpdateResponseRelatedContactPhonesItem =
   ContactsReadResponseRelatedContactPhonesItem;
 
 export type ContactsUpdateResponseRelatedContactPhonesList =
-  Array<ContactsReadResponseRelatedContactPhonesItem>;
+  Array<ContactsReadResponseRelatedContactPhonesItem | null>;
 export const ContactsUpdateResponseRelatedContactPhonesList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactPhonesItem,
+    S.NullOr(ContactsReadResponseRelatedContactPhonesItem),
   ) as any as S.Schema<ContactsUpdateResponseRelatedContactPhonesList>;
 
 export type ContactsUpdateResponseRelatedContactTagsItem =
@@ -8588,10 +8598,10 @@ export const ContactsUpdateResponseRelatedContactTagsItem =
   ContactsReadResponseRelatedContactTagsItem;
 
 export type ContactsUpdateResponseRelatedContactTagsList =
-  Array<ContactsReadResponseRelatedContactTagsItem>;
+  Array<ContactsReadResponseRelatedContactTagsItem | null>;
 export const ContactsUpdateResponseRelatedContactTagsList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactTagsItem,
+    S.NullOr(ContactsReadResponseRelatedContactTagsItem),
   ) as any as S.Schema<ContactsUpdateResponseRelatedContactTagsList>;
 
 export type ContactsUpdateResponseRelatedContactDocumentsList = Array<unknown>;
@@ -8606,10 +8616,10 @@ export const ContactsUpdateResponseRelatedContactMailingListsItem =
   ContactsReadResponseRelatedContactMailingListsItem;
 
 export type ContactsUpdateResponseRelatedContactMailingListsList =
-  Array<ContactsReadResponseRelatedContactMailingListsItem>;
+  Array<ContactsReadResponseRelatedContactMailingListsItem | null>;
 export const ContactsUpdateResponseRelatedContactMailingListsList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactMailingListsItem,
+    S.NullOr(ContactsReadResponseRelatedContactMailingListsItem),
   ) as any as S.Schema<ContactsUpdateResponseRelatedContactMailingListsList>;
 
 export type ContactsUpdateResponseRelatedContactRelationshipsItemRelationshipType =
@@ -8633,10 +8643,10 @@ export const ContactsUpdateResponseRelatedContactRelationshipsItem =
   ContactsReadResponseRelatedContactRelationshipsItem;
 
 export type ContactsUpdateResponseRelatedContactRelationshipsList =
-  Array<ContactsReadResponseRelatedContactRelationshipsItem>;
+  Array<ContactsReadResponseRelatedContactRelationshipsItem | null>;
 export const ContactsUpdateResponseRelatedContactRelationshipsList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactRelationshipsItem,
+    S.NullOr(ContactsReadResponseRelatedContactRelationshipsItem),
   ) as any as S.Schema<ContactsUpdateResponseRelatedContactRelationshipsList>;
 
 export type ContactsUpdateResponseRelatedContactRelnPropertyItemRelnType =
@@ -8670,10 +8680,10 @@ export const ContactsUpdateResponseRelatedContactRelnPropertyItem =
   ContactsReadResponseRelatedContactRelnPropertyItem;
 
 export type ContactsUpdateResponseRelatedContactRelnPropertyList =
-  Array<ContactsReadResponseRelatedContactRelnPropertyItem>;
+  Array<ContactsReadResponseRelatedContactRelnPropertyItem | null>;
 export const ContactsUpdateResponseRelatedContactRelnPropertyList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactRelnPropertyItem,
+    S.NullOr(ContactsReadResponseRelatedContactRelnPropertyItem),
   ) as any as S.Schema<ContactsUpdateResponseRelatedContactRelnPropertyList>;
 
 export type ContactsUpdateResponseRelatedContactRelnListingItemRelnType =
@@ -8712,10 +8722,10 @@ export const ContactsUpdateResponseRelatedContactRelnListingItem =
   ContactsReadResponseRelatedContactRelnListingItem;
 
 export type ContactsUpdateResponseRelatedContactRelnListingList =
-  Array<ContactsReadResponseRelatedContactRelnListingItem>;
+  Array<ContactsReadResponseRelatedContactRelnListingItem | null>;
 export const ContactsUpdateResponseRelatedContactRelnListingList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactRelnListingItem,
+    S.NullOr(ContactsReadResponseRelatedContactRelnListingItem),
   ) as any as S.Schema<ContactsUpdateResponseRelatedContactRelnListingList>;
 
 export interface ContactsUpdateResponseRelated {
@@ -8800,10 +8810,10 @@ export const ContactsUpdateResponseMatchSummary = /*@__PURE__*/ S.suspend(() =>
   identifier: "ContactsUpdateResponseMatchSummary",
 }) as any as S.Schema<ContactsUpdateResponseMatchSummary>;
 
-export type ContactsUpdateResponseSecurityUserRightsList = Array<string>;
+export type ContactsUpdateResponseSecurityUserRightsList = Array<string | null>;
 export const ContactsUpdateResponseSecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContactsUpdateResponseSecurityUserRightsList>;
 
 export interface ContactsUpdateResponse {
@@ -9574,10 +9584,10 @@ export const ContractsDescribeResponseMethodsReadParametersFields =
   }) as any as S.Schema<ContractsDescribeResponseMethodsReadParametersFields>;
 
 export type ContractsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
-  Array<string>;
+  Array<string | null>;
 export const ContractsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContractsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList>;
 
 export interface ContractsDescribeResponseMethodsReadParametersExtraFields {
@@ -10873,10 +10883,10 @@ export const ContractsDescribeDeleteModesRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "ContractsDescribeDeleteModesRequest",
 }) as any as S.Schema<ContractsDescribeDeleteModesRequest>;
 
-export type ContractsDescribeDeleteModesResponseBodyList = Array<string>;
+export type ContractsDescribeDeleteModesResponseBodyList = Array<string | null>;
 export const ContractsDescribeDeleteModesResponseBodyList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContractsDescribeDeleteModesResponseBodyList>;
 
 export type ContractsDescribeDeleteModesResponse =
@@ -10906,23 +10916,26 @@ export const ContractsDescribeModelResponseSearchResultFormatsItem =
   AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
 
 export type ContractsDescribeModelResponseSearchResultFormatsList =
-  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
+  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem | null>;
 export const ContractsDescribeModelResponseSearchResultFormatsList =
   /*@__PURE__*/ S.Array(
-    AdminWebhooksDescribeModelResponseSearchResultFormatsItem,
+    S.NullOr(AdminWebhooksDescribeModelResponseSearchResultFormatsItem),
   ) as any as S.Schema<ContractsDescribeModelResponseSearchResultFormatsList>;
 
-export type ContractsDescribeModelResponseDeleteModesList = Array<string>;
+export type ContractsDescribeModelResponseDeleteModesList = Array<
+  string | null
+>;
 export const ContractsDescribeModelResponseDeleteModesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContractsDescribeModelResponseDeleteModesList>;
 
-export type ContractsDescribeModelResponseDataStructureStructureList =
-  Array<string>;
+export type ContractsDescribeModelResponseDataStructureStructureList = Array<
+  string | null
+>;
 export const ContractsDescribeModelResponseDataStructureStructureList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContractsDescribeModelResponseDataStructureStructureList>;
 
 export interface ContractsDescribeModelResponseDataStructure {
@@ -11006,10 +11019,12 @@ export type ContractsDescribeModelResponseSearchableFields =
 export const ContractsDescribeModelResponseSearchableFields =
   AdminWebhooksDescribeModelResponseSearchableFields;
 
-export type ContractsDescribeModelResponseOrderbyFieldsList = Array<string>;
+export type ContractsDescribeModelResponseOrderbyFieldsList = Array<
+  string | null
+>;
 export const ContractsDescribeModelResponseOrderbyFieldsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContractsDescribeModelResponseOrderbyFieldsList>;
 
 export type ContractsDescribeModelResponseExportOptionsList = Array<unknown>;
@@ -11286,10 +11301,10 @@ export const ContractsGetConditionsForListingResponseBodyItem =
   }) as any as S.Schema<ContractsGetConditionsForListingResponseBodyItem>;
 
 export type ContractsGetConditionsForListingResponseBodyList =
-  Array<ContractsGetConditionsForListingResponseBodyItem>;
+  Array<ContractsGetConditionsForListingResponseBodyItem | null>;
 export const ContractsGetConditionsForListingResponseBodyList =
   /*@__PURE__*/ S.Array(
-    ContractsGetConditionsForListingResponseBodyItem,
+    S.NullOr(ContractsGetConditionsForListingResponseBodyItem),
   ) as any as S.Schema<ContractsGetConditionsForListingResponseBodyList>;
 
 export type ContractsGetConditionsForListingResponse =
@@ -11666,10 +11681,10 @@ export const ContractsReadResponseRelatedListingContractConditionsItem =
   }) as any as S.Schema<ContractsReadResponseRelatedListingContractConditionsItem>;
 
 export type ContractsReadResponseRelatedListingContractConditionsList =
-  Array<ContractsReadResponseRelatedListingContractConditionsItem>;
+  Array<ContractsReadResponseRelatedListingContractConditionsItem | null>;
 export const ContractsReadResponseRelatedListingContractConditionsList =
   /*@__PURE__*/ S.Array(
-    ContractsReadResponseRelatedListingContractConditionsItem,
+    S.NullOr(ContractsReadResponseRelatedListingContractConditionsItem),
   ) as any as S.Schema<ContractsReadResponseRelatedListingContractConditionsList>;
 
 export interface ContractsReadResponseRelatedListingContractPurchtenantsItemPurchtenant {
@@ -11714,10 +11729,10 @@ export const ContractsReadResponseRelatedListingContractPurchtenantsItem =
   }) as any as S.Schema<ContractsReadResponseRelatedListingContractPurchtenantsItem>;
 
 export type ContractsReadResponseRelatedListingContractPurchtenantsList =
-  Array<ContractsReadResponseRelatedListingContractPurchtenantsItem>;
+  Array<ContractsReadResponseRelatedListingContractPurchtenantsItem | null>;
 export const ContractsReadResponseRelatedListingContractPurchtenantsList =
   /*@__PURE__*/ S.Array(
-    ContractsReadResponseRelatedListingContractPurchtenantsItem,
+    S.NullOr(ContractsReadResponseRelatedListingContractPurchtenantsItem),
   ) as any as S.Schema<ContractsReadResponseRelatedListingContractPurchtenantsList>;
 
 export interface ContractsReadResponseRelated {
@@ -11737,10 +11752,10 @@ export const ContractsReadResponseRelated = /*@__PURE__*/ S.suspend(() =>
   identifier: "ContractsReadResponseRelated",
 }) as any as S.Schema<ContractsReadResponseRelated>;
 
-export type ContractsReadResponseSecurityUserRightsList = Array<string>;
+export type ContractsReadResponseSecurityUserRightsList = Array<string | null>;
 export const ContractsReadResponseSecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContractsReadResponseSecurityUserRightsList>;
 
 export interface ContractsReadResponse {
@@ -11976,11 +11991,12 @@ export type ContractsSearchResponseRowsItemSystemCreatedUser =
 export const ContractsSearchResponseRowsItemSystemCreatedUser =
   ContactsReadResponseSystemOwnerUser;
 
-export type ContractsSearchResponseRowsItemSecurityUserRightsList =
-  Array<string>;
+export type ContractsSearchResponseRowsItemSecurityUserRightsList = Array<
+  string | null
+>;
 export const ContractsSearchResponseRowsItemSecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContractsSearchResponseRowsItemSecurityUserRightsList>;
 
 export type ContractsSearchResponseRowsItemRelatedListingContractConditionsItemAdminContractCondition =
@@ -11994,10 +12010,10 @@ export const ContractsSearchResponseRowsItemRelatedListingContractConditionsItem
   ContractsReadResponseRelatedListingContractConditionsItem;
 
 export type ContractsSearchResponseRowsItemRelatedListingContractConditionsList =
-  Array<ContractsReadResponseRelatedListingContractConditionsItem>;
+  Array<ContractsReadResponseRelatedListingContractConditionsItem | null>;
 export const ContractsSearchResponseRowsItemRelatedListingContractConditionsList =
   /*@__PURE__*/ S.Array(
-    ContractsReadResponseRelatedListingContractConditionsItem,
+    S.NullOr(ContractsReadResponseRelatedListingContractConditionsItem),
   ) as any as S.Schema<ContractsSearchResponseRowsItemRelatedListingContractConditionsList>;
 
 export interface ContractsSearchResponseRowsItemRelated {
@@ -12265,9 +12281,9 @@ export const ContractsSearchResponseRowsItem = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<ContractsSearchResponseRowsItem>;
 
 export type ContractsSearchResponseRowsList =
-  Array<ContractsSearchResponseRowsItem>;
+  Array<ContractsSearchResponseRowsItem | null>;
 export const ContractsSearchResponseRowsList = /*@__PURE__*/ S.Array(
-  ContractsSearchResponseRowsItem,
+  S.NullOr(ContractsSearchResponseRowsItem),
 ) as any as S.Schema<ContractsSearchResponseRowsList>;
 
 export type ContractsSearchResponseCriteriaList = Array<unknown>;
@@ -12616,10 +12632,10 @@ export const ContractsUpdateResponseRelatedListingContractConditionsItem =
   ContractsReadResponseRelatedListingContractConditionsItem;
 
 export type ContractsUpdateResponseRelatedListingContractConditionsList =
-  Array<ContractsReadResponseRelatedListingContractConditionsItem>;
+  Array<ContractsReadResponseRelatedListingContractConditionsItem | null>;
 export const ContractsUpdateResponseRelatedListingContractConditionsList =
   /*@__PURE__*/ S.Array(
-    ContractsReadResponseRelatedListingContractConditionsItem,
+    S.NullOr(ContractsReadResponseRelatedListingContractConditionsItem),
   ) as any as S.Schema<ContractsUpdateResponseRelatedListingContractConditionsList>;
 
 export type ContractsUpdateResponseRelatedListingContractPurchtenantsItemPurchtenant =
@@ -12633,10 +12649,10 @@ export const ContractsUpdateResponseRelatedListingContractPurchtenantsItem =
   ContractsReadResponseRelatedListingContractPurchtenantsItem;
 
 export type ContractsUpdateResponseRelatedListingContractPurchtenantsList =
-  Array<ContractsReadResponseRelatedListingContractPurchtenantsItem>;
+  Array<ContractsReadResponseRelatedListingContractPurchtenantsItem | null>;
 export const ContractsUpdateResponseRelatedListingContractPurchtenantsList =
   /*@__PURE__*/ S.Array(
-    ContractsReadResponseRelatedListingContractPurchtenantsItem,
+    S.NullOr(ContractsReadResponseRelatedListingContractPurchtenantsItem),
   ) as any as S.Schema<ContractsUpdateResponseRelatedListingContractPurchtenantsList>;
 
 export interface ContractsUpdateResponseRelated {
@@ -12656,10 +12672,12 @@ export const ContractsUpdateResponseRelated = /*@__PURE__*/ S.suspend(() =>
   identifier: "ContractsUpdateResponseRelated",
 }) as any as S.Schema<ContractsUpdateResponseRelated>;
 
-export type ContractsUpdateResponseSecurityUserRightsList = Array<string>;
+export type ContractsUpdateResponseSecurityUserRightsList = Array<
+  string | null
+>;
 export const ContractsUpdateResponseSecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ContractsUpdateResponseSecurityUserRightsList>;
 
 export interface ContractsUpdateResponse {
@@ -13529,10 +13547,10 @@ export const FeedbackDescribeResponseMethodsReadParametersFields =
   }) as any as S.Schema<FeedbackDescribeResponseMethodsReadParametersFields>;
 
 export type FeedbackDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
-  Array<string>;
+  Array<string | null>;
 export const FeedbackDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<FeedbackDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList>;
 
 export interface FeedbackDescribeResponseMethodsReadParametersExtraFields {
@@ -14818,10 +14836,10 @@ export const FeedbackDescribeDeleteModesRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "FeedbackDescribeDeleteModesRequest",
 }) as any as S.Schema<FeedbackDescribeDeleteModesRequest>;
 
-export type FeedbackDescribeDeleteModesResponseBodyList = Array<string>;
+export type FeedbackDescribeDeleteModesResponseBodyList = Array<string | null>;
 export const FeedbackDescribeDeleteModesResponseBodyList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<FeedbackDescribeDeleteModesResponseBodyList>;
 
 export type FeedbackDescribeDeleteModesResponse =
@@ -14851,23 +14869,24 @@ export const FeedbackDescribeModelResponseSearchResultFormatsItem =
   AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
 
 export type FeedbackDescribeModelResponseSearchResultFormatsList =
-  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
+  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem | null>;
 export const FeedbackDescribeModelResponseSearchResultFormatsList =
   /*@__PURE__*/ S.Array(
-    AdminWebhooksDescribeModelResponseSearchResultFormatsItem,
+    S.NullOr(AdminWebhooksDescribeModelResponseSearchResultFormatsItem),
   ) as any as S.Schema<FeedbackDescribeModelResponseSearchResultFormatsList>;
 
-export type FeedbackDescribeModelResponseDeleteModesList = Array<string>;
+export type FeedbackDescribeModelResponseDeleteModesList = Array<string | null>;
 export const FeedbackDescribeModelResponseDeleteModesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<FeedbackDescribeModelResponseDeleteModesList>;
 
-export type FeedbackDescribeModelResponseDataStructureStructureList =
-  Array<string>;
+export type FeedbackDescribeModelResponseDataStructureStructureList = Array<
+  string | null
+>;
 export const FeedbackDescribeModelResponseDataStructureStructureList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<FeedbackDescribeModelResponseDataStructureStructureList>;
 
 export interface FeedbackDescribeModelResponseDataStructure {
@@ -14951,10 +14970,12 @@ export type FeedbackDescribeModelResponseSearchableFields =
 export const FeedbackDescribeModelResponseSearchableFields =
   AdminWebhooksDescribeModelResponseSearchableFields;
 
-export type FeedbackDescribeModelResponseOrderbyFieldsList = Array<string>;
+export type FeedbackDescribeModelResponseOrderbyFieldsList = Array<
+  string | null
+>;
 export const FeedbackDescribeModelResponseOrderbyFieldsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<FeedbackDescribeModelResponseOrderbyFieldsList>;
 
 export type FeedbackDescribeModelResponseExportOptionsList = Array<unknown>;
@@ -15199,9 +15220,9 @@ export const FeedbackGetListingFiltersResponseBodyItem =
   }) as any as S.Schema<FeedbackGetListingFiltersResponseBodyItem>;
 
 export type FeedbackGetListingFiltersResponseBodyList =
-  Array<FeedbackGetListingFiltersResponseBodyItem>;
+  Array<FeedbackGetListingFiltersResponseBodyItem | null>;
 export const FeedbackGetListingFiltersResponseBodyList = /*@__PURE__*/ S.Array(
-  FeedbackGetListingFiltersResponseBodyItem,
+  S.NullOr(FeedbackGetListingFiltersResponseBodyItem),
 ) as any as S.Schema<FeedbackGetListingFiltersResponseBodyList>;
 
 export type FeedbackGetListingFiltersResponse =
@@ -15522,10 +15543,10 @@ export const FeedbackReadResponseListingRelatedContactRelnListingItem =
   }) as any as S.Schema<FeedbackReadResponseListingRelatedContactRelnListingItem>;
 
 export type FeedbackReadResponseListingRelatedContactRelnListingList =
-  Array<FeedbackReadResponseListingRelatedContactRelnListingItem>;
+  Array<FeedbackReadResponseListingRelatedContactRelnListingItem | null>;
 export const FeedbackReadResponseListingRelatedContactRelnListingList =
   /*@__PURE__*/ S.Array(
-    FeedbackReadResponseListingRelatedContactRelnListingItem,
+    S.NullOr(FeedbackReadResponseListingRelatedContactRelnListingItem),
   ) as any as S.Schema<FeedbackReadResponseListingRelatedContactRelnListingList>;
 
 export interface FeedbackReadResponseListingRelated {
@@ -15634,9 +15655,9 @@ export type FeedbackReadResponseInterestLevel =
 export const FeedbackReadResponseInterestLevel =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
-export type FeedbackReadResponseSecurityUserRightsList = Array<string>;
+export type FeedbackReadResponseSecurityUserRightsList = Array<string | null>;
 export const FeedbackReadResponseSecurityUserRightsList = /*@__PURE__*/ S.Array(
-  S.String,
+  S.NullOr(S.String),
 ) as any as S.Schema<FeedbackReadResponseSecurityUserRightsList>;
 
 export type FeedbackReadResponseRelatedFeedbackContactsItemContactSystemOwnerUser =
@@ -15727,10 +15748,10 @@ export const FeedbackReadResponseRelatedFeedbackContactsItem =
   }) as any as S.Schema<FeedbackReadResponseRelatedFeedbackContactsItem>;
 
 export type FeedbackReadResponseRelatedFeedbackContactsList =
-  Array<FeedbackReadResponseRelatedFeedbackContactsItem>;
+  Array<FeedbackReadResponseRelatedFeedbackContactsItem | null>;
 export const FeedbackReadResponseRelatedFeedbackContactsList =
   /*@__PURE__*/ S.Array(
-    FeedbackReadResponseRelatedFeedbackContactsItem,
+    S.NullOr(FeedbackReadResponseRelatedFeedbackContactsItem),
   ) as any as S.Schema<FeedbackReadResponseRelatedFeedbackContactsList>;
 
 export type FeedbackReadResponseRelatedFeedbackIndividualList = Array<unknown>;
@@ -16001,10 +16022,10 @@ export const FeedbackSearchResponseRowsItemListingRelatedContactRelnListingItem 
   FeedbackReadResponseListingRelatedContactRelnListingItem;
 
 export type FeedbackSearchResponseRowsItemListingRelatedContactRelnListingList =
-  Array<FeedbackReadResponseListingRelatedContactRelnListingItem>;
+  Array<FeedbackReadResponseListingRelatedContactRelnListingItem | null>;
 export const FeedbackSearchResponseRowsItemListingRelatedContactRelnListingList =
   /*@__PURE__*/ S.Array(
-    FeedbackReadResponseListingRelatedContactRelnListingItem,
+    S.NullOr(FeedbackReadResponseListingRelatedContactRelnListingItem),
   ) as any as S.Schema<FeedbackSearchResponseRowsItemListingRelatedContactRelnListingList>;
 
 export interface FeedbackSearchResponseRowsItemListingRelated {
@@ -16119,11 +16140,12 @@ export type FeedbackSearchResponseRowsItemInterestLevel =
 export const FeedbackSearchResponseRowsItemInterestLevel =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
-export type FeedbackSearchResponseRowsItemSecurityUserRightsList =
-  Array<string>;
+export type FeedbackSearchResponseRowsItemSecurityUserRightsList = Array<
+  string | null
+>;
 export const FeedbackSearchResponseRowsItemSecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<FeedbackSearchResponseRowsItemSecurityUserRightsList>;
 
 export type FeedbackSearchResponseRowsItemRelatedFeedbackContactsItemContactSystemOwnerUser =
@@ -16142,10 +16164,10 @@ export const FeedbackSearchResponseRowsItemRelatedFeedbackContactsItem =
   FeedbackReadResponseRelatedFeedbackContactsItem;
 
 export type FeedbackSearchResponseRowsItemRelatedFeedbackContactsList =
-  Array<FeedbackReadResponseRelatedFeedbackContactsItem>;
+  Array<FeedbackReadResponseRelatedFeedbackContactsItem | null>;
 export const FeedbackSearchResponseRowsItemRelatedFeedbackContactsList =
   /*@__PURE__*/ S.Array(
-    FeedbackReadResponseRelatedFeedbackContactsItem,
+    S.NullOr(FeedbackReadResponseRelatedFeedbackContactsItem),
   ) as any as S.Schema<FeedbackSearchResponseRowsItemRelatedFeedbackContactsList>;
 
 export type FeedbackSearchResponseRowsItemRelatedFeedbackIndividualList =
@@ -16275,9 +16297,9 @@ export const FeedbackSearchResponseRowsItem = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<FeedbackSearchResponseRowsItem>;
 
 export type FeedbackSearchResponseRowsList =
-  Array<FeedbackSearchResponseRowsItem>;
+  Array<FeedbackSearchResponseRowsItem | null>;
 export const FeedbackSearchResponseRowsList = /*@__PURE__*/ S.Array(
-  FeedbackSearchResponseRowsItem,
+  S.NullOr(FeedbackSearchResponseRowsItem),
 ) as any as S.Schema<FeedbackSearchResponseRowsList>;
 
 export type FeedbackSearchResponseCriteriaItem =
@@ -16286,9 +16308,9 @@ export const FeedbackSearchResponseCriteriaItem =
   ContactsSearchResponseCriteriaItem;
 
 export type FeedbackSearchResponseCriteriaList =
-  Array<ContactsSearchResponseCriteriaItem>;
+  Array<ContactsSearchResponseCriteriaItem | null>;
 export const FeedbackSearchResponseCriteriaList = /*@__PURE__*/ S.Array(
-  ContactsSearchResponseCriteriaItem,
+  S.NullOr(ContactsSearchResponseCriteriaItem),
 ) as any as S.Schema<FeedbackSearchResponseCriteriaList>;
 
 export type FeedbackSearchResponseOrderByList = Array<unknown>;
@@ -16676,10 +16698,10 @@ export const FeedbackUpdateResponseListingRelatedContactRelnListingItem =
   FeedbackReadResponseListingRelatedContactRelnListingItem;
 
 export type FeedbackUpdateResponseListingRelatedContactRelnListingList =
-  Array<FeedbackReadResponseListingRelatedContactRelnListingItem>;
+  Array<FeedbackReadResponseListingRelatedContactRelnListingItem | null>;
 export const FeedbackUpdateResponseListingRelatedContactRelnListingList =
   /*@__PURE__*/ S.Array(
-    FeedbackReadResponseListingRelatedContactRelnListingItem,
+    S.NullOr(FeedbackReadResponseListingRelatedContactRelnListingItem),
   ) as any as S.Schema<FeedbackUpdateResponseListingRelatedContactRelnListingList>;
 
 export interface FeedbackUpdateResponseListingRelated {
@@ -16784,10 +16806,10 @@ export type FeedbackUpdateResponseSystemApprovalStatus =
 export const FeedbackUpdateResponseSystemApprovalStatus =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
-export type FeedbackUpdateResponseSecurityUserRightsList = Array<string>;
+export type FeedbackUpdateResponseSecurityUserRightsList = Array<string | null>;
 export const FeedbackUpdateResponseSecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<FeedbackUpdateResponseSecurityUserRightsList>;
 
 export type FeedbackUpdateResponseRelatedFeedbackContactsItemContactSystemOwnerUser =
@@ -16806,10 +16828,10 @@ export const FeedbackUpdateResponseRelatedFeedbackContactsItem =
   FeedbackReadResponseRelatedFeedbackContactsItem;
 
 export type FeedbackUpdateResponseRelatedFeedbackContactsList =
-  Array<FeedbackReadResponseRelatedFeedbackContactsItem>;
+  Array<FeedbackReadResponseRelatedFeedbackContactsItem | null>;
 export const FeedbackUpdateResponseRelatedFeedbackContactsList =
   /*@__PURE__*/ S.Array(
-    FeedbackReadResponseRelatedFeedbackContactsItem,
+    S.NullOr(FeedbackReadResponseRelatedFeedbackContactsItem),
   ) as any as S.Schema<FeedbackUpdateResponseRelatedFeedbackContactsList>;
 
 export type FeedbackUpdateResponseRelatedFeedbackIndividualItemEnquirySource =
@@ -16848,10 +16870,10 @@ export const FeedbackUpdateResponseRelatedFeedbackIndividualItemContactsItem =
   }) as any as S.Schema<FeedbackUpdateResponseRelatedFeedbackIndividualItemContactsItem>;
 
 export type FeedbackUpdateResponseRelatedFeedbackIndividualItemContactsList =
-  Array<FeedbackUpdateResponseRelatedFeedbackIndividualItemContactsItem>;
+  Array<FeedbackUpdateResponseRelatedFeedbackIndividualItemContactsItem | null>;
 export const FeedbackUpdateResponseRelatedFeedbackIndividualItemContactsList =
   /*@__PURE__*/ S.Array(
-    FeedbackUpdateResponseRelatedFeedbackIndividualItemContactsItem,
+    S.NullOr(FeedbackUpdateResponseRelatedFeedbackIndividualItemContactsItem),
   ) as any as S.Schema<FeedbackUpdateResponseRelatedFeedbackIndividualItemContactsList>;
 
 export interface FeedbackUpdateResponseRelatedFeedbackIndividualItem {
@@ -16889,10 +16911,10 @@ export const FeedbackUpdateResponseRelatedFeedbackIndividualItem =
   }) as any as S.Schema<FeedbackUpdateResponseRelatedFeedbackIndividualItem>;
 
 export type FeedbackUpdateResponseRelatedFeedbackIndividualList =
-  Array<FeedbackUpdateResponseRelatedFeedbackIndividualItem>;
+  Array<FeedbackUpdateResponseRelatedFeedbackIndividualItem | null>;
 export const FeedbackUpdateResponseRelatedFeedbackIndividualList =
   /*@__PURE__*/ S.Array(
-    FeedbackUpdateResponseRelatedFeedbackIndividualItem,
+    S.NullOr(FeedbackUpdateResponseRelatedFeedbackIndividualItem),
   ) as any as S.Schema<FeedbackUpdateResponseRelatedFeedbackIndividualList>;
 
 export interface FeedbackUpdateResponseRelated {
@@ -17899,10 +17921,10 @@ export const ListingsDescribeResponseMethodsReadParametersFields =
   }) as any as S.Schema<ListingsDescribeResponseMethodsReadParametersFields>;
 
 export type ListingsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
-  Array<string>;
+  Array<string | null>;
 export const ListingsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ListingsDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList>;
 
 export interface ListingsDescribeResponseMethodsReadParametersExtraFields {
@@ -19188,10 +19210,10 @@ export const ListingsDescribeDeleteModesRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "ListingsDescribeDeleteModesRequest",
 }) as any as S.Schema<ListingsDescribeDeleteModesRequest>;
 
-export type ListingsDescribeDeleteModesResponseBodyList = Array<string>;
+export type ListingsDescribeDeleteModesResponseBodyList = Array<string | null>;
 export const ListingsDescribeDeleteModesResponseBodyList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ListingsDescribeDeleteModesResponseBodyList>;
 
 export type ListingsDescribeDeleteModesResponse =
@@ -19221,23 +19243,24 @@ export const ListingsDescribeModelResponseSearchResultFormatsItem =
   AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
 
 export type ListingsDescribeModelResponseSearchResultFormatsList =
-  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
+  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem | null>;
 export const ListingsDescribeModelResponseSearchResultFormatsList =
   /*@__PURE__*/ S.Array(
-    AdminWebhooksDescribeModelResponseSearchResultFormatsItem,
+    S.NullOr(AdminWebhooksDescribeModelResponseSearchResultFormatsItem),
   ) as any as S.Schema<ListingsDescribeModelResponseSearchResultFormatsList>;
 
-export type ListingsDescribeModelResponseDeleteModesList = Array<string>;
+export type ListingsDescribeModelResponseDeleteModesList = Array<string | null>;
 export const ListingsDescribeModelResponseDeleteModesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ListingsDescribeModelResponseDeleteModesList>;
 
-export type ListingsDescribeModelResponseDataStructureStructureList =
-  Array<string>;
+export type ListingsDescribeModelResponseDataStructureStructureList = Array<
+  string | null
+>;
 export const ListingsDescribeModelResponseDataStructureStructureList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ListingsDescribeModelResponseDataStructureStructureList>;
 
 export interface ListingsDescribeModelResponseDataStructure {
@@ -19321,10 +19344,12 @@ export type ListingsDescribeModelResponseSearchableFields =
 export const ListingsDescribeModelResponseSearchableFields =
   AdminWebhooksDescribeModelResponseSearchableFields;
 
-export type ListingsDescribeModelResponseOrderbyFieldsList = Array<string>;
+export type ListingsDescribeModelResponseOrderbyFieldsList = Array<
+  string | null
+>;
 export const ListingsDescribeModelResponseOrderbyFieldsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ListingsDescribeModelResponseOrderbyFieldsList>;
 
 export type ListingsDescribeModelResponseExportOptionsList = Array<unknown>;
@@ -20237,10 +20262,12 @@ export type ListingsReadResponsePropertyPropertyImage =
 export const ListingsReadResponsePropertyPropertyImage =
   ContractsReadResponseListingListingPrimaryImage;
 
-export type ListingsReadResponsePropertySecurityUserRightsList = Array<string>;
+export type ListingsReadResponsePropertySecurityUserRightsList = Array<
+  string | null
+>;
 export const ListingsReadResponsePropertySecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ListingsReadResponsePropertySecurityUserRightsList>;
 
 export interface ListingsReadResponseProperty {
@@ -20498,10 +20525,10 @@ export const ListingsReadResponseRelatedPropertyFeaturesItem =
   }) as any as S.Schema<ListingsReadResponseRelatedPropertyFeaturesItem>;
 
 export type ListingsReadResponseRelatedPropertyFeaturesList =
-  Array<ListingsReadResponseRelatedPropertyFeaturesItem>;
+  Array<ListingsReadResponseRelatedPropertyFeaturesItem | null>;
 export const ListingsReadResponseRelatedPropertyFeaturesList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedPropertyFeaturesItem,
+    S.NullOr(ListingsReadResponseRelatedPropertyFeaturesItem),
   ) as any as S.Schema<ListingsReadResponseRelatedPropertyFeaturesList>;
 
 export type ListingsReadResponseRelatedPropertyViewsItemView =
@@ -20532,10 +20559,10 @@ export const ListingsReadResponseRelatedPropertyViewsItem =
   }) as any as S.Schema<ListingsReadResponseRelatedPropertyViewsItem>;
 
 export type ListingsReadResponseRelatedPropertyViewsList =
-  Array<ListingsReadResponseRelatedPropertyViewsItem>;
+  Array<ListingsReadResponseRelatedPropertyViewsItem | null>;
 export const ListingsReadResponseRelatedPropertyViewsList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedPropertyViewsItem,
+    S.NullOr(ListingsReadResponseRelatedPropertyViewsItem),
   ) as any as S.Schema<ListingsReadResponseRelatedPropertyViewsList>;
 
 export type ListingsReadResponseRelatedPropertyTagsItem =
@@ -20544,10 +20571,10 @@ export const ListingsReadResponseRelatedPropertyTagsItem =
   ContactsReadResponseRelatedContactTagsItem;
 
 export type ListingsReadResponseRelatedPropertyTagsList =
-  Array<ContactsReadResponseRelatedContactTagsItem>;
+  Array<ContactsReadResponseRelatedContactTagsItem | null>;
 export const ListingsReadResponseRelatedPropertyTagsList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactTagsItem,
+    S.NullOr(ContactsReadResponseRelatedContactTagsItem),
   ) as any as S.Schema<ListingsReadResponseRelatedPropertyTagsList>;
 
 export type ListingsReadResponseRelatedContactRelnListingItemRelnType =
@@ -20641,10 +20668,10 @@ export const ListingsReadResponseRelatedContactRelnListingItem =
   }) as any as S.Schema<ListingsReadResponseRelatedContactRelnListingItem>;
 
 export type ListingsReadResponseRelatedContactRelnListingList =
-  Array<ListingsReadResponseRelatedContactRelnListingItem>;
+  Array<ListingsReadResponseRelatedContactRelnListingItem | null>;
 export const ListingsReadResponseRelatedContactRelnListingList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedContactRelnListingItem,
+    S.NullOr(ListingsReadResponseRelatedContactRelnListingItem),
   ) as any as S.Schema<ListingsReadResponseRelatedContactRelnListingList>;
 
 export type ListingsReadResponseRelatedListingIdealforsItemIdealfor =
@@ -20675,10 +20702,10 @@ export const ListingsReadResponseRelatedListingIdealforsItem =
   }) as any as S.Schema<ListingsReadResponseRelatedListingIdealforsItem>;
 
 export type ListingsReadResponseRelatedListingIdealforsList =
-  Array<ListingsReadResponseRelatedListingIdealforsItem>;
+  Array<ListingsReadResponseRelatedListingIdealforsItem | null>;
 export const ListingsReadResponseRelatedListingIdealforsList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingIdealforsItem,
+    S.NullOr(ListingsReadResponseRelatedListingIdealforsItem),
   ) as any as S.Schema<ListingsReadResponseRelatedListingIdealforsList>;
 
 export type ListingsReadResponseRelatedListingAllowancesList = Array<unknown>;
@@ -20704,10 +20731,10 @@ export const ListingsReadResponseRelatedListingAdvertsItem =
   }) as any as S.Schema<ListingsReadResponseRelatedListingAdvertsItem>;
 
 export type ListingsReadResponseRelatedListingAdvertsList =
-  Array<ListingsReadResponseRelatedListingAdvertsItem>;
+  Array<ListingsReadResponseRelatedListingAdvertsItem | null>;
 export const ListingsReadResponseRelatedListingAdvertsList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingAdvertsItem,
+    S.NullOr(ListingsReadResponseRelatedListingAdvertsItem),
   ) as any as S.Schema<ListingsReadResponseRelatedListingAdvertsList>;
 
 export type ListingsReadResponseRelatedListingEventsItemEventAgent =
@@ -20744,10 +20771,10 @@ export const ListingsReadResponseRelatedListingEventsItem =
   }) as any as S.Schema<ListingsReadResponseRelatedListingEventsItem>;
 
 export type ListingsReadResponseRelatedListingEventsList =
-  Array<ListingsReadResponseRelatedListingEventsItem>;
+  Array<ListingsReadResponseRelatedListingEventsItem | null>;
 export const ListingsReadResponseRelatedListingEventsList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingEventsItem,
+    S.NullOr(ListingsReadResponseRelatedListingEventsItem),
   ) as any as S.Schema<ListingsReadResponseRelatedListingEventsList>;
 
 export type ListingsReadResponseRelatedListingImagesItemThumbs800x600 =
@@ -20806,10 +20833,10 @@ export const ListingsReadResponseRelatedListingImagesItem =
   }) as any as S.Schema<ListingsReadResponseRelatedListingImagesItem>;
 
 export type ListingsReadResponseRelatedListingImagesList =
-  Array<ListingsReadResponseRelatedListingImagesItem>;
+  Array<ListingsReadResponseRelatedListingImagesItem | null>;
 export const ListingsReadResponseRelatedListingImagesList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingImagesItem,
+    S.NullOr(ListingsReadResponseRelatedListingImagesItem),
   ) as any as S.Schema<ListingsReadResponseRelatedListingImagesList>;
 
 export type ListingsReadResponseRelatedListingDocumentsList = Array<unknown>;
@@ -20909,10 +20936,10 @@ export const ListingsReadResponseRelatedListingFloorplansItem =
   }) as any as S.Schema<ListingsReadResponseRelatedListingFloorplansItem>;
 
 export type ListingsReadResponseRelatedListingFloorplansList =
-  Array<ListingsReadResponseRelatedListingFloorplansItem>;
+  Array<ListingsReadResponseRelatedListingFloorplansItem | null>;
 export const ListingsReadResponseRelatedListingFloorplansList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingFloorplansItem,
+    S.NullOr(ListingsReadResponseRelatedListingFloorplansItem),
   ) as any as S.Schema<ListingsReadResponseRelatedListingFloorplansList>;
 
 export type ListingsReadResponseRelatedListingHolidaybookingsList =
@@ -20939,10 +20966,10 @@ export const ListingsReadResponseRelatedListingLinksItem =
   }) as any as S.Schema<ListingsReadResponseRelatedListingLinksItem>;
 
 export type ListingsReadResponseRelatedListingLinksList =
-  Array<ListingsReadResponseRelatedListingLinksItem>;
+  Array<ListingsReadResponseRelatedListingLinksItem | null>;
 export const ListingsReadResponseRelatedListingLinksList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingLinksItem,
+    S.NullOr(ListingsReadResponseRelatedListingLinksItem),
   ) as any as S.Schema<ListingsReadResponseRelatedListingLinksList>;
 
 export type ListingsReadResponseRelatedListingSubcategoriesItemSubcategory =
@@ -20971,10 +20998,10 @@ export const ListingsReadResponseRelatedListingSubcategoriesItem =
   }) as any as S.Schema<ListingsReadResponseRelatedListingSubcategoriesItem>;
 
 export type ListingsReadResponseRelatedListingSubcategoriesList =
-  Array<ListingsReadResponseRelatedListingSubcategoriesItem>;
+  Array<ListingsReadResponseRelatedListingSubcategoriesItem | null>;
 export const ListingsReadResponseRelatedListingSubcategoriesList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingSubcategoriesItem,
+    S.NullOr(ListingsReadResponseRelatedListingSubcategoriesItem),
   ) as any as S.Schema<ListingsReadResponseRelatedListingSubcategoriesList>;
 
 export interface ListingsReadResponseRelated {
@@ -21046,9 +21073,9 @@ export const ListingsReadResponseRelated = /*@__PURE__*/ S.suspend(() =>
   identifier: "ListingsReadResponseRelated",
 }) as any as S.Schema<ListingsReadResponseRelated>;
 
-export type ListingsReadResponseSecurityUserRightsList = Array<string>;
+export type ListingsReadResponseSecurityUserRightsList = Array<string | null>;
 export const ListingsReadResponseSecurityUserRightsList = /*@__PURE__*/ S.Array(
-  S.String,
+  S.NullOr(S.String),
 ) as any as S.Schema<ListingsReadResponseSecurityUserRightsList>;
 
 export interface ListingsReadResponse {
@@ -21367,11 +21394,12 @@ export type ListingsSearchResponseRowsItemSystemCreatedUser =
 export const ListingsSearchResponseRowsItemSystemCreatedUser =
   ContactsReadResponseSystemOwnerUser;
 
-export type ListingsSearchResponseRowsItemSecurityUserRightsList =
-  Array<string>;
+export type ListingsSearchResponseRowsItemSecurityUserRightsList = Array<
+  string | null
+>;
 export const ListingsSearchResponseRowsItemSecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ListingsSearchResponseRowsItemSecurityUserRightsList>;
 
 export type ListingsSearchResponseRowsItemPropertySystemOwnerUser =
@@ -21841,9 +21869,9 @@ export const ListingsSearchResponseRowsItem = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<ListingsSearchResponseRowsItem>;
 
 export type ListingsSearchResponseRowsList =
-  Array<ListingsSearchResponseRowsItem>;
+  Array<ListingsSearchResponseRowsItem | null>;
 export const ListingsSearchResponseRowsList = /*@__PURE__*/ S.Array(
-  ListingsSearchResponseRowsItem,
+  S.NullOr(ListingsSearchResponseRowsItem),
 ) as any as S.Schema<ListingsSearchResponseRowsList>;
 
 export type ListingsSearchResponseCriteriaList = Array<unknown>;
@@ -22470,11 +22498,12 @@ export type ListingsUpdateResponsePropertyPropertyImage =
 export const ListingsUpdateResponsePropertyPropertyImage =
   ContractsReadResponseListingListingPrimaryImage;
 
-export type ListingsUpdateResponsePropertySecurityUserRightsList =
-  Array<string>;
+export type ListingsUpdateResponsePropertySecurityUserRightsList = Array<
+  string | null
+>;
 export const ListingsUpdateResponsePropertySecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ListingsUpdateResponsePropertySecurityUserRightsList>;
 
 export interface ListingsUpdateResponseProperty {
@@ -22715,10 +22744,10 @@ export const ListingsUpdateResponseRelatedPropertyFeaturesItem =
   ListingsReadResponseRelatedPropertyFeaturesItem;
 
 export type ListingsUpdateResponseRelatedPropertyFeaturesList =
-  Array<ListingsReadResponseRelatedPropertyFeaturesItem>;
+  Array<ListingsReadResponseRelatedPropertyFeaturesItem | null>;
 export const ListingsUpdateResponseRelatedPropertyFeaturesList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedPropertyFeaturesItem,
+    S.NullOr(ListingsReadResponseRelatedPropertyFeaturesItem),
   ) as any as S.Schema<ListingsUpdateResponseRelatedPropertyFeaturesList>;
 
 export type ListingsUpdateResponseRelatedPropertyViewsItemView =
@@ -22732,10 +22761,10 @@ export const ListingsUpdateResponseRelatedPropertyViewsItem =
   ListingsReadResponseRelatedPropertyViewsItem;
 
 export type ListingsUpdateResponseRelatedPropertyViewsList =
-  Array<ListingsReadResponseRelatedPropertyViewsItem>;
+  Array<ListingsReadResponseRelatedPropertyViewsItem | null>;
 export const ListingsUpdateResponseRelatedPropertyViewsList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedPropertyViewsItem,
+    S.NullOr(ListingsReadResponseRelatedPropertyViewsItem),
   ) as any as S.Schema<ListingsUpdateResponseRelatedPropertyViewsList>;
 
 export type ListingsUpdateResponseRelatedPropertyTagsItem =
@@ -22744,10 +22773,10 @@ export const ListingsUpdateResponseRelatedPropertyTagsItem =
   ContactsReadResponseRelatedContactTagsItem;
 
 export type ListingsUpdateResponseRelatedPropertyTagsList =
-  Array<ContactsReadResponseRelatedContactTagsItem>;
+  Array<ContactsReadResponseRelatedContactTagsItem | null>;
 export const ListingsUpdateResponseRelatedPropertyTagsList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactTagsItem,
+    S.NullOr(ContactsReadResponseRelatedContactTagsItem),
   ) as any as S.Schema<ListingsUpdateResponseRelatedPropertyTagsList>;
 
 export type ListingsUpdateResponseRelatedContactRelnListingItemRelnType =
@@ -22771,10 +22800,10 @@ export const ListingsUpdateResponseRelatedContactRelnListingItem =
   ListingsReadResponseRelatedContactRelnListingItem;
 
 export type ListingsUpdateResponseRelatedContactRelnListingList =
-  Array<ListingsReadResponseRelatedContactRelnListingItem>;
+  Array<ListingsReadResponseRelatedContactRelnListingItem | null>;
 export const ListingsUpdateResponseRelatedContactRelnListingList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedContactRelnListingItem,
+    S.NullOr(ListingsReadResponseRelatedContactRelnListingItem),
   ) as any as S.Schema<ListingsUpdateResponseRelatedContactRelnListingList>;
 
 export type ListingsUpdateResponseRelatedListingIdealforsItemIdealfor =
@@ -22788,10 +22817,10 @@ export const ListingsUpdateResponseRelatedListingIdealforsItem =
   ListingsReadResponseRelatedListingIdealforsItem;
 
 export type ListingsUpdateResponseRelatedListingIdealforsList =
-  Array<ListingsReadResponseRelatedListingIdealforsItem>;
+  Array<ListingsReadResponseRelatedListingIdealforsItem | null>;
 export const ListingsUpdateResponseRelatedListingIdealforsList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingIdealforsItem,
+    S.NullOr(ListingsReadResponseRelatedListingIdealforsItem),
   ) as any as S.Schema<ListingsUpdateResponseRelatedListingIdealforsList>;
 
 export type ListingsUpdateResponseRelatedListingAllowancesList = Array<unknown>;
@@ -22806,10 +22835,10 @@ export const ListingsUpdateResponseRelatedListingAdvertsItem =
   ListingsReadResponseRelatedListingAdvertsItem;
 
 export type ListingsUpdateResponseRelatedListingAdvertsList =
-  Array<ListingsReadResponseRelatedListingAdvertsItem>;
+  Array<ListingsReadResponseRelatedListingAdvertsItem | null>;
 export const ListingsUpdateResponseRelatedListingAdvertsList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingAdvertsItem,
+    S.NullOr(ListingsReadResponseRelatedListingAdvertsItem),
   ) as any as S.Schema<ListingsUpdateResponseRelatedListingAdvertsList>;
 
 export type ListingsUpdateResponseRelatedListingEventsItemEventAgent =
@@ -22823,10 +22852,10 @@ export const ListingsUpdateResponseRelatedListingEventsItem =
   ListingsReadResponseRelatedListingEventsItem;
 
 export type ListingsUpdateResponseRelatedListingEventsList =
-  Array<ListingsReadResponseRelatedListingEventsItem>;
+  Array<ListingsReadResponseRelatedListingEventsItem | null>;
 export const ListingsUpdateResponseRelatedListingEventsList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingEventsItem,
+    S.NullOr(ListingsReadResponseRelatedListingEventsItem),
   ) as any as S.Schema<ListingsUpdateResponseRelatedListingEventsList>;
 
 export type ListingsUpdateResponseRelatedListingImagesItemThumbs800x600 =
@@ -22860,10 +22889,10 @@ export const ListingsUpdateResponseRelatedListingImagesItem =
   ListingsReadResponseRelatedListingImagesItem;
 
 export type ListingsUpdateResponseRelatedListingImagesList =
-  Array<ListingsReadResponseRelatedListingImagesItem>;
+  Array<ListingsReadResponseRelatedListingImagesItem | null>;
 export const ListingsUpdateResponseRelatedListingImagesList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingImagesItem,
+    S.NullOr(ListingsReadResponseRelatedListingImagesItem),
   ) as any as S.Schema<ListingsUpdateResponseRelatedListingImagesList>;
 
 export type ListingsUpdateResponseRelatedListingDocumentsList = Array<unknown>;
@@ -22909,10 +22938,10 @@ export const ListingsUpdateResponseRelatedListingFloorplansItem =
   ListingsReadResponseRelatedListingFloorplansItem;
 
 export type ListingsUpdateResponseRelatedListingFloorplansList =
-  Array<ListingsReadResponseRelatedListingFloorplansItem>;
+  Array<ListingsReadResponseRelatedListingFloorplansItem | null>;
 export const ListingsUpdateResponseRelatedListingFloorplansList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingFloorplansItem,
+    S.NullOr(ListingsReadResponseRelatedListingFloorplansItem),
   ) as any as S.Schema<ListingsUpdateResponseRelatedListingFloorplansList>;
 
 export type ListingsUpdateResponseRelatedListingHolidaybookingsList =
@@ -22928,10 +22957,10 @@ export const ListingsUpdateResponseRelatedListingLinksItem =
   ListingsReadResponseRelatedListingLinksItem;
 
 export type ListingsUpdateResponseRelatedListingLinksList =
-  Array<ListingsReadResponseRelatedListingLinksItem>;
+  Array<ListingsReadResponseRelatedListingLinksItem | null>;
 export const ListingsUpdateResponseRelatedListingLinksList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingLinksItem,
+    S.NullOr(ListingsReadResponseRelatedListingLinksItem),
   ) as any as S.Schema<ListingsUpdateResponseRelatedListingLinksList>;
 
 export type ListingsUpdateResponseRelatedListingSubcategoriesItemSubcategory =
@@ -22945,10 +22974,10 @@ export const ListingsUpdateResponseRelatedListingSubcategoriesItem =
   ListingsReadResponseRelatedListingSubcategoriesItem;
 
 export type ListingsUpdateResponseRelatedListingSubcategoriesList =
-  Array<ListingsReadResponseRelatedListingSubcategoriesItem>;
+  Array<ListingsReadResponseRelatedListingSubcategoriesItem | null>;
 export const ListingsUpdateResponseRelatedListingSubcategoriesList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedListingSubcategoriesItem,
+    S.NullOr(ListingsReadResponseRelatedListingSubcategoriesItem),
   ) as any as S.Schema<ListingsUpdateResponseRelatedListingSubcategoriesList>;
 
 export interface ListingsUpdateResponseRelated {
@@ -23020,10 +23049,10 @@ export const ListingsUpdateResponseRelated = /*@__PURE__*/ S.suspend(() =>
   identifier: "ListingsUpdateResponseRelated",
 }) as any as S.Schema<ListingsUpdateResponseRelated>;
 
-export type ListingsUpdateResponseSecurityUserRightsList = Array<string>;
+export type ListingsUpdateResponseSecurityUserRightsList = Array<string | null>;
 export const ListingsUpdateResponseSecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<ListingsUpdateResponseSecurityUserRightsList>;
 
 export interface ListingsUpdateResponse {
@@ -23919,10 +23948,10 @@ export const NotesDescribeResponseMethodsReadParametersFields =
   }) as any as S.Schema<NotesDescribeResponseMethodsReadParametersFields>;
 
 export type NotesDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
-  Array<string>;
+  Array<string | null>;
 export const NotesDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<NotesDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList>;
 
 export interface NotesDescribeResponseMethodsReadParametersExtraFields {
@@ -25183,9 +25212,9 @@ export const NotesDescribeDeleteModesRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "NotesDescribeDeleteModesRequest",
 }) as any as S.Schema<NotesDescribeDeleteModesRequest>;
 
-export type NotesDescribeDeleteModesResponseBodyList = Array<string>;
+export type NotesDescribeDeleteModesResponseBodyList = Array<string | null>;
 export const NotesDescribeDeleteModesResponseBodyList = /*@__PURE__*/ S.Array(
-  S.String,
+  S.NullOr(S.String),
 ) as any as S.Schema<NotesDescribeDeleteModesResponseBodyList>;
 
 export type NotesDescribeDeleteModesResponse =
@@ -25211,22 +25240,23 @@ export const NotesDescribeModelResponseSearchResultFormatsItem =
   AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
 
 export type NotesDescribeModelResponseSearchResultFormatsList =
-  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
+  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem | null>;
 export const NotesDescribeModelResponseSearchResultFormatsList =
   /*@__PURE__*/ S.Array(
-    AdminWebhooksDescribeModelResponseSearchResultFormatsItem,
+    S.NullOr(AdminWebhooksDescribeModelResponseSearchResultFormatsItem),
   ) as any as S.Schema<NotesDescribeModelResponseSearchResultFormatsList>;
 
-export type NotesDescribeModelResponseDeleteModesList = Array<string>;
+export type NotesDescribeModelResponseDeleteModesList = Array<string | null>;
 export const NotesDescribeModelResponseDeleteModesList = /*@__PURE__*/ S.Array(
-  S.String,
+  S.NullOr(S.String),
 ) as any as S.Schema<NotesDescribeModelResponseDeleteModesList>;
 
-export type NotesDescribeModelResponseDataStructureStructureList =
-  Array<string>;
+export type NotesDescribeModelResponseDataStructureStructureList = Array<
+  string | null
+>;
 export const NotesDescribeModelResponseDataStructureStructureList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<NotesDescribeModelResponseDataStructureStructureList>;
 
 export interface NotesDescribeModelResponseDataStructure {
@@ -25310,10 +25340,10 @@ export type NotesDescribeModelResponseSearchableFields =
 export const NotesDescribeModelResponseSearchableFields =
   AdminWebhooksDescribeModelResponseSearchableFields;
 
-export type NotesDescribeModelResponseOrderbyFieldsList = Array<string>;
+export type NotesDescribeModelResponseOrderbyFieldsList = Array<string | null>;
 export const NotesDescribeModelResponseOrderbyFieldsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<NotesDescribeModelResponseOrderbyFieldsList>;
 
 export type NotesDescribeModelResponseExportOptionsList = Array<unknown>;
@@ -25541,9 +25571,9 @@ export const NotesReadResponseRelatedNoteContactsItem = /*@__PURE__*/ S.suspend(
 }) as any as S.Schema<NotesReadResponseRelatedNoteContactsItem>;
 
 export type NotesReadResponseRelatedNoteContactsList =
-  Array<NotesReadResponseRelatedNoteContactsItem>;
+  Array<NotesReadResponseRelatedNoteContactsItem | null>;
 export const NotesReadResponseRelatedNoteContactsList = /*@__PURE__*/ S.Array(
-  NotesReadResponseRelatedNoteContactsItem,
+  S.NullOr(NotesReadResponseRelatedNoteContactsItem),
 ) as any as S.Schema<NotesReadResponseRelatedNoteContactsList>;
 
 export type NotesReadResponseRelatedNoteMarketLeadsList = Array<unknown>;
@@ -25582,9 +25612,9 @@ export const NotesReadResponseRelatedNotePropertiesItem =
   }) as any as S.Schema<NotesReadResponseRelatedNotePropertiesItem>;
 
 export type NotesReadResponseRelatedNotePropertiesList =
-  Array<NotesReadResponseRelatedNotePropertiesItem>;
+  Array<NotesReadResponseRelatedNotePropertiesItem | null>;
 export const NotesReadResponseRelatedNotePropertiesList = /*@__PURE__*/ S.Array(
-  NotesReadResponseRelatedNotePropertiesItem,
+  S.NullOr(NotesReadResponseRelatedNotePropertiesItem),
 ) as any as S.Schema<NotesReadResponseRelatedNotePropertiesList>;
 
 export type NotesReadResponseRelatedNoteProjectsList = Array<unknown>;
@@ -25646,9 +25676,9 @@ export type NotesReadResponseSystemCreatedUser =
 export const NotesReadResponseSystemCreatedUser =
   ContactsReadResponseSystemOwnerUser;
 
-export type NotesReadResponseSecurityUserRightsList = Array<string>;
+export type NotesReadResponseSecurityUserRightsList = Array<string | null>;
 export const NotesReadResponseSecurityUserRightsList = /*@__PURE__*/ S.Array(
-  S.String,
+  S.NullOr(S.String),
 ) as any as S.Schema<NotesReadResponseSecurityUserRightsList>;
 
 export interface NotesReadResponse {
@@ -25770,10 +25800,12 @@ export const NotesSearchRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "NotesSearchRequest",
 }) as any as S.Schema<NotesSearchRequest>;
 
-export type NotesSearchResponseRowsItemSecurityUserRightsList = Array<string>;
+export type NotesSearchResponseRowsItemSecurityUserRightsList = Array<
+  string | null
+>;
 export const NotesSearchResponseRowsItemSecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<NotesSearchResponseRowsItemSecurityUserRightsList>;
 
 export type NotesSearchResponseRowsItemNoteType =
@@ -25797,10 +25829,10 @@ export const NotesSearchResponseRowsItemRelatedNoteContactsItem =
   NotesReadResponseRelatedNoteContactsItem;
 
 export type NotesSearchResponseRowsItemRelatedNoteContactsList =
-  Array<NotesReadResponseRelatedNoteContactsItem>;
+  Array<NotesReadResponseRelatedNoteContactsItem | null>;
 export const NotesSearchResponseRowsItemRelatedNoteContactsList =
   /*@__PURE__*/ S.Array(
-    NotesReadResponseRelatedNoteContactsItem,
+    S.NullOr(NotesReadResponseRelatedNoteContactsItem),
   ) as any as S.Schema<NotesSearchResponseRowsItemRelatedNoteContactsList>;
 
 export type NotesSearchResponseRowsItemRelatedNoteMarketLeadsList =
@@ -25831,10 +25863,10 @@ export const NotesSearchResponseRowsItemRelatedNotePropertiesItem =
   NotesReadResponseRelatedNotePropertiesItem;
 
 export type NotesSearchResponseRowsItemRelatedNotePropertiesList =
-  Array<NotesReadResponseRelatedNotePropertiesItem>;
+  Array<NotesReadResponseRelatedNotePropertiesItem | null>;
 export const NotesSearchResponseRowsItemRelatedNotePropertiesList =
   /*@__PURE__*/ S.Array(
-    NotesReadResponseRelatedNotePropertiesItem,
+    S.NullOr(NotesReadResponseRelatedNotePropertiesItem),
   ) as any as S.Schema<NotesSearchResponseRowsItemRelatedNotePropertiesList>;
 
 export type NotesSearchResponseRowsItemRelatedNoteProjectsList = Array<unknown>;
@@ -25943,9 +25975,10 @@ export const NotesSearchResponseRowsItem = /*@__PURE__*/ S.suspend(() =>
   identifier: "NotesSearchResponseRowsItem",
 }) as any as S.Schema<NotesSearchResponseRowsItem>;
 
-export type NotesSearchResponseRowsList = Array<NotesSearchResponseRowsItem>;
+export type NotesSearchResponseRowsList =
+  Array<NotesSearchResponseRowsItem | null>;
 export const NotesSearchResponseRowsList = /*@__PURE__*/ S.Array(
-  NotesSearchResponseRowsItem,
+  S.NullOr(NotesSearchResponseRowsItem),
 ) as any as S.Schema<NotesSearchResponseRowsList>;
 
 export type NotesSearchResponseCriteriaItem =
@@ -25954,9 +25987,9 @@ export const NotesSearchResponseCriteriaItem =
   ContactsSearchResponseCriteriaItem;
 
 export type NotesSearchResponseCriteriaList =
-  Array<ContactsSearchResponseCriteriaItem>;
+  Array<ContactsSearchResponseCriteriaItem | null>;
 export const NotesSearchResponseCriteriaList = /*@__PURE__*/ S.Array(
-  ContactsSearchResponseCriteriaItem,
+  S.NullOr(ContactsSearchResponseCriteriaItem),
 ) as any as S.Schema<NotesSearchResponseCriteriaList>;
 
 export type NotesSearchResponseOrderByList = Array<unknown>;
@@ -26248,9 +26281,9 @@ export const NotesUpdateResponseRelatedNoteContactsItem =
   NotesReadResponseRelatedNoteContactsItem;
 
 export type NotesUpdateResponseRelatedNoteContactsList =
-  Array<NotesReadResponseRelatedNoteContactsItem>;
+  Array<NotesReadResponseRelatedNoteContactsItem | null>;
 export const NotesUpdateResponseRelatedNoteContactsList = /*@__PURE__*/ S.Array(
-  NotesReadResponseRelatedNoteContactsItem,
+  S.NullOr(NotesReadResponseRelatedNoteContactsItem),
 ) as any as S.Schema<NotesUpdateResponseRelatedNoteContactsList>;
 
 export type NotesUpdateResponseRelatedNoteMarketLeadsList = Array<unknown>;
@@ -26280,10 +26313,10 @@ export const NotesUpdateResponseRelatedNotePropertiesItem =
   NotesReadResponseRelatedNotePropertiesItem;
 
 export type NotesUpdateResponseRelatedNotePropertiesList =
-  Array<NotesReadResponseRelatedNotePropertiesItem>;
+  Array<NotesReadResponseRelatedNotePropertiesItem | null>;
 export const NotesUpdateResponseRelatedNotePropertiesList =
   /*@__PURE__*/ S.Array(
-    NotesReadResponseRelatedNotePropertiesItem,
+    S.NullOr(NotesReadResponseRelatedNotePropertiesItem),
   ) as any as S.Schema<NotesUpdateResponseRelatedNotePropertiesList>;
 
 export type NotesUpdateResponseRelatedNoteProjectsList = Array<unknown>;
@@ -26346,9 +26379,9 @@ export type NotesUpdateResponseSystemCreatedUser =
 export const NotesUpdateResponseSystemCreatedUser =
   ContactsReadResponseSystemOwnerUser;
 
-export type NotesUpdateResponseSecurityUserRightsList = Array<string>;
+export type NotesUpdateResponseSecurityUserRightsList = Array<string | null>;
 export const NotesUpdateResponseSecurityUserRightsList = /*@__PURE__*/ S.Array(
-  S.String,
+  S.NullOr(S.String),
 ) as any as S.Schema<NotesUpdateResponseSecurityUserRightsList>;
 
 export interface NotesUpdateResponse {
@@ -27217,10 +27250,10 @@ export const PropertiesDescribeResponseMethodsReadParametersFields =
   }) as any as S.Schema<PropertiesDescribeResponseMethodsReadParametersFields>;
 
 export type PropertiesDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
-  Array<string>;
+  Array<string | null>;
 export const PropertiesDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PropertiesDescribeResponseMethodsReadParametersExtraFieldsDefaultValueList>;
 
 export interface PropertiesDescribeResponseMethodsReadParametersExtraFields {
@@ -28525,10 +28558,12 @@ export const PropertiesDescribeDeleteModesRequest = /*@__PURE__*/ S.suspend(
   identifier: "PropertiesDescribeDeleteModesRequest",
 }) as any as S.Schema<PropertiesDescribeDeleteModesRequest>;
 
-export type PropertiesDescribeDeleteModesResponseBodyList = Array<string>;
+export type PropertiesDescribeDeleteModesResponseBodyList = Array<
+  string | null
+>;
 export const PropertiesDescribeDeleteModesResponseBodyList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PropertiesDescribeDeleteModesResponseBodyList>;
 
 export type PropertiesDescribeDeleteModesResponse =
@@ -28558,23 +28593,26 @@ export const PropertiesDescribeModelResponseSearchResultFormatsItem =
   AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
 
 export type PropertiesDescribeModelResponseSearchResultFormatsList =
-  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
+  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem | null>;
 export const PropertiesDescribeModelResponseSearchResultFormatsList =
   /*@__PURE__*/ S.Array(
-    AdminWebhooksDescribeModelResponseSearchResultFormatsItem,
+    S.NullOr(AdminWebhooksDescribeModelResponseSearchResultFormatsItem),
   ) as any as S.Schema<PropertiesDescribeModelResponseSearchResultFormatsList>;
 
-export type PropertiesDescribeModelResponseDeleteModesList = Array<string>;
+export type PropertiesDescribeModelResponseDeleteModesList = Array<
+  string | null
+>;
 export const PropertiesDescribeModelResponseDeleteModesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PropertiesDescribeModelResponseDeleteModesList>;
 
-export type PropertiesDescribeModelResponseDataStructureStructureList =
-  Array<string>;
+export type PropertiesDescribeModelResponseDataStructureStructureList = Array<
+  string | null
+>;
 export const PropertiesDescribeModelResponseDataStructureStructureList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PropertiesDescribeModelResponseDataStructureStructureList>;
 
 export interface PropertiesDescribeModelResponseDataStructure {
@@ -28658,10 +28696,12 @@ export type PropertiesDescribeModelResponseSearchableFields =
 export const PropertiesDescribeModelResponseSearchableFields =
   AdminWebhooksDescribeModelResponseSearchableFields;
 
-export type PropertiesDescribeModelResponseOrderbyFieldsList = Array<string>;
+export type PropertiesDescribeModelResponseOrderbyFieldsList = Array<
+  string | null
+>;
 export const PropertiesDescribeModelResponseOrderbyFieldsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PropertiesDescribeModelResponseOrderbyFieldsList>;
 
 export type PropertiesDescribeModelResponseExportOptionsList = Array<unknown>;
@@ -29042,10 +29082,12 @@ export const PropertiesReadResponseAttrPrimaryElectricitySupplyItem =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type PropertiesReadResponseAttrPrimaryElectricitySupplyList =
-  Array<ContactsReadResponseRelatedContactRelationshipsItemRelationshipType>;
+  Array<ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null>;
 export const PropertiesReadResponseAttrPrimaryElectricitySupplyList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+    S.NullOr(
+      ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+    ),
   ) as any as S.Schema<PropertiesReadResponseAttrPrimaryElectricitySupplyList>;
 
 export type PropertiesReadResponseAttrBroadbandItem =
@@ -29054,9 +29096,9 @@ export const PropertiesReadResponseAttrBroadbandItem =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type PropertiesReadResponseAttrBroadbandList =
-  Array<ContactsReadResponseRelatedContactRelationshipsItemRelationshipType>;
+  Array<ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null>;
 export const PropertiesReadResponseAttrBroadbandList = /*@__PURE__*/ S.Array(
-  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+  S.NullOr(ContactsReadResponseRelatedContactRelationshipsItemRelationshipType),
 ) as any as S.Schema<PropertiesReadResponseAttrBroadbandList>;
 
 export type PropertiesReadResponseAttrSourcesOfFloodingItem =
@@ -29065,10 +29107,12 @@ export const PropertiesReadResponseAttrSourcesOfFloodingItem =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type PropertiesReadResponseAttrSourcesOfFloodingList =
-  Array<ContactsReadResponseRelatedContactRelationshipsItemRelationshipType>;
+  Array<ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null>;
 export const PropertiesReadResponseAttrSourcesOfFloodingList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+    S.NullOr(
+      ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+    ),
   ) as any as S.Schema<PropertiesReadResponseAttrSourcesOfFloodingList>;
 
 export type PropertiesReadResponseAdrBuilding =
@@ -29137,10 +29181,10 @@ export const PropertiesReadResponseRelatedPropertyTagsItem =
   ContactsReadResponseRelatedContactTagsItem;
 
 export type PropertiesReadResponseRelatedPropertyTagsList =
-  Array<ContactsReadResponseRelatedContactTagsItem>;
+  Array<ContactsReadResponseRelatedContactTagsItem | null>;
 export const PropertiesReadResponseRelatedPropertyTagsList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactTagsItem,
+    S.NullOr(ContactsReadResponseRelatedContactTagsItem),
   ) as any as S.Schema<PropertiesReadResponseRelatedPropertyTagsList>;
 
 export type PropertiesReadResponseRelatedPropertyFeaturesItemFeature =
@@ -29154,10 +29198,10 @@ export const PropertiesReadResponseRelatedPropertyFeaturesItem =
   ListingsReadResponseRelatedPropertyFeaturesItem;
 
 export type PropertiesReadResponseRelatedPropertyFeaturesList =
-  Array<ListingsReadResponseRelatedPropertyFeaturesItem>;
+  Array<ListingsReadResponseRelatedPropertyFeaturesItem | null>;
 export const PropertiesReadResponseRelatedPropertyFeaturesList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedPropertyFeaturesItem,
+    S.NullOr(ListingsReadResponseRelatedPropertyFeaturesItem),
   ) as any as S.Schema<PropertiesReadResponseRelatedPropertyFeaturesList>;
 
 export type PropertiesReadResponseRelatedPropertyViewsItemView =
@@ -29171,10 +29215,10 @@ export const PropertiesReadResponseRelatedPropertyViewsItem =
   ListingsReadResponseRelatedPropertyViewsItem;
 
 export type PropertiesReadResponseRelatedPropertyViewsList =
-  Array<ListingsReadResponseRelatedPropertyViewsItem>;
+  Array<ListingsReadResponseRelatedPropertyViewsItem | null>;
 export const PropertiesReadResponseRelatedPropertyViewsList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedPropertyViewsItem,
+    S.NullOr(ListingsReadResponseRelatedPropertyViewsItem),
   ) as any as S.Schema<PropertiesReadResponseRelatedPropertyViewsList>;
 
 export type PropertiesReadResponseRelatedPropertyDocumentsList = Array<unknown>;
@@ -29274,10 +29318,10 @@ export const PropertiesReadResponseRelatedContactRelnPropertyItem =
   }) as any as S.Schema<PropertiesReadResponseRelatedContactRelnPropertyItem>;
 
 export type PropertiesReadResponseRelatedContactRelnPropertyList =
-  Array<PropertiesReadResponseRelatedContactRelnPropertyItem>;
+  Array<PropertiesReadResponseRelatedContactRelnPropertyItem | null>;
 export const PropertiesReadResponseRelatedContactRelnPropertyList =
   /*@__PURE__*/ S.Array(
-    PropertiesReadResponseRelatedContactRelnPropertyItem,
+    S.NullOr(PropertiesReadResponseRelatedContactRelnPropertyItem),
   ) as any as S.Schema<PropertiesReadResponseRelatedContactRelnPropertyList>;
 
 export interface PropertiesReadResponseRelated {
@@ -29309,10 +29353,10 @@ export const PropertiesReadResponseRelated = /*@__PURE__*/ S.suspend(() =>
   identifier: "PropertiesReadResponseRelated",
 }) as any as S.Schema<PropertiesReadResponseRelated>;
 
-export type PropertiesReadResponseSecurityUserRightsList = Array<string>;
+export type PropertiesReadResponseSecurityUserRightsList = Array<string | null>;
 export const PropertiesReadResponseSecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PropertiesReadResponseSecurityUserRightsList>;
 
 export interface PropertiesReadResponse {
@@ -29770,11 +29814,12 @@ export type PropertiesSearchResponseRowsItemPropertyImage =
 export const PropertiesSearchResponseRowsItemPropertyImage =
   ContractsReadResponseListingListingPrimaryImage;
 
-export type PropertiesSearchResponseRowsItemSecurityUserRightsList =
-  Array<string>;
+export type PropertiesSearchResponseRowsItemSecurityUserRightsList = Array<
+  string | null
+>;
 export const PropertiesSearchResponseRowsItemSecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PropertiesSearchResponseRowsItemSecurityUserRightsList>;
 
 export interface PropertiesSearchResponseRowsItem {
@@ -29861,9 +29906,9 @@ export const PropertiesSearchResponseRowsItem = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<PropertiesSearchResponseRowsItem>;
 
 export type PropertiesSearchResponseRowsList =
-  Array<PropertiesSearchResponseRowsItem>;
+  Array<PropertiesSearchResponseRowsItem | null>;
 export const PropertiesSearchResponseRowsList = /*@__PURE__*/ S.Array(
-  PropertiesSearchResponseRowsItem,
+  S.NullOr(PropertiesSearchResponseRowsItem),
 ) as any as S.Schema<PropertiesSearchResponseRowsList>;
 
 export type PropertiesSearchResponseCriteriaItem =
@@ -29872,9 +29917,9 @@ export const PropertiesSearchResponseCriteriaItem =
   ContactsSearchResponseCriteriaItem;
 
 export type PropertiesSearchResponseCriteriaList =
-  Array<ContactsSearchResponseCriteriaItem>;
+  Array<ContactsSearchResponseCriteriaItem | null>;
 export const PropertiesSearchResponseCriteriaList = /*@__PURE__*/ S.Array(
-  ContactsSearchResponseCriteriaItem,
+  S.NullOr(ContactsSearchResponseCriteriaItem),
 ) as any as S.Schema<PropertiesSearchResponseCriteriaList>;
 
 export type PropertiesSearchResponseOrderByList = Array<unknown>;
@@ -30354,10 +30399,12 @@ export const PropertiesUpdateResponseAttrPrimaryElectricitySupplyItem =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type PropertiesUpdateResponseAttrPrimaryElectricitySupplyList =
-  Array<ContactsReadResponseRelatedContactRelationshipsItemRelationshipType>;
+  Array<ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null>;
 export const PropertiesUpdateResponseAttrPrimaryElectricitySupplyList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+    S.NullOr(
+      ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+    ),
   ) as any as S.Schema<PropertiesUpdateResponseAttrPrimaryElectricitySupplyList>;
 
 export type PropertiesUpdateResponseAttrBroadbandItem =
@@ -30366,9 +30413,9 @@ export const PropertiesUpdateResponseAttrBroadbandItem =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type PropertiesUpdateResponseAttrBroadbandList =
-  Array<ContactsReadResponseRelatedContactRelationshipsItemRelationshipType>;
+  Array<ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null>;
 export const PropertiesUpdateResponseAttrBroadbandList = /*@__PURE__*/ S.Array(
-  ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+  S.NullOr(ContactsReadResponseRelatedContactRelationshipsItemRelationshipType),
 ) as any as S.Schema<PropertiesUpdateResponseAttrBroadbandList>;
 
 export type PropertiesUpdateResponseAttrSourcesOfFloodingItem =
@@ -30377,10 +30424,12 @@ export const PropertiesUpdateResponseAttrSourcesOfFloodingItem =
   ContactsReadResponseRelatedContactRelationshipsItemRelationshipType;
 
 export type PropertiesUpdateResponseAttrSourcesOfFloodingList =
-  Array<ContactsReadResponseRelatedContactRelationshipsItemRelationshipType>;
+  Array<ContactsReadResponseRelatedContactRelationshipsItemRelationshipType | null>;
 export const PropertiesUpdateResponseAttrSourcesOfFloodingList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+    S.NullOr(
+      ContactsReadResponseRelatedContactRelationshipsItemRelationshipType,
+    ),
   ) as any as S.Schema<PropertiesUpdateResponseAttrSourcesOfFloodingList>;
 
 export type PropertiesUpdateResponseAttrParkingType =
@@ -30454,10 +30503,10 @@ export const PropertiesUpdateResponseRelatedPropertyTagsItem =
   ContactsReadResponseRelatedContactTagsItem;
 
 export type PropertiesUpdateResponseRelatedPropertyTagsList =
-  Array<ContactsReadResponseRelatedContactTagsItem>;
+  Array<ContactsReadResponseRelatedContactTagsItem | null>;
 export const PropertiesUpdateResponseRelatedPropertyTagsList =
   /*@__PURE__*/ S.Array(
-    ContactsReadResponseRelatedContactTagsItem,
+    S.NullOr(ContactsReadResponseRelatedContactTagsItem),
   ) as any as S.Schema<PropertiesUpdateResponseRelatedPropertyTagsList>;
 
 export type PropertiesUpdateResponseRelatedPropertyFeaturesItemFeature =
@@ -30471,10 +30520,10 @@ export const PropertiesUpdateResponseRelatedPropertyFeaturesItem =
   ListingsReadResponseRelatedPropertyFeaturesItem;
 
 export type PropertiesUpdateResponseRelatedPropertyFeaturesList =
-  Array<ListingsReadResponseRelatedPropertyFeaturesItem>;
+  Array<ListingsReadResponseRelatedPropertyFeaturesItem | null>;
 export const PropertiesUpdateResponseRelatedPropertyFeaturesList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedPropertyFeaturesItem,
+    S.NullOr(ListingsReadResponseRelatedPropertyFeaturesItem),
   ) as any as S.Schema<PropertiesUpdateResponseRelatedPropertyFeaturesList>;
 
 export type PropertiesUpdateResponseRelatedPropertyViewsItemView =
@@ -30488,10 +30537,10 @@ export const PropertiesUpdateResponseRelatedPropertyViewsItem =
   ListingsReadResponseRelatedPropertyViewsItem;
 
 export type PropertiesUpdateResponseRelatedPropertyViewsList =
-  Array<ListingsReadResponseRelatedPropertyViewsItem>;
+  Array<ListingsReadResponseRelatedPropertyViewsItem | null>;
 export const PropertiesUpdateResponseRelatedPropertyViewsList =
   /*@__PURE__*/ S.Array(
-    ListingsReadResponseRelatedPropertyViewsItem,
+    S.NullOr(ListingsReadResponseRelatedPropertyViewsItem),
   ) as any as S.Schema<PropertiesUpdateResponseRelatedPropertyViewsList>;
 
 export type PropertiesUpdateResponseRelatedPropertyDocumentsList =
@@ -30522,10 +30571,10 @@ export const PropertiesUpdateResponseRelatedContactRelnPropertyItem =
   PropertiesReadResponseRelatedContactRelnPropertyItem;
 
 export type PropertiesUpdateResponseRelatedContactRelnPropertyList =
-  Array<PropertiesReadResponseRelatedContactRelnPropertyItem>;
+  Array<PropertiesReadResponseRelatedContactRelnPropertyItem | null>;
 export const PropertiesUpdateResponseRelatedContactRelnPropertyList =
   /*@__PURE__*/ S.Array(
-    PropertiesReadResponseRelatedContactRelnPropertyItem,
+    S.NullOr(PropertiesReadResponseRelatedContactRelnPropertyItem),
   ) as any as S.Schema<PropertiesUpdateResponseRelatedContactRelnPropertyList>;
 
 export interface PropertiesUpdateResponseRelated {
@@ -30557,10 +30606,12 @@ export const PropertiesUpdateResponseRelated = /*@__PURE__*/ S.suspend(() =>
   identifier: "PropertiesUpdateResponseRelated",
 }) as any as S.Schema<PropertiesUpdateResponseRelated>;
 
-export type PropertiesUpdateResponseSecurityUserRightsList = Array<string>;
+export type PropertiesUpdateResponseSecurityUserRightsList = Array<
+  string | null
+>;
 export const PropertiesUpdateResponseSecurityUserRightsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PropertiesUpdateResponseSecurityUserRightsList>;
 
 export interface PropertiesUpdateResponse {
@@ -30932,10 +30983,10 @@ export const PublishedListingsDescribeResponseMethodsAutocompleteParametersSearc
   AdminValueListsDescribeResponseMethodsArchiveParametersId;
 
 export type PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStatesDefaultValueList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStatesDefaultValueList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStatesDefaultValueList>;
 
 export interface PublishedListingsDescribeResponseMethodsAutocompleteParametersListingStates {
@@ -31028,10 +31079,10 @@ export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestP
   }) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersSearchString>;
 
 export type PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinitionDefaultList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinitionDefaultList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinitionDefaultList>;
 
 export interface PublishedListingsDescribeResponseMethodsAutocompleteOpenapiRequestParametersListingStatesDefinition {
@@ -33085,10 +33136,10 @@ export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRespons
   AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
 
 export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchResultFormatsList =
-  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
+  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem | null>;
 export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchResultFormatsList =
   /*@__PURE__*/ S.Array(
-    AdminWebhooksDescribeModelResponseSearchResultFormatsItem,
+    S.NullOr(AdminWebhooksDescribeModelResponseSearchResultFormatsItem),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchResultFormatsList>;
 
 export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchExtraOptionsExtraFieldsFields {
@@ -33285,10 +33336,10 @@ export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRespons
   AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
 
 export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeAreaLimitToRegionsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeAreaLimitToRegionsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeAreaLimitToRegionsList>;
 
 export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeArea {
@@ -33317,10 +33368,10 @@ export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRespons
   }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeArea>;
 
 export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrictLimitToRegionsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrictLimitToRegionsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrictLimitToRegionsList>;
 
 export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrict {
@@ -33349,10 +33400,10 @@ export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRespons
   }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeDistrict>;
 
 export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSectorLimitToRegionsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSectorLimitToRegionsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSectorLimitToRegionsList>;
 
 export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsPropertyAdrPostcodeSector {
@@ -34402,10 +34453,10 @@ export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRespons
   PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
 
 export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicatedLimitToRegionsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicatedLimitToRegionsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicatedLimitToRegionsList>;
 
 export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractDateActualCommunicated {
@@ -34550,10 +34601,10 @@ export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRespons
   AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
 
 export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorIdLimitToRegionsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorIdLimitToRegionsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorIdLimitToRegionsList>;
 
 export interface PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractStabilityIndicatorId {
@@ -35565,10 +35616,10 @@ export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiRespons
   }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFields>;
 
 export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleOrderbyFieldsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleOrderbyFieldsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleOrderbyFieldsList>;
 
 export type PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleExportOptionsList =
@@ -35855,10 +35906,10 @@ export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapi
   AdminWebhooksDescribeModelResponseSearchableFieldsSystemCtime;
 
 export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeAreaLimitToRegionsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeAreaLimitToRegionsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeAreaLimitToRegionsList>;
 
 export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeArea {
@@ -35887,10 +35938,10 @@ export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapi
   }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeArea>;
 
 export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrictLimitToRegionsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrictLimitToRegionsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrictLimitToRegionsList>;
 
 export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrict {
@@ -35919,10 +35970,10 @@ export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapi
   }) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeDistrict>;
 
 export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSectorLimitToRegionsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSectorLimitToRegionsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSectorLimitToRegionsList>;
 
 export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExamplePropertyAdrPostcodeSector {
@@ -36766,10 +36817,10 @@ export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapi
   PublishedListingsDescribeResponseMethodsDescribeModelOpenapiResponseExamplesExample1ExampleSearchableFieldsContractIsBackupOffer;
 
 export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicatedLimitToRegionsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicatedLimitToRegionsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicatedLimitToRegionsList>;
 
 export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractDateActualCommunicated {
@@ -36900,10 +36951,10 @@ export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapi
   AdminWebhooksDescribeModelResponseSearchableFieldsSystemOwnerUserIdOptions;
 
 export type PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorIdLimitToRegionsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorIdLimitToRegionsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorIdLimitToRegionsList>;
 
 export interface PublishedListingsDescribeResponseMethodsDescribeSearchFieldsOpenapiResponseExamplesExample1ExampleContractStabilityIndicatorId {
@@ -38626,10 +38677,10 @@ export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestParameter
   }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestParameters>;
 
 export type PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1ExtraFieldsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1ExtraFieldsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1ExtraFieldsList>;
 
 export interface PublishedListingsDescribeResponseMethodsReadOpenapiRequestExamplesExample1SearchArgumentsExtraOptions {
@@ -39059,31 +39110,31 @@ export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamples
   }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultMeta>;
 
 export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultTagsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultTagsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultTagsList>;
 
 export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFeaturesList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFeaturesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFeaturesList>;
 
 export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultViewsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultViewsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultViewsList>;
 
 export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultIdealforsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultIdealforsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultIdealforsList>;
 
 export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAllowancesList =
@@ -39136,10 +39187,12 @@ export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamples
   }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem>;
 
 export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem | null>;
 export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem,
+    S.NullOr(
+      PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem,
+    ),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsList>;
 
 export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem {
@@ -39158,10 +39211,12 @@ export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamples
   }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem>;
 
 export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem | null>;
 export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem,
+    S.NullOr(
+      PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem,
+    ),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksList>;
 
 export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultBookingsList =
@@ -39214,10 +39269,12 @@ export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamples
   }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem>;
 
 export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem | null>;
 export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem,
+    S.NullOr(
+      PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem,
+    ),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesList>;
 
 export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItemThumbs {
@@ -39263,10 +39320,12 @@ export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamples
   }) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem>;
 
 export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem | null>;
 export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem,
+    S.NullOr(
+      PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem,
+    ),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansList>;
 
 export interface PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultAdvertInternet {
@@ -39302,10 +39361,10 @@ export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamples
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultDocumentsList>;
 
 export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultSubcategoriesList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultSubcategoriesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultSubcategoriesList>;
 
 export type PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultCustomFieldsList =
@@ -40185,31 +40244,31 @@ export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExampl
   PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultMeta;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemTagsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemTagsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemTagsList>;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFeaturesList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFeaturesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFeaturesList>;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemViewsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemViewsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemViewsList>;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemIdealforsList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemIdealforsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemIdealforsList>;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAllowancesList =
@@ -40230,10 +40289,12 @@ export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExampl
   PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem | null>;
 export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem,
+    S.NullOr(
+      PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem,
+    ),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemEventsList>;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksItem =
@@ -40242,10 +40303,12 @@ export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExampl
   PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem | null>;
 export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem,
+    S.NullOr(
+      PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultLinksItem,
+    ),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemLinksList>;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemBookingsList =
@@ -40266,10 +40329,12 @@ export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExampl
   PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem | null>;
 export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem,
+    S.NullOr(
+      PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem,
+    ),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemImagesList>;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansItemThumbs =
@@ -40283,10 +40348,12 @@ export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExampl
   PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem | null>;
 export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem,
+    S.NullOr(
+      PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem,
+    ),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemFloorplansList>;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemAdvertInternet =
@@ -40312,10 +40379,10 @@ export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExampl
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemDocumentsList>;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemSubcategoriesList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemSubcategoriesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemSubcategoriesList>;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItemCustomFieldsList =
@@ -40575,10 +40642,12 @@ export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExampl
   }) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItem>;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsList =
-  Array<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItem>;
+  Array<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItem | null>;
 export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItem,
+    S.NullOr(
+      PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsItem,
+    ),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultRowsList>;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaItem =
@@ -40587,10 +40656,10 @@ export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExampl
   ContactsSearchResponseCriteriaItem;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaList =
-  Array<ContactsSearchResponseCriteriaItem>;
+  Array<ContactsSearchResponseCriteriaItem | null>;
 export const PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaList =
   /*@__PURE__*/ S.Array(
-    ContactsSearchResponseCriteriaItem,
+    S.NullOr(ContactsSearchResponseCriteriaItem),
   ) as any as S.Schema<PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultCriteriaList>;
 
 export type PublishedListingsDescribeResponseMethodsSearchOpenapiResponseExamplesExample1ExampleResultOrderByList =
@@ -40825,11 +40894,12 @@ export const PublishedListingsDescribeDeleteModesRequest =
     identifier: "PublishedListingsDescribeDeleteModesRequest",
   }) as any as S.Schema<PublishedListingsDescribeDeleteModesRequest>;
 
-export type PublishedListingsDescribeDeleteModesResponseBodyList =
-  Array<string>;
+export type PublishedListingsDescribeDeleteModesResponseBodyList = Array<
+  string | null
+>;
 export const PublishedListingsDescribeDeleteModesResponseBodyList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeDeleteModesResponseBodyList>;
 
 export type PublishedListingsDescribeDeleteModesResponse =
@@ -40863,24 +40933,25 @@ export const PublishedListingsDescribeModelResponseSearchResultFormatsItem =
   AdminWebhooksDescribeModelResponseSearchResultFormatsItem;
 
 export type PublishedListingsDescribeModelResponseSearchResultFormatsList =
-  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem>;
+  Array<AdminWebhooksDescribeModelResponseSearchResultFormatsItem | null>;
 export const PublishedListingsDescribeModelResponseSearchResultFormatsList =
   /*@__PURE__*/ S.Array(
-    AdminWebhooksDescribeModelResponseSearchResultFormatsItem,
+    S.NullOr(AdminWebhooksDescribeModelResponseSearchResultFormatsItem),
   ) as any as S.Schema<PublishedListingsDescribeModelResponseSearchResultFormatsList>;
 
-export type PublishedListingsDescribeModelResponseDeleteModesList =
-  Array<string>;
+export type PublishedListingsDescribeModelResponseDeleteModesList = Array<
+  string | null
+>;
 export const PublishedListingsDescribeModelResponseDeleteModesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeModelResponseDeleteModesList>;
 
 export type PublishedListingsDescribeModelResponseDataStructureStructureList =
-  Array<string>;
+  Array<string | null>;
 export const PublishedListingsDescribeModelResponseDataStructureStructureList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeModelResponseDataStructureStructureList>;
 
 export interface PublishedListingsDescribeModelResponseDataStructure {
@@ -40966,11 +41037,12 @@ export type PublishedListingsDescribeModelResponseSearchableFields =
 export const PublishedListingsDescribeModelResponseSearchableFields =
   AdminWebhooksDescribeModelResponseSearchableFields;
 
-export type PublishedListingsDescribeModelResponseOrderbyFieldsList =
-  Array<string>;
+export type PublishedListingsDescribeModelResponseOrderbyFieldsList = Array<
+  string | null
+>;
 export const PublishedListingsDescribeModelResponseOrderbyFieldsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsDescribeModelResponseOrderbyFieldsList>;
 
 export type PublishedListingsDescribeModelResponseExportOptionsList =
@@ -41512,24 +41584,24 @@ export const PublishedListingsReadResponseMeta = /*@__PURE__*/ S.suspend(() =>
   identifier: "PublishedListingsReadResponseMeta",
 }) as any as S.Schema<PublishedListingsReadResponseMeta>;
 
-export type PublishedListingsReadResponseTagsList = Array<string>;
+export type PublishedListingsReadResponseTagsList = Array<string | null>;
 export const PublishedListingsReadResponseTagsList = /*@__PURE__*/ S.Array(
-  S.String,
+  S.NullOr(S.String),
 ) as any as S.Schema<PublishedListingsReadResponseTagsList>;
 
-export type PublishedListingsReadResponseFeaturesList = Array<string>;
+export type PublishedListingsReadResponseFeaturesList = Array<string | null>;
 export const PublishedListingsReadResponseFeaturesList = /*@__PURE__*/ S.Array(
-  S.String,
+  S.NullOr(S.String),
 ) as any as S.Schema<PublishedListingsReadResponseFeaturesList>;
 
-export type PublishedListingsReadResponseViewsList = Array<string>;
+export type PublishedListingsReadResponseViewsList = Array<string | null>;
 export const PublishedListingsReadResponseViewsList = /*@__PURE__*/ S.Array(
-  S.String,
+  S.NullOr(S.String),
 ) as any as S.Schema<PublishedListingsReadResponseViewsList>;
 
-export type PublishedListingsReadResponseIdealforsList = Array<string>;
+export type PublishedListingsReadResponseIdealforsList = Array<string | null>;
 export const PublishedListingsReadResponseIdealforsList = /*@__PURE__*/ S.Array(
-  S.String,
+  S.NullOr(S.String),
 ) as any as S.Schema<PublishedListingsReadResponseIdealforsList>;
 
 export type PublishedListingsReadResponseAllowancesList = Array<unknown>;
@@ -41549,9 +41621,11 @@ export const PublishedListingsReadResponseEventsItem =
   PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem;
 
 export type PublishedListingsReadResponseEventsList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem | null>;
 export const PublishedListingsReadResponseEventsList = /*@__PURE__*/ S.Array(
-  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem,
+  S.NullOr(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem,
+  ),
 ) as any as S.Schema<PublishedListingsReadResponseEventsList>;
 
 export interface PublishedListingsReadResponseLinksItem {
@@ -41571,9 +41645,9 @@ export const PublishedListingsReadResponseLinksItem = /*@__PURE__*/ S.suspend(
 }) as any as S.Schema<PublishedListingsReadResponseLinksItem>;
 
 export type PublishedListingsReadResponseLinksList =
-  Array<PublishedListingsReadResponseLinksItem>;
+  Array<PublishedListingsReadResponseLinksItem | null>;
 export const PublishedListingsReadResponseLinksList = /*@__PURE__*/ S.Array(
-  PublishedListingsReadResponseLinksItem,
+  S.NullOr(PublishedListingsReadResponseLinksItem),
 ) as any as S.Schema<PublishedListingsReadResponseLinksList>;
 
 export type PublishedListingsReadResponseBookingsList = Array<unknown>;
@@ -41592,9 +41666,11 @@ export const PublishedListingsReadResponseImagesItem =
   PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem;
 
 export type PublishedListingsReadResponseImagesList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem | null>;
 export const PublishedListingsReadResponseImagesList = /*@__PURE__*/ S.Array(
-  PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem,
+  S.NullOr(
+    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem,
+  ),
 ) as any as S.Schema<PublishedListingsReadResponseImagesList>;
 
 export type PublishedListingsReadResponseFloorplansItemThumbs =
@@ -41608,10 +41684,12 @@ export const PublishedListingsReadResponseFloorplansItem =
   PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem;
 
 export type PublishedListingsReadResponseFloorplansList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem | null>;
 export const PublishedListingsReadResponseFloorplansList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem,
+    S.NullOr(
+      PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem,
+    ),
   ) as any as S.Schema<PublishedListingsReadResponseFloorplansList>;
 
 export type PublishedListingsReadResponseAdvertInternet =
@@ -41634,10 +41712,12 @@ export const PublishedListingsReadResponseDocumentsList = /*@__PURE__*/ S.Array(
   S.Unknown,
 ) as any as S.Schema<PublishedListingsReadResponseDocumentsList>;
 
-export type PublishedListingsReadResponseSubcategoriesList = Array<string>;
+export type PublishedListingsReadResponseSubcategoriesList = Array<
+  string | null
+>;
 export const PublishedListingsReadResponseSubcategoriesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsReadResponseSubcategoriesList>;
 
 export type PublishedListingsReadResponseCustomFieldsList = Array<unknown>;
@@ -42039,29 +42119,36 @@ export type PublishedListingsSearchResponseRowsItemMeta =
 export const PublishedListingsSearchResponseRowsItemMeta =
   PublishedListingsReadResponseMeta;
 
-export type PublishedListingsSearchResponseRowsItemTagsList = Array<string>;
+export type PublishedListingsSearchResponseRowsItemTagsList = Array<
+  string | null
+>;
 export const PublishedListingsSearchResponseRowsItemTagsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsSearchResponseRowsItemTagsList>;
 
-export type PublishedListingsSearchResponseRowsItemFeaturesList = Array<string>;
+export type PublishedListingsSearchResponseRowsItemFeaturesList = Array<
+  string | null
+>;
 export const PublishedListingsSearchResponseRowsItemFeaturesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsSearchResponseRowsItemFeaturesList>;
 
-export type PublishedListingsSearchResponseRowsItemViewsList = Array<string>;
+export type PublishedListingsSearchResponseRowsItemViewsList = Array<
+  string | null
+>;
 export const PublishedListingsSearchResponseRowsItemViewsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsSearchResponseRowsItemViewsList>;
 
-export type PublishedListingsSearchResponseRowsItemIdealforsList =
-  Array<string>;
+export type PublishedListingsSearchResponseRowsItemIdealforsList = Array<
+  string | null
+>;
 export const PublishedListingsSearchResponseRowsItemIdealforsList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsSearchResponseRowsItemIdealforsList>;
 
 export type PublishedListingsSearchResponseRowsItemAllowancesList =
@@ -42082,10 +42169,12 @@ export const PublishedListingsSearchResponseRowsItemEventsItem =
   PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem;
 
 export type PublishedListingsSearchResponseRowsItemEventsList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem | null>;
 export const PublishedListingsSearchResponseRowsItemEventsList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem,
+    S.NullOr(
+      PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultEventsItem,
+    ),
   ) as any as S.Schema<PublishedListingsSearchResponseRowsItemEventsList>;
 
 export type PublishedListingsSearchResponseRowsItemLinksItem =
@@ -42094,10 +42183,10 @@ export const PublishedListingsSearchResponseRowsItemLinksItem =
   PublishedListingsReadResponseLinksItem;
 
 export type PublishedListingsSearchResponseRowsItemLinksList =
-  Array<PublishedListingsReadResponseLinksItem>;
+  Array<PublishedListingsReadResponseLinksItem | null>;
 export const PublishedListingsSearchResponseRowsItemLinksList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsReadResponseLinksItem,
+    S.NullOr(PublishedListingsReadResponseLinksItem),
   ) as any as S.Schema<PublishedListingsSearchResponseRowsItemLinksList>;
 
 export type PublishedListingsSearchResponseRowsItemBookingsList =
@@ -42118,10 +42207,12 @@ export const PublishedListingsSearchResponseRowsItemImagesItem =
   PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem;
 
 export type PublishedListingsSearchResponseRowsItemImagesList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem | null>;
 export const PublishedListingsSearchResponseRowsItemImagesList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem,
+    S.NullOr(
+      PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultImagesItem,
+    ),
   ) as any as S.Schema<PublishedListingsSearchResponseRowsItemImagesList>;
 
 export type PublishedListingsSearchResponseRowsItemFloorplansItemThumbs =
@@ -42135,10 +42226,12 @@ export const PublishedListingsSearchResponseRowsItemFloorplansItem =
   PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem;
 
 export type PublishedListingsSearchResponseRowsItemFloorplansList =
-  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem>;
+  Array<PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem | null>;
 export const PublishedListingsSearchResponseRowsItemFloorplansList =
   /*@__PURE__*/ S.Array(
-    PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem,
+    S.NullOr(
+      PublishedListingsDescribeResponseMethodsReadOpenapiResponseExamplesExample1ExampleResultFloorplansItem,
+    ),
   ) as any as S.Schema<PublishedListingsSearchResponseRowsItemFloorplansList>;
 
 export type PublishedListingsSearchResponseRowsItemAdvertInternet =
@@ -42163,11 +42256,12 @@ export const PublishedListingsSearchResponseRowsItemDocumentsList =
     S.Unknown,
   ) as any as S.Schema<PublishedListingsSearchResponseRowsItemDocumentsList>;
 
-export type PublishedListingsSearchResponseRowsItemSubcategoriesList =
-  Array<string>;
+export type PublishedListingsSearchResponseRowsItemSubcategoriesList = Array<
+  string | null
+>;
 export const PublishedListingsSearchResponseRowsItemSubcategoriesList =
   /*@__PURE__*/ S.Array(
-    S.String,
+    S.NullOr(S.String),
   ) as any as S.Schema<PublishedListingsSearchResponseRowsItemSubcategoriesList>;
 
 export type PublishedListingsSearchResponseRowsItemCustomFieldsList =
@@ -42402,9 +42496,9 @@ export const PublishedListingsSearchResponseRowsItem = /*@__PURE__*/ S.suspend(
 }) as any as S.Schema<PublishedListingsSearchResponseRowsItem>;
 
 export type PublishedListingsSearchResponseRowsList =
-  Array<PublishedListingsSearchResponseRowsItem>;
+  Array<PublishedListingsSearchResponseRowsItem | null>;
 export const PublishedListingsSearchResponseRowsList = /*@__PURE__*/ S.Array(
-  PublishedListingsSearchResponseRowsItem,
+  S.NullOr(PublishedListingsSearchResponseRowsItem),
 ) as any as S.Schema<PublishedListingsSearchResponseRowsList>;
 
 export type PublishedListingsSearchResponseCriteriaItem =
@@ -42413,10 +42507,10 @@ export const PublishedListingsSearchResponseCriteriaItem =
   ContactsSearchResponseCriteriaItem;
 
 export type PublishedListingsSearchResponseCriteriaList =
-  Array<ContactsSearchResponseCriteriaItem>;
+  Array<ContactsSearchResponseCriteriaItem | null>;
 export const PublishedListingsSearchResponseCriteriaList =
   /*@__PURE__*/ S.Array(
-    ContactsSearchResponseCriteriaItem,
+    S.NullOr(ContactsSearchResponseCriteriaItem),
   ) as any as S.Schema<PublishedListingsSearchResponseCriteriaList>;
 
 export type PublishedListingsSearchResponseOrderByList = Array<unknown>;

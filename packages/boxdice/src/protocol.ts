@@ -45,13 +45,17 @@
 import * as Effect from "effect/Effect";
 import * as Redacted from "effect/Redacted";
 import type * as Layer from "effect/Layer";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
 import type * as API from "@distilled.cloud/core/api";
 import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
 import type { API_ERRORS, ConfigError } from "@distilled.cloud/core/errors";
 import { Credentials, type Config } from "./credentials.ts";
-import { BoxDiceApiError, UnknownBoxDiceError } from "./errors.ts";
+import {
+  BoxDiceApiError,
+  UnknownBoxDiceError,
+  BoxDiceParseError,
+} from "./errors.ts";
 
 /**
  * Error channel shared by every generated Box+Dice operation. Generated
@@ -63,6 +67,7 @@ export type BoxDiceOpError =
   | InstanceType<(typeof API_ERRORS)[number]>
   | BoxDiceApiError
   | UnknownBoxDiceError
+  | BoxDiceParseError
   | ConfigError
   | HttpClientError.HttpClientError;
 
@@ -139,6 +144,7 @@ export const BoxDiceProtocol: Layer.Layer<API.Protocol> =
       const message = firstMessage(body);
       return message === undefined ? undefined : { message };
     },
+    parseError: ({ body, cause }) => new BoxDiceParseError({ body, cause }),
     unknownError: ({ code, message, body }) => {
       const detail = errorDetail(body);
       if (detail !== undefined) {

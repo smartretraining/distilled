@@ -57,7 +57,7 @@ request from the Worker `env`.
 ```typescript
 // src/runtime.ts
 import { Layer } from "effect";
-import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
+import * as FetchHttpClient from "effect/http/FetchHttpClient";
 import { CredentialsFromToken } from "@smartretraining/rex-effect";
 
 export interface Env {

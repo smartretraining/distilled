@@ -1,6 +1,6 @@
 {
   "name": "@distilled.cloud/fly-io",
-  "version": "1.0.0-rc.4",
+  "version": "1.0.0-rc.13",
   "repository": {
     "type": "git",
     "url": "https://github.com/alchemy-run/distilled",
@@ -51,11 +51,35 @@
       "worker": "./src/traits.ts",
       "default": "./lib/traits.js"
     },
+    "./Pagination": {
+      "types": "./lib/pagination.d.ts",
+      "bun": "./src/pagination.ts",
+      "worker": "./src/pagination.ts",
+      "default": "./lib/pagination.js"
+    },
     "./machines": {
       "types": "./lib/services/machines.d.ts",
       "bun": "./src/services/machines.ts",
       "worker": "./src/services/machines.ts",
       "default": "./lib/services/machines.js"
+    },
+    "./sprites": {
+      "types": "./lib/services/sprites.d.ts",
+      "bun": "./src/services/sprites.ts",
+      "worker": "./src/services/sprites.ts",
+      "default": "./lib/services/sprites.js"
+    },
+    "./mpg": {
+      "types": "./lib/services/mpg.d.ts",
+      "bun": "./src/services/mpg.ts",
+      "worker": "./src/services/mpg.ts",
+      "default": "./lib/services/mpg.js"
+    },
+    "./addons": {
+      "types": "./lib/services/addons.d.ts",
+      "bun": "./src/services/addons.ts",
+      "worker": "./src/services/addons.ts",
+      "default": "./lib/services/addons.js"
     },
     "./*": {
       "types": "./lib/services/*.d.ts",
@@ -69,8 +93,8 @@
     "generate": "bun scripts/generate.ts",
     "typecheck": "tsc -p tsconfig.json",
     "build": "tsc -b",
-    "specs:fetch": "git submodule update --force --init --recursive --depth=1 specs/distilled-spec-fly-io && git -C specs/distilled-spec-fly-io checkout -- .",
-    "specs:update": "git -C specs/distilled-spec-fly-io fetch && git -C specs/distilled-spec-fly-io checkout main && git -C specs/distilled-spec-fly-io pull"
+    "specs:fetch": "git submodule update --force --init --depth=1 specs/spec-mirror-fly-io",
+    "specs:update": "git submodule update --remote --force --depth=1 specs/spec-mirror-fly-io"
   },
   "dependencies": {
     "@distilled.cloud/core": "workspace:*"

@@ -1,0 +1,141 @@
+# Railway GraphQL for Effect
+
+`@distilled.cloud/railway` exposes Railway's GraphQL API as lazy Query
+lenses. Combinators live in `@distilled.cloud/core/query`.
+
+```ts
+import * as Effect from "effect/Effect";
+import * as FetchHttpClient from "effect/http/FetchHttpClient";
+import { Query } from "@distilled.cloud/core/query";
+import {
+  CredentialsFromEnv,
+  GraphQLLive,
+  Railway,
+} from "@distilled.cloud/railway";
+
+const load = Query.fn(() => {
+  const me = Railway.me();
+  return {
+    email: me.email,
+    workspaces: me.workspaces.pipe(Query.map((w) => w.name)),
+  };
+});
+
+await Effect.runPromise(
+  load().pipe(
+    Effect.provide(GraphQLLive),
+    Effect.provide(CredentialsFromEnv),
+    Effect.provide(FetchHttpClient.layer),
+  ),
+);
+```
+
+Credentials accept `RAILWAY_API_TOKEN`, `RAILWAY_TOKEN`, or
+`RAILWAY_PROJECT_TOKEN`. Account tokens and project tokens use their
+respective Railway headers.
+
+## How selection works
+
+`Railway.me()` does not fetch. Reading `me.email` records that field.
+`Query.fn` walks the plan you return, posts **one** document, then fills
+in the values.
+
+```ts
+const project = Query.fn(() => {
+  const p = Railway.project({ id: "your-project-id" });
+  return {
+    id: p.id,
+    name: p.name,
+    services: p.services({ first: 20 }).pipe(
+      Query.map((service) => service.name),
+    ),
+  };
+});
+```
+
+Two roots in one plan are one POST:
+
+```ts
+const both = Query.fn(() => {
+  const production = Railway.project({ id: "production-id" });
+  const staging = Railway.project({ id: "staging-id" });
+  return {
+    production: { id: production.id, name: production.name },
+    staging: { id: staging.id, name: staging.name },
+  };
+});
+```
+
+Queries and mutations cannot share a plan. Run a mutation in its own
+`Query.fn`:
+
+```ts
+const created = Query.fn(() => {
+  const project = Railway.projectCreate({
+    input: { name: "example" },
+  });
+  return { id: project.id, name: project.name };
+});
+```
+
+## Pagination
+
+Connections read as lists of nodes. `Query.items` and `Query.pages` turn
+one into a `Stream` that follows `pageInfo.endCursor` until
+`hasNextPage` is false, one request per page:
+
+```ts
+import * as Stream from "effect/Stream";
+
+const services = Query.items(
+  Railway.project({ id: "your-project-id" })
+    .services({ first: 50 })
+    .pipe(Query.map((service) => ({ id: service.id, name: service.name }))),
+);
+
+const all = await Effect.runPromise(
+  Stream.runCollect(services).pipe(
+    Effect.provide(GraphQLLive),
+    Effect.provide(CredentialsFromEnv),
+    Effect.provide(FetchHttpClient.layer),
+  ),
+);
+```
+
+The connection may be a root (`Railway.projects`) or nested under objects
+(`project.services`). A page that reports more results without a new cursor
+fails with `GraphQLPaginationError`.
+
+## Errors
+
+Every root declares the typed errors it can return, so `Query.fn`'s error
+channel is the union of the roots your plan reads. Handle them with
+`Effect.catchTag`:
+
+```ts
+const deleteProxy = Query.fn((id: string) => Railway.tcpProxyDelete({ id }));
+
+const program = deleteProxy("proxy-id").pipe(
+  // tcpProxyDelete declares RailwayOperationInProgress and RailwayNotFound
+  Effect.catchTag("RailwayNotFound", () => Effect.succeed(true)),
+);
+```
+
+Each GraphQL error is classified against the root its `path` points at
+(path-less errors against the global errors such as `RailwayRateLimited`).
+An error no matcher recognizes is `UnknownGraphQLError`; a response whose
+errors carry different tags fails with `GraphQLFailure`, and failures that
+never produce a GraphQL body are `GraphQLTransportError`. Queries retry
+retryable errors up to 5 times; mutations never retry. The declarations
+live in [`patches/graphql/`](patches/graphql/README.md).
+
+## Generate
+
+```sh
+bun scripts/convert.ts
+bun scripts/generate.ts
+pnpm exec oxfmt src/graphql.ts
+```
+
+Conversion reads the mirrored introspection schema. Generation reads
+`.generated-graphql/railway.json`. Never edit `src/graphql.ts` by hand.

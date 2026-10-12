@@ -24,10 +24,10 @@
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import type * as AST from "effect/SchemaAST";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
-import type * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
-import type * as HttpClientResponse from "effect/unstable/http/HttpClientResponse";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
+import type * as HttpClientRequest from "effect/http/HttpClientRequest";
+import type * as HttpClientResponse from "effect/http/HttpClientResponse";
 import * as API from "@distilled.cloud/core/api";
 import {
   bodySymbol,
@@ -54,6 +54,7 @@ import {
   TooManyRequests,
   Unauthorized,
 } from "@distilled.cloud/core/errors";
+import { validateResponse } from "@distilled.cloud/core/response-validation";
 import {
   parseRetryAfterForStatus,
   parseServerRetryHint,
@@ -67,6 +68,7 @@ import {
 import {
   type CloudflareError,
   CloudflareHttpError,
+  CloudflareParseError,
   type CloudflareRateLimited,
   type DefaultErrors,
   InvalidRoute,
@@ -389,9 +391,12 @@ const makeDecode =
           isTransientAuthBlip ? tagRetryable(error) : error;
 
         // 1. Per-operation typed error (matcher metadata on the class).
-        const typed = matchTypedError(errorClasses, status, [
-          { code: errorCode, message: errorMessage },
-        ]);
+        const typed = matchTypedError(
+          errorClasses,
+          status,
+          [{ code: errorCode, message: errorMessage }],
+          { body: nonJson ? text : json, headers },
+        );
         if (typed !== undefined) {
           return yield* Effect.fail(tagBlip(typed)) as Effect.Effect<never>;
         }
@@ -442,6 +447,16 @@ const makeDecode =
         );
       }
 
+      // Strict mode (core/response-validation) checks the TS-shaped output
+      // against the schema; lenient mode returns it as built.
+      const body: unknown = nonJson ? text : json;
+      const validate = (value: unknown) =>
+        validateResponse(
+          outputAst,
+          value,
+          (cause) => new CloudflareParseError({ body, cause }),
+        ).pipe(Effect.catch(fail));
+
       if (nonJson) json = {};
 
       // Unwrap the envelope: the payload is `result` (fall back to the whole
@@ -459,8 +474,12 @@ const makeDecode =
       // Bare-payload response: the whole value IS the envelope's `result`
       // (array/scalar), returned directly rather than wrapped in a struct.
       if (getAnn(outputAst, envelopePayloadRootSymbol) !== undefined) {
-        return mapKeys(outputAst, payload, "decode", rootDict);
+        return yield* validate(mapKeys(outputAst, payload, "decode", rootDict));
       }
+
+      // A non-JSON body for a struct output: lenient returns the text as
+      // read; strict fails it against the struct schema.
+      if (nonJson) return yield* validate(text);
 
       const result: Record<string, unknown> = {};
 
@@ -503,7 +522,7 @@ const makeDecode =
           }
         }
       }
-      return result;
+      return yield* validate(result);
     });
 
 export const CloudflareProtocol: Layer.Layer<API.Protocol> = Layer.succeed(

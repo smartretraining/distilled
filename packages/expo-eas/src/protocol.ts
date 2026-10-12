@@ -29,13 +29,17 @@ import * as Layer from "effect/Layer";
 import * as Redacted from "effect/Redacted";
 import * as Schema from "effect/Schema";
 import type * as AST from "effect/SchemaAST";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
-import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
-import type * as HttpClientResponse from "effect/unstable/http/HttpClientResponse";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
+import * as HttpClientRequest from "effect/http/HttpClientRequest";
+import type * as HttpClientResponse from "effect/http/HttpClientResponse";
 import * as API from "@distilled.cloud/core/api";
 import { getAnn } from "@distilled.cloud/core/protocol-http";
 import { HTTP_STATUS_MAP } from "@distilled.cloud/core/errors";
+import {
+  failIfStrict,
+  validateResponse,
+} from "@distilled.cloud/core/response-validation";
 import { parseRetryAfterForStatus } from "@distilled.cloud/core/retry-after";
 import { type Config, Credentials } from "./credentials.ts";
 import {
@@ -277,12 +281,14 @@ const decode = ({
       if (status >= 400) {
         return yield* matchError(status, text, headers);
       }
-      return yield* fail(
+      // Lenient mode returns the body as read.
+      return yield* failIfStrict(
         new EasParseError({
           body: text,
           cause: "response body is not valid JSON",
         }),
-      );
+        text,
+      ).pipe(Effect.catch(fail));
     }
 
     // GraphQL errors[] (even on HTTP 200) or HTTP-level failure → typed
@@ -298,7 +304,8 @@ const decode = ({
     }
 
     // Success: unwrap `data.<responsePath>` and return it verbatim (member
-    // names are GraphQL field names — no wire renames).
+    // names are GraphQL field names — no wire renames). Strict mode
+    // (core/response-validation) checks it against the output schema.
     const path = getAnn(outputAst, responsePathSymbol) as string | undefined;
     let payload: unknown =
       envelope !== null && typeof envelope === "object"
@@ -312,7 +319,11 @@ const decode = ({
             : undefined;
       }
     }
-    return payload === undefined ? null : payload;
+    return yield* validateResponse(
+      outputAst,
+      payload === undefined ? null : payload,
+      (cause) => new EasParseError({ body: json, cause }),
+    ).pipe(Effect.catch(fail));
   });
 
 /**

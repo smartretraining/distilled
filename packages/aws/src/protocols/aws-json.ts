@@ -17,6 +17,7 @@
  *   (clients must accept either format for both protocols)
  */
 
+import { failIfStrict } from "@distilled.cloud/core/response-validation";
 import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
 import * as AST from "effect/SchemaAST";
@@ -149,9 +150,13 @@ function createAwsJsonProtocol(version: "1.0" | "1.1"): Protocol {
               return parsed as Record<string, unknown>;
             }
           } catch {
-            return yield* new ParseError({
-              message: `Failed to parse JSON body: ${bodyText}`,
-            });
+            // Lenient mode returns the body as read.
+            return yield* failIfStrict(
+              new ParseError({
+                message: `Failed to parse JSON body: ${bodyText}`,
+              }),
+              bodyText,
+            );
           }
         }
 
@@ -179,10 +184,13 @@ function createAwsJsonProtocol(version: "1.0" | "1.1"): Protocol {
           }
         }
 
-        // Extract error code: check X-Amzn-Errortype header first, then body fields
+        // Extract error code: X-Amzn-Errortype first (Smithy), then the
+        // Coral X-Amz-Errortype spelling, then body fields.
         const rawErrorCode =
           response.headers["x-amzn-errortype"] ??
           response.headers["X-Amzn-Errortype"] ??
+          response.headers["x-amz-errortype"] ??
+          response.headers["X-Amz-Errortype"] ??
           extractJsonErrorCode(body);
 
         if (!rawErrorCode) {

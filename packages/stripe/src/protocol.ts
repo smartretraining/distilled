@@ -21,7 +21,8 @@
  *   response: 2xx JSON is the payload (no envelope) → wire→TS key mapping →
  *             Redacted wrapping of sensitive members; failures parse the
  *             `{ error: { type, code, message, … } }` envelope and dispatch
- *             by `error.type` first (card_error → CardError,
+ *             by per-op matcher classes first (`matchTypedError`, e.g.
+ *             ProductHasPrices), then `error.type` (card_error → CardError,
  *             idempotency_error → IdempotencyError, invalid_request_error →
  *             InvalidRequestError, api_error → ApiError), then the
  *             Stripe-specific status map (402 → PaymentError, 424 →
@@ -34,11 +35,11 @@ import * as Layer from "effect/Layer";
 import * as Option from "effect/Option";
 import * as Redacted from "effect/Redacted";
 import type * as AST from "effect/SchemaAST";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
-import * as HttpBody from "effect/unstable/http/HttpBody";
-import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
-import type * as HttpClientResponse from "effect/unstable/http/HttpClientResponse";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
+import * as HttpBody from "effect/http/HttpBody";
+import * as HttpClientRequest from "effect/http/HttpClientRequest";
+import type * as HttpClientResponse from "effect/http/HttpClientResponse";
 import * as API from "@distilled.cloud/core/api";
 import {
   buildRequest,
@@ -46,6 +47,7 @@ import {
   getProps,
   hasPropAnn,
   mapKeys,
+  matchTypedError,
   nameOf,
 } from "@distilled.cloud/core/protocol-http";
 import {
@@ -64,6 +66,7 @@ import {
   NotFound,
   UnprocessableEntity,
 } from "@distilled.cloud/core/errors";
+import { validateResponse } from "@distilled.cloud/core/response-validation";
 import { parseRetryAfterForStatus } from "@distilled.cloud/core/retry-after";
 import { Credentials, type Config } from "./credentials.ts";
 import {
@@ -90,7 +93,7 @@ import {
 // Per-call request options (v0's StripeRequestOptions, fiber-context style)
 // =============================================================================
 
-type StripeConnectRequestOptions =
+export type StripeConnectRequestOptions =
   | {
       readonly stripeAccount?: string | undefined;
       readonly stripeContext?: never;
@@ -430,27 +433,39 @@ const coreStatusMap: Readonly<
   Record<number, (new (args: any) => unknown) | undefined>
 > = HTTP_STATUS_MAP;
 
+/** Stripe's `{ error: { type, message, … } }` object, when present. */
+const stripeErrorEnvelope = (
+  errorBody: unknown,
+): Record<string, unknown> | undefined => {
+  const envelope =
+    errorBody !== null && typeof errorBody === "object"
+      ? (errorBody as Record<string, unknown>).error
+      : undefined;
+  return envelope !== null && typeof envelope === "object"
+    ? (envelope as Record<string, unknown>)
+    : undefined;
+};
+
+const stripeErrorMessage = (errorBody: unknown): string | undefined => {
+  const message = stripeErrorEnvelope(errorBody)?.message;
+  return typeof message === "string" ? message : undefined;
+};
+
 /**
  * Match a Stripe API error response to the appropriate error class.
  *
  * Stripe dispatches errors by:
- * 1. The `error.type` field (card_error, idempotency_error,
+ * 1. Per-operation matcher classes (`matchTypedError`) — see decode
+ * 2. The `error.type` field (card_error, idempotency_error,
  *    invalid_request_error, api_error)
- * 2. HTTP status code (402/424 Stripe-specific, then the core status map)
+ * 3. HTTP status code (402/424 Stripe-specific, then the core status map)
  */
 const matchStripeError = (
   status: number,
   errorBody: unknown,
   headers: Record<string, string | undefined>,
 ): unknown => {
-  const envelope =
-    errorBody !== null && typeof errorBody === "object"
-      ? (errorBody as Record<string, unknown>).error
-      : undefined;
-  const err =
-    envelope !== null && typeof envelope === "object"
-      ? (envelope as Record<string, unknown>)
-      : undefined;
+  const err = stripeErrorEnvelope(errorBody);
   // v0 parity: an unparseable envelope (no `error.type` string) is an
   // UnknownStripeError carrying the raw body.
   if (!err || typeof err.type !== "string") {
@@ -533,6 +548,7 @@ const matchStripeError = (
 const decode = ({
   response,
   outputAst,
+  errors: errorClasses,
 }: {
   readonly response: HttpClientResponse.HttpClientResponse;
   readonly outputAst: AST.AST;
@@ -557,15 +573,28 @@ const decode = ({
     const headers = response.headers as Record<string, string | undefined>;
 
     if (status >= 400) {
-      return yield* fail(
-        matchStripeError(status, nonJson ? text : json, headers),
-      );
+      const errorBody: unknown = nonJson ? text : json;
+      const message =
+        stripeErrorMessage(errorBody) ??
+        (nonJson && text.trim() ? text.trim() : `HTTP ${status}`);
+      const typed = matchTypedError(errorClasses, status, [{ message }], {
+        body: nonJson ? text : json,
+        headers,
+      });
+      if (typed !== undefined) return yield* fail(typed);
+      return yield* fail(matchStripeError(status, errorBody, headers));
     }
 
     // 2xx: the response body IS the payload (no envelope). Wire→TS key
     // mapping is schema-driven; sensitive members come back Redacted.
+    // Strict mode checks the mapped body against the output schema first.
     const body: unknown = nonJson ? text : (json ?? {});
-    return wrapSensitive(outputAst, mapKeys(outputAst, body, "decode"));
+    const mapped = yield* validateResponse(
+      outputAst,
+      mapKeys(outputAst, body, "decode"),
+      (cause) => new StripeParseError({ body: nonJson ? text : json, cause }),
+    ).pipe(Effect.catch(fail));
+    return wrapSensitive(outputAst, mapped);
   });
 
 export const StripeProtocol: Layer.Layer<API.Protocol> = Layer.succeed(

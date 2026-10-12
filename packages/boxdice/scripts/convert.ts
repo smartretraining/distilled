@@ -27,6 +27,9 @@ await runOpenApiConvert({
   ],
   patchesDir: "patches",
   options: {
+    // core rc.13 defaults to verbNoun (contactsSearch -> searchContact), which
+    // renames every published operation.
+    operationNaming: "as-is",
     namespace: "com.boxdice.ai",
     serviceName: "BoxDice",
     // 400 is the only failure Box+Dice declares per-operation; it carries

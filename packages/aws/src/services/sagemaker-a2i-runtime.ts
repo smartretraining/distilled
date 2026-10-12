@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
 import { AwsProtocol } from "../protocol.ts";
@@ -167,7 +167,7 @@ export type HumanLoopStatus =
   | "Stopped"
   | "Stopping"
   | (string & {});
-export const HumanLoopStatus = /*@__PURE__*/ S.String;
+export const HumanLoopStatus = S.String;
 
 export type HumanLoopArn = string;
 export type FlowDefinitionArn = string;
@@ -206,7 +206,7 @@ export const DescribeHumanLoopResponse = /*@__PURE__*/ S.suspend(() =>
   identifier: "DescribeHumanLoopResponse",
 }) as any as S.Schema<DescribeHumanLoopResponse>;
 export type SortOrder = "Ascending" | "Descending" | (string & {});
-export const SortOrder = /*@__PURE__*/ S.String;
+export const SortOrder = S.String;
 
 export type NextToken = string;
 export type MaxResults = number;
@@ -291,7 +291,7 @@ export type ContentClassifier =
   | "FreeOfPersonallyIdentifiableInformation"
   | "FreeOfAdultContent"
   | (string & {});
-export const ContentClassifier = /*@__PURE__*/ S.String;
+export const ContentClassifier = S.String;
 
 export type ContentClassifiers = ContentClassifier[];
 export const ContentClassifiers = /*@__PURE__*/ S.Array(ContentClassifier);

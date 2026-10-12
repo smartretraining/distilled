@@ -1,6 +1,6 @@
 {
   "name": "@smartretraining/vaultre-effect",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Effect-native SDK for the VaultRE API, generated from the vendor's published OpenAPI document.",
   "license": "MIT",
   "repository": {
@@ -80,7 +80,7 @@
     "test": "bunx vitest run test"
   },
   "dependencies": {
-    "@distilled.cloud/core": "1.0.0-rc.4"
+    "@distilled.cloud/core": "1.0.0-rc.13"
   },
   "devDependencies": {
     "@effect/platform-bun": "catalog:",
@@ -91,6 +91,6 @@
     "yaml": "^2.8.1"
   },
   "peerDependencies": {
-    "effect": ">=4.0.0-beta.104 || >=4.0.0"
+    "effect": "^4.0.0"
   }
 }

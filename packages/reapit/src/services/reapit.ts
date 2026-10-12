@@ -37,7 +37,7 @@ export class UnprocessableEntity
   ) {}
 
 export type NewContactInputType = "Person" | "Business";
-export const NewContactInputType = /*@__PURE__*/ S.String;
+export const NewContactInputType = S.String;
 
 export interface Address {
   address?: string;
@@ -194,7 +194,7 @@ export const CreateContactRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<CreateContactRequest>;
 
 export type CreateContactResponseStatus = "success" | "fail";
-export const CreateContactResponseStatus = /*@__PURE__*/ S.String;
+export const CreateContactResponseStatus = S.String;
 
 export interface Links {
   self?: string;
@@ -340,7 +340,7 @@ export const CreateEnquiryRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<CreateEnquiryRequest>;
 
 export type CreateEnquiryResponseStatus = "success" | "fail";
-export const CreateEnquiryResponseStatus = /*@__PURE__*/ S.String;
+export const CreateEnquiryResponseStatus = S.String;
 
 export type CreateEnquiryResponseEnquiryLinks = Links;
 export const CreateEnquiryResponseEnquiryLinks = Links;
@@ -373,7 +373,7 @@ export const CreateEnquiryResponse = /*@__PURE__*/ S.suspend(() =>
 
 /** The general type the property for search */
 export type NewSearchRequirementInputListingType = "Sale" | "Lease";
-export const NewSearchRequirementInputListingType = /*@__PURE__*/ S.String;
+export const NewSearchRequirementInputListingType = S.String;
 
 /** The specific type the property for search */
 export type NewSearchRequirementInputPropertyType =
@@ -382,7 +382,7 @@ export type NewSearchRequirementInputPropertyType =
   | "Commercial"
   | "Holiday"
   | "Business";
-export const NewSearchRequirementInputPropertyType = /*@__PURE__*/ S.String;
+export const NewSearchRequirementInputPropertyType = S.String;
 
 export type SearchRequirementCategory = Subscription;
 export const SearchRequirementCategory = Subscription;
@@ -503,7 +503,7 @@ export const CreateSearchRequirementRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<CreateSearchRequirementRequest>;
 
 export type CreateSearchRequirementResponseStatus = "success" | "fail";
-export const CreateSearchRequirementResponseStatus = /*@__PURE__*/ S.String;
+export const CreateSearchRequirementResponseStatus = S.String;
 
 export type SimpleSearchRequirementOutput = SimpleContactOutput;
 export const SimpleSearchRequirementOutput = SimpleContactOutput;
@@ -540,7 +540,7 @@ export const DeleteSearchRequirementRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<DeleteSearchRequirementRequest>;
 
 export type DeleteSearchRequirementResponseStatus = "success" | "fail";
-export const DeleteSearchRequirementResponseStatus = /*@__PURE__*/ S.String;
+export const DeleteSearchRequirementResponseStatus = S.String;
 
 export interface DeleteSearchRequirementResponse {
   id?: string;
@@ -559,7 +559,7 @@ export type GetContactRequestInclude =
   | "relatedStaffMembers"
   | "searchRequirements"
   | "permissions";
-export const GetContactRequestInclude = /*@__PURE__*/ S.String;
+export const GetContactRequestInclude = S.String;
 
 export interface GetContactRequest {
   /** Unique Contact Id */
@@ -777,7 +777,7 @@ export const GetContactResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetContactResponse>;
 
 export type GetContactClassesRequestInclude = "group" | "staffMember";
-export const GetContactClassesRequestInclude = /*@__PURE__*/ S.String;
+export const GetContactClassesRequestInclude = S.String;
 
 export interface GetContactClassesRequest {
   /** Filter results by contact class name */
@@ -835,19 +835,19 @@ export type GetContactsRequestFilterStatus =
   | "Do Not Contact"
   | "Unsubscribed"
   | "All";
-export const GetContactsRequestFilterStatus = /*@__PURE__*/ S.String;
+export const GetContactsRequestFilterStatus = S.String;
 
 export type GetContactsRequestFilterMemberRole =
   | "Full Access"
   | "View Only"
   | "Primary Owner";
-export const GetContactsRequestFilterMemberRole = /*@__PURE__*/ S.String;
+export const GetContactsRequestFilterMemberRole = S.String;
 
 export type GetContactsRequestFilterType = "Person" | "Business";
-export const GetContactsRequestFilterType = /*@__PURE__*/ S.String;
+export const GetContactsRequestFilterType = S.String;
 
 export type GetContactsRequestFilterReqListingType = "Sale" | "Lease";
-export const GetContactsRequestFilterReqListingType = /*@__PURE__*/ S.String;
+export const GetContactsRequestFilterReqListingType = S.String;
 
 export type GetContactsRequestFilterReqPropertyType =
   | "Residential"
@@ -855,7 +855,7 @@ export type GetContactsRequestFilterReqPropertyType =
   | "Commercial"
   | "Holiday"
   | "Business";
-export const GetContactsRequestFilterReqPropertyType = /*@__PURE__*/ S.String;
+export const GetContactsRequestFilterReqPropertyType = S.String;
 
 export type GetContactsRequestFilterReqPropertyCategory =
   | "Apartment"
@@ -916,8 +916,7 @@ export type GetContactsRequestFilterReqPropertyCategory =
   | "Professional"
   | "Rural"
   | "Transport/Distribution";
-export const GetContactsRequestFilterReqPropertyCategory =
-  /*@__PURE__*/ S.String;
+export const GetContactsRequestFilterReqPropertyCategory = S.String;
 
 export type GetContactsRequestInclude =
   | "streetAddress"
@@ -926,10 +925,10 @@ export type GetContactsRequestInclude =
   | "subscriptions"
   | "communicationRestrictions"
   | "permissions";
-export const GetContactsRequestInclude = /*@__PURE__*/ S.String;
+export const GetContactsRequestInclude = S.String;
 
 export type GetContactsRequestFields = "lastContacted" | "clientRef";
-export const GetContactsRequestFields = /*@__PURE__*/ S.String;
+export const GetContactsRequestFields = S.String;
 
 export type GetContactsRequestOrderBy =
   | "firstName"
@@ -938,10 +937,10 @@ export type GetContactsRequestOrderBy =
   | "firstCreated"
   | "lastModified"
   | "lastContacted";
-export const GetContactsRequestOrderBy = /*@__PURE__*/ S.String;
+export const GetContactsRequestOrderBy = S.String;
 
 export type GetContactsRequestOrder = "ASC" | "DESC";
-export const GetContactsRequestOrder = /*@__PURE__*/ S.String;
+export const GetContactsRequestOrder = S.String;
 
 export interface GetContactsRequest {
   /** Which page of results should be returned */
@@ -1496,7 +1495,7 @@ export type GetListingRequestInclude =
   | "permissionsExtended"
   | "externalAgents"
   | "mainImage";
-export const GetListingRequestInclude = /*@__PURE__*/ S.String;
+export const GetListingRequestInclude = S.String;
 
 export interface GetListingRequest {
   /** Unique Listing Id */
@@ -1918,7 +1917,7 @@ export const GetListingResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetListingResponse>;
 
 export type GetListingsRequestFilterType = "Sale" | "Lease";
-export const GetListingsRequestFilterType = /*@__PURE__*/ S.String;
+export const GetListingsRequestFilterType = S.String;
 
 export type GetListingsRequestFilterStatus =
   | "Appraisal"
@@ -1931,7 +1930,7 @@ export type GetListingsRequestFilterStatus =
   | "Leased"
   | "Withdrawn"
   | "Archived";
-export const GetListingsRequestFilterStatus = /*@__PURE__*/ S.String;
+export const GetListingsRequestFilterStatus = S.String;
 
 export type GetListingsRequestFilterMarketingStatus =
   | "Not Listed"
@@ -1939,7 +1938,7 @@ export type GetListingsRequestFilterMarketingStatus =
   | "Under Contract"
   | "Sold"
   | "Leased";
-export const GetListingsRequestFilterMarketingStatus = /*@__PURE__*/ S.String;
+export const GetListingsRequestFilterMarketingStatus = S.String;
 
 export type GetListingsRequestFilterPropertyType =
   | "Residential"
@@ -1947,7 +1946,7 @@ export type GetListingsRequestFilterPropertyType =
   | "Commercial"
   | "Holiday"
   | "Business";
-export const GetListingsRequestFilterPropertyType = /*@__PURE__*/ S.String;
+export const GetListingsRequestFilterPropertyType = S.String;
 
 export type GetListingsRequestFilterPropertyCategory =
   | "Apartment"
@@ -2008,7 +2007,7 @@ export type GetListingsRequestFilterPropertyCategory =
   | "Professional"
   | "Rural"
   | "Transport/Distribution";
-export const GetListingsRequestFilterPropertyCategory = /*@__PURE__*/ S.String;
+export const GetListingsRequestFilterPropertyCategory = S.String;
 
 export type GetListingsRequestInclude =
   | "relatedContacts"
@@ -2023,7 +2022,7 @@ export type GetListingsRequestInclude =
   | "permissionsExtended"
   | "externalAgents"
   | "hiddenImages";
-export const GetListingsRequestInclude = /*@__PURE__*/ S.String;
+export const GetListingsRequestInclude = S.String;
 
 export type GetListingsRequestOrderBy =
   | "soldPrice"
@@ -2041,10 +2040,10 @@ export type GetListingsRequestOrderBy =
   | "status"
   | "marketingStatus"
   | "leasedDate";
-export const GetListingsRequestOrderBy = /*@__PURE__*/ S.String;
+export const GetListingsRequestOrderBy = S.String;
 
 export type GetListingsRequestOrder = "ASC" | "DESC";
-export const GetListingsRequestOrder = /*@__PURE__*/ S.String;
+export const GetListingsRequestOrder = S.String;
 
 export interface GetListingsRequest {
   /** Which page of results should be returned */
@@ -2603,7 +2602,7 @@ export const GetListingsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetListingsResponse>;
 
 export type GetOfficeRequestInclude = "images" | "permissions";
-export const GetOfficeRequestInclude = /*@__PURE__*/ S.String;
+export const GetOfficeRequestInclude = S.String;
 
 export interface GetOfficeRequest {
   /** Unique Office Id */
@@ -2759,16 +2758,16 @@ export const GetOfficeResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetOfficeResponse>;
 
 export type GetOfficesRequestFilterStatus = "Active" | "Archived";
-export const GetOfficesRequestFilterStatus = /*@__PURE__*/ S.String;
+export const GetOfficesRequestFilterStatus = S.String;
 
 export type GetOfficesRequestInclude = "mainImage" | "permissions";
-export const GetOfficesRequestInclude = /*@__PURE__*/ S.String;
+export const GetOfficesRequestInclude = S.String;
 
 export type GetOfficesRequestOrderBy = "name" | "lastModified";
-export const GetOfficesRequestOrderBy = /*@__PURE__*/ S.String;
+export const GetOfficesRequestOrderBy = S.String;
 
 export type GetOfficesRequestOrder = "ASC" | "DESC";
-export const GetOfficesRequestOrder = /*@__PURE__*/ S.String;
+export const GetOfficesRequestOrder = S.String;
 
 export interface GetOfficesRequest {
   /** Which page of results should be returned */
@@ -2902,7 +2901,7 @@ export const GetOfficesResponse = /*@__PURE__*/ S.suspend(() =>
 export type GetPropertyTypesRequestInclude =
   | "categories"
   | "categories.subCategories";
-export const GetPropertyTypesRequestInclude = /*@__PURE__*/ S.String;
+export const GetPropertyTypesRequestInclude = S.String;
 
 export interface GetPropertyTypesRequest {
   /** Which page of results should be returned */
@@ -2960,10 +2959,10 @@ export const GetPropertyTypesResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetPropertyTypesResponse>;
 
 export type GetRegionsRequestOrderBy = "name";
-export const GetRegionsRequestOrderBy = /*@__PURE__*/ S.String;
+export const GetRegionsRequestOrderBy = S.String;
 
 export type GetRegionsRequestOrder = "ASC" | "DESC";
-export const GetRegionsRequestOrder = /*@__PURE__*/ S.String;
+export const GetRegionsRequestOrder = S.String;
 
 export interface GetRegionsRequest {
   /** Filter regions by region name. */
@@ -3033,7 +3032,7 @@ export const GetRegionsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetRegionsResponse>;
 
 export type GetSearchRequirementRequestInclude = "permissions";
-export const GetSearchRequirementRequestInclude = /*@__PURE__*/ S.String;
+export const GetSearchRequirementRequestInclude = S.String;
 
 export interface GetSearchRequirementRequest {
   /** Unique Search Requirement Id */
@@ -3206,15 +3205,15 @@ export const GetSearchRequirementResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetSearchRequirementResponse>;
 
 export type GetSearchRequirementsRequestInclude = "permissions";
-export const GetSearchRequirementsRequestInclude = /*@__PURE__*/ S.String;
+export const GetSearchRequirementsRequestInclude = S.String;
 
 export type GetSearchRequirementsRequestOrderBy =
   | "firstCreated"
   | "lastModified";
-export const GetSearchRequirementsRequestOrderBy = /*@__PURE__*/ S.String;
+export const GetSearchRequirementsRequestOrderBy = S.String;
 
 export type GetSearchRequirementsRequestOrder = "ASC" | "DESC";
-export const GetSearchRequirementsRequestOrder = /*@__PURE__*/ S.String;
+export const GetSearchRequirementsRequestOrder = S.String;
 
 export interface GetSearchRequirementsRequest {
   /** Which page of results should be returned */
@@ -3444,24 +3443,24 @@ export type GetStaffRequestFilterUserAccessLevel =
   | "Master"
   | "Principal"
   | "Sales Manager";
-export const GetStaffRequestFilterUserAccessLevel = /*@__PURE__*/ S.String;
+export const GetStaffRequestFilterUserAccessLevel = S.String;
 
 export type GetStaffRequestInclude =
   | "mainImage"
   | "permissions"
   | "userAccess"
   | "relatedOffices";
-export const GetStaffRequestInclude = /*@__PURE__*/ S.String;
+export const GetStaffRequestInclude = S.String;
 
 export type GetStaffRequestOrderBy =
   | "firstName"
   | "lastName"
   | "firstCreated"
   | "lastModified";
-export const GetStaffRequestOrderBy = /*@__PURE__*/ S.String;
+export const GetStaffRequestOrderBy = S.String;
 
 export type GetStaffRequestOrder = "ASC" | "DESC";
-export const GetStaffRequestOrder = /*@__PURE__*/ S.String;
+export const GetStaffRequestOrder = S.String;
 
 export interface GetStaffRequest {
   /** Which page of results should be returned */
@@ -3637,7 +3636,7 @@ export type GetStaffMemberRequestInclude =
   | "permissions"
   | "userAccess"
   | "relatedOffices";
-export const GetStaffMemberRequestInclude = /*@__PURE__*/ S.String;
+export const GetStaffMemberRequestInclude = S.String;
 
 export interface GetStaffMemberRequest {
   /** Unique Staff Id */
@@ -3817,10 +3816,10 @@ export const GetSubscriptionsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetSubscriptionsResponse>;
 
 export type GetSuburbsRequestOrderBy = "name" | "state" | "postcode";
-export const GetSuburbsRequestOrderBy = /*@__PURE__*/ S.String;
+export const GetSuburbsRequestOrderBy = S.String;
 
 export type GetSuburbsRequestOrder = "ASC" | "DESC";
-export const GetSuburbsRequestOrder = /*@__PURE__*/ S.String;
+export const GetSuburbsRequestOrder = S.String;
 
 export interface GetSuburbsRequest {
   /** Which page of results should be returned */
@@ -3903,7 +3902,7 @@ export const GetSuburbsResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetSuburbsResponse>;
 
 export type ExistingContactInputType = "Person" | "Business";
-export const ExistingContactInputType = /*@__PURE__*/ S.String;
+export const ExistingContactInputType = S.String;
 
 export type ExistingContactInputAttachedRelatedStaffMembersItem =
   NewContactInputAttachedRelatedStaffMembersItem;
@@ -4013,7 +4012,7 @@ export const UpdateContactRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<UpdateContactRequest>;
 
 export type UpdateContactResponseStatus = "success" | "fail";
-export const UpdateContactResponseStatus = /*@__PURE__*/ S.String;
+export const UpdateContactResponseStatus = S.String;
 
 export interface UpdateContactResponse {
   status?: UpdateContactResponseStatus;
@@ -4033,7 +4032,7 @@ export type UpdateContactSubscriptionsRequestAction =
   | "subscribe"
   | "unsubscribe"
   | "remove";
-export const UpdateContactSubscriptionsRequestAction = /*@__PURE__*/ S.String;
+export const UpdateContactSubscriptionsRequestAction = S.String;
 
 /** An array of mailing_set ids or names to subscribe/unsubscribe the contact */
 export type UpdateContactSubscriptionsRequestSubscriptionsList = Array<string>;
@@ -4063,7 +4062,7 @@ export const UpdateContactSubscriptionsRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<UpdateContactSubscriptionsRequest>;
 
 export type UpdateContactSubscriptionsResponseStatus = "success" | "fail";
-export const UpdateContactSubscriptionsResponseStatus = /*@__PURE__*/ S.String;
+export const UpdateContactSubscriptionsResponseStatus = S.String;
 
 export interface UpdateContactSubscriptionsResponse {
   status?: UpdateContactSubscriptionsResponseStatus;
@@ -4078,7 +4077,7 @@ export const UpdateContactSubscriptionsResponse = /*@__PURE__*/ S.suspend(() =>
 
 /** The general type the property for search */
 export type ExistingSearchRequirementInputListingType = "Sale" | "Lease";
-export const ExistingSearchRequirementInputListingType = /*@__PURE__*/ S.String;
+export const ExistingSearchRequirementInputListingType = S.String;
 
 /** The specific type the property for search */
 export type ExistingSearchRequirementInputPropertyType =
@@ -4087,8 +4086,7 @@ export type ExistingSearchRequirementInputPropertyType =
   | "Commercial"
   | "Holiday"
   | "Business";
-export const ExistingSearchRequirementInputPropertyType =
-  /*@__PURE__*/ S.String;
+export const ExistingSearchRequirementInputPropertyType = S.String;
 
 /** List of categories */
 export type ExistingSearchRequirementInputPropertyCategoriesList =
@@ -4168,7 +4166,7 @@ export const UpdateSearchRequirementRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<UpdateSearchRequirementRequest>;
 
 export type UpdateSearchRequirementResponseStatus = "success" | "fail";
-export const UpdateSearchRequirementResponseStatus = /*@__PURE__*/ S.String;
+export const UpdateSearchRequirementResponseStatus = S.String;
 
 export interface UpdateSearchRequirementResponse {
   status?: UpdateSearchRequirementResponseStatus;

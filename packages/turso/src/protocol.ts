@@ -17,13 +17,17 @@
 import * as Effect from "effect/Effect";
 import type * as Layer from "effect/Layer";
 import * as Redacted from "effect/Redacted";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
 import type * as API from "@distilled.cloud/core/api";
 import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
 import type { ConfigError } from "@distilled.cloud/core/errors";
 import { Credentials, type Config } from "./credentials.ts";
-import { UnknownTursoError, type DefaultErrors } from "./errors.ts";
+import {
+  UnknownTursoError,
+  type DefaultErrors,
+  TursoParseError,
+} from "./errors.ts";
 
 /**
  * Error channel shared by every generated Turso operation. Generated service
@@ -65,4 +69,5 @@ export const TursoProtocol: Layer.Layer<API.Protocol> =
         message,
         body,
       }),
+    parseError: ({ body, cause }) => new TursoParseError({ body, cause }),
   });

@@ -13,13 +13,17 @@
  */
 import * as Effect from "effect/Effect";
 import type * as Layer from "effect/Layer";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
 import type * as API from "@distilled.cloud/core/api";
 import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
 import type { ConfigError } from "@distilled.cloud/core/errors";
 import { type Config, Credentials, formatHeaders } from "./credentials.ts";
-import { type DefaultErrors, UnknownTypesenseError } from "./errors.ts";
+import {
+  type DefaultErrors,
+  UnknownTypesenseError,
+  TypesenseParseError,
+} from "./errors.ts";
 
 /**
  * Error channel shared by every generated Typesense operation. Generated
@@ -49,4 +53,5 @@ export const TypesenseProtocol: Layer.Layer<API.Protocol> =
     // factory's default envelope reader.
     unknownError: ({ message, body }) =>
       new UnknownTypesenseError({ message, body }),
+    parseError: ({ body, cause }) => new TypesenseParseError({ body, cause }),
   });

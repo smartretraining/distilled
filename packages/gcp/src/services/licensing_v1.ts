@@ -52,6 +52,28 @@ export class Forbidden
     [{ status: 403 }],
   ) {}
 
+/** The credential lacks the https://www.googleapis.com/auth/apps.licensing OAuth scope (HTTP 403 'Request had insufficient authentication scopes.'). A Cloud Platform-scoped service account token cannot call the License Manager API; not retryable. */
+export class InsufficientAuthenticationScopes
+  extends /*@__PURE__*/ T.applyErrorMatchers(
+    /*@__PURE__*/ S.TaggedError<InsufficientAuthenticationScopes>()(
+      "InsufficientAuthenticationScopes",
+      {
+        code: S.optional(S.Number),
+        message: S.String,
+        status: S.optional(S.String),
+        reason: S.optional(S.String),
+        domain: S.optional(S.String),
+        details: S.optional(S.Array(S.Unknown)),
+      },
+    ).pipe(C.withAuthError),
+    [
+      {
+        status: 403,
+        message: { includes: "insufficient authentication scopes" },
+      },
+    ],
+  ) {}
+
 export class NotFound
   extends /*@__PURE__*/ T.applyErrorMatchers(
     /*@__PURE__*/ S.TaggedError<NotFound>()("NotFound", {
@@ -66,17 +88,17 @@ export class NotFound
   ) {}
 
 export interface DeleteLicenseAssignmentsRequest {
-  /** A product's unique identifier. For more information about products in this version of the API, see Products and SKUs. */
-  productId: string;
   /** The user's current primary email address. If the user's email address changes, use the new email address in your API requests. Since a `userId` is subject to change, do not use a `userId` value as a key for persistent data. This key could break if the current user's email address changes. If the `userId` is suspended, the license status changes. */
   userId: string;
+  /** A product's unique identifier. For more information about products in this version of the API, see Products and SKUs. */
+  productId: string;
   /** A product SKU's unique identifier. For more information about available SKUs in this version of the API, see Products and SKUs. */
   skuId: string;
 }
 export const DeleteLicenseAssignmentsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    productId: S.String.pipe(T.Label()),
     userId: S.String.pipe(T.Label()),
+    productId: S.String.pipe(T.Label()),
     skuId: S.String.pipe(T.Label()),
   }).pipe(
     T.Http({
@@ -121,33 +143,33 @@ export const GetLicenseAssignmentsRequest = /*@__PURE__*/ S.suspend(() =>
 
 /** Representation of a license assignment. */
 export interface LicenseAssignment {
-  /** ETag of the resource. */
-  etags?: string;
-  /** Link to this page. */
-  selfLink?: string;
-  /** Display Name of the sku of the product. */
-  skuName?: string;
-  /** A product's unique identifier. For more information about products in this version of the API, see Product and SKU IDs. */
-  productId?: string;
-  /** Identifies the resource as a LicenseAssignment, which is `licensing#licenseAssignment`. */
-  kind?: string;
-  /** The user's current primary email address. If the user's email address changes, use the new email address in your API requests. Since a `userId` is subject to change, do not use a `userId` value as a key for persistent data. This key could break if the current user's email address changes. If the `userId` is suspended, the license status changes. */
-  userId?: string;
   /** A product SKU's unique identifier. For more information about available SKUs in this version of the API, see Products and SKUs. */
   skuId?: string;
+  /** Display Name of the sku of the product. */
+  skuName?: string;
+  /** The user's current primary email address. If the user's email address changes, use the new email address in your API requests. Since a `userId` is subject to change, do not use a `userId` value as a key for persistent data. This key could break if the current user's email address changes. If the `userId` is suspended, the license status changes. */
+  userId?: string;
+  /** ETag of the resource. */
+  etags?: string;
+  /** Identifies the resource as a LicenseAssignment, which is `licensing#licenseAssignment`. */
+  kind?: string;
   /** Display Name of the product. */
   productName?: string;
+  /** A product's unique identifier. For more information about products in this version of the API, see Product and SKU IDs. */
+  productId?: string;
+  /** Link to this page. */
+  selfLink?: string;
 }
 export const LicenseAssignment = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    etags: S.optional(S.String),
-    selfLink: S.optional(S.String),
-    skuName: S.optional(S.String),
-    productId: S.optional(S.String),
-    kind: S.optional(S.String),
-    userId: S.optional(S.String),
     skuId: S.optional(S.String),
+    skuName: S.optional(S.String),
+    userId: S.optional(S.String),
+    etags: S.optional(S.String),
+    kind: S.optional(S.String),
     productName: S.optional(S.String),
+    productId: S.optional(S.String),
+    selfLink: S.optional(S.String),
   }),
 ).annotate({
   identifier: "LicenseAssignment",
@@ -191,25 +213,25 @@ export const InsertLicenseAssignmentsRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<InsertLicenseAssignmentsRequest>;
 
 export interface ListForProductAndSkuLicenseAssignmentsRequest {
-  /** A product SKU's unique identifier. For more information about available SKUs in this version of the API, see Products and SKUs. */
-  skuId: string;
-  /** The `maxResults` query string determines how many entries are returned on each page of a large response. This is an optional parameter. The value must be a positive number. */
-  maxResults?: number;
   /** A product's unique identifier. For more information about products in this version of the API, see Products and SKUs. */
   productId: string;
-  /** The customer's unique ID as defined in the Admin console, such as `C00000000`. If the customer is suspended, the server returns an error. */
-  customerId: string;
+  /** The `maxResults` query string determines how many entries are returned on each page of a large response. This is an optional parameter. The value must be a positive number. */
+  maxResults?: number;
+  /** A product SKU's unique identifier. For more information about available SKUs in this version of the API, see Products and SKUs. */
+  skuId: string;
   /** Token to fetch the next page of data. The `maxResults` query string is related to the `pageToken` since `maxResults` determines how many entries are returned on each page. This is an optional query string. If not specified, the server returns the first page. */
   pageToken?: string;
+  /** The customer's unique ID as defined in the Admin console, such as `C00000000`. If the customer is suspended, the server returns an error. */
+  customerId: string;
 }
 export const ListForProductAndSkuLicenseAssignmentsRequest =
   /*@__PURE__*/ S.suspend(() =>
     S.Struct({
-      skuId: S.String.pipe(T.Label()),
-      maxResults: S.optional(S.Number.pipe(T.Query())),
       productId: S.String.pipe(T.Label()),
-      customerId: S.String.pipe(T.Query()),
+      maxResults: S.optional(S.Number.pipe(T.Query())),
+      skuId: S.String.pipe(T.Label()),
       pageToken: S.optional(S.String.pipe(T.Query())),
+      customerId: S.String.pipe(T.Query()),
     }).pipe(
       T.Http({
         method: "GET",
@@ -229,18 +251,18 @@ export const LicenseAssignmentList_ = /*@__PURE__*/ S.Array(
 export interface LicenseAssignmentList {
   /** The LicenseAssignments in this page of results. */
   items: LicenseAssignmentList_;
-  /** The token that you must submit in a subsequent request to retrieve additional license results matching your query parameters. The `maxResults` query string is related to the `nextPageToken` since `maxResults` determines how many entries are returned on each next page. */
-  nextPageToken?: string;
   /** Identifies the resource as a collection of LicenseAssignments. */
   kind?: string;
+  /** The token that you must submit in a subsequent request to retrieve additional license results matching your query parameters. The `maxResults` query string is related to the `nextPageToken` since `maxResults` determines how many entries are returned on each next page. */
+  nextPageToken?: string;
   /** ETag of the resource. */
   etag?: string;
 }
 export const LicenseAssignmentList = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
     items: LicenseAssignmentList_,
-    nextPageToken: S.optional(S.String),
     kind: S.optional(S.String),
+    nextPageToken: S.optional(S.String),
     etag: S.optional(S.String),
   }),
 ).annotate({
@@ -248,22 +270,22 @@ export const LicenseAssignmentList = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<LicenseAssignmentList>;
 
 export interface ListForProductLicenseAssignmentsRequest {
-  /** A product's unique identifier. For more information about products in this version of the API, see Products and SKUs. */
-  productId: string;
   /** The customer's unique ID as defined in the Admin console, such as `C00000000`. If the customer is suspended, the server returns an error. */
   customerId: string;
-  /** The `maxResults` query string determines how many entries are returned on each page of a large response. This is an optional parameter. The value must be a positive number. */
-  maxResults?: number;
   /** Token to fetch the next page of data. The `maxResults` query string is related to the `pageToken` since `maxResults` determines how many entries are returned on each page. This is an optional query string. If not specified, the server returns the first page. */
   pageToken?: string;
+  /** A product's unique identifier. For more information about products in this version of the API, see Products and SKUs. */
+  productId: string;
+  /** The `maxResults` query string determines how many entries are returned on each page of a large response. This is an optional parameter. The value must be a positive number. */
+  maxResults?: number;
 }
 export const ListForProductLicenseAssignmentsRequest = /*@__PURE__*/ S.suspend(
   () =>
     S.Struct({
-      productId: S.String.pipe(T.Label()),
       customerId: S.String.pipe(T.Query()),
-      maxResults: S.optional(S.Number.pipe(T.Query())),
       pageToken: S.optional(S.String.pipe(T.Query())),
+      productId: S.String.pipe(T.Label()),
+      maxResults: S.optional(S.Number.pipe(T.Query())),
     }).pipe(
       T.Http({
         method: "GET",
@@ -276,10 +298,10 @@ export const ListForProductLicenseAssignmentsRequest = /*@__PURE__*/ S.suspend(
 }) as any as S.Schema<ListForProductLicenseAssignmentsRequest>;
 
 export interface PatchLicenseAssignmentsRequest {
-  /** The user's current primary email address. If the user's email address changes, use the new email address in your API requests. Since a `userId` is subject to change, do not use a `userId` value as a key for persistent data. This key could break if the current user's email address changes. If the `userId` is suspended, the license status changes. */
-  userId: string;
   /** A product SKU's unique identifier. For more information about available SKUs in this version of the API, see Products and SKUs. */
   skuId: string;
+  /** The user's current primary email address. If the user's email address changes, use the new email address in your API requests. Since a `userId` is subject to change, do not use a `userId` value as a key for persistent data. This key could break if the current user's email address changes. If the `userId` is suspended, the license status changes. */
+  userId: string;
   /** A product's unique identifier. For more information about products in this version of the API, see Products and SKUs. */
   productId: string;
   /** Request body */
@@ -287,8 +309,8 @@ export interface PatchLicenseAssignmentsRequest {
 }
 export const PatchLicenseAssignmentsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    userId: S.String.pipe(T.Label()),
     skuId: S.String.pipe(T.Label()),
+    userId: S.String.pipe(T.Label()),
     productId: S.String.pipe(T.Label()),
     body: S.optional(LicenseAssignment.pipe(T.HttpBody())),
   }).pipe(
@@ -303,20 +325,20 @@ export const PatchLicenseAssignmentsRequest = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<PatchLicenseAssignmentsRequest>;
 
 export interface UpdateLicenseAssignmentsRequest {
-  /** A product's unique identifier. For more information about products in this version of the API, see Products and SKUs. */
-  productId: string;
   /** The user's current primary email address. If the user's email address changes, use the new email address in your API requests. Since a `userId` is subject to change, do not use a `userId` value as a key for persistent data. This key could break if the current user's email address changes. If the `userId` is suspended, the license status changes. */
   userId: string;
   /** A product SKU's unique identifier. For more information about available SKUs in this version of the API, see Products and SKUs. */
   skuId: string;
+  /** A product's unique identifier. For more information about products in this version of the API, see Products and SKUs. */
+  productId: string;
   /** Request body */
   body?: LicenseAssignment;
 }
 export const UpdateLicenseAssignmentsRequest = /*@__PURE__*/ S.suspend(() =>
   S.Struct({
-    productId: S.String.pipe(T.Label()),
     userId: S.String.pipe(T.Label()),
     skuId: S.String.pipe(T.Label()),
+    productId: S.String.pipe(T.Label()),
     body: S.optional(LicenseAssignment.pipe(T.HttpBody())),
   }).pipe(
     T.Http({
@@ -334,6 +356,7 @@ export type DeleteLicenseAssignmentsError =
   | Forbidden
   | BadRequest
   | Conflict
+  | InsufficientAuthenticationScopes
   | GcpOpError;
 /** Revoke a license. */
 export const deleteLicenseAssignments: API.OperationMethod<
@@ -344,12 +367,23 @@ export const deleteLicenseAssignments: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: DeleteLicenseAssignmentsRequest,
   output: Empty,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    InsufficientAuthenticationScopes,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
 
-export type GetLicenseAssignmentsError = NotFound | Forbidden | GcpOpError;
+export type GetLicenseAssignmentsError =
+  | NotFound
+  | Forbidden
+  | InsufficientAuthenticationScopes
+  | GcpOpError;
 /** Get a specific user's license by product SKU. */
 export const getLicenseAssignments: API.OperationMethod<
   GetLicenseAssignmentsRequest,
@@ -359,7 +393,12 @@ export const getLicenseAssignments: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: GetLicenseAssignmentsRequest,
   output: LicenseAssignment,
-  errors: [NotFound, Forbidden, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    InsufficientAuthenticationScopes,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -369,6 +408,7 @@ export type InsertLicenseAssignmentsError =
   | Forbidden
   | BadRequest
   | Conflict
+  | InsufficientAuthenticationScopes
   | GcpOpError;
 /** Assign a license. */
 export const insertLicenseAssignments: API.OperationMethod<
@@ -379,7 +419,14 @@ export const insertLicenseAssignments: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: InsertLicenseAssignmentsRequest,
   output: LicenseAssignment,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    InsufficientAuthenticationScopes,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -387,6 +434,7 @@ export const insertLicenseAssignments: API.OperationMethod<
 export type ListForProductAndSkuLicenseAssignmentsError =
   | NotFound
   | Forbidden
+  | InsufficientAuthenticationScopes
   | GcpOpError;
 /** List all users assigned licenses for a specific product SKU. */
 export const listForProductAndSkuLicenseAssignments: API.PaginatedOperationMethod<
@@ -398,7 +446,12 @@ export const listForProductAndSkuLicenseAssignments: API.PaginatedOperationMetho
 > = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListForProductAndSkuLicenseAssignmentsRequest,
   output: LicenseAssignmentList,
-  errors: [NotFound, Forbidden, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    InsufficientAuthenticationScopes,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
   pagination: {
@@ -411,6 +464,7 @@ export const listForProductAndSkuLicenseAssignments: API.PaginatedOperationMetho
 export type ListForProductLicenseAssignmentsError =
   | NotFound
   | Forbidden
+  | InsufficientAuthenticationScopes
   | GcpOpError;
 /** List all users assigned licenses for a specific product SKU. */
 export const listForProductLicenseAssignments: API.PaginatedOperationMethod<
@@ -422,7 +476,12 @@ export const listForProductLicenseAssignments: API.PaginatedOperationMethod<
 > = /*@__PURE__*/ API.makePaginated(() => ({
   input: ListForProductLicenseAssignmentsRequest,
   output: LicenseAssignmentList,
-  errors: [NotFound, Forbidden, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    InsufficientAuthenticationScopes,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
   pagination: {
@@ -437,6 +496,7 @@ export type PatchLicenseAssignmentsError =
   | Forbidden
   | BadRequest
   | Conflict
+  | InsufficientAuthenticationScopes
   | GcpOpError;
 /** Reassign a user's product SKU with a different SKU in the same product. This method supports patch semantics. */
 export const patchLicenseAssignments: API.OperationMethod<
@@ -447,7 +507,14 @@ export const patchLicenseAssignments: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: PatchLicenseAssignmentsRequest,
   output: LicenseAssignment,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    InsufficientAuthenticationScopes,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));
@@ -457,6 +524,7 @@ export type UpdateLicenseAssignmentsError =
   | Forbidden
   | BadRequest
   | Conflict
+  | InsufficientAuthenticationScopes
   | GcpOpError;
 /** Reassign a user's product SKU with a different SKU in the same product. */
 export const updateLicenseAssignments: API.OperationMethod<
@@ -467,7 +535,14 @@ export const updateLicenseAssignments: API.OperationMethod<
 > = /*@__PURE__*/ API.make(() => ({
   input: UpdateLicenseAssignmentsRequest,
   output: LicenseAssignment,
-  errors: [NotFound, Forbidden, BadRequest, Conflict, UnknownGCPError],
+  errors: [
+    NotFound,
+    Forbidden,
+    BadRequest,
+    Conflict,
+    InsufficientAuthenticationScopes,
+    UnknownGCPError,
+  ],
   protocol: GcpProtocol,
   retry: Retry.Retry,
 }));

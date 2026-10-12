@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import { Effect, Layer } from "effect";
-import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
+import * as FetchHttpClient from "effect/http/FetchHttpClient";
 import { resolve } from "path";
 import { CredentialsFromEnv } from "../src/credentials.ts";
 

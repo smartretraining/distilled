@@ -41,13 +41,13 @@ import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Redacted from "effect/Redacted";
 import * as Schema from "effect/Schema";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type * as HttpClientError from "effect/unstable/http/HttpClientError";
+import type * as HttpClient from "effect/http/HttpClient";
+import type * as HttpClientError from "effect/http/HttpClientError";
 import * as API from "@distilled.cloud/core/api";
 import { makeRestProtocol } from "@distilled.cloud/core/protocol-rest";
 import type { API_ERRORS, ConfigError } from "@distilled.cloud/core/errors";
 import { Credentials, type Config } from "./credentials.ts";
-import { RexApiError, UnknownRexError } from "./errors.ts";
+import { RexApiError, UnknownRexError, RexParseError } from "./errors.ts";
 
 /**
  * Error channel shared by every generated Rex operation. Generated service
@@ -59,6 +59,7 @@ export type RexOpError =
   | InstanceType<(typeof API_ERRORS)[number]>
   | RexApiError
   | UnknownRexError
+  | RexParseError
   | ConfigError
   | HttpClientError.HttpClientError;
 
@@ -141,6 +142,7 @@ const baseProtocol = makeRestProtocol<Config>({
    * it into {@link UnknownRexError}. Only bodies with no envelope error at
    * all fall through to the unknown case.
    */
+  parseError: ({ body, cause }) => new RexParseError({ body, cause }),
   unknownError: ({ code, message, body }) => {
     const env = decodeEnvelope(body);
     const inner =

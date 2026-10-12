@@ -24,7 +24,6 @@
  * rules) is keyed off the operation config's identity, which `API.make`
  * memoizes — so it runs once per operation per process.
  */
-import { AwsV4Signer } from "aws4fetch";
 import * as Duration from "effect/Duration";
 import * as Effect from "effect/Effect";
 import { pipe } from "effect/Function";
@@ -32,20 +31,21 @@ import * as Layer from "effect/Layer";
 import * as Option from "effect/Option";
 import * as Redacted from "effect/Redacted";
 import * as Stream from "effect/Stream";
-import * as HttpBody from "effect/unstable/http/HttpBody";
-import type * as HttpClient from "effect/unstable/http/HttpClient";
-import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
-import type * as HttpClientResponse from "effect/unstable/http/HttpClientResponse";
+import * as HttpBody from "effect/http/HttpBody";
+import type * as HttpClient from "effect/http/HttpClient";
+import * as HttpClientRequest from "effect/http/HttpClientRequest";
+import type * as HttpClientResponse from "effect/http/HttpClientResponse";
 import * as API from "@distilled.cloud/core/api";
 
 import type { Operation } from "./client/operation.ts";
 import { makeRequestBuilder } from "./client/request-builder.ts";
 import type { Request } from "./client/request.ts";
 import { makeResponseParser } from "./client/response-parser.ts";
-import * as Credentials from "./credentials.browser.ts";
+import * as Credentials from "./credentials-service.ts";
 import * as Endpoint from "./endpoint.ts";
 import * as Region from "./region.ts";
 import { makeEndpointResolver } from "./rules-engine/endpoint-resolver.ts";
+import * as SigV4 from "./sigv4.ts";
 import {
   getAwsApiService,
   getAwsAuthSigv2,
@@ -106,14 +106,8 @@ const prepare = (config: API.ProtocolOperationConfig): Prepared => {
     parseResponse: makeResponseParser(op, {
       service: serviceSdkId,
       operation: operationName,
-      // Responses are not schema-validated by default (matching every other
-      // distilled SDK): decode still runs for its transformations
-      // (timestamps -> Date, sensitive -> Redacted) but a shape mismatch
-      // falls back to the raw response instead of failing the call.
-      // DISTILLED_AWS_VALIDATE=1 restores hard-failing validation (the seed
-      // of a future strict mode).
-      validate:
-        typeof process !== "undefined" && !!process.env?.DISTILLED_AWS_VALIDATE,
+      // Validation follows the caller's ResponseValidation layer
+      // (@distilled.cloud/core, lenient by default).
     }),
     sigv4: getAwsAuthSigv4(inputAst),
     sigv2: getAwsAuthSigv2(inputAst),
@@ -372,7 +366,7 @@ const encode = ({
 
     // S3 Control rejects UNSIGNED-PAYLOAD on several routes (access point
     // operations fail with `InvalidRequest: "Request body cannot be
-    // unsigned"`). aws4fetch injects UNSIGNED-PAYLOAD for any service signing
+    // unsigned"`). The signer injects UNSIGNED-PAYLOAD for any service signing
     // as "s3" when the header is absent, so pre-compute the real payload
     // SHA-256 here (matching the official SDK's applyChecksum behavior).
     // Glacier likewise REQUIRES the x-amz-content-sha256 header on
@@ -408,31 +402,24 @@ const encode = ({
       };
     }
 
-    const signer = new AwsV4Signer({
+    const signedRequest = yield* SigV4.sign({
       method: resolvedRequest.method,
       url: `${endpoint}${fullPath}`,
       headers: signingHeaders,
-      // Don't pass body to signer when using unsigned payload
-      body: useUnsignedPayload
-        ? undefined
-        : resolvedRequest.body instanceof Uint8Array
-          ? Buffer.from(resolvedRequest.body)
+      // Don't pass body to signer when using unsigned payload. A streaming
+      // body only reaches here with an explicit x-amz-content-sha256, in
+      // which case the signer never reads the body.
+      body:
+        useUnsignedPayload || resolvedRequest.body instanceof ReadableStream
+          ? undefined
           : resolvedRequest.body,
       accessKeyId: Redacted.value(credentials.accessKeyId),
-      secretAccessKey: Redacted.value(credentials.secretAccessKey),
-      sessionToken: credentials.sessionToken
-        ? Redacted.value(credentials.sessionToken)
-        : undefined,
+      secretAccessKey: credentials.secretAccessKey,
+      sessionToken: credentials.sessionToken,
       service: signingServiceName,
       region: signingRegion,
     });
-    const signedRequest = yield* Effect.promise(() => signer.sign());
-
-    // Build headers object from signed request
-    const signedHeaders: Record<string, string> = {};
-    signedRequest.headers.forEach((value, key) => {
-      signedHeaders[key] = value;
-    });
+    const signedHeaders = signedRequest.headers;
 
     // Get content type from signed headers for body constructor
     const contentType = signedHeaders["content-type"];
@@ -473,6 +460,11 @@ const encode = ({
       )(signedRequest.url),
       HttpClientRequest.setHeaders(signedHeaders),
       HttpClientRequest.setBody(httpBody),
+      // Empty bodies clear Content-Type, which S3 also uses for object metadata.
+      (request) =>
+        httpBody._tag === "Empty" && contentType !== undefined
+          ? HttpClientRequest.setHeader(request, "content-type", contentType)
+          : request,
     );
   });
 

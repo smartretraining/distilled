@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as redacted from "effect/Redacted";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
@@ -172,7 +172,7 @@ export type FilterNameStringType =
   | "owning-service"
   | "all"
   | (string & {});
-export const FilterNameStringType = /*@__PURE__*/ S.String;
+export const FilterNameStringType = S.String;
 
 export type FilterValueStringType = string;
 export type FilterValuesStringList = string[];
@@ -356,7 +356,7 @@ export const CreateSecretRequest = /*@__PURE__*/ S.suspend(() =>
   identifier: "CreateSecretRequest",
 }) as any as S.Schema<CreateSecretRequest>;
 export type StatusType = "InSync" | "Failed" | "InProgress" | (string & {});
-export const StatusType = /*@__PURE__*/ S.String;
+export const StatusType = S.String;
 
 export type StatusMessageType = string;
 export type LastAccessedDateType = Date;
@@ -677,7 +677,7 @@ export const GetSecretValueResponse = /*@__PURE__*/ S.suspend(() =>
 }) as any as S.Schema<GetSecretValueResponse>;
 export type MaxResultsType = number;
 export type SortOrderType = "asc" | "desc" | (string & {});
-export const SortOrderType = /*@__PURE__*/ S.String;
+export const SortOrderType = S.String;
 
 export type SortByType =
   | "created-date"
@@ -685,7 +685,7 @@ export type SortByType =
   | "last-changed-date"
   | "name"
   | (string & {});
-export const SortByType = /*@__PURE__*/ S.String;
+export const SortByType = S.String;
 
 export interface ListSecretsRequest {
   IncludePlannedDeletion?: boolean;

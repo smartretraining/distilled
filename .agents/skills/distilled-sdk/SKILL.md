@@ -1,0 +1,482 @@
+---
+name: distilled-sdk
+description: Build or update a distilled SDK for an API provider — sourcing its OpenAPI/Smithy/GraphQL/discovery description, adding the spec mirror that feeds it, generating packages/<provider>, listing it on distilled.cloud with a category and a logo, writing a README with a complete Effect example, opening a GitHub PR whose body includes that same example, and regenerating an existing one. Use for "create a distilled SDK for <provider>", adding a provider, writing or fixing a fetch-specs.ts, giving a provider a catalogue group or brand mark, working on stacks/distilled-submodules or a spec-mirror-* repository, or anything about where a package's specs come from.
+---
+
+# Building a distilled SDK
+
+## The pipeline
+
+```
+  upstream API description  (a URL, a git repo, a GraphQL endpoint, docs)
+    │
+    │  stacks/distilled-submodules/spec-repos/<pkg>/fetch-specs.ts   ← you write this
+    ▼
+  distilled-mirror/spec-mirror-<pkg>          one repo per package, refetched daily
+    │                                          layout: .meta/ (machinery) + specs/ (payload)
+    │  git submodule
+    ▼
+  packages/<pkg>/specs/spec-mirror-<pkg>/specs/…
+    │
+    │  packages/<pkg>/scripts/convert.ts       spec dialect → Smithy
+    ▼
+  packages/<pkg>/.generated-specs/*.json       Smithy 2.0 models      (committed)
+    │
+    │  packages/<pkg>/scripts/generate.ts      Smithy → Effect SDK
+    ▼
+  packages/<pkg>/src/services/*.ts                                   (committed)
+```
+
+Two facts follow from this and shape everything below:
+
+- **The generated output is committed.** CI never runs `generate` and never
+  checks out a submodule. A PR is green with no spec present at all — the
+  specs only matter to whoever regenerates.
+- **The mirror is the spec source, not the upstream.** A package never
+  submodules the upstream repository. `github/rest-api-description` is 6.7 GB
+  checked out for one 13 MB file; the mirror holds the file. See
+  [`stacks/distilled-submodules/README.md`](../../../stacks/distilled-submodules/README.md).
+
+## Step 1 — identify the upstream shape
+
+There is no generic fetch script. Copy the closest existing one and adapt it;
+this table is the whole decision.
+
+| Upstream publishes | Copy | Technique |
+| --- | --- | --- |
+| One OpenAPI document at a stable URL | `spec-repos/hetzner` | `fetch()` → validate → write |
+| A live endpoint serving YAML | `spec-repos/posthog` | `fetch()` → `yaml` parse → write JSON |
+| A few files inside a big git repo | `spec-repos/github`, `spec-repos/turso` | `raw.githubusercontent.com` per file — never clone |
+| Whole directories inside a huge git repo | `spec-repos/aws`, `spec-repos/azure` | blobless (`--filter=blob:none`) + `--no-checkout` clone, narrow sparse patterns from the tree, only then fetch blobs |
+| An index that enumerates many documents | `spec-repos/gcp` | crawl the discovery directory, write `_manifest.json` + one doc per entry |
+| A GraphQL endpoint | `spec-repos/railway`, `spec-repos/expo-eas` | introspection query → `schema.json` |
+| Only human docs (markdown/HTML) | `spec-repos/cloudflare` | crawl the docs sidebar, download each page's markdown twin, render the page HTML when that twin is truncated |
+
+A YAML spec does not have to be converted in the mirror: `spec-repos/coinbase`
+mirrors `openapi.yaml` verbatim and `packages/coinbase/scripts/convert.ts`
+passes `parse: (text) => Bun.YAML.parse(text)` to `runOpenApiConvert`. Convert
+in the mirror only when the upstream is an endpoint rather than a file.
+
+**When the user says "like GitHub"** they mean a few files out of a big repo —
+raw download, no clone. **"Like cloudflare"** means the description has to be
+scraped out of documentation pages. Copy `spec-repos/cloudflare`: crawl the
+sidebar for every page URL, download each page's `index.md` twin, and fall
+back to rendering the page's HTML when the twin comes back truncated — that
+host cuts the markdown off mid-page on its largest schemas. If you are about
+to scrape docs, first check whether the provider publishes a real
+machine-readable description somewhere — that is nearly always the better
+spec.
+
+Rules every `fetch-specs.ts` follows:
+
+- It runs from `.meta/` and writes to `../specs/` — nothing else.
+- It **validates what it got** before writing. A login page, a rate-limit
+  body, or a gutted response is still valid JSON; failing here beats failing
+  three steps later in the generator. The usual check is
+  `typeof spec.openapi === "string" && spec.paths !== undefined`.
+- It writes deterministically — `JSON.stringify(spec, null, 2) + "\n"` — so a
+  whitespace-only change upstream produces no diff and no daily commit.
+- It fetches the **subset the generator reads**, not the repository.
+
+## Step 2 — add the mirror
+
+```sh
+mkdir stacks/distilled-submodules/spec-repos/<pkg>
+# fetch-specs.ts, package.json, readme.md — copy the exemplar from step 1
+```
+
+Add `{ package: "<pkg>" }` to `SPEC_REPOS` in
+`stacks/distilled-submodules/SpecRepos.ts`, in alphabetical position.
+
+You cannot create the mirror repository — it lives in the `distilled-mirror`
+org and is created by the `distilled-submodules` stack, which deploys on merge
+to `main`. That is fine; step 3 replaces it.
+
+## Step 3 — materialise the mirror locally
+
+```sh
+pnpm specs:local <pkg>
+```
+
+This copies the same scaffold the stack deploys into
+`packages/<pkg>/specs/.local/` and runs `fetch-specs.ts` from its `.meta`
+directory, so the result is byte-identical to a checkout of the real mirror:
+
+```
+packages/<pkg>/specs/.local/
+├── .meta/    fetch-specs.ts, package.json, tsconfig.json
+└── specs/    ← what the generator reads
+```
+
+The directory is gitignored. Re-run the command to refetch after editing the
+fetch script (the `bun install` only happens once).
+
+## Step 4 — write the package
+
+Create `packages/<pkg>/` from the closest existing package. In `convert.ts`,
+declare the **production** spec path and resolve it:
+
+```ts
+import { resolveSpecPath } from "@distilled.cloud/core/codegen/spec-path";
+
+const specPath = resolveSpecPath(root, "specs/spec-mirror-<pkg>/specs/openapi.json");
+```
+
+`runOpenApiConvert` already does this for its `specPath` entries, so an
+OpenAPI package gets it for free — just declare the mirror path.
+
+Then register the package: `pnpm-workspace.yaml` needs nothing (it globs
+`packages/*`), but add both tsconfig references to the root `tsconfig.json`.
+
+Public surface: re-export the generated barrel at the package root
+(`export * from "./services/index.ts"`) so callers write `Pkg.vms.createVm`,
+not `Pkg.Services.vms.createVm`. Do not add a `Services` namespace. A
+single-service package re-exports operations on the root (`Pkg.listX`) the
+same way.
+
+### Errors and response validation
+
+Every error class in `src/errors.ts` must be one the protocol can actually
+raise. A class in the operation error union that nothing constructs tells
+callers to handle a failure that never happens — that is how ~75 packages
+ended up declaring a `<Pkg>ParseError` no code path created.
+
+`src/errors.ts` declares, and the operation error union
+(`<Pkg>OpError` / `DefaultErrors`) includes:
+
+- `Unknown<Pkg>Error` — built by the protocol's `unknownError` fallback.
+- `<Pkg>ParseError` with `{ body: Schema.Unknown, cause: Schema.Unknown }`,
+  `.pipe(Category.withParseError)` — built by the protocol's `parseError`
+  (copy `packages/s2/src/errors.ts`).
+- Any status classes the provider needs beyond core's `HTTP_STATUS_MAP`,
+  each wired into the protocol's `statusMap`.
+
+The protocol wires every one of them:
+
+- **`makeRestProtocol`** requires `parseError`:
+  `parseError: ({ body, cause }) => new <Pkg>ParseError({ body, cause })`.
+- **A hand-written protocol** calls `validateResponse(outputAst, value,
+  (cause) => new <Pkg>ParseError({ body, cause }))` from
+  `@distilled.cloud/core/response-validation` on every 2xx path that returns
+  the operation output — after wire→TS key mapping, before `wrapSensitive`.
+  `packages/core/src/protocol-rest.ts` is the reference.
+
+2xx responses are validated only in strict mode. `ResponseValidation`
+(`import { ResponseValidation } from "@distilled.cloud/core"`) is one context
+reference shared by every SDK: lenient by default, switched with
+`Effect.provide(ResponseValidation.strict)` — only ever by layer. A new
+protocol reads the mode through `validateResponse`; it never adds its own
+flag or environment variable.
+
+Lenient mode checks only what the protocol needs in order to transform the
+body (unwrap an envelope, map keys, wrap sensitive members) and nothing
+more: a non-JSON body comes back as text, a body missing members comes back
+as read. Never decode against the output schema outside `validateResponse`.
+Strict mode surfaces every spec inaccuracy (an undocumented `null`, a new
+enum member) as a `<Pkg>ParseError`; that is the cost of opting in, and why
+strict is never the default.
+
+Every SDK ships `src/response-validation.test.ts` (copy
+`packages/s2/src/response-validation.test.ts`). It uses
+`runValidationModes` from `@distilled.cloud/core/testing` to run one real
+operation against a canned response in both modes and asserts: a matching
+body succeeds in both; a mismatched body succeeds in lenient and fails with
+`<Pkg>ParseError` in strict; and what a non-JSON body does in each. CI runs
+every `packages/*/src/response-validation.test.ts`.
+
+Before opening the PR, confirm the parse error and the unknown-error
+fallback are both constructed outside the generated code — this must print
+two or more lines:
+
+```sh
+grep -rnE 'new \w+(ParseError|Unknown\w*Error)\(' packages/<pkg>/src \
+  --include='*.ts' --exclude-dir=services
+```
+
+For every other class you add to `errors.ts`, find where the protocol
+raises it (`statusMap`, a code lookup table, or `new`). A class nothing
+raises comes out of `errors.ts` and the error union.
+
+## Step 5 — iterate
+
+```sh
+DISTILLED_SPECS_LOCAL=1 pnpm generate <pkg>
+```
+
+The environment variable re-roots every spec read into `.local`. It prints a
+warning to stderr on every run so a local-spec generation is never mistaken
+for a real one, and it lives in one command's environment — **never** in a
+file. Without it the same command reads the submodule, which is what you want
+once the mirror exists.
+
+Iterate on `convert.ts` (spec → Smithy) and `generate.ts` (Smithy → TS)
+separately: `pnpm --filter @distilled.cloud/<pkg> run convert` stops after the
+Smithy models, which is usually where the interesting bugs are.
+
+Patches go in `packages/<pkg>/patches/` as RFC-6902 `*.json` and apply in
+**convert** (`finalizeConvert` at the end of every dialect — OpenAPI,
+GraphQL, discovery, proto, Cloudflare markdown), so `.generated-specs` is
+the patched Smithy model. OpenAPI pointers (`/paths`, `/components`) run on
+the spec before conversion; Smithy pointers (`/shapes`, `/metadata`) run on
+the model after. generate does not patch — it only compiles the committed
+models.
+
+`finalizeConvert` is **not idempotent** — `move` patches and model transforms
+only make sense on freshly converted models — so it stamps
+`metadata["distilled.finalized"]` and refuses to run over a model that
+already carries it. To re-apply patches or naming, re-run the package's
+`convert`; never post-process a committed `.generated-specs` file. It also
+fails if any `target` in a model points at a shape that does not exist.
+**Stale patch pointers fail the run** (they used to warn-and-skip, which is
+how Fly's whole chain vanished after the spec-mirror prefixed paths with
+`/v1`). Pass `onStalePatch: "warn"` only if you truly want skip.
+
+Operation **names** are convert policy, not patches, and default to
+**verbNoun** (`listApps`, `getApp`, `createMachine`) in the OpenAPI and
+GraphQL converters and in `finalizeConvert` (for dialects with no naming
+step of their own). `toVerbNoun` only reorders ids it can recognise —
+go-swagger `Apps_list`, REST `ConfigsList`, GraphQL `projectCreate` — and
+leaves anything already verb-first or ambiguous (`WatchPodList`,
+`AppGetOrCreate`, `accountById`) unchanged. Irregulars go in
+`operationNames` (lookup by `"METHOD path"`, then operationId) — PUT vs
+PATCH that share an upstream id need the path key. Cases live in
+`packages/core/src/codegen/rewrite-operation-ids.test.ts` (`bun test`); add
+one before changing the heuristic. Do not RFC-6902-patch
+`/paths/~1foo/get/operationId`; those break when upstream adds a prefix.
+Patch the spec, not the generated TypeScript. Writing and checking a
+patch is the `distilled-sdk-patch` skill
+([`.agents/skills/distilled-sdk-patch/SKILL.md`](../distilled-sdk-patch/SKILL.md)).
+
+## Step 6 — wire the submodule
+
+```sh
+pnpm specs:link <pkg>
+```
+
+Everything about the entry is derived from the package name
+(`packages/<pkg>/specs/spec-mirror-<pkg>` ←
+`https://github.com/distilled-mirror/spec-mirror-<pkg>.git`), so this is a
+convenience, not a decision. Before the mirror exists it writes the
+`.gitmodules` stanza alone. That is inert — `git submodule` iterates gitlinks
+in the index, so a stanza without one is skipped by `pnpm specs:sync` and by
+every `submodule update` — and it becomes a real submodule when you run the
+same command again after the mirror is deployed.
+
+## Step 7 — list it on the website
+
+The catalogue on distilled.cloud reads `packages/*/package.json` at build
+time, so a new non-private package appears on its own — in the catch-all
+group **More**, with a generated monogram where a logo should be. Two files
+under `website/build/` fix that, and both tolerate a package that is not in
+the tree yet, so the entries belong in the PR that adds the SDK.
+
+**Category** — add `<pkg>` to a group array in `GROUPS`
+(`website/build/packages.ts`). Order within a group does not matter; the
+catalogue sorts each group by package name. While you are there add
+`SEARCH_HINTS[<pkg>]` — extra words the catalogue filter matches on top of the
+npm name and the directory, which it already matches (`neon: "postgres
+serverless"`).
+
+**Logo** — add a `{ viewBox, inner }` entry to
+`website/build/data/brand-icons.json`, keyed by the same `<pkg>`:
+
+```json
+"neon": {
+  "viewBox": "0 0 64 64",
+  "inner": "<path d=\"M63 0.0177…\" fill=\"currentColor\"/>"
+}
+```
+
+- `inner` is the source SVG's children — no `<svg>` wrapper, no `width` or
+  `height`. Keep the source's own `viewBox` or the mark renders cropped.
+- Every fill and stroke must be `currentColor`. Marks are monochrome and
+  inherit the card's colour, which differs between themes and on hover, so a
+  hardcoded hex disappears in one of them.
+- `build/plugin.ts` concatenates the entries into one `/icons.svg` sprite as
+  `<symbol id="i-<pkg>">` and the markup is injected verbatim. Use a source
+  you trust, and rename any internal `id` (clip paths, gradients) — they are
+  global in the sprite and collide across providers.
+- Sources so far are recorded in the file's `_license` entry: svgl.app for
+  most, Simple Icons (CC0) where svgl lacks the brand, official vector files
+  otherwise. Add the provenance there when you introduce a new kind.
+
+Neither is a build failure — "More" and the monogram exist so a new package
+never breaks the site, and plenty of providers still run on a monogram — but a
+provider with both is findable by search and looks finished.
+
+The catalogue only lists packages that export at least one
+`API.OperationMethod`, so a support package (`core`) never shows up and a
+`GROUPS` entry for one would be dead config.
+
+## Step 8 — README, examples, and the PR
+
+Every provider package ships `packages/<pkg>/README.md`. Do not skip it.
+Shape it after [`packages/aws/README.md`](../../../packages/aws/README.md):
+install, a complete Effect program, then auth. `listX({})` with no Layer,
+credentials, or HTTP client is not an example.
+
+**README** (`packages/<pkg>/README.md`):
+
+````md
+# @distilled.cloud/<pkg>
+
+Effect-native <Name> SDK, generated from <spec URL>.
+
+## Installation
+
+```bash
+npm install @distilled.cloud/<pkg> effect
+```
+
+## Quick start
+
+```ts
+import { Effect, Layer } from "effect";
+import * as FetchHttpClient from "effect/http/FetchHttpClient";
+import * as Pkg from "@distilled.cloud/<pkg>";
+
+const program = Effect.gen(function* () {
+  const result = yield* Pkg.vms.createVm({ firewall: { rules: [] } });
+  return result;
+});
+
+const Live = Layer.mergeAll(
+  FetchHttpClient.layer,
+  Pkg.CredentialsFromEnv,
+  Pkg.PkgProtocol,
+);
+
+program.pipe(Effect.provide(Live), Effect.runPromise);
+```
+
+## Auth
+
+`<ENV>` as `Authorization: Bearer`. Optional `<ENV>_API_BASE_URL`.
+````
+
+The quick-start program must compile against the generated names:
+
+- `Layer.mergeAll(FetchHttpClient.layer, CredentialsFromEnv, <Pkg>Protocol)`
+- at least one real call (`Pkg.vms.createVm` / `Pkg.execVm` / `Pkg.getX`,
+  not `Pkg.Services.…` and not only `list*`)
+- `Effect.provide` + `Effect.runPromise`
+
+If a generated operation cannot work as REST — WebSocket `101`,
+`application/octet-stream` bodies, SSE — say so and show the hand-written
+helper (or omit that call), never the stub. Keep `src/index.ts`'s `@example`
+the same shortest program.
+
+When credentials exist, run that program live and mention the result in the
+PR (`execVm` status 0, PTY `sessionInfo`, …). Delete anything the example
+created.
+
+The job is not done until step 10 has opened a GitHub PR. npm trusted
+publishing (`npm-oidc-setup`) needs a logged-in `npm whoami`; skip it and
+say so in the PR when this environment is not.
+
+## Step 9 — check
+
+```sh
+pnpm specs:check     # mirror manifest ↔ spec-repos/ ↔ .gitmodules ↔ packages/
+pnpm typecheck       # tsc -b
+pnpm format          # generated output is committed formatted
+```
+
+`pnpm generate` formats at the end for a reason: **never diff regeneration
+results before formatting**, or every file looks changed.
+
+## Step 10 — open the PR
+
+A new SDK is not finished in the working tree. Open a GitHub PR. Stage
+explicit paths (never `git add -A`), commit, push, `gh pr create`.
+
+Title: `feat(<pkg>): add the <Name> SDK`.
+
+Body, in order:
+
+1. One sentence: Effect-native SDK for X, generated from [the spec URL].
+2. Bullets: operation count and service split; auth (env + header + default
+   host); pagination; non-JSON surfaces; wiring (SpecRepos, `.gitmodules`,
+   tsconfig, website, lockfile). Note that `spec-mirror-<pkg>` is created by
+   the distilled-submodules stack on merge to main.
+3. **The same complete example as the README** — `Layer.mergeAll`,
+   `CredentialsFromEnv`, `<Pkg>Protocol`, a real call, `Effect.runPromise`.
+   A PR whose only snippet is `listX({})` is incomplete; paste the README
+   quick start.
+4. `Checks: pnpm specs:check` green, `tsc -b packages/<pkg> --noCheck false`
+   green, `DISTILLED_SPECS_LOCAL=1 pnpm generate <pkg>` reproduces output,
+   the error-construction check from step 4 finds both classes, and
+   `bun test src/response-validation.test.ts` passes.
+
+```sh
+git push -u origin HEAD
+gh pr create --title "feat(<pkg>): add the <Name> SDK" --body-file /tmp/pr.md
+```
+
+## Step 11 — after merge
+
+The stack deploys on push to `main` and creates `spec-mirror-<pkg>`, seeded
+with your fetch script and a workflow that refetches daily. Then, in a
+follow-up: `pnpm specs:link <pkg>` to record the gitlink, delete
+`packages/<pkg>/specs/.local/`, and confirm `pnpm generate <pkg>` reproduces
+the committed output from the submodule.
+
+---
+
+# Working on an existing SDK
+
+```sh
+pnpm specs:sync                              # every mirror, tip commit only
+pnpm --filter @distilled.cloud/<pkg> \
+  run specs:fetch                            # just one
+pnpm --filter @distilled.cloud/<pkg> \
+  run specs:update                           # move it to the mirror's latest
+pnpm generate <pkg> [<pkg>…]                 # convert + generate + format
+pnpm generate                                # everything
+```
+
+Every one of those is `--depth=1` and none is `--recursive`: a mirror's
+history is refetch noise (a commit a day, forever) and no mirror has nested
+submodules. `.gitmodules` sets `shallow = true` on every entry and
+`specs:check` fails if one loses it.
+
+To iterate on a mirror's fetch script — or to regenerate against today's
+upstream without touching submodules — use `pnpm specs:local <pkg>` and
+`DISTILLED_SPECS_LOCAL=1`, exactly as above.
+
+Moving a package to a newer spec and pruning the patches it no longer
+needs is the `distilled-sdk-update` skill
+([`.agents/skills/distilled-sdk-update/SKILL.md`](../distilled-sdk-update/SKILL.md)).
+
+# Rules CI enforces
+
+- **No committed file may reference `specs/.local`.** A package that reads
+  from a gitignored directory is one nobody else can regenerate. Local mode is
+  an environment variable, never a source edit. `pnpm specs:check` fails on a
+  `.local` path in a string literal.
+- **A package with a `specs/` directory needs a `SPEC_REPOS` entry.** Checked
+  by `pnpm specs:check` on the PR, and again by the stack at deploy time so a
+  new SDK cannot quietly stay on a multi-gigabyte upstream submodule.
+- **`spec-repos/<pkg>/` needs all three files** — `fetch-specs.ts`,
+  `package.json`, `readme.md` — and a `blocked` package must have none of
+  them, because the stack never commits its scaffold.
+- **`.gitmodules` mirror entries must match the naming convention.**
+
+# Known boundaries
+
+Local mode re-roots a spec path by taking everything after its last `specs`
+segment, which is why every package's declared path is
+`specs/spec-mirror-<pkg>/specs/<file>`: the tail is what the mirror holds.
+A path that reads through some other layout resolves to a file the mirror
+does not have, and `resolveSpecPath` says so rather than failing later.
+
+`aws` convert reads the spec-mirror Smithy models, applies the typed
+`patches/{sdkId}.json` config (`applyAwsSpecPatches`), copies
+`partitions.json`, and writes `.generated-specs/<sdkId>.json`. generate
+compiles those and reads the patch file only for `errorCategories`. `cloudflare`
+takes its spec root as a `--specs` flag whose default is the mirror path, and
+resolves it through `resolveSpecPath` like everything else.
+
+`fly-io` is the one package that reads more than its mirror: `specs/sprites`,
+`specs/mpg` and `specs/addons` are small hand-maintained documents committed
+next to the submodule, because Fly publishes nothing to mirror for them.

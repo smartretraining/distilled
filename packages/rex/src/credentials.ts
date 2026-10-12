@@ -110,13 +110,13 @@ export const CredentialsFromToken = (
   );
 
 const envConfig = EffectConfig.all({
-  token: EffectConfig.string("REX_API_TOKEN").pipe(EffectConfig.option),
-  email: EffectConfig.string("REX_EMAIL").pipe(EffectConfig.option),
-  password: EffectConfig.string("REX_PASSWORD").pipe(EffectConfig.option),
-  apiBaseUrl: EffectConfig.string("REX_API_BASE_URL").pipe(
+  token: EffectConfig.String("REX_API_TOKEN").pipe(EffectConfig.option),
+  email: EffectConfig.String("REX_EMAIL").pipe(EffectConfig.option),
+  password: EffectConfig.String("REX_PASSWORD").pipe(EffectConfig.option),
+  apiBaseUrl: EffectConfig.String("REX_API_BASE_URL").pipe(
     EffectConfig.withDefault(DEFAULT_API_BASE_URL),
   ),
-  appIdentifier: EffectConfig.string("REX_APP_IDENTIFIER").pipe(
+  appIdentifier: EffectConfig.String("REX_APP_IDENTIFIER").pipe(
     EffectConfig.option,
   ),
 });

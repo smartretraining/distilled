@@ -29,6 +29,9 @@ await runOpenApiConvert({
   ],
   patchesDir: "patches",
   options: {
+    // core rc.13 defaults to verbNoun (contactsSearch -> searchContact), which
+    // renames every published operation.
+    operationNaming: "as-is",
     namespace: "com.reapit.agentbox",
     serviceName: "Reapit",
     // 422 is the API's catch-all validation failure and 404 answers any

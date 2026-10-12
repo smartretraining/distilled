@@ -1,4 +1,4 @@
-import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClient from "effect/http/HttpClient";
 import * as redacted from "effect/Redacted";
 import * as S from "@distilled.cloud/core/schema";
 import * as API from "@distilled.cloud/core/api";
@@ -620,17 +620,17 @@ export type SymmetricKeyAlgorithm =
   | "HMAC_SHA512"
   | "HMAC_SHA224"
   | (string & {});
-export const SymmetricKeyAlgorithm = /*@__PURE__*/ S.String;
+export const SymmetricKeyAlgorithm = S.String;
 
 export type KeyDerivationFunction = "NIST_SP800" | "ANSI_X963" | (string & {});
-export const KeyDerivationFunction = /*@__PURE__*/ S.String;
+export const KeyDerivationFunction = S.String;
 
 export type KeyDerivationHashAlgorithm =
   | "SHA_256"
   | "SHA_384"
   | "SHA_512"
   | (string & {});
-export const KeyDerivationHashAlgorithm = /*@__PURE__*/ S.String;
+export const KeyDerivationHashAlgorithm = S.String;
 
 export type SharedInformation = string;
 export type DiffieHellmanDerivationData = { SharedInformation: string };
@@ -667,7 +667,7 @@ export type As2805KeyVariant =
   | "MESSAGE_AUTHENTICATION_KEY_VARIANT_24"
   | "DATA_ENCRYPTION_KEY_VARIANT_22"
   | (string & {});
-export const As2805KeyVariant = /*@__PURE__*/ S.String;
+export const As2805KeyVariant = S.String;
 
 export interface ExportAs2805KeyCryptogram {
   WrappingKeyIdentifier: string;

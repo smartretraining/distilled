@@ -15,7 +15,7 @@
  *
  * GitHub keeps its wire member names verbatim (snake_case) on the TS surface.
  * Module files are named after the tag slug (`code_scanning.ts`) while the
- * barrel exports them camelCased (`Services.codeScanning.listAlertsForRepo`),
+ * barrel exports them camelCased (`codeScanning.listAlertsForRepo`),
  * the spelling GitHub's own clients use.
  *
  * No pagination profiles are emitted: GitHub paginates with `page`/`per_page`
@@ -77,7 +77,7 @@ const spec: SdkSpec = {
   // discrimination is needed.
   union: ({ name, caseTargets, tsRef }) => [
     `export type ${name} = ${caseTargets.map(tsRef).join(" | ") || "unknown"};`,
-    `export const ${name} = /*@__PURE__*/ S.Unknown as any as S.Schema<${name}>;\n`,
+    `export const ${name} = S.Unknown as any as S.Schema<${name}>;\n`,
   ],
 
   sourceNote: ".generated-specs (specs/rest-api-description)",
